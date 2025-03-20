@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ClickFort Armazenagem - Relatório de Gastos</title>
   <link rel="icon" type="image/x-icon" href="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0">
   <!-- Bootstrap CSS -->
@@ -15,7 +15,7 @@
     }
     body {
       background-color: #f4f6f9;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
     }
@@ -26,13 +26,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0') no-repeat center center;
+      background: url("https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0") no-repeat center center;
       background-size: cover;
       z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding-right: 50px;
+      padding: 15px;
     }
     #loginOverlay::before {
       content: "";
@@ -41,29 +41,37 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.6);
       z-index: -1;
     }
     #loginOverlay .login-form {
       background: #fff;
-      padding: 40px;
+      padding: 25px 20px;
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      width: 350px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 320px;
       position: relative;
+      margin-right: 10px;
     }
     #loginOverlay .login-form h3 {
       font-weight: 600;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       color: #333;
+      text-align: center;
+      font-size: 1.5rem;
     }
     #loginOverlay .login-form .form-control {
       border-radius: 5px;
       box-shadow: none;
+      font-size: 1rem;
+      padding: 10px;
     }
     #loginOverlay .login-form .btn {
       border-radius: 5px;
       font-weight: bold;
+      font-size: 1rem;
+      padding: 10px;
     }
     #loginOverlay .login-form .forgot {
       display: block;
@@ -73,6 +81,10 @@
       text-decoration: none;
       font-size: 0.9rem;
     }
+    .form-check-label {
+      margin-left: 5px;
+      font-size: 0.9rem;
+    }
     /* Spinner Styles */
     #spinner {
       position: absolute;
@@ -80,7 +92,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.8);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -101,18 +113,40 @@
       height: 40px;
       margin-right: 10px;
     }
-    .header h1 {
-      margin: 0;
+    /* Desktop: exibe tudo em uma linha */
+    .header .header-text {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .header-text .main-title {
       font-size: 24px;
       font-weight: 400;
-      text-align: center;
+    }
+    .header .header-text .sub-title {
+      font-size: 24px;
+      font-weight: 400;
+    }
+    /* Mobile: exibe "Relatório de Gastos" abaixo do nome */
+    @media (max-width: 576px) {
+      .header .header-text {
+        flex-direction: column;
+      }
+      .header .header-text .main-title {
+        font-size: 20px;
+      }
+      .header .header-text .sub-title {
+        font-size: 16px;
+      }
     }
     .menu {
       text-align: center;
       margin: 10px 0;
     }
     .menu .btn {
-      margin: 0 5px;
+      margin: 5px;
+      font-size: 0.95rem;
     }
     main {
       flex: 1;
@@ -129,7 +163,7 @@
   <!-- Login Overlay -->
   <div id="loginOverlay">
     <div class="login-form">
-      <h3 class="text-center">Acesso Restrito</h3>
+      <h3>Acesso Restrito</h3>
       <form id="formLogin">
         <div class="mb-3">
           <label for="username" class="form-label">Usuário</label>
@@ -139,10 +173,13 @@
           <label for="password" class="form-label">Senha</label>
           <input type="password" class="form-control" id="password" placeholder="Digite sua senha" required>
         </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="rememberMe">
+          <label class="form-check-label" for="rememberMe">Lembrar meus dados</label>
+        </div>
         <button type="submit" class="btn btn-primary w-100">Entrar</button>
         <a href="#" class="forgot">Esqueceu a senha?</a>
       </form>
-      <!-- Spinner -->
       <div id="spinner">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Carregando...</span>
@@ -153,8 +190,11 @@
 
   <!-- Conteúdo Principal -->
   <header class="header">
-    <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem" />
-    <h1>ClickForte Armazenagem - Relatório de Gastos</h1>
+    <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem">
+    <div class="header-text">
+      <span class="main-title">ClickForte Armazenagem</span>
+      <span class="sub-title">Relatório de Gastos</span>
+    </div>
   </header>
 
   <div class="menu">
@@ -170,24 +210,42 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.getElementById('formLogin').addEventListener('submit', function(e) {
+    const loginOverlay = document.getElementById("loginOverlay");
+    const spinner = document.getElementById("spinner");
+    const formLogin = document.getElementById("formLogin");
+    const rememberMe = document.getElementById("rememberMe");
+    const usernameField = document.getElementById("username");
+    const passwordField = document.getElementById("password");
+
+    window.addEventListener("DOMContentLoaded", function() {
+      const savedUsername = localStorage.getItem("savedUsername");
+      const savedPassword = localStorage.getItem("savedPassword");
+      if (savedUsername) usernameField.value = savedUsername;
+      if (savedPassword) {
+        passwordField.value = savedPassword;
+        rememberMe.checked = true;
+      }
+    });
+
+    formLogin.addEventListener("submit", function(e) {
       e.preventDefault();
-      // Exibe o spinner
-      document.getElementById('spinner').style.display = 'flex';
-      
-      // Simula um atraso para o processamento do login (por exemplo, 2 segundos)
+      spinner.style.display = "flex";
       setTimeout(function() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        // Exemplo simples de validação: usuário "admin" e senha "admin123"
-        if(username === "admin" && password === "admin123") {
-          document.getElementById('loginOverlay').style.display = 'none';
+        const username = usernameField.value;
+        const password = passwordField.value;
+        if (username === "admin" && password === "admin123") {
+          if (rememberMe.checked) {
+            localStorage.setItem("savedUsername", username);
+            localStorage.setItem("savedPassword", password);
+          } else {
+            localStorage.removeItem("savedUsername");
+            localStorage.removeItem("savedPassword");
+          }
+          loginOverlay.style.display = "none";
         } else {
           alert("Usuário ou senha incorretos!");
         }
-        // Oculta o spinner após a validação
-        document.getElementById('spinner').style.display = 'none';
+        spinner.style.display = "none";
       }, 2000);
     });
   </script>
