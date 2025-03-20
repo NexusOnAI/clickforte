@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fornecedores - Março/2025</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h2 {
+      margin: 10px 0;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .chart-container {
+      margin-bottom: 50px;
+    }
+    .fullscreen-btn {
+      cursor: pointer;
+      padding: 8px 12px;
+      border: 1px solid #aaa;
+      background: #f4f4f4;
+      border-radius: 4px;
+    }
+    .fullscreen-btn:hover {
+      background: #e8e8e8;
+    }
+    /* Card para exibir o total geral */
+    .total-card {
+      display: inline-block;
+      margin: 10px 0 20px 0;
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fornecedores - Março/2025</h1>
+
+  <!-- Barra de filtros e botões (SEM tabela) -->
+  <div class="top-bar">
+    <!-- SELECT para filtrar descrição (fornecedor) -->
+    <label for="descSelect"><strong>Filtrar Fornecedor:</strong></label>
+    <select id="descSelect">
+      <!-- Opções criadas via JavaScript -->
+    </select>
+
+    <!-- Botão Tela Cheia -->
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">
+      Tela Cheia
+    </button>
+
+    <!-- Botão Visão Geral (Pizza) -->
+    <button id="overviewBtn" class="fullscreen-btn">
+      Visão Geral
+    </button>
+  </div>
+
+  <!-- Área para inserir os gráficos dinamicamente -->
+  <div id="charts-container"></div>
+
+  <script>
+    // --------------------------------------------------------------------
+    // 1) Dados brutos (Fornecedores - Março/2025)
+    //
+    // Observação: Para cada linha do seu arquivo, criamos um objeto:
+    //   { descricao: "...", nf: "...", date: "MM/DD/YYYY", valorPago: "R$ X" }
+    // --------------------------------------------------------------------
+    const rawData = [
+      { descricao:"SULGRILL", nf:"", date:"03/03/2025", valorPago:"R$ 12.480,00" },
+      { descricao:"LOTUS", nf:"", date:"03/03/2025", valorPago:"R$ 4.879,77" },
+      { descricao:"VN EPS", nf:"", date:"03/03/2025", valorPago:"R$ 7.296,00" },
+      { descricao:"Arauco do Brasil - Jaguariaiva", nf:"323893", date:"03/05/2025", valorPago:"R$ 61.935,85" },
+      { descricao:"METALURGICA ALBRAS LTDA", nf:"250081", date:"03/05/2025", valorPago:"R$ 18.198,18" },
+      { descricao:"METALURGICA ALBRAS LTDA", nf:"250093", date:"03/05/2025", valorPago:"R$ 1.055,49" },
+      { descricao:"ARAUCO", nf:"3238895", date:"03/05/2025", valorPago:"R$ 30.967,93" },
+      { descricao:"OR DESIGN", nf:"385099", date:"03/05/2025", valorPago:"R$ 16.283,98" },
+      { descricao:"BIGFER MATRIZ", nf:"2327106", date:"03/05/2025", valorPago:"R$ 1.400,69" },
+      { descricao:"ARAUCO", nf:"323892", date:"03/05/2025", valorPago:"R$ 92.903,78" },
+      { descricao:"ARAUCO", nf:"359619", date:"03/05/2025", valorPago:"R$ 67.943,01" },
+      { descricao:"EUCATEX RAFA", nf:"305473", date:"03/05/2025", valorPago:"R$ 24.532,41" },
+      { descricao:"EUCATEX RAFA", nf:"305477", date:"03/05/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"EUCATEX RAFA", nf:"305470", date:"03/05/2025", valorPago:"R$ 1.989,04" },
+      { descricao:"ARAUCO", nf:"324245", date:"03/05/2025", valorPago:"R$ 92.903,78" },
+      { descricao:"ARAUCO", nf:"323949", date:"03/05/2025", valorPago:"R$ 92.903,78" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5104", date:"03/05/2025", valorPago:"R$ 1.075,64" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254595", date:"03/05/2025", valorPago:"R$ 603,93" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254584", date:"03/05/2025", valorPago:"R$ 405,26" },
+      { descricao:"MUNDIAL GÁS", nf:"", date:"03/05/2025", valorPago:"R$ 420,00" },
+      { descricao:"MUNDIAL GÁS", nf:"", date:"03/05/2025", valorPago:"R$ 210,00" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254570", date:"03/05/2025", valorPago:"R$ 4.172,48" },
+      { descricao:"Cianureto Comercio de Ferro e aco EIRELI", nf:"2779", date:"03/05/2025", valorPago:"R$ 7.140,00" },
+      { descricao:"Cianureto Comercio de Ferro e aco EIRELI", nf:"2781", date:"03/05/2025", valorPago:"R$ 7.140,00" },
+      { descricao:"VPLAST", nf:"26543", date:"03/05/2025", valorPago:"R$ 2.318,48" },
+      { descricao:"CAPACK", nf:"1773", date:"03/05/2025", valorPago:"R$ 1.290,30" },
+      { descricao:"IRSA ROLAMENTOS S/A", nf:"291251", date:"03/05/2025", valorPago:"R$ 759,50" },
+      { descricao:"MB DECOR", nf:"", date:"03/05/2025", valorPago:"R$ 16.619,00" },
+      { descricao:"MB DECOR", nf:"", date:"03/05/2025", valorPago:"R$ 13.279,31" },
+      { descricao:"VN EPS", nf:"", date:"03/05/2025", valorPago:"R$ 10.260,00" },
+      { descricao:"VERTICAL PACK", nf:"PF=5104", date:"03/05/2025", valorPago:"R$ 8.418,06" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254628", date:"03/06/2025", valorPago:"R$ 371,15" },
+      { descricao:"ACM FIBRAS", nf:"6863", date:"03/06/2025", valorPago:"R$ 61.966,00" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254617", date:"03/06/2025", valorPago:"R$ 322,52" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"225683", date:"03/06/2025", valorPago:"R$ 51.615,75" },
+      { descricao:"EUCATEX RAFA", nf:"305478", date:"03/06/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"EUCATEX RAFA", nf:"305479", date:"03/06/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"EUCATEX RAFA", nf:"305470", date:"03/06/2025", valorPago:"R$ 8.942,90" },
+      { descricao:"CAPACK", nf:"PF=1773", date:"03/06/2025", valorPago:"R$ 6.358,00" },
+      { descricao:"MB DECOR", nf:"", date:"03/06/2025", valorPago:"R$ 2.496,00" },
+      { descricao:"EUCATEX RAFA", nf:"305470", date:"03/06/2025", valorPago:"R$ 7.197,70" },
+      { descricao:"EUCATEX RAFA", nf:"305480", date:"03/06/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254662", date:"03/06/2025", valorPago:"R$ 681,75" },
+      { descricao:"BIGFER MATRIZ", nf:"2328928", date:"03/06/2025", valorPago:"R$ 1.204,00" },
+      { descricao:"PRD_IMD NAVEGANTES", nf:"307550", date:"03/06/2025", valorPago:"R$ 29.000,00" },
+      { descricao:"PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", nf:"24574", date:"03/06/2025", valorPago:"R$ 631,05" },
+      { descricao:"CAPACK", nf:"1785", date:"03/06/2025", valorPago:"R$ 2.494,15" },
+      { descricao:"WIRUTEX", nf:"91468", date:"03/06/2025", valorPago:"R$ 3.137,53" },
+      { descricao:"IV PLAST", nf:"33108", date:"03/07/2025", valorPago:"R$ 1.556,49" },
+      { descricao:"TRZ MOVELARIA", nf:"", date:"03/07/2025", valorPago:"R$ 50.000,00" },
+      { descricao:"CAPACK", nf:"PF=1785", date:"03/07/2025", valorPago:"R$ 12.290,01" },
+      { descricao:"EUCATEX RAFA", nf:"305474", date:"03/10/2025", valorPago:"R$ 24.532,41" },
+      { descricao:"EUCATEX RAFA", nf:"305475", date:"03/10/2025", valorPago:"R$ 24.532,41" },
+      { descricao:"EUCATEX RAFA", nf:"305476", date:"03/10/2025", valorPago:"R$ 24.532,41" },
+      { descricao:"EUCATEX RAFA", nf:"305486", date:"03/10/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"EUCATEX RAFA", nf:"305487", date:"03/10/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"EUCATEX RAFA", nf:"305488", date:"03/10/2025", valorPago:"R$ 28.478,55" },
+      { descricao:"EUCATEX RAFA", nf:"305489", date:"03/10/2025", valorPago:"R$ 24.998,21" },
+      { descricao:"EUCATEX RAFA", nf:"305490", date:"03/10/2025", valorPago:"R$ 24.998,21" },
+      { descricao:"EUCATEX RAFA", nf:"305491", date:"03/10/2025", valorPago:"R$ 24.998,21" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254697", date:"03/10/2025", valorPago:"R$ 322,48" },
+      { descricao:"OR DESIGN", nf:"385966", date:"03/10/2025", valorPago:"R$ 9.199,77" },
+      { descricao:"PRD_IMD NAVEGANTES", nf:"313736", date:"03/10/2025", valorPago:"R$ 18.038,54" },
+      { descricao:"DZAINER", nf:"OF", date:"03/10/2025", valorPago:"R$ 23.128,00" },
+      { descricao:"DZAINER", nf:"PF", date:"03/10/2025", valorPago:"R$ 22.400,00" },
+      { descricao:"MULTIVISÃO", nf:"225684", date:"03/10/2025", valorPago:"R$ 1.203,12" },
+      { descricao:"MULTIVISÃO", nf:"225696", date:"03/10/2025", valorPago:"R$ 861,88" },
+      { descricao:"MULTIVISÃO", nf:"225731", date:"03/10/2025", valorPago:"R$ 1.523,97" },
+      { descricao:"MULTIVISÃO", nf:"225733", date:"03/10/2025", valorPago:"R$ 1.559,59" },
+      { descricao:"MULTIVISÃO", nf:"225880", date:"03/10/2025", valorPago:"R$ 3.805,28" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"225879", date:"03/10/2025", valorPago:"R$ 22.300,87" },
+      { descricao:"CAROÇO", nf:"PF=225684, 225696", date:"03/10/2025", valorPago:"R$ 17.995,18" },
+      { descricao:"CAROÇO", nf:"PF=225732, 225733", date:"03/10/2025", valorPago:"R$ 26.880,81" },
+      { descricao:"CAROÇO", nf:"PF=225880", date:"03/10/2025", valorPago:"R$ 33.180,03" },
+      { descricao:"FITA ESPLENDIDA", nf:"", date:"03/10/2025", valorPago:"R$ 25.536,00" },
+      { descricao:"MULTIVISÃO", nf:"225996", date:"03/10/2025", valorPago:"R$ 3.721,13" },
+      { descricao:"MULTIVISÃO", nf:"226010", date:"03/10/2025", valorPago:"R$ 3.816,90" },
+      { descricao:"MULTIVISÃO", nf:"226012", date:"03/10/2025", valorPago:"R$ 1.723,76" },
+      { descricao:"MULTIVISÃO", nf:"226060", date:"03/10/2025", valorPago:"R$ 4.925,03" },
+      { descricao:"MULTIVISÃO", nf:"226061", date:"03/10/2025", valorPago:"R$ 1.484,22" },
+      { descricao:"LOTUS", nf:"", date:"03/10/2025", valorPago:"R$ 19.761,60" },
+      { descricao:"LOTUS", nf:"", date:"03/10/2025", valorPago:"R$ 13.946,70" },
+      { descricao:"BIGFER MATRIZ", nf:"2324289", date:"03/11/2025", valorPago:"R$ 516,00" },
+      { descricao:"BERTEL COMERCIAL ELETRICA LTDA", nf:"254751", date:"03/11/2025", valorPago:"R$ 334,43" },
+      { descricao:"METALURGICA ALBRAS LTDA", nf:"250093", date:"03/11/2025", valorPago:"R$ 1.055,50" },
+      { descricao:"METALURGICA ALBRAS LTDA", nf:"250081", date:"03/11/2025", valorPago:"R$ 18.198,18" },
+      { descricao:"OR DESIGN", nf:"388413", date:"03/11/2025", valorPago:"R$ 11.040,32" },
+      { descricao:"CELSO LUCOTTE DOS SANTOS", nf:"3826", date:"03/11/2025", valorPago:"R$ 15.675,00" },
+      { descricao:"Cianureto Comercio de Ferro e aco EIRELI", nf:"2784", date:"03/11/2025", valorPago:"R$ 7.140,00" },
+      { descricao:"BIGFER MATRIZ", nf:"2317041", date:"03/11/2025", valorPago:"R$ 2.580,00" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"225995", date:"03/11/2025", valorPago:"R$ 36.050,54" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"225732", date:"03/11/2025", valorPago:"R$ 39.575,72" },
+      { descricao:"Squalidus Usinagem", nf:"", date:"03/11/2025", valorPago:"R$ 2.690,00" },
+      { descricao:"MUNDIAL GÁS", nf:"", date:"03/12/2025", valorPago:"R$ 420,00" },
+      { descricao:"CAROÇO", nf:"PF=226060, 226061", date:"03/12/2025", valorPago:"R$ 55.856,96" },
+      { descricao:"OR DESIGN", nf:"392640", date:"03/12/2025", valorPago:"R$ 23.736,73" },
+      { descricao:"VPLAST", nf:"26609", date:"03/12/2025", valorPago:"R$ 4.214,67" },
+      { descricao:"ARAUCO", nf:"324563", date:"03/12/2025", valorPago:"R$ 92.903,78" },
+      { descricao:"CAROÇO", nf:"PF=225996, 226010, 226012", date:"03/12/2025", valorPago:"R$ 77.000,00" },
+      { descricao:"CAROÇO", nf:"PF=225996, 226010, 226012", date:"3/13/2025", valorPago:"R$ 3.735,33" },
+      { descricao:"ACM FIBRAS", nf:"6867", date:"3/13/2025", valorPago:"R$ 85.391,50" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"226059", date:"3/13/2025", valorPago:"R$ 51.198,08" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5128", date:"3/13/2025", valorPago:"R$ 1.491,78" },
+      { descricao:"OR DESIGN", nf:"392685", date:"3/13/2025", valorPago:"R$ 20.700,63" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5127", date:"3/13/2025", valorPago:"R$ 1.876,97" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5131", date:"3/13/2025", valorPago:"R$ 699,99" },
+      { descricao:"CAROÇO", nf:"PF=226157", date:"3/13/2025", valorPago:"R$ 18.863,36" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5129", date:"3/13/2025", valorPago:"R$ 1.758,12" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5130", date:"3/13/2025", valorPago:"R$ 2.157,63" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"226158", date:"3/13/2025", valorPago:"R$ 35.844,27" },
+      { descricao:"MULTIVISÃO", nf:"226157", date:"3/13/2025", valorPago:"R$ 2.165,18" },
+      { descricao:"VERTICAL PACK", nf:"PF=5128", date:"3/13/2025", valorPago:"R$ 11.674,80" },
+      { descricao:"VERTICAL PACK", nf:"PF=5129", date:"3/13/2025", valorPago:"R$ 13.759,20" },
+      { descricao:"VERTICAL PACK", nf:"PF=5131", date:"3/13/2025", valorPago:"R$ 5.478,16" },
+      { descricao:"RUDGENTULHO AMBIENTAL LTDA", nf:"", date:"3/14/2025", valorPago:"R$ 380,00" },
+      { descricao:"PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", nf:"24650", date:"3/14/2025", valorPago:"R$ 526,70" },
+      { descricao:"CAPACK", nf:"1812", date:"3/14/2025", valorPago:"R$ 749,95" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"226183", date:"3/14/2025", valorPago:"R$ 40.672,86" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"226273", date:"3/14/2025", valorPago:"R$ 5.892,48" },
+      { descricao:"VERTICAL PACK", nf:"PF=5127", date:"3/14/2025", valorPago:"R$ 14.689,35" },
+      { descricao:"VERTICAL PACK", nf:"PF=5130", date:"3/14/2025", valorPago:"R$ 16.885,80" },
+      { descricao:"MULTIVISÃO", nf:"226184", date:"3/14/2025", valorPago:"R$ 3.047,94" },
+      { descricao:"MULTIVISÃO", nf:"226187", date:"3/14/2025", valorPago:"R$ 5.044,27" },
+      { descricao:"MULTIVISÃO", nf:"226200", date:"3/14/2025", valorPago:"R$ 4.925,03" },
+      { descricao:"CAPACK", nf:"PF=1812", date:"3/14/2025", valorPago:"R$ 3.695,38" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"226279", date:"3/14/2025", valorPago:"R$ 14.935,11" },
+      { descricao:"CAPACK", nf:"PF=1811", date:"3/14/2025", valorPago:"R$ 7.214,50" },
+      { descricao:"MUNDIAL GÁS", nf:"", date:"3/17/2025", valorPago:"R$ 420,00" },
+      { descricao:"MULTIVISAO INDUSTRIA E COMERCIO LTDA", nf:"226255", date:"3/17/2025", valorPago:"R$ 75.425,16" },
+      { descricao:"CAPACK", nf:"1811", date:"3/17/2025", valorPago:"R$ 1.665,62" },
+      { descricao:"OR DESIGN", nf:"386714", date:"3/17/2025", valorPago:"R$ 6.900,00" },
+      { descricao:"OR DESIGN", nf:"389073", date:"3/17/2025", valorPago:"R$ 18.399,92" },
+      { descricao:"Cianureto Comercio de Ferro e aco EIRELI", nf:"2786", date:"3/17/2025", valorPago:"R$ 7.140,00" },
+      { descricao:"PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", nf:"24668", date:"3/17/2025", valorPago:"R$ 197,40" },
+      { descricao:"PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", nf:"24667", date:"3/17/2025", valorPago:"R$ 444,95" },
+      { descricao:"WERK SCHOTT MIRASSOL", nf:"254887", date:"3/17/2025", valorPago:"R$ 724,80" },
+      { descricao:"BARUERI", nf:"7437765", date:"3/17/2025", valorPago:"R$ 311,69" },
+      { descricao:"ARAUCO", nf:"297181", date:"3/17/2025", valorPago:"R$ 79.186,62" },
+      { descricao:"MULTIVISÃO", nf:"226280", date:"3/17/2025", valorPago:"R$ 3.730,42" },
+      { descricao:"DZAINER", nf:"OF", date:"3/17/2025", valorPago:"R$ 23.128,00" },
+      { descricao:"DZAINER", nf:"PF", date:"3/17/2025", valorPago:"R$ 22.400,00" },
+      { descricao:"VN EPS", nf:"", date:"3/17/2025", valorPago:"R$ 18.468,00" },
+      { descricao:"MB DECOR", nf:"", date:"3/17/2025", valorPago:"R$ 10.173,00" },
+      { descricao:"LOTUS", nf:"", date:"3/17/2025", valorPago:"R$ 18.541,50" },
+      { descricao:"RESTAMP", nf:"", date:"3/17/2025", valorPago:"R$ 22.800,00" },
+      { descricao:"TB EXPRESS - MICHAEL DAMASCENO", nf:"", date:"3/17/2025", valorPago:"R$ 897,00" },
+      { descricao:"CAROÇO", nf:"PF=226184, 226187, 226200", date:"3/17/2025", valorPago:"R$ 113.482,19" },
+      { descricao:"ACM FIBRAS", nf:"6869", date:"3/17/2025", valorPago:"R$ 86.457,04" },
+      { descricao:"CAROÇO", nf:"PF=226280", date:"3/18/2025", valorPago:"R$ 32.536,06" },
+      { descricao:"BIGFER MATRIZ", nf:"2327106", date:"3/18/2025", valorPago:"R$ 1.400,69" },
+      { descricao:"LIDEAR MAQUINAS DO BRASIL LTDA", nf:"16473", date:"3/18/2025", valorPago:"R$ 1.683,43" },
+      { descricao:"VERTICALPACK EMBALAGENS", nf:"5141", date:"3/18/2025", valorPago:"R$ 2.509,29" },
+      { descricao:"ARAUCO", nf:"324837", date:"3/18/2025", valorPago:"R$ 92.903,78" },
+      { descricao:"VERTICAL PACK", nf:"PF=5141", date:"3/18/2025", valorPago:"R$ 15.000,00" }
+    ];
+
+    // --------------------------------------------------------------------
+    // 2) Converter datas p/ "MM/DD/YYYY" e valores p/ Number
+    // --------------------------------------------------------------------
+    function parseValor(valorStr) {
+      // Ex: "R$ 1.000,00" => 1000.00
+      return parseFloat(
+        valorStr
+          .replace("R$","")
+          .replace(/\s/g,"")
+          .replace(/\./g,"")
+          .replace(",",".")
+      );
+    }
+
+    function fixDate(dtStr) {
+      // Ex: "3/17/2025" -> "03/17/2025"
+      const parts = dtStr.split("/");
+      const M = parts[0].padStart(2,"0");
+      const D = parts[1].padStart(2,"0");
+      const Y = parts[2];
+      return `${M}/${D}/${Y}`;
+    }
+
+    const dataset = rawData.map(item => ({
+      descricao: item.descricao,
+      date: fixDate(item.date),   // "MM/DD/YYYY"
+      valor: parseValor(item.valorPago)
+    }));
+
+    // --------------------------------------------------------------------
+    // 3) Função para descobrir a semana de março (1..4)
+    //    (Semana 1: dias 1..7, Semana 2: dias 8..14, Semana 3: dias 15..21, Semana 4: dias 22..31)
+    // --------------------------------------------------------------------
+    function getMarchWeek(dateStr) {
+      const [mm, dd, yyyy] = dateStr.split("/");
+      if (mm !== "03" || yyyy !== "2025") return 0;
+      const day = parseInt(dd, 10);
+      if (day >= 1 && day <= 7)  return 1;
+      if (day >= 8 && day <= 14) return 2;
+      if (day >= 15 && day <= 21) return 3;
+      if (day >= 22 && day <= 31) return 4;
+      return 0;
+    }
+
+    // --------------------------------------------------------------------
+    // 4) Somar valores por descrição e por semana
+    // --------------------------------------------------------------------
+    const sumsByDesc = {};
+
+    dataset.forEach(item => {
+      const w = getMarchWeek(item.date);
+      if (w === 0) return; // ignora se não for mar/2025
+      const desc = item.descricao;
+      if (!sumsByDesc[desc]) {
+        sumsByDesc[desc] = [0,0,0,0];
+      }
+      sumsByDesc[desc][w-1] += item.valor;
+    });
+
+    // Lista de descrições (fornecedores)
+    const uniqueDescriptions = Object.keys(sumsByDesc).sort();
+
+    // --------------------------------------------------------------------
+    // 5) Montar SELECT (TODOS + cada descrição)
+    // --------------------------------------------------------------------
+    const descSelect = document.getElementById("descSelect");
+    const optTodos = document.createElement("option");
+    optTodos.value = "TODOS";
+    optTodos.text = "Todos";
+    descSelect.appendChild(optTodos);
+
+    uniqueDescriptions.forEach(desc => {
+      const opt = document.createElement("option");
+      opt.value = desc;
+      opt.text = desc;
+      descSelect.appendChild(opt);
+    });
+
+    // --------------------------------------------------------------------
+    // 6) Renderização (gráficos)
+    // --------------------------------------------------------------------
+    function renderCharts(selectedDesc) {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = ""; // limpa
+
+      if (selectedDesc === "TODOS") {
+        // Cria gráfico para cada fornecedor
+        uniqueDescriptions.forEach(desc => createChart(desc, container));
+      } else {
+        createChart(selectedDesc, container);
+      }
+    }
+
+    // Cria gráfico para UM fornecedor (4 semanas + total)
+    function createChart(desc, container) {
+      const values = sumsByDesc[desc];
+      if (!values) return;
+
+      // Soma total
+      const total = values.reduce((acc, val) => acc + val, 0);
+
+      // Monta array com as 4 semanas + "Total"
+      const valuesWithTotal = [...values, total];
+      const categories = [
+        "Semana 1 (1-7)",
+        "Semana 2 (8-14)",
+        "Semana 3 (15-21)",
+        "Semana 4 (22-31)",
+        "Total"
+      ];
+
+      // Título
+      const h2 = document.createElement("h2");
+      h2.textContent = desc;
+      container.appendChild(h2);
+
+      // Div p/ gráfico
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "chart-container";
+      const chartId = "chart_" + desc.replace(/\W+/g, "_");
+      chartDiv.id = chartId;
+      container.appendChild(chartDiv);
+
+      // Config do ApexCharts
+      const options = {
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        series: [
+          {
+            name: desc,
+            data: valuesWithTotal
+          }
+        ],
+        xaxis: {
+          categories: categories
+        },
+        dataLabels: {
+          formatter: val =>
+            "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+        },
+        tooltip: {
+          y: {
+            formatter: val =>
+              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+          }
+        },
+        title: {
+          text: `Fornecedor - ${desc}`,
+          align: "center"
+        },
+        subtitle: {
+          text: `Total: R$ ${total.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2
+          })}`,
+          align: "center"
+        }
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 7) Evento de mudança do SELECT
+    // --------------------------------------------------------------------
+    descSelect.addEventListener("change", () => {
+      renderCharts(descSelect.value);
+    });
+
+    // --------------------------------------------------------------------
+    // 8) Botão "Visão Geral" (Pizza) + total
+    // --------------------------------------------------------------------
+    const overviewBtn = document.getElementById("overviewBtn");
+    overviewBtn.addEventListener("click", createOverviewChart);
+
+    function createOverviewChart() {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = "";
+
+      // Monta arrays p/ pizza
+      const descArray = [];
+      const totalArray = [];
+
+      uniqueDescriptions.forEach(desc => {
+        const total = sumsByDesc[desc].reduce((acc, val) => acc + val, 0);
+        descArray.push(desc);
+        totalArray.push(total);
+      });
+
+      // total geral
+      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+      // Card do total geral
+      const totalCard = document.createElement("div");
+      totalCard.className = "total-card";
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+      container.appendChild(totalCard);
+
+      // Div p/ gráfico de pizza
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "chart-container";
+      chartDiv.id = "overview_chart";
+      container.appendChild(chartDiv);
+
+      // Config ApexCharts (tipo "pie")
+      const options = {
+        chart: {
+          type: "pie",
+          height: 450
+        },
+        series: totalArray,
+        labels: descArray,
+        dataLabels: {
+          formatter: val =>
+            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%"
+        },
+        tooltip: {
+          y: {
+            formatter: val =>
+              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+          }
+        },
+        title: {
+          text: "Visão Geral - Fornecedores (Março)",
+          align: "center"
+        },
+        subtitle: {
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+          align: "center"
+        }
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 9) Função de Tela Cheia
+    // --------------------------------------------------------------------
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.body.style.backgroundColor = "#fff";
+        document.documentElement.requestFullscreen();
+      } else {
+        document.body.style.backgroundColor = "";
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+    window.toggleFullScreen = toggleFullScreen;
+
+    // --------------------------------------------------------------------
+    // 10) Renderiza todos os gráficos (individuais) por padrão
+    // --------------------------------------------------------------------
+    descSelect.value = "TODOS";
+    renderCharts("TODOS");
+  </script>
+</body>
+</html>

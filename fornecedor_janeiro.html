@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gráficos de Gastos por Fornecedor - Janeiro/2025</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h2 {
+      margin: 10px 0;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .chart-container {
+      margin-bottom: 50px;
+    }
+    .fullscreen-btn {
+      cursor: pointer;
+      padding: 8px 12px;
+      border: 1px solid #aaa;
+      background: #f4f4f4;
+      border-radius: 4px;
+    }
+    .fullscreen-btn:hover {
+      background: #e8e8e8;
+    }
+    /* Card simples para exibir o total geral */
+    .total-card {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gastos por Fornecedor (Semanas 1 a 4 + Total Mensal - Janeiro/2025)</h1>
+
+  <!-- Barra de filtros e botões -->
+  <div class="top-bar">
+    <!-- SELECT para escolher fornecedor -->
+    <label for="fornecedorSelect"><strong>Filtrar Fornecedor:</strong></label>
+    <select id="fornecedorSelect"></select>
+
+    <!-- Botão para Tela Cheia -->
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">
+      Tela Cheia
+    </button>
+
+    <!-- Botão Visão Geral (pizza) -->
+    <button id="overviewBtn" class="fullscreen-btn">
+      Visão Geral
+    </button>
+  </div>
+
+  <!-- Onde os gráficos serão inseridos dinamicamente -->
+  <div id="charts-container"></div>
+
+  <script>
+    // --------------------------------------------------------------------
+    // 1) Dados brutos (todos os lançamentos)
+    //    Formato: { vendor, doc, date, value }
+    // --------------------------------------------------------------------
+    const dataset = [
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224080", date: "01/02/2025", value: 82626.14 },
+      { vendor: "MULTIVISÃO", doc: "223960", date: "01/02/2025", value: 4778.21 },
+      { vendor: "MULTIVISÃO", doc: "223967", date: "01/02/2025", value: 3159.46 },
+      { vendor: "VERTICAL PACK", doc: "PF=5300", date: "01/06/2025", value: 7306.83 },
+      { vendor: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", doc: "24127", date: "01/06/2025", value: 522.35 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2759", date: "01/06/2025", value: 6300.00 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "4939", date: "01/06/2025", value: 965.03 },
+      { vendor: "DIFATO", doc: "PF=223960, 223967", date: "01/06/2025", value: 69178.04 },
+      { vendor: "MULTIVISÃO", doc: "224111", date: "01/06/2025", value: 3376.29 },
+      { vendor: "DIFATO", doc: "PF=224111", date: "01/06/2025", value: 29432.49 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224108", date: "01/06/2025", value: 19280.91 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224162", date: "01/06/2025", value: 29033.13 },
+      { vendor: "OR DESIGN", doc: "382117", date: "01/06/2025", value: 12880.00 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224197", date: "01/06/2025", value: 34895.92 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224206", date: "01/06/2025", value: 697.92 },
+      { vendor: "ACM FIBRAS", doc: "6827", date: "01/06/2025", value: 75246.50 },
+      { vendor: "VERTICAL PACK", doc: "PF=4939", date: "01/06/2025", value: 7552.44 },
+      { vendor: "FERGRAFPLASTIC", doc: "215", date: "01/06/2025", value: 9982.20 },
+      { vendor: "CONTHEY PRESENTES", doc: "14489", date: "01/06/2025", value: 69998.34 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5003", date: "01/06/2025", value: 936.30 },
+      { vendor: "MULTIVISÃO", doc: "224163", date: "01/06/2025", value: 2849.71 },
+      { vendor: "MULTIVISÃO", doc: "224198", date: "01/06/2025", value: 2985.99 },
+      { vendor: "MULTIVISÃO", doc: "224204", date: "01/06/2025", value: 7.12 },
+      { vendor: "DIFATO", doc: "PF=224163, 224198, 224204", date: "01/06/2025", value: 50936.93 },
+      { vendor: "EUCATEX RAFA", doc: "302849", date: "01/07/2025", value: 22713.54 },
+      { vendor: "EUCATEX RAFA", doc: "302850", date: "01/07/2025", value: 22713.54 },
+      { vendor: "OR DESIGN", doc: "385099", date: "01/07/2025", value: 16283.98 },
+      { vendor: "ARAUCO", doc: "341385", date: "01/07/2025", value: 103504.31 },
+      { vendor: "EUCATEX RAFA", doc: "302851", date: "01/08/2025", value: 22713.54 },
+      { vendor: "EUCATEX RAFA", doc: "302852", date: "01/08/2025", value: 23146.08 },
+      { vendor: "EUCATEX RAFA", doc: "302853", date: "01/08/2025", value: 23146.08 },
+      { vendor: "EUCATEX RAFA", doc: "302854", date: "01/08/2025", value: 23146.08 },
+      { vendor: "BIGFER INDUSTRIA", doc: "130819", date: "01/08/2025", value: 6064.60 },
+      { vendor: "ÁGUA VIVA", doc: "10193", date: "01/08/2025", value: 840.00 },
+      { vendor: "MARCOS AURELIO SEGREDO - PUXADORES", doc: "", date: "01/09/2025", value: 297.99 },
+      { vendor: "SOS RODÍZIOS", doc: "", date: "01/09/2025", value: 150.00 },
+      { vendor: "BIGFER INDUSTRIA", doc: "132049", date: "01/09/2025", value: 6084.16 },
+      { vendor: "METALURGICA ALBRAS LTDA", doc: "247685", date: "01/09/2025", value: 17176.39 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224344", date: "01/09/2025", value: 11166.49 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2760", date: "01/09/2025", value: 6428.09 },
+      { vendor: "OR DESIGN", doc: "385966", date: "01/09/2025", value: 9199.77 },
+      { vendor: "ARAUCO", doc: "295044", date: "01/09/2025", value: 79186.62 },
+      { vendor: "MULTIVISÃO", doc: "224203", date: "01/09/2025", value: 4831.73 },
+      { vendor: "MULTIVISÃO", doc: "224340", date: "01/09/2025", value: 991.20 },
+      { vendor: "REPACK EMBALAGENS", doc: "13385", date: "01/10/2025", value: 4920.00 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224337", date: "01/10/2025", value: 54904.19 },
+      { vendor: "MULTIVISÃO", doc: "224332", date: "01/10/2025", value: 783.67 },
+      { vendor: "MULTIVISÃO", doc: "224376", date: "01/10/2025", value: 924.09 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224454", date: "01/10/2025", value: 35451.93 },
+      { vendor: "DIFATO", doc: "PF=224203, 224340", date: "01/10/2025", value: 50752.97 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224377", date: "01/13/2025", value: 59698.54 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224530", date: "01/13/2025", value: 83949.30 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2762", date: "01/13/2025", value: 5250.00 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2763", date: "01/13/2025", value: 3150.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "222", date: "01/13/2025", value: 14840.00 },
+      { vendor: "WIRUTEX", doc: "90841", date: "01/13/2025", value: 981.94 },
+      { vendor: "FERGRAFPLASTIC", doc: "223", date: "01/13/2025", value: 12985.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "224", date: "01/13/2025", value: 7048.50 },
+      { vendor: "DIFATO", doc: "PF=224332, 224376", date: "01/13/2025", value: 14887.00 },
+      { vendor: "MULTIVISÃO", doc: "224441", date: "01/13/2025", value: 4821.78 },
+      { vendor: "MULTIVISÃO", doc: "224457", date: "01/13/2025", value: 3205.92 },
+      { vendor: "DIFATO", doc: "PF=224441, 224457", date: "01/13/2025", value: 69974.49 },
+      { vendor: "DZAINER", doc: "", date: "01/13/2025", value: 12000.00 },
+      { vendor: "LOTUS", doc: "", date: "01/13/2025", value: 23070.60 },
+      { vendor: "MB DECOR", doc: "", date: "01/13/2025", value: 9870.50 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/14/2025", value: 3456.00 },
+      { vendor: "OR DESIGN", doc: "386714", date: "01/14/2025", value: 6900.00 },
+      { vendor: "MULTIVISÃO", doc: "224537", date: "01/15/2025", value: 664.68 },
+      { vendor: "MULTIVISÃO", doc: "224531", date: "01/15/2025", value: 5443.18 },
+      { vendor: "DIFATO", doc: "PF=224531, 224537", date: "01/15/2025", value: 53079.82 },
+      { vendor: "BIGFER INDUSTRIA", doc: "132049", date: "01/15/2025", value: 5926.51 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224610", date: "01/16/2025", value: 53249.12 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2766", date: "01/16/2025", value: 4200.00 },
+      { vendor: "STYROPLAST ESPUMAS", doc: "138488", date: "01/16/2025", value: 923.11 },
+      { vendor: "STYROPLAST", doc: "PF=138488", date: "01/16/2025", value: 7569.94 },
+      { vendor: "MULTIVISÃO", doc: "224561", date: "01/16/2025", value: 4831.73 },
+      { vendor: "DIFATO", doc: "PF=224561", date: "01/16/2025", value: 42112.97 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224684", date: "01/16/2025", value: 33500.08 },
+      { vendor: "OR DESIGN", doc: "383170", date: "01/16/2025", value: 13800.00 },
+      { vendor: "DESING PLAST", doc: "", date: "01/16/2025", value: 1479.00 },
+      { vendor: "MULTIVISÃO", doc: "224605", date: "01/16/2025", value: 5262.66 },
+      { vendor: "MULTIVISÃO", doc: "224642", date: "01/16/2025", value: 495.60 },
+      { vendor: "MULTIVISÃO", doc: "224643", date: "01/16/2025", value: 495.60 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224677", date: "01/17/2025", value: 59685.90 },
+      { vendor: "ARAUCO", doc: "295323", date: "01/17/2025", value: 79186.62 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224641", date: "01/17/2025", value: 16856.60 },
+      { vendor: "FERGRAFPLASTIC", doc: "225", date: "01/20/2025", value: 13525.50 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5024", date: "01/20/2025", value: 807.07 },
+      { vendor: "BIGFER INDUSTRIA", doc: "130819", date: "01/20/2025", value: 5926.52 },
+      { vendor: "VERTICAL PACK", doc: "PF=5024", date: "01/20/2025", value: 6316.20 },
+      { vendor: "LOTUS", doc: "", date: "01/20/2025", value: 13223.00 },
+      { vendor: "LOTUS", doc: "", date: "01/20/2025", value: 8450.10 },
+      { vendor: "MB DECOR", doc: "", date: "01/20/2025", value: 18345.50 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224696", date: "01/20/2025", value: 8146.43 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224694", date: "01/20/2025", value: 54352.70 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224690", date: "01/20/2025", value: 73623.19 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224688", date: "01/20/2025", value: 9709.63 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224695", date: "01/20/2025", value: 3303.79 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", doc: "224692", date: "01/20/2025", value: 16353.77 },
+      { vendor: "CAROÇO", doc: "PF=224605, 224642, 224643", date: "01/20/2025", value: 54517.71 },
+      { vendor: "MULTIVISÃO", doc: "224678", date: "01/20/2025", value: 1631.35 },
+      { vendor: "MULTIVISÃO", doc: "224683", date: "01/20/2025", value: 2415.86 },
+      { vendor: "MULTIVISÃO", doc: "224686", date: "01/20/2025", value: 815.68 },
+      { vendor: "MULTIVISÃO", doc: "224687", date: "01/20/2025", value: 4026.44 },
+      { vendor: "CAROÇO", doc: "PF=224678, 224683,224686,224687", date: "01/20/2025", value: 77473.10 },
+      { vendor: "MULTIVISÃO", doc: "224689", date: "01/20/2025", value: 4831.73 },
+      { vendor: "CAROÇO", doc: "PF=224689", date: "01/20/2025", value: 42112.97 },
+      { vendor: "ARAUCO", doc: "357959", date: "01/21/2025", value: 67943.01 },
+      { vendor: "VERTICAL PACK", doc: "PF=5031", date: "01/21/2025", value: 2193.75 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5031", date: "01/22/2025", value: 280.31 },
+      { vendor: "MUNDIAL GÁS", doc: "", date: "01/22/2025", value: 420.00 },
+      { vendor: "MULTIVISÃO", doc: "224693", date: "01/22/2025", value: 1276.18 },
+      { vendor: "ARAUCO", doc: "342432", date: "01/22/2025", value: 100881.39 },
+      { vendor: "MULTIVISÃO", doc: "224696", date: "01/22/2025", value: 3380.93 },
+      { vendor: "VIEIRA COMERCIO", doc: "", date: "01/22/2025", value: 12768.00 },
+      { vendor: "CAROÇO", doc: "PF=224693,224696", date: "01/22/2025", value: 40598.34 },
+      { vendor: "ARAUCO", doc: "342182", date: "01/23/2025", value: 100881.39 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/23/2025", value: 2880.00 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/24/2025", value: 3456.00 },
+      { vendor: "DESING PLAST", doc: "", date: "01/24/2025", value: 9180.00 },
+      { vendor: "DESING PLAST", doc: "", date: "01/24/2025", value: 2432.52 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5033", date: "01/24/2025", value: 1449.00 },
+      { vendor: "VERTICAL PACK", doc: "PF=5033", date: "01/24/2025", value: 4600.00 },
+      { vendor: "VERTICAL PACK", doc: "PF=5033", date: "01/24/2025", value: 6740.00 },
+      { vendor: "ARAUCO", doc: "357877", date: "01/24/2025", value: 67943.01 },
+      { vendor: "OR DESIGN", doc: "384354", date: "01/27/2025", value: 7360.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "227", date: "01/27/2025", value: 29268.50 },
+      { vendor: "VPLAST", doc: "26152", date: "01/27/2025", value: 6483.06 },
+      { vendor: "FERGRAFPLASTIC", doc: "228", date: "01/27/2025", value: 16414.00 },
+      { vendor: "ARAUCO", doc: "342542", date: "01/27/2025", value: 100881.39 },
+      { vendor: "LOTUS", doc: "", date: "01/27/2025", value: 580.00 },
+      { vendor: "MB DECOR", doc: "", date: "01/27/2025", value: 9644.00 },
+      { vendor: "ARAUCO", doc: "342304", date: "01/27/2025", value: 100881.39 },
+      { vendor: "SUPIMPA - CARLOS EDUARDO MONTEIRO PINTO", doc: "", date: "01/28/2025", value: 31444.44 },
+      { vendor: "STYROPLAST", doc: "138771", date: "01/28/2025", value: 615.41 },
+      { vendor: "OR DESIGN", doc: "380969", date: "01/28/2025", value: 29188.67 },
+      { vendor: "STYROPLAST", doc: "PF=138771", date: "01/28/2025", value: 5046.62 },
+      { vendor: "MUNDIAL GÁS", doc: "", date: "01/28/2025", value: 420.00 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/28/2025", value: 8952.00 },
+      { vendor: "EUCATEX RAFA", doc: "304012", date: "01/29/2025", value: 25869.62 },
+      { vendor: "BARUERI", doc: "7285958", date: "01/29/2025", value: 504.31 },
+      { vendor: "EUCATEX RAFA", doc: "304013", date: "01/29/2025", value: 25869.62 },
+      { vendor: "ARAUCO", doc: "342309", date: "01/29/2025", value: 100881.39 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5055", date: "01/30/2025", value: 1104.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "229", date: "01/30/2025", value: 9646.00 },
+      { vendor: "VERTICAL PACK", doc: "PF=5055", date: "01/30/2025", value: 8640.00 },
+      { vendor: "EUCATEX RAFA", doc: "304014", date: "01/30/2025", value: 25869.62 },
+      { vendor: "ARAUCO", doc: "342693", date: "01/30/2025", value: 100881.39 },
+      { vendor: "VPLAST", doc: "26198", date: "01/31/2025", value: 5098.49 },
+      { vendor: "BIGFER INDUSTRIA", doc: "132049", date: "01/31/2025", value: 5926.52 },
+      { vendor: "ACM FIBRAS", doc: "6838", date: "01/30/2025", value: 68077.05 },
+      { vendor: "ARAUCO", doc: "358270", date: "01/31/2025", value: 67943.01 }
+    ];
+
+    // --------------------------------------------------------------------
+    // 2) Definir as semanas: 4 semanas + total
+    // --------------------------------------------------------------------
+    function getSemanaDeJaneiro(dateStr) {
+      // Formato "MM/DD/AAAA"
+      const [mm, dd, yyyy] = dateStr.split("/");
+      if (mm !== "01" || yyyy !== "2025") return 0; // Só conta se for janeiro/2025
+      const day = parseInt(dd, 10);
+      if (day >= 1 && day <= 7)   return 1;
+      if (day >= 8 && day <= 14) return 2;
+      if (day >= 15 && day <= 21) return 3;
+      if (day >= 22 && day <= 31) return 4;
+      return 0;
+    }
+
+    // --------------------------------------------------------------------
+    // 3) Somar valores por fornecedor
+    //    sums[fornecedor] = [sem1, sem2, sem3, sem4, totalMes]
+    // --------------------------------------------------------------------
+    const sums = {};
+    dataset.forEach(item => {
+      const week = getSemanaDeJaneiro(item.date);
+      if (week === 0) return; // Ignora datas fora de jan/2025
+      const fornecedor = item.vendor;
+
+      if (!sums[fornecedor]) {
+        sums[fornecedor] = [0, 0, 0, 0, 0]; // 4 semanas + 1 total
+      }
+      sums[fornecedor][week - 1] += item.value;
+    });
+    // Preenche a posição [4] (total no mês) = soma das 4 semanas
+    Object.keys(sums).forEach(fornecedor => {
+      const arr = sums[fornecedor];
+      arr[4] = arr[0] + arr[1] + arr[2] + arr[3];
+    });
+
+    // --------------------------------------------------------------------
+    // 4) Montar a lista de fornecedores para o SELECT
+    // --------------------------------------------------------------------
+    const fornecedorSelect = document.getElementById("fornecedorSelect");
+    // Opção "Todos"
+    const optTodos = document.createElement("option");
+    optTodos.value = "TODOS";
+    optTodos.text = "Todos";
+    fornecedorSelect.appendChild(optTodos);
+
+    // Lista ordenada de fornecedores
+    const vendorsList = Object.keys(sums).sort();
+    vendorsList.forEach(vendor => {
+      const opt = document.createElement("option");
+      opt.value = vendor;
+      opt.text = vendor;
+      fornecedorSelect.appendChild(opt);
+    });
+
+    // --------------------------------------------------------------------
+    // 5) Renderizar os gráficos de barras (1 para cada fornecedor)
+    // --------------------------------------------------------------------
+    function renderCharts(selectedVendor) {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = "";
+
+      if (selectedVendor === "TODOS") {
+        // Renderiza todos
+        vendorsList.forEach(vendor => createChart(vendor, container));
+      } else {
+        // Renderiza apenas o selecionado
+        createChart(selectedVendor, container);
+      }
+    }
+
+    function createChart(fornecedor, container) {
+      const valores = sums[fornecedor]; // [sem1, sem2, sem3, sem4, totalMes]
+      if (!valores) return;
+
+      // Título
+      const h2 = document.createElement("h2");
+      h2.textContent = fornecedor;
+      container.appendChild(h2);
+
+      // Div do gráfico
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "chart-container";
+      const chartId = "chart_" + fornecedor.replace(/\W+/g, "_");
+      chartDiv.id = chartId;
+      container.appendChild(chartDiv);
+
+      // Config ApexCharts (gráfico de barras)
+      const options = {
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        series: [
+          {
+            name: fornecedor,
+            data: valores
+          }
+        ],
+        xaxis: {
+          categories: [
+            "Semana 1 (1-7)",
+            "Semana 2 (8-14)",
+            "Semana 3 (15-21)",
+            "Semana 4 (22-31)",
+            "Total no Mês"
+          ]
+        },
+        dataLabels: {
+          formatter: val =>
+            "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+        },
+        tooltip: {
+          y: {
+            formatter: val =>
+              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+          }
+        },
+        title: {
+          text: `Gastos Semanais - ${fornecedor}`,
+          align: "center"
+        }
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 6) Evento de mudança no SELECT: refaz os gráficos de barras
+    // --------------------------------------------------------------------
+    fornecedorSelect.addEventListener("change", () => {
+      renderCharts(fornecedorSelect.value);
+    });
+
+    // --------------------------------------------------------------------
+    // 7) Visão Geral: gráfico de pizza com total de cada fornecedor
+    // --------------------------------------------------------------------
+    const overviewBtn = document.getElementById("overviewBtn");
+    overviewBtn.addEventListener("click", createOverviewChart);
+
+    function createOverviewChart() {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = ""; // limpa gráficos anteriores
+
+      // Vamos pegar apenas o total (índice 4) de cada fornecedor
+      const vendorArray = [];
+      const totalArray = [];
+
+      Object.keys(sums).forEach(vendor => {
+        const totalMes = sums[vendor][4];
+        vendorArray.push(vendor);
+        totalArray.push(totalMes);
+      });
+
+      // Calcula o total geral
+      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+      // Cria um "card" mostrando o total geral
+      const totalCard = document.createElement("div");
+      totalCard.className = "total-card";
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+      container.appendChild(totalCard);
+
+      // Div para o gráfico de pizza
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "chart-container";
+      chartDiv.id = "overview_chart";
+      container.appendChild(chartDiv);
+
+      // Config do ApexCharts (pie)
+      const options = {
+        chart: {
+          type: "pie",
+          height: 450
+        },
+        series: totalArray, // valores
+        labels: vendorArray, // fornecedores
+        dataLabels: {
+          formatter: val => 
+            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%"
+        },
+        tooltip: {
+          y: {
+            formatter: val =>
+              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+          }
+        },
+        title: {
+          text: "Visão Geral - Gastos Totais por Fornecedor (Pizza)",
+          align: "center"
+        },
+        subtitle: {
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+          align: "center"
+        }
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 8) Função Tela Cheia (fundo claro quando em fullscreen)
+    // --------------------------------------------------------------------
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        // Entrando em fullscreen
+        document.body.style.backgroundColor = "#fff";
+        document.documentElement.requestFullscreen();
+      } else {
+        // Saindo de fullscreen
+        document.body.style.backgroundColor = "";
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+    window.toggleFullScreen = toggleFullScreen;
+
+    // --------------------------------------------------------------------
+    // 9) Renderiza todos (em barras) por padrão
+    // --------------------------------------------------------------------
+    fornecedorSelect.value = "TODOS";
+    renderCharts("TODOS");
+  </script>
+</body>
+</html>
