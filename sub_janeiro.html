@@ -18,7 +18,7 @@
       display: flex;
       flex-direction: column;
     }
-    /* Container para título e submenu */
+    /* Header Section */
     .header-section {
       background-color: #fff;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -28,44 +28,65 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
+      position: relative;
     }
     .header-section h2 {
       margin: 0;
       font-size: 1.75rem;
       flex: 1 1 auto;
     }
-    /* Submenu para desktop: exibido à direita */
+    /* Tabs Container for Desktop (visible only on sm and up) */
     .tabs-container {
       flex: 0 0 auto;
+      display: none;
     }
-    .tabs-container ul {
-      margin-bottom: 0;
-    }
-    /* Mobile: exibe as tabs em uma linha separada */
-    @media (max-width: 576px) {
-      .header-section {
-        flex-direction: column;
-        align-items: center;
-      }
-      .header-section h2 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-      }
+    @media (min-width: 576px) {
       .tabs-container {
-        width: 100%;
-        overflow-x: auto;
+        display: block;
       }
-      .tabs-container ul {
-        display: flex;
-        width: 100%;
+    }
+    /* Mobile Hamburger Button (visible only on xs) */
+    .hamburger-btn {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #000;
+      display: block;
+    }
+    @media (min-width: 576px) {
+      .hamburger-btn {
+        display: none;
       }
-      .tabs-container li {
-        flex: 0 0 auto;
-      }
-      .tabs-container .nav-link {
-        padding: 8px 10px;
-        font-size: 0.95rem;
-      }
+    }
+    /* Mobile Menu (hidden by default) */
+    #mobileMenu {
+      display: none;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      width: 100%;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 999;
+    }
+    #mobileMenu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #mobileMenu li {
+      border-bottom: 1px solid #ddd;
+    }
+    #mobileMenu .nav-link {
+      display: block;
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: #000;
+      text-decoration: none;
+    }
+    #mobileMenu .nav-link.active, #mobileMenu .nav-link:hover {
+      background-color: #eef2f7;
     }
     /* Iframe ocupará o espaço restante */
     .iframe-container {
@@ -76,11 +97,43 @@
   </style>
 </head>
 <body>
-  <!-- Container do Título e Submenu -->
+  <!-- Header Section com Título e Submenu -->
   <div class="header-section">
     <h2>Janeiro - Relatório de Gastos</h2>
+    <!-- Tabs para Desktop -->
     <div class="tabs-container">
-      <ul class="nav nav-tabs" id="tabs">
+      <ul class="nav nav-tabs" id="tabsDesktop">
+        <li class="nav-item">
+          <a class="nav-link active" data-url="despesa_fixa_janeiro.html" href="#">Despesa Fixa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="despesa_variavel_janeiro.html" href="#">Despesa Variável</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="fornecedor_janeiro.html" href="#">Fornecedor</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="imposto_janeiro.html" href="#">Imposto</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="investimento_janeiro.html" href="#">Investimento</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="retirada_janeiro.html" href="#">Retirada</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="salario_janeiro.html" href="#">Salário</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="transportadora_janeiro.html" href="#">Transportadora</a>
+        </li>
+      </ul>
+    </div>
+    <!-- Hamburger Button para Mobile -->
+    <button class="hamburger-btn" id="hamburgerBtn">&#9776;</button>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu">
+      <ul class="nav flex-column">
         <li class="nav-item">
           <a class="nav-link active" data-url="despesa_fixa_janeiro.html" href="#">Despesa Fixa</a>
         </li>
@@ -115,19 +168,46 @@
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Evento de clique nas abas para atualizar o conteúdo do iframe
-    document.querySelectorAll('#tabs .nav-link').forEach(function(tab) {
-      tab.addEventListener('click', function(event) {
+    // Função para alternar o menu mobile
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburgerBtn.addEventListener("click", function() {
+      if (mobileMenu.style.display === "block") {
+        mobileMenu.style.display = "none";
+      } else {
+        mobileMenu.style.display = "block";
+      }
+    });
+
+    // Função para atualizar o iframe quando uma aba for clicada
+    function updateIframe(url) {
+      document.getElementById("contentIframe").src = url;
+    }
+
+    // Eventos para as abas do Desktop
+    document.querySelectorAll('#tabsDesktop .nav-link').forEach(function(tab) {
+      tab.addEventListener("click", function(event) {
         event.preventDefault();
-        // Remove a classe 'active' de todas as abas
-        document.querySelectorAll('#tabs .nav-link').forEach(function(t) {
-          t.classList.remove('active');
+        document.querySelectorAll('#tabsDesktop .nav-link').forEach(function(t) {
+          t.classList.remove("active");
         });
-        // Adiciona a classe 'active' na aba clicada
-        this.classList.add('active');
-        // Atualiza o src do iframe para carregar o conteúdo correspondente
-        var url = this.getAttribute('data-url');
-        document.getElementById('contentIframe').src = url;
+        this.classList.add("active");
+        updateIframe(this.getAttribute("data-url"));
+      });
+    });
+
+    // Eventos para as abas do Mobile
+    document.querySelectorAll('#mobileMenu .nav-link').forEach(function(tab) {
+      tab.addEventListener("click", function(event) {
+        event.preventDefault();
+        document.querySelectorAll('#mobileMenu .nav-link').forEach(function(t) {
+          t.classList.remove("active");
+        });
+        this.classList.add("active");
+        updateIframe(this.getAttribute("data-url"));
+        // Fecha o menu após seleção
+        mobileMenu.style.display = "none";
       });
     });
   </script>
