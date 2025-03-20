@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Transportadoras - Março/2025</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h2 {
+      margin: 10px 0;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .chart-container {
+      margin-bottom: 50px;
+    }
+    .fullscreen-btn {
+      cursor: pointer;
+      padding: 8px 12px;
+      border: 1px solid #aaa;
+      background: #f4f4f4;
+      border-radius: 4px;
+    }
+    .fullscreen-btn:hover {
+      background: #e8e8e8;
+    }
+    /* Card para exibir o total geral */
+    .total-card {
+      display: inline-block;
+      margin: 10px 0 20px 0;
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Transportadoras - Março/2025</h1>
+
+  <!-- Barra de filtros e botões (SEM tabela) -->
+  <div class="top-bar">
+    <!-- SELECT para filtrar descrição (transportadora) -->
+    <label for="descSelect"><strong>Filtrar Transportadora:</strong></label>
+    <select id="descSelect">
+      <!-- Opções criadas via JavaScript -->
+    </select>
+
+    <!-- Botão Tela Cheia -->
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">
+      Tela Cheia
+    </button>
+
+    <!-- Botão Visão Geral (Pizza) -->
+    <button id="overviewBtn" class="fullscreen-btn">
+      Visão Geral
+    </button>
+  </div>
+
+  <!-- Área para inserir os gráficos dinamicamente -->
+  <div id="charts-container"></div>
+
+  <script>
+    // --------------------------------------------------------------------
+    // 1) Dados brutos (Transportadoras - Março/2025)
+    // --------------------------------------------------------------------
+    const rawData = [
+      { descricao: "TRANS NEW",  nf:"",      date: "03/06/2025", valorPago: "R$ 6.500,00" },
+      { descricao: "SMARTRACK",  nf:"",      date: "03/07/2025", valorPago: "R$ 10.837,00" },
+      { descricao: "ZAGA TRANS", nf:"",      date: "03/10/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "ZAGA TRANS", nf:"",      date: "03/10/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "TRANS NEW",  nf:"",      date: "03/10/2025", valorPago: "R$ 6.500,00" },
+      { descricao: "ABC SPPED",  nf:"43602", date: "03/13/2025", valorPago: "R$ 5.483,69" },
+      { descricao: "ZAGA TRANS", nf:"",      date: "03/13/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "ZAGA TRANS", nf:"",      date: "03/14/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "TRANS NEW",  nf:"",      date: "03/17/2025", valorPago: "R$ 6.774,51" },
+      { descricao: "ZAGA TRANS", nf:"",      date: "03/18/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "ZUPO TRANS", nf:"",      date: "03/18/2025", valorPago: "R$ 14.000,00" },
+      { descricao: "ZUPO TRANS", nf:"",      date: "03/18/2025", valorPago: "R$ 11.000,00" }
+    ];
+
+    // --------------------------------------------------------------------
+    // 2) Converter datas e valores para formatos consistentes
+    // --------------------------------------------------------------------
+    function parseValor(valorStr) {
+      // Ex: "R$ 1.000,00" => 1000.00
+      return parseFloat(
+        valorStr
+          .replace("R$","")
+          .replace(/\s/g,"")
+          .replace(/\./g,"")
+          .replace(",",".")
+      );
+    }
+
+    function fixDate(dtStr) {
+      // Ex: "3/7/2025" -> "03/07/2025" => "MM/DD/YYYY"
+      const parts = dtStr.split("/");
+      const M = parts[0].padStart(2,"0");
+      const D = parts[1].padStart(2,"0");
+      const Y = parts[2];
+      return `${M}/${D}/${Y}`;
+    }
+
+    const dataset = rawData.map(item => ({
+      descricao: item.descricao,
+      date: fixDate(item.date),
+      valor: parseValor(item.valorPago)
+    }));
+
+    // --------------------------------------------------------------------
+    // 3) Função para descobrir a semana de março (1..4)
+    // --------------------------------------------------------------------
+    //   Semana 1: 1..7
+    //   Semana 2: 8..14
+    //   Semana 3: 15..21
+    //   Semana 4: 22..31
+    function getMarchWeek(dateStr) {
+      const [mm, dd, yyyy] = dateStr.split("/");
+      if (mm !== "03" || yyyy !== "2025") return 0;
+      const day = parseInt(dd, 10);
+      if (day >= 1 && day <= 7)  return 1;
+      if (day >= 8 && day <= 14) return 2;
+      if (day >= 15 && day <= 21) return 3;
+      if (day >= 22 && day <= 31) return 4;
+      return 0;
+    }
+
+    // --------------------------------------------------------------------
+    // 4) Somar valores por descrição e por semana
+    // --------------------------------------------------------------------
+    const sumsByDesc = {};
+
+    dataset.forEach(item => {
+      const w = getMarchWeek(item.date);
+      if (w === 0) return; // ignorar se não for mar/2025
+      const desc = item.descricao;
+      if (!sumsByDesc[desc]) {
+        sumsByDesc[desc] = [0,0,0,0];
+      }
+      sumsByDesc[desc][w-1] += item.valor;
+    });
+
+    // Lista única de descrições
+    const uniqueDescriptions = Object.keys(sumsByDesc).sort();
+
+    // --------------------------------------------------------------------
+    // 5) Montar SELECT de filtro (TODOS + cada descrição)
+    // --------------------------------------------------------------------
+    const descSelect = document.getElementById("descSelect");
+    const optTodos = document.createElement("option");
+    optTodos.value = "TODOS";
+    optTodos.text = "Todos";
+    descSelect.appendChild(optTodos);
+
+    uniqueDescriptions.forEach(desc => {
+      const opt = document.createElement("option");
+      opt.value = desc;
+      opt.text = desc;
+      descSelect.appendChild(opt);
+    });
+
+    // --------------------------------------------------------------------
+    // 6) Renderização dos gráficos individuais
+    // --------------------------------------------------------------------
+    function renderCharts(selectedDesc) {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = ""; // limpa
+
+      if (selectedDesc === "TODOS") {
+        uniqueDescriptions.forEach(desc => createChart(desc, container));
+      } else {
+        createChart(selectedDesc, container);
+      }
+    }
+
+    // Cria gráfico para UMA descrição (4 semanas + total)
+    function createChart(desc, container) {
+      const values = sumsByDesc[desc];
+      if (!values) return;
+
+      // Soma total
+      const total = values.reduce((acc, val) => acc + val, 0);
+
+      // Monta array com 4 semanas + "Total"
+      const valuesWithTotal = [...values, total];
+      const categories = [
+        "Semana 1 (1-7)",
+        "Semana 2 (8-14)",
+        "Semana 3 (15-21)",
+        "Semana 4 (22-31)",
+        "Total"
+      ];
+
+      // Título
+      const h2 = document.createElement("h2");
+      h2.textContent = desc;
+      container.appendChild(h2);
+
+      // Div para o gráfico
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "chart-container";
+      const chartId = "chart_" + desc.replace(/\W+/g, "_");
+      chartDiv.id = chartId;
+      container.appendChild(chartDiv);
+
+      // Config do ApexCharts
+      const options = {
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        series: [
+          {
+            name: desc,
+            data: valuesWithTotal
+          }
+        ],
+        xaxis: {
+          categories: categories
+        },
+        dataLabels: {
+          formatter: val =>
+            "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+        },
+        tooltip: {
+          y: {
+            formatter: val =>
+              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+          }
+        },
+        title: {
+          text: `Transportadora - ${desc}`,
+          align: "center"
+        },
+        subtitle: {
+          text: `Total: R$ ${total.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2
+          })}`,
+          align: "center"
+        }
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 7) Evento de mudança do SELECT
+    // --------------------------------------------------------------------
+    descSelect.addEventListener("change", () => {
+      renderCharts(descSelect.value);
+    });
+
+    // --------------------------------------------------------------------
+    // 8) Botão "Visão Geral" (Pizza) + total geral
+    // --------------------------------------------------------------------
+    const overviewBtn = document.getElementById("overviewBtn");
+    overviewBtn.addEventListener("click", createOverviewChart);
+
+    function createOverviewChart() {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = ""; // limpa
+
+      // Monta arrays p/ pizza
+      const descArray = [];
+      const totalArray = [];
+
+      uniqueDescriptions.forEach(desc => {
+        const total = sumsByDesc[desc].reduce((acc, val) => acc + val, 0);
+        descArray.push(desc);
+        totalArray.push(total);
+      });
+
+      // total geral
+      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+      // Card com total geral
+      const totalCard = document.createElement("div");
+      totalCard.className = "total-card";
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+      container.appendChild(totalCard);
+
+      // Div p/ gráfico de pizza
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "chart-container";
+      chartDiv.id = "overview_chart";
+      container.appendChild(chartDiv);
+
+      // Config do ApexCharts (tipo "pie")
+      const options = {
+        chart: {
+          type: "pie",
+          height: 450
+        },
+        series: totalArray,
+        labels: descArray,
+        dataLabels: {
+          formatter: val =>
+            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%"
+        },
+        tooltip: {
+          y: {
+            formatter: val =>
+              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+          }
+        },
+        title: {
+          text: "Visão Geral - Transportadoras (Março)",
+          align: "center"
+        },
+        subtitle: {
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+          align: "center"
+        }
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 9) Função de Tela Cheia
+    // --------------------------------------------------------------------
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.body.style.backgroundColor = "#fff";
+        document.documentElement.requestFullscreen();
+      } else {
+        document.body.style.backgroundColor = "";
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+    window.toggleFullScreen = toggleFullScreen;
+
+    // --------------------------------------------------------------------
+    // 10) Renderiza todos os gráficos (individuais) por padrão
+    // --------------------------------------------------------------------
+    descSelect.value = "TODOS";
+    renderCharts("TODOS");
+  </script>
+</body>
+</html>
