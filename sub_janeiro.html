@@ -27,13 +27,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       position: relative;
     }
     .header-section h2 {
       margin: 0;
       font-size: 1.75rem;
-      flex: 1 1 auto;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     /* Tabs Container for Desktop (visible only on sm and up) */
     .tabs-container {
@@ -67,7 +70,7 @@
       width: 100%;
       position: absolute;
       top: 100%;
-      left: 0;
+      right: 0;
       z-index: 999;
     }
     #mobileMenu ul {
@@ -94,13 +97,19 @@
       width: 100%;
       border: none;
     }
+    /* Mobile adjustments: title smaller */
+    @media (max-width: 576px) {
+      .header-section h2 {
+        font-size: 1.3rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Header Section com Título e Submenu -->
+  <!-- Header Section -->
   <div class="header-section">
     <h2>Janeiro - Relatório de Gastos</h2>
-    <!-- Tabs para Desktop -->
+    <!-- Tabs for Desktop -->
     <div class="tabs-container">
       <ul class="nav nav-tabs" id="tabsDesktop">
         <li class="nav-item">
@@ -129,7 +138,7 @@
         </li>
       </ul>
     </div>
-    <!-- Hamburger Button para Mobile -->
+    <!-- Hamburger Button for Mobile, always on the right -->
     <button class="hamburger-btn" id="hamburgerBtn">&#9776;</button>
     <!-- Mobile Menu -->
     <div id="mobileMenu">
@@ -173,14 +182,10 @@
     const mobileMenu = document.getElementById("mobileMenu");
 
     hamburgerBtn.addEventListener("click", function() {
-      if (mobileMenu.style.display === "block") {
-        mobileMenu.style.display = "none";
-      } else {
-        mobileMenu.style.display = "block";
-      }
+      mobileMenu.style.display = mobileMenu.style.display === "block" ? "none" : "block";
     });
 
-    // Função para atualizar o iframe quando uma aba for clicada
+    // Função para atualizar o iframe
     function updateIframe(url) {
       document.getElementById("contentIframe").src = url;
     }
@@ -206,7 +211,6 @@
         });
         this.classList.add("active");
         updateIframe(this.getAttribute("data-url"));
-        // Fecha o menu após seleção
         mobileMenu.style.display = "none";
       });
     });
