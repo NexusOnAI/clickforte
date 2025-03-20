@@ -32,7 +32,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       text-align: center;
       padding: 20px;
     }
@@ -45,6 +45,12 @@
     .content p {
       font-size: 1.75rem;
       animation: fadeInUp 1s ease-out;
+    }
+    /* Botão de ação */
+    .btn-report {
+      margin-top: 30px;
+      font-size: 1.25rem;
+      padding: 10px 20px;
     }
     /* Animações */
     @keyframes fadeInDown {
@@ -67,10 +73,18 @@
         transform: translateY(0);
       }
     }
-    .btn-report {
-      margin-top: 30px;
-      font-size: 1.25rem;
-      padding: 10px 20px;
+    /* Ajustes para dispositivos móveis */
+    @media (max-width: 768px) {
+      .content h1 {
+        font-size: 2.5rem;
+      }
+      .content p {
+        font-size: 1.25rem;
+      }
+      .btn-report {
+        font-size: 1rem;
+        padding: 8px 16px;
+      }
     }
   </style>
 </head>
