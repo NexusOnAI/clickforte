@@ -18,21 +18,54 @@
       display: flex;
       flex-direction: column;
     }
-    /* Container das tabs e do título */
-    .tabs-container {
-      padding: 10px 20px;
+    /* Container para título e submenu */
+    .header-section {
       background-color: #fff;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 10px 20px;
       z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap; /* Para melhor responsividade */
+      flex-wrap: wrap;
     }
-    .tabs-container h2 {
+    .header-section h2 {
       margin: 0;
-      font-size: 1.5rem;
-      padding-right: 20px;
+      font-size: 1.75rem;
+      flex: 1 1 auto;
+    }
+    /* Submenu para desktop: exibido à direita */
+    .tabs-container {
+      flex: 0 0 auto;
+    }
+    .tabs-container ul {
+      margin-bottom: 0;
+    }
+    /* Mobile: exibe as tabs em uma linha separada */
+    @media (max-width: 576px) {
+      .header-section {
+        flex-direction: column;
+        align-items: center;
+      }
+      .header-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+      .tabs-container {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .tabs-container ul {
+        display: flex;
+        width: 100%;
+      }
+      .tabs-container li {
+        flex: 0 0 auto;
+      }
+      .tabs-container .nav-link {
+        padding: 8px 10px;
+        font-size: 0.95rem;
+      }
     }
     /* Iframe ocupará o espaço restante */
     .iframe-container {
@@ -40,42 +73,40 @@
       width: 100%;
       border: none;
     }
-    /* Removendo margem inferior da lista de tabs */
-    #tabs {
-      margin-bottom: 0;
-    }
   </style>
 </head>
 <body>
-  <!-- Container do Título e das Tabs -->
-  <div class="tabs-container">
+  <!-- Container do Título e Submenu -->
+  <div class="header-section">
     <h2>Janeiro - Relatório de Gastos</h2>
-    <ul class="nav nav-tabs" id="tabs">
-      <li class="nav-item">
-        <a class="nav-link active" data-url="despesa_fixa_janeiro.html" href="#">Despesa Fixa</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="despesa_variavel_janeiro.html" href="#">Despesa Variável</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="fornecedor_janeiro.html" href="#">Fornecedor</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="imposto_janeiro.html" href="#">Imposto</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="investimento_janeiro.html" href="#">Investimento</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="retirada_janeiro.html" href="#">Retirada</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="salario_janeiro.html" href="#">Salário</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-url="transportadora_janeiro.html" href="#">Transportadora</a>
-      </li>
-    </ul>
+    <div class="tabs-container">
+      <ul class="nav nav-tabs" id="tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-url="despesa_fixa_janeiro.html" href="#">Despesa Fixa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="despesa_variavel_janeiro.html" href="#">Despesa Variável</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="fornecedor_janeiro.html" href="#">Fornecedor</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="imposto_janeiro.html" href="#">Imposto</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="investimento_janeiro.html" href="#">Investimento</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="retirada_janeiro.html" href="#">Retirada</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="salario_janeiro.html" href="#">Salário</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-url="transportadora_janeiro.html" href="#">Transportadora</a>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <!-- Iframe que carrega o conteúdo da aba selecionada -->
