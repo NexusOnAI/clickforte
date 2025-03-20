@@ -198,13 +198,15 @@
   </header>
 
   <div class="menu">
+    <button class="btn btn-primary" onclick="document.getElementById('frame').src='home.html'">Home</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_janeiro.html'">Janeiro</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_fevereiro.html'">Fevereiro</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_marco.html'">Março</button>
   </div>
 
   <main>
-    <iframe id="frame" src="sub_janeiro.html"></iframe>
+    <!-- Após o login, o iframe inicia com a página home "Janeiro" -->
+    <iframe id="frame" src="home.html"></iframe>
   </main>
 
   <!-- Bootstrap JS -->
