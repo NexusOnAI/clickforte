@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Fornecedores - Fevereiro/2025</title>
+  <title>Gráficos de Gastos por Fornecedor - Janeiro/2025</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
     body {
@@ -31,375 +31,289 @@
     .fullscreen-btn:hover {
       background: #e8e8e8;
     }
-    /* Card para exibir o total geral */
+    /* Card simples para exibir o total geral */
     .total-card {
       display: inline-block;
-      margin: 10px 0 20px 0;
+      margin: 10px 0;
       padding: 10px 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
       background-color: #f9f9f9;
       font-weight: bold;
-      font-size: 1.1em;
     }
   </style>
 </head>
 <body>
-  <h1>Fornecedores - Fevereiro/2025</h1>
+  <h1>Gastos por Fornecedor (Semanas 1 a 4 + Total Mensal - Janeiro/2025)</h1>
 
-  <!-- Barra de filtros e botões (SEM tabela) -->
+  <!-- Barra de filtros e botões -->
   <div class="top-bar">
-    <!-- SELECT para filtrar descrição (fornecedor) -->
-    <label for="descSelect"><strong>Filtrar Fornecedor:</strong></label>
-    <select id="descSelect">
-      <!-- Opções criadas via JavaScript -->
-    </select>
+    <!-- SELECT para escolher fornecedor -->
+    <label for="fornecedorSelect"><strong>Filtrar Fornecedor:</strong></label>
+    <select id="fornecedorSelect"></select>
 
-    <!-- Botão Tela Cheia -->
+    <!-- Botão para Tela Cheia -->
     <button class="fullscreen-btn" onclick="toggleFullScreen()">
       Tela Cheia
     </button>
 
-    <!-- Botão Visão Geral (Pizza) -->
+    <!-- Botão Visão Geral (pizza) -->
     <button id="overviewBtn" class="fullscreen-btn">
       Visão Geral
     </button>
   </div>
 
-  <!-- Área para inserir os gráficos dinamicamente -->
+  <!-- Onde os gráficos serão inseridos dinamicamente -->
   <div id="charts-container"></div>
 
   <script>
     // --------------------------------------------------------------------
-    // 1) Dados brutos (Fornecedores de Fevereiro/2025)
+    // 1) Dados brutos (todos os lançamentos)
+    //    Formato: { vendor, doc, date, value }
     // --------------------------------------------------------------------
-    const rawData = [
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"385099", date:"02/03/2025", valorPago:"R$ 3.404,10" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"385099", date:"02/03/2025", valorPago:"R$ 12.879,88" },
-      { descricao: "ROCHESA S/A TINTAS E VERNIZES", nf:"206903", date:"02/03/2025", valorPago:"R$ 21.060,27" },
-      { descricao: "FERGRAFPLASTIC", nf:"234", date:"02/03/2025", valorPago:"R$ 15.621,00" },
-      { descricao: "ARAUCO", nf:"295579", date:"02/03/2025", valorPago:"R$ 79.186,62" },
-      { descricao: "TRZ MOVELARIA", nf:"", date:"02/03/2025", valorPago:"R$ 19.784,54" },
-      { descricao: "SCALA PLÁSTICOS", nf:"", date:"02/03/2025", valorPago:"R$ 3.552,00" },
-      { descricao: "LOTUS", nf:"", date:"02/03/2025", valorPago:"R$ 8.508,60" },
-      { descricao: "LOTUS", nf:"", date:"02/03/2025", valorPago:"R$ 20.497,20" },
-      { descricao: "MB DECOR", nf:"", date:"02/03/2025", valorPago:"R$ 18.991,00" },
-      { descricao: "JOMARCA INDUSTRIAL DE PARAFUSOS LTDA", nf:"856298", date:"02/04/2025", valorPago:"R$ 10.225,41" },
-      { descricao: "CAPACK INDUSTRIA E COMERCIO DE PAPEL LTDA.", nf:"1665", date:"02/04/2025", valorPago:"R$ 2.411,55" },
-      { descricao: "VN EPS", nf:"", date:"02/04/2025", valorPago:"R$ 8.188,05" },
-      { descricao: "MUNDIAL GÁS", nf:"", date:"02/04/2025", valorPago:"R$ 420,00" },
-      { descricao: "CAPACK", nf:"PF=1665", date:"02/04/2025", valorPago:"R$ 11.883,00" },
-      { descricao: "EUCATEX RAFA", nf:"304009", date:"02/05/2025", valorPago:"R$ 22.713,54" },
-      { descricao: "EUCATEX RAFA", nf:"304010", date:"02/05/2025", valorPago:"R$ 22.713,54" },
-      { descricao: "EUCATEX RAFA", nf:"304011", date:"02/05/2025", valorPago:"R$ 22.713,54" },
-      { descricao: "EUCATEX RAFA", nf:"304015", date:"02/05/2025", valorPago:"R$ 25.869,62" },
-      { descricao: "EUCATEX RAFA", nf:"304016", date:"02/05/2025", valorPago:"R$ 25.869,62" },
-      { descricao: "EUCATEX RAFA", nf:"304017", date:"02/05/2025", valorPago:"R$ 25.869,62" },
-      { descricao: "FERNANDO REIS", nf:"", date:"02/05/2025", valorPago:"R$ 200,00" },
-      { descricao: "VPLAST ACESSORIOS PARA MOVEIS LTDA", nf:"26249", date:"02/05/2025", valorPago:"R$ 5.098,49" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14599", date:"02/05/2025", valorPago:"R$ 7.599,82" },
-      { descricao: "CAPACK", nf:"PF=1667", date:"02/05/2025", valorPago:"R$ 2.962,08" },
-      { descricao: "Cianureto Comercio de Ferro e aco EIRELI", nf:"2770", date:"02/05/2025", valorPago:"R$ 5.880,00" },
-      { descricao: "CAPACK INDUSTRIA E COMERCIO DE PAPEL LTDA.", nf:"1667", date:"02/05/2025", valorPago:"R$ 601,13" },
-      { descricao: "EUCATEX RAFA", nf:"304018", date:"02/05/2025", valorPago:"R$ 22.713,54" },
-      { descricao: "EUCATEX RAFA", nf:"304019", date:"02/05/2025", valorPago:"R$ 22.713,54" },
-      { descricao: "EUCATEX RAFA", nf:"304020", date:"02/05/2025", valorPago:"R$ 22.713,54" },
-      { descricao: "Cianureto Comercio de Ferro e aco EIRELI", nf:"2771", date:"02/06/2025", valorPago:"R$ 5.460,00" },
-      { descricao: "MUNDIAL GÁS", nf:"", date:"02/06/2025", valorPago:"R$ 210,00" },
-      { descricao: "EUCATEX RAFA", nf:"304021", date:"02/06/2025", valorPago:"R$ 23.146,08" },
-      { descricao: "DZAINER", nf:"OF", date:"02/06/2025", valorPago:"R$ 23.128,00" },
-      { descricao: "EUCATEX RAFA", nf:"304022", date:"02/06/2025", valorPago:"R$ 23.146,08" },
-      { descricao: "EUCATEX RAFA", nf:"304023", date:"02/06/2025", valorPago:"R$ 23.146,08" },
-      { descricao: "ACM FIBRAS", nf:"6841", date:"02/06/2025", valorPago:"R$ 35.640,50" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"382117", date:"02/05/2025", valorPago:"R$ 12.880,00" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14730", date:"02/07/2025", valorPago:"R$ 11.400,04" },
-      { descricao: "ROCHESA S/A TINTAS E VERNIZES", nf:"207298", date:"02/07/2025", valorPago:"R$ 21.060,27" },
-      { descricao: "IMD COMERCIO DE MOVEIS LTDA", nf:"307550", date:"02/07/2025", valorPago:"R$ 29.000,00" },
-      { descricao: "ACM FIBRAS", nf:"6842", date:"02/07/2025", valorPago:"R$ 32.500,00" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"224770", date:"02/10/2025", valorPago:"R$ 71.590,14" },
-      { descricao: "VERTICALPACK INDUSTRIA, COMERCIO E SERVICOS DE EMBALAGENS LT", nf:"5067", date:"02/10/2025", valorPago:"R$ 2.570,25" },
-      { descricao: "FERGRAFPLASTIC", nf:"235", date:"02/10/2025", valorPago:"R$ 9.089,50" },
-      { descricao: "FERGRAFPLASTIC", nf:"236", date:"02/10/2025", valorPago:"R$ 7.429,50" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"385966", date:"02/10/2025", valorPago:"R$ 9.199,77" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"388413", date:"02/10/2025", valorPago:"R$ 11.040,32" },
-      { descricao: "BIGFER IND E COM DE FERRAGENS LTDA", nf:"2317041", date:"02/10/2025", valorPago:"R$ 2.580,00" },
-      { descricao: "Multivisão - OF LETS", nf:"224778", date:"02/10/2025", valorPago:"R$ 4.516,66" },
-      { descricao: "VERTICAL PACK", nf:"PF=5067", date:"02/10/2025", valorPago:"R$ 20.115,00" },
-      { descricao: "Multivisão - OF LETS", nf:"224822", date:"02/10/2025", valorPago:"R$ 4.384,35" },
-      { descricao: "Multivisão - OF LETS", nf:"224828", date:"02/10/2025", valorPago:"R$ 447,38" },
-      { descricao: "CAROÇO - PF", nf:"PF=224778", date:"02/10/2025", valorPago:"R$ 39.370,89" },
-      { descricao: "CAROÇO - PF", nf:"PF=224822, 224828", date:"02/10/2025", valorPago:"R$ 42.112,97" },
-      { descricao: "MB DECOR", nf:"", date:"02/10/2025", valorPago:"R$ 37.037,96" },
-      { descricao: "LOTUS", nf:"", date:"02/10/2025", valorPago:"R$ 18.442,20" },
-      { descricao: "DZAINER", nf:"PF", date:"02/11/2025", valorPago:"R$ 22.400,00" },
-      { descricao: "Cianureto Comercio de Ferro e aco EIRELI", nf:"2772", date:"02/11/2025", valorPago:"R$ 5.880,00" },
-      { descricao: "BARUERI", nf:"7375128", date:"02/11/2025", valorPago:"R$ 544,93" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"224891", date:"02/11/2025", valorPago:"R$ 4.951,91" },
-      { descricao: "MUNDIAL GÁS", nf:"", date:"02/11/2025", valorPago:"R$ 420,00" },
-      { descricao: "Rrv comercio e serviços", nf:"", date:"02/11/2025", valorPago:"R$ 12.768,00" },
-      { descricao: "Multivisão - OF LETS", nf:"224860", date:"02/11/2025", valorPago:"R$ 805,29" },
-      { descricao: "Multivisão - OF LETS", nf:"224843", date:"02/11/2025", valorPago:"R$ 638,09" },
-      { descricao: "Multivisão - OF LETS", nf:"224873", date:"02/11/2025", valorPago:"R$ 2.634,61" },
-      { descricao: "Multivisão - OF LETS", nf:"224890", date:"02/11/2025", valorPago:"R$ 4.289,79" },
-      { descricao: "ARAUCO", nf:"296105", date:"02/12/2025", valorPago:"R$ 79.186,62" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"224872", date:"02/12/2025", valorPago:"R$ 40.373,02" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"224874", date:"02/12/2025", valorPago:"R$ 11.374,02" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14765", date:"02/12/2025", valorPago:"R$ 27.200,18" },
-      { descricao: "CAROÇO - PF", nf:"PF=224860, 224843, 224873, 224890", date:"02/12/2025", valorPago:"R$ 18.000,00" },
-      { descricao: "ARAUCO", nf:"296095", date:"02/12/2025", valorPago:"R$ 79.186,62" },
-      { descricao: "ACM FIBRAS", nf:"6846", date:"02/12/2025", valorPago:"R$ 57.771,57" },
-      { descricao: "CAROÇO - PF", nf:"PF=224860, 224843, 224873, 224890", date:"02/12/2025", valorPago:"R$ 32.000,00" },
-      { descricao: "Cianureto Comercio de Ferro e aco EIRELI", nf:"2774", date:"2/13/2025", valorPago:"R$ 1.260,00" },
-      { descricao: "Cianureto Comercio de Ferro e aco EIRELI", nf:"2773", date:"2/13/2025", valorPago:"R$ 6.300,00" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14600", date:"2/13/2025", valorPago:"R$ 15.199,64" },
-      { descricao: "ARAUCO", nf:"358915", date:"2/13/2025", valorPago:"R$ 67.943,01" },
-      { descricao: "VN EPS", nf:"", date:"2/13/2025", valorPago:"R$ 8.208,00" },
-      { descricao: "CAROÇO - PF", nf:"PF=224860, 224843, 224873, 224890", date:"2/13/2025", valorPago:"R$ 7.500,00" },
-      { descricao: "CAROÇO - PF", nf:"PF=224860, 224843, 224873, 224890", date:"2/13/2025", valorPago:"R$ 15.440,25" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225076", date:"2/14/2025", valorPago:"R$ 51.088,27" },
-      { descricao: "CAPACK", nf:"1706", date:"2/14/2025", valorPago:"R$ 1.248,15" },
-      { descricao: "CAPACK", nf:"1705", date:"2/14/2025", valorPago:"R$ 1.317,47" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225083", date:"2/14/2025", valorPago:"R$ 9.571,28" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225102", date:"2/14/2025", valorPago:"R$ 10.746,13" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"386714", date:"2/14/2025", valorPago:"R$ 6.900,00" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14767", date:"2/14/2025", valorPago:"R$ 40.800,27" },
-      { descricao: "CAPACK", nf:"PF=1705", date:"2/14/2025", valorPago:"R$ 6.491,88" },
-      { descricao: "CAPACK", nf:"PF=1706", date:"2/14/2025", valorPago:"R$ 6.150,30" },
-      { descricao: "Multivisão - OF LETS", nf:"225077", date:"2/14/2025", valorPago:"R$ 1.276,17" },
-      { descricao: "Multivisão - OF LETS", nf:"225085", date:"2/14/2025", valorPago:"R$ 510,47" },
-      { descricao: "Multivisão - OF LETS", nf:"225103", date:"2/14/2025", valorPago:"R$ 4.220,80" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225084", date:"2/17/2025", valorPago:"R$ 47.772,31" },
-      { descricao: "BIGFER IND E COM DE FERRAGENS LTDA", nf:"2320117", date:"2/17/2025", valorPago:"R$ 129,00" },
-      { descricao: "METALURGICA BASSO LTDA", nf:"30643", date:"2/17/2025", valorPago:"R$ 618,37" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"383170", date:"2/17/2025", valorPago:"R$ 11.040,03" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"383170", date:"2/17/2025", valorPago:"R$ 2.759,97" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"389073", date:"2/17/2025", valorPago:"R$ 15.639,85" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"389073", date:"2/17/2025", valorPago:"R$ 2.760,08" },
-      { descricao: "FERGRAFPLASTIC", nf:"238", date:"2/17/2025", valorPago:"R$ 15.049,50" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225194", date:"2/17/2025", valorPago:"R$ 24.227,82" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225260", date:"2/17/2025", valorPago:"R$ 19.142,55" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225259", date:"2/17/2025", valorPago:"R$ 23.871,41" },
-      { descricao: "MB DECOR", nf:"", date:"2/17/2025", valorPago:"R$ 10.423,60" },
-      { descricao: "SULGRILL", nf:"", date:"2/17/2025", valorPago:"R$ 9.300,00" },
-      { descricao: "MUNDIAL GÁS", nf:"", date:"2/17/2025", valorPago:"R$ 420,00" },
-      { descricao: "Multivisão - OF LETS", nf:"225147", date:"2/17/2025", valorPago:"R$ 4.559,15" },
-      { descricao: "Multivisão - OF LETS", nf:"225193", date:"2/17/2025", valorPago:"R$ 3.562,13" },
-      { descricao: "Multivisão - OF LETS", nf:"225195", date:"2/17/2025", valorPago:"R$ 4.831,73" },
-      { descricao: "CAROÇO - PF", nf:"PF=225077, 225085, 225103", date:"2/17/2025", valorPago:"R$ 52.366,43" },
-      { descricao: "CAROÇO - PF", nf:"PF=225147", date:"2/17/2025", valorPago:"R$ 39.731,95" },
-      { descricao: "CAROÇO - PF", nf:"PF=225193, 225195", date:"2/17/2025", valorPago:"R$ 73.167,98" },
-      { descricao: "ACM FIBRAS", nf:"6848", date:"2/17/2025", valorPago:"R$ 56.792,19" },
-      { descricao: "LOTUS", nf:"", date:"2/17/2025", valorPago:"R$ 36.624,80" },
-      { descricao: "ARAUCO", nf:"323718", date:"2/18/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "ARAUCO", nf:"323722", date:"2/18/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "DZAINER", nf:"OF", date:"2/18/2025", valorPago:"R$ 23.128,00" },
-      { descricao: "JOMARCA INDUSTRIAL DE PARAFUSOS LTDA", nf:"856298", date:"2/19/2025", valorPago:"R$ 7.750,00" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225284", date:"2/19/2025", valorPago:"R$ 4.073,21" },
-      { descricao: "NEPPE", nf:"328358", date:"2/19/2025", valorPago:"R$ 242,96" },
-      { descricao: "NEPPE", nf:"328384", date:"2/19/2025", valorPago:"R$ 509,00" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225293", date:"2/19/2025", valorPago:"R$ 5.726,58" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14805", date:"2/19/2025", valorPago:"R$ 15.199,64" },
-      { descricao: "ARAUCO", nf:"296338", date:"2/19/2025", valorPago:"R$ 79.186,62" },
-      { descricao: "ARAUCO", nf:"296363", date:"2/19/2025", valorPago:"R$ 79.186,62" },
-      { descricao: "CAROÇO - PF", nf:"PF=225261, 225265, 225280, 225281", date:"2/19/2025", valorPago:"R$ 49.085,06" },
-      { descricao: "RESTAMP", nf:"", date:"2/19/2025", valorPago:"R$ 22.750,00" },
-      { descricao: "Multivisão - OF LETS", nf:"225261", date:"2/19/2025", valorPago:"R$ 991,20" },
-      { descricao: "Multivisão - OF LETS", nf:"225265", date:"2/19/2025", valorPago:"R$ 991,20" },
-      { descricao: "Multivisão - OF LETS", nf:"225280", date:"2/19/2025", valorPago:"R$ 2.198,56" },
-      { descricao: "Multivisão - OF LETS", nf:"225281", date:"2/19/2025", valorPago:"R$ 1.450,25" },
-      { descricao: "BERTEL COMERCIAL ELETRICA LTDA", nf:"254232", date:"2/20/2025", valorPago:"R$ 274,81" },
-      { descricao: "JOMARCA INDUSTRIAL DE PARAFUSOS LTDA", nf:"856302", date:"2/20/2025", valorPago:"R$ 18.753,05" },
-      { descricao: "ARAUCO", nf:"323823", date:"2/20/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "ARAUCO", nf:"323831", date:"2/20/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "SUPIMPA", nf:"", date:"2/20/2025", valorPago:"R$ 18.777,20" },
-      { descricao: "SUPIMPA", nf:"", date:"2/20/2025", valorPago:"R$ 6.753,60" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225283", date:"2/21/2025", valorPago:"R$ 80.398,71" },
-      { descricao: "NORTEL SUPRIMENTOS INDUSTRIAIS LTDA", nf:"1249194", date:"2/21/2025", valorPago:"R$ 5.486,91" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"389718", date:"2/21/2025", valorPago:"R$ 15.640,00" },
-      { descricao: "VERTICALPACK EMBALAGENS", nf:"5089", date:"2/21/2025", valorPago:"R$ 2.766,73" },
-      { descricao: "PRD_IMD NAVEGANTES", nf:"310613", date:"2/21/2025", valorPago:"R$ 29.000,00" },
-      { descricao: "VPLAST", nf:"26430", date:"2/21/2025", valorPago:"R$ 26.845,00" },
-      { descricao: "DZAINER", nf:"PF", date:"2/21/2025", valorPago:"R$ 22.400,00" },
-      { descricao: "JOMARCA", nf:"", date:"2/21/2025", valorPago:"R$ 17.608,50" },
-      { descricao: "VN EPS", nf:"", date:"2/21/2025", valorPago:"R$ 7.296,00" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225348", date:"2/24/2025", valorPago:"R$ 73.002,83" },
-      { descricao: "BIGFER IND E COM DE FERRAGENS LTDA", nf:"2324289", date:"2/24/2025", valorPago:"R$ 516,00" },
-      { descricao: "FERGRAFPLASTIC", nf:"239", date:"2/24/2025", valorPago:"R$ 15.621,00" },
-      { descricao: "BIGFER IND E COM DE FERRAGENS LTDA", nf:"2317041", date:"2/24/2025", valorPago:"R$ 2.580,00" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225428", date:"2/24/2025", valorPago:"R$ 18.855,92" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225430", date:"2/24/2025", valorPago:"R$ 17.880,84" },
-      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", nf:"225529", date:"2/24/2025", valorPago:"R$ 39.364,59" },
-      { descricao: "DZAINER", nf:"OF", date:"2/24/2025", valorPago:"R$ 12.475,02" },
-      { descricao: "DZAINER", nf:"PF", date:"2/24/2025", valorPago:"R$ 12.082,35" },
-      { descricao: "Multivisão - OF LETS", nf:"225429", date:"2/24/2025", valorPago:"R$ 2.985,22" },
-      { descricao: "Multivisão - OF LETS", nf:"225456", date:"2/24/2025", valorPago:"R$ 5.171,28" },
-      { descricao: "DZAINER", nf:"OF", date:"2/24/2025", valorPago:"R$ 23.128,00" },
-      { descricao: "DZAINER", nf:"PF", date:"2/24/2025", valorPago:"R$ 22.400,00" },
-      { descricao: "RESTAMP", nf:"", date:"2/24/2025", valorPago:"R$ 92.500,00" },
-      { descricao: "ACM FIBRAS", nf:"6850", date:"2/24/2025", valorPago:"R$ 88.394,38" },
-      { descricao: "CAROÇO - PF", nf:"PF=225429", date:"2/24/2025", valorPago:"R$ 26.030,96" },
-      { descricao: "CAROÇO - PF", nf:"PF=225456", date:"2/24/2025", valorPago:"R$ 45.057,53" },
-      { descricao: "MB DECOR", nf:"", date:"2/24/2025", valorPago:"R$ 4.491,00" },
-      { descricao: "MB DECOR", nf:"", date:"2/24/2025", valorPago:"R$ 15.862,00" },
-      { descricao: "MB DECOR", nf:"", date:"2/24/2025", valorPago:"R$ 8.610,00" },
-      { descricao: "MB DECOR", nf:"", date:"2/24/2025", valorPago:"R$ 3.650,00" },
-      { descricao: "LOTUS", nf:"", date:"2/24/2025", valorPago:"R$ 34.011,20" },
-      { descricao: "SULGRILL", nf:"", date:"2/24/2025", valorPago:"R$ 9.300,00" },
-      { descricao: "TRZ MOVELARIA", nf:"", date:"2/24/2025", valorPago:"R$ 4.095,00" },
-      { descricao: "MUNDIAL GÁS", nf:"", date:"2/24/2025", valorPago:"R$ 420,00" },
-      { descricao: "MUNDIAL GÁS", nf:"", date:"2/24/2025", valorPago:"R$ 210,00" },
-      { descricao: "RESTAMP", nf:"", date:"2/24/2025", valorPago:"R$ 8.400,00" },
-      { descricao: "BERTEL COMERCIAL ELETRICA LTDA", nf:"254349", date:"2/25/2025", valorPago:"R$ 343,00" },
-      { descricao: "METALURGICA ALBRAS LTDA", nf:"250093", date:"2/25/2025", valorPago:"R$ 1.261,65" },
-      { descricao: "METALURGICA ALBRAS LTDA", nf:"250081", date:"2/25/2025", valorPago:"R$ 21.752,64" },
-      { descricao: "VERTICAL PACK", nf:"PF=5089", date:"2/25/2025", valorPago:"R$ 21.652,65" },
-      { descricao: "BERTEL COMERCIAL ELETRICA LTDA", nf:"254363", date:"2/26/2025", valorPago:"R$ 781,37" },
-      { descricao: "GAL COMERCIO IMPORTACAO EXPORTACAO LTDA", nf:"384354", date:"2/26/2025", valorPago:"R$ 7.360,00" },
-      { descricao: "CONTHEY PRESENTES E DECORACOES LTDA", nf:"14855", date:"2/26/2025", valorPago:"R$ 14.413,91" },
-      { descricao: "Cianureto Comercio de Ferro e aco EIRELI", nf:"2776", date:"2/26/2025", valorPago:"R$ 7.140,00" },
-      { descricao: "BERTEL COMERCIAL ELETRICA LTDA", nf:"254375", date:"2/26/2025", valorPago:"R$ 1.351,86" },
-      { descricao: "PRD_IMD NAVEGANTES", nf:"311485", date:"2/26/2025", valorPago:"R$ 7.269,26" },
-      { descricao: "ACLUB - ARAUCO", nf:"323768", date:"2/26/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "SUPIMPA", nf:"", date:"2/26/2025", valorPago:"R$ 22.260,60" },
-      { descricao: "Multivisão - OF LETS", nf:"225538", date:"2/26/2025", valorPago:"R$ 2.166,70" },
-      { descricao: "CAROÇO - PF", nf:"PF=225538", date:"2/26/2025", valorPago:"R$ 18.897,04" },
-      { descricao: "EUCATEX RAFA", nf:"305353", date:"2/27/2025", valorPago:"R$ 24.532,41" },
-      { descricao: "EUCATEX RAFA", nf:"305354", date:"2/27/2025", valorPago:"R$ 24.532,41" },
-      { descricao: "EUCATEX RAFA", nf:"305355", date:"2/27/2025", valorPago:"R$ 24.532,41" },
-      { descricao: "EUCATEX RAFA", nf:"305470", date:"2/27/2025", valorPago:"R$ 6.402,77" },
-      { descricao: "NEPPE", nf:"328944", date:"2/27/2025", valorPago:"R$ 2.472,29" },
-      { descricao: "GIVOTRADING", nf:"19", date:"2/27/2025", valorPago:"R$ 100.100,00" },
-      { descricao: "EUCATEX RAFA", nf:"305472", date:"2/28/2025", valorPago:"R$ 24.532,41" },
-      { descricao: "ARAUCO", nf:"323808", date:"2/28/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "ARAUCO", nf:"324118", date:"2/28/2025", valorPago:"R$ 92.903,78" },
-      { descricao: "ACM FIBRAS", nf:"6856", date:"2/28/2025", valorPago:"R$ 64.000,00" },
-      { descricao: "ACM FIBRAS", nf:"6856", date:"2/27/2025", valorPago:"R$ 23.348,16" }
+    const dataset = [
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO - OF", doc: "224080", date: "01/02/2025", value: 82626.14 },
+      { vendor: "Multivisão - OF LETS", doc: "223960", date: "01/02/2025", value: 4778.21 },
+      { vendor: "Multivisão - OF LETS", doc: "223967", date: "01/02/2025", value: 3159.46 },
+      { vendor: "VERTICAL PACK", doc: "PF=5300", date: "01/06/2025", value: 7306.83 },
+      { vendor: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", doc: "24127", date: "01/06/2025", value: 522.35 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2759", date: "01/06/2025", value: 6300.00 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "4939", date: "01/06/2025", value: 965.03 },
+      { vendor: "DIFATO - PF", doc: "PF=223960, 223967", date: "01/06/2025", value: 69178.04 },
+      { vendor: "Multivisão - OF LETS", doc: "224111", date: "01/06/2025", value: 3376.29 },
+      { vendor: "DIFATO - PF", doc: "PF=224111", date: "01/06/2025", value: 29432.49 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224108", date: "01/06/2025", value: 19280.91 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224162", date: "01/06/2025", value: 29033.13 },
+      { vendor: "OR DESIGN", doc: "382117", date: "01/06/2025", value: 12880.00 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224197", date: "01/06/2025", value: 34895.92 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224206", date: "01/06/2025", value: 697.92 },
+      { vendor: "ACM FIBRAS", doc: "6827", date: "01/06/2025", value: 75246.50 },
+      { vendor: "VERTICAL PACK", doc: "PF=4939", date: "01/06/2025", value: 7552.44 },
+      { vendor: "FERGRAFPLASTIC", doc: "215", date: "01/06/2025", value: 9982.20 },
+      { vendor: "CONTHEY PRESENTES", doc: "14489", date: "01/06/2025", value: 69998.34 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5003", date: "01/06/2025", value: 936.30 },
+      { vendor: "Multivisão - OF LETS", doc: "224163", date: "01/06/2025", value: 2849.71 },
+      { vendor: "Multivisão - OF LETS", doc: "224198", date: "01/06/2025", value: 2985.99 },
+      { vendor: "Multivisão - OF LETS", doc: "224204", date: "01/06/2025", value: 7.12 },
+      { vendor: "DIFATO - PF", doc: "PF=224163, 224198, 224204", date: "01/06/2025", value: 50936.93 },
+      { vendor: "EUCATEX RAFA", doc: "302849", date: "01/07/2025", value: 22713.54 },
+      { vendor: "EUCATEX RAFA", doc: "302850", date: "01/07/2025", value: 22713.54 },
+      { vendor: "OR DESIGN", doc: "385099", date: "01/07/2025", value: 16283.98 },
+      { vendor: "ARAUCO", doc: "341385", date: "01/07/2025", value: 103504.31 },
+      { vendor: "EUCATEX RAFA", doc: "302851", date: "01/08/2025", value: 22713.54 },
+      { vendor: "EUCATEX RAFA", doc: "302852", date: "01/08/2025", value: 23146.08 },
+      { vendor: "EUCATEX RAFA", doc: "302853", date: "01/08/2025", value: 23146.08 },
+      { vendor: "EUCATEX RAFA", doc: "302854", date: "01/08/2025", value: 23146.08 },
+      { vendor: "BIGFER INDUSTRIA", doc: "130819", date: "01/08/2025", value: 6064.60 },
+      { vendor: "ÁGUA VIVA", doc: "10193", date: "01/08/2025", value: 840.00 },
+      { vendor: "MARCOS AURELIO SEGREDO - PUXADORES", doc: "", date: "01/09/2025", value: 297.99 },
+      { vendor: "SOS RODÍZIOS", doc: "", date: "01/09/2025", value: 150.00 },
+      { vendor: "BIGFER INDUSTRIA", doc: "132049", date: "01/09/2025", value: 6084.16 },
+      { vendor: "METALURGICA ALBRAS LTDA", doc: "247685", date: "01/09/2025", value: 17176.39 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224344", date: "01/09/2025", value: 11166.49 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2760", date: "01/09/2025", value: 6428.09 },
+      { vendor: "OR DESIGN", doc: "385966", date: "01/09/2025", value: 9199.77 },
+      { vendor: "ARAUCO", doc: "295044", date: "01/09/2025", value: 79186.62 },
+      { vendor: "Multivisão - OF LETS", doc: "224203", date: "01/09/2025", value: 4831.73 },
+      { vendor: "Multivisão - OF LETS", doc: "224340", date: "01/09/2025", value: 991.20 },
+      { vendor: "REPACK EMBALAGENS", doc: "13385", date: "01/10/2025", value: 4920.00 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224337", date: "01/10/2025", value: 54904.19 },
+      { vendor: "Multivisão - OF LETS", doc: "224332", date: "01/10/2025", value: 783.67 },
+      { vendor: "Multivisão - OF LETS", doc: "224376", date: "01/10/2025", value: 924.09 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224454", date: "01/10/2025", value: 35451.93 },
+      { vendor: "DIFATO - PF", doc: "PF=224203, 224340", date: "01/10/2025", value: 50752.97 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224377", date: "01/13/2025", value: 59698.54 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224530", date: "01/13/2025", value: 83949.30 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2762", date: "01/13/2025", value: 5250.00 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2763", date: "01/13/2025", value: 3150.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "222", date: "01/13/2025", value: 14840.00 },
+      { vendor: "WIRUTEX", doc: "90841", date: "01/13/2025", value: 981.94 },
+      { vendor: "FERGRAFPLASTIC", doc: "223", date: "01/13/2025", value: 12985.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "224", date: "01/13/2025", value: 7048.50 },
+      { vendor: "DIFATO - PF", doc: "PF=224332, 224376", date: "01/13/2025", value: 14887.00 },
+      { vendor: "Multivisão - OF LETS", doc: "224441", date: "01/13/2025", value: 4821.78 },
+      { vendor: "Multivisão - OF LETS", doc: "224457", date: "01/13/2025", value: 3205.92 },
+      { vendor: "DIFATO - PF", doc: "PF=224441, 224457", date: "01/13/2025", value: 69974.49 },
+      { vendor: "DZAINER", doc: "", date: "01/13/2025", value: 12000.00 },
+      { vendor: "LOTUS", doc: "", date: "01/13/2025", value: 23070.60 },
+      { vendor: "MB DECOR", doc: "", date: "01/13/2025", value: 9870.50 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/14/2025", value: 3456.00 },
+      { vendor: "OR DESIGN", doc: "386714", date: "01/14/2025", value: 6900.00 },
+      { vendor: "Multivisão - OF LETS", doc: "224537", date: "01/15/2025", value: 664.68 },
+      { vendor: "Multivisão - OF LETS", doc: "224531", date: "01/15/2025", value: 5443.18 },
+      { vendor: "DIFATO - PF", doc: "PF=224531, 224537", date: "01/15/2025", value: 53079.82 },
+      { vendor: "BIGFER INDUSTRIA", doc: "132049", date: "01/15/2025", value: 5926.51 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224610", date: "01/16/2025", value: 53249.12 },
+      { vendor: "Cianureto Comercio de Ferro e aco EIRELI", doc: "2766", date: "01/16/2025", value: 4200.00 },
+      { vendor: "STYROPLAST ESPUMAS", doc: "138488", date: "01/16/2025", value: 923.11 },
+      { vendor: "STYROPLAST", doc: "PF=138488", date: "01/16/2025", value: 7569.94 },
+      { vendor: "Multivisão - OF LETS", doc: "224561", date: "01/16/2025", value: 4831.73 },
+      { vendor: "DIFATO - PF", doc: "PF=224561", date: "01/16/2025", value: 42112.97 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224684", date: "01/16/2025", value: 33500.08 },
+      { vendor: "OR DESIGN", doc: "383170", date: "01/16/2025", value: 13800.00 },
+      { vendor: "DESING PLAST", doc: "", date: "01/16/2025", value: 1479.00 },
+      { vendor: "Multivisão - OF LETS", doc: "224605", date: "01/16/2025", value: 5262.66 },
+      { vendor: "Multivisão - OF LETS", doc: "224642", date: "01/16/2025", value: 495.60 },
+      { vendor: "Multivisão - OF LETS", doc: "224643", date: "01/16/2025", value: 495.60 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224677", date: "01/17/2025", value: 59685.90 },
+      { vendor: "ARAUCO", doc: "295323", date: "01/17/2025", value: 79186.62 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224641", date: "01/17/2025", value: 16856.60 },
+      { vendor: "FERGRAFPLASTIC", doc: "225", date: "01/20/2025", value: 13525.50 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5024", date: "01/20/2025", value: 807.07 },
+      { vendor: "BIGFER INDUSTRIA", doc: "130819", date: "01/20/2025", value: 5926.52 },
+      { vendor: "VERTICAL PACK", doc: "PF=5024", date: "01/20/2025", value: 6316.20 },
+      { vendor: "LOTUS", doc: "", date: "01/20/2025", value: 13223.00 },
+      { vendor: "LOTUS", doc: "", date: "01/20/2025", value: 8450.10 },
+      { vendor: "MB DECOR", doc: "", date: "01/20/2025", value: 18345.50 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224696", date: "01/20/2025", value: 8146.43 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224694", date: "01/20/2025", value: 54352.70 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224690", date: "01/20/2025", value: 73623.19 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224688", date: "01/20/2025", value: 9709.63 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224695", date: "01/20/2025", value: 3303.79 },
+      { vendor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", doc: "224692", date: "01/20/2025", value: 16353.77 },
+      { vendor: "CAROÇO - PF", doc: "PF=224605, 224642, 224643", date: "01/20/2025", value: 54517.71 },
+      { vendor: "Multivisão - OF LETS", doc: "224678", date: "01/20/2025", value: 1631.35 },
+      { vendor: "Multivisão - OF LETS", doc: "224683", date: "01/20/2025", value: 2415.86 },
+      { vendor: "Multivisão - OF LETS", doc: "224686", date: "01/20/2025", value: 815.68 },
+      { vendor: "Multivisão - OF LETS", doc: "224687", date: "01/20/2025", value: 4026.44 },
+      { vendor: "CAROÇO - PF", doc: "PF=224678, 224683,224686,224687", date: "01/20/2025", value: 77473.10 },
+      { vendor: "Multivisão - OF LETS", doc: "224689", date: "01/20/2025", value: 4831.73 },
+      { vendor: "CAROÇO - PF", doc: "PF=224689", date: "01/20/2025", value: 42112.97 },
+      { vendor: "ARAUCO", doc: "357959", date: "01/21/2025", value: 67943.01 },
+      { vendor: "VERTICAL PACK", doc: "PF=5031", date: "01/21/2025", value: 2193.75 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5031", date: "01/22/2025", value: 280.31 },
+      { vendor: "MUNDIAL GÁS", doc: "", date: "01/22/2025", value: 420.00 },
+      { vendor: "Multivisão - OF LETS", doc: "224693", date: "01/22/2025", value: 1276.18 },
+      { vendor: "ARAUCO", doc: "342432", date: "01/22/2025", value: 100881.39 },
+      { vendor: "Multivisão - OF LETS", doc: "224696", date: "01/22/2025", value: 3380.93 },
+      { vendor: "VIEIRA COMERCIO", doc: "", date: "01/22/2025", value: 12768.00 },
+      { vendor: "CAROÇO - PF", doc: "PF=224693,224696", date: "01/22/2025", value: 40598.34 },
+      { vendor: "ARAUCO", doc: "342182", date: "01/23/2025", value: 100881.39 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/23/2025", value: 2880.00 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/24/2025", value: 3456.00 },
+      { vendor: "DESING PLAST", doc: "", date: "01/24/2025", value: 9180.00 },
+      { vendor: "DESING PLAST", doc: "", date: "01/24/2025", value: 2432.52 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5033", date: "01/24/2025", value: 1449.00 },
+      { vendor: "VERTICAL PACK", doc: "PF=5033", date: "01/24/2025", value: 4600.00 },
+      { vendor: "VERTICAL PACK", doc: "PF=5033", date: "01/24/2025", value: 6740.00 },
+      { vendor: "ARAUCO", doc: "357877", date: "01/24/2025", value: 67943.01 },
+      { vendor: "OR DESIGN", doc: "384354", date: "01/27/2025", value: 7360.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "227", date: "01/27/2025", value: 29268.50 },
+      { vendor: "VPLAST", doc: "26152", date: "01/27/2025", value: 6483.06 },
+      { vendor: "FERGRAFPLASTIC", doc: "228", date: "01/27/2025", value: 16414.00 },
+      { vendor: "ARAUCO", doc: "342542", date: "01/27/2025", value: 100881.39 },
+      { vendor: "LOTUS", doc: "", date: "01/27/2025", value: 580.00 },
+      { vendor: "MB DECOR", doc: "", date: "01/27/2025", value: 9644.00 },
+      { vendor: "ARAUCO", doc: "342304", date: "01/27/2025", value: 100881.39 },
+      { vendor: "SUPIMPA - CARLOS EDUARDO MONTEIRO PINTO", doc: "", date: "01/28/2025", value: 31444.44 },
+      { vendor: "STYROPLAST", doc: "138771", date: "01/28/2025", value: 615.41 },
+      { vendor: "OR DESIGN", doc: "380969", date: "01/28/2025", value: 29188.67 },
+      { vendor: "STYROPLAST", doc: "PF=138771", date: "01/28/2025", value: 5046.62 },
+      { vendor: "MUNDIAL GÁS", doc: "", date: "01/28/2025", value: 420.00 },
+      { vendor: "SCALA PLÁSTICOS", doc: "", date: "01/28/2025", value: 8952.00 },
+      { vendor: "EUCATEX RAFA", doc: "304012", date: "01/29/2025", value: 25869.62 },
+      { vendor: "BARUERI", doc: "7285958", date: "01/29/2025", value: 504.31 },
+      { vendor: "EUCATEX RAFA", doc: "304013", date: "01/29/2025", value: 25869.62 },
+      { vendor: "ARAUCO", doc: "342309", date: "01/29/2025", value: 100881.39 },
+      { vendor: "VERTICALPACK EMBALAGENS", doc: "5055", date: "01/30/2025", value: 1104.00 },
+      { vendor: "FERGRAFPLASTIC", doc: "229", date: "01/30/2025", value: 9646.00 },
+      { vendor: "VERTICAL PACK", doc: "PF=5055", date: "01/30/2025", value: 8640.00 },
+      { vendor: "EUCATEX RAFA", doc: "304014", date: "01/30/2025", value: 25869.62 },
+      { vendor: "ARAUCO", doc: "342693", date: "01/30/2025", value: 100881.39 },
+      { vendor: "VPLAST", doc: "26198", date: "01/31/2025", value: 5098.49 },
+      { vendor: "BIGFER INDUSTRIA", doc: "132049", date: "01/31/2025", value: 5926.52 },
+      { vendor: "ACM FIBRAS", doc: "6838", date: "01/30/2025", value: 68077.05 },
+      { vendor: "ARAUCO", doc: "358270", date: "01/31/2025", value: 67943.01 }
     ];
 
     // --------------------------------------------------------------------
-    // 2) Converter datas e valores para formatos consistentes
+    // 2) Definir as semanas: 4 semanas + total
     // --------------------------------------------------------------------
-    function parseValor(valorStr) {
-      // Ex: "R$ 1.000,00" => 1000.00
-      return parseFloat(
-        valorStr
-          .replace("R$","")
-          .replace(/\s/g,"")
-          .replace(/\./g,"")
-          .replace(",",".")
-      );
-    }
-
-    function fixDate(dtStr) {
-      // Pode vir como "2/5/2025" ou "02/05/2025". Vamos normalizar para "MM/DD/YYYY".
-      const parts = dtStr.split("/");
-      const M = parts[0].padStart(2,"0");
-      const D = parts[1].padStart(2,"0");
-      const Y = parts[2];
-      return `${M}/${D}/${Y}`;
-    }
-
-    const dataset = rawData.map(item => ({
-      descricao: item.descricao,
-      date: fixDate(item.date),   // "MM/DD/YYYY"
-      valor: parseValor(item.valorPago)
-    }));
-
-    // --------------------------------------------------------------------
-    // 3) Função para descobrir a semana de fevereiro (1..4), ou 0 se fora
-    // --------------------------------------------------------------------
-    function getFebruaryWeek(dateStr) {
+    function getSemanaDeJaneiro(dateStr) {
+      // Formato "MM/DD/AAAA"
       const [mm, dd, yyyy] = dateStr.split("/");
-      if (mm !== "02" || yyyy !== "2025") return 0;
+      if (mm !== "01" || yyyy !== "2025") return 0; // Só conta se for janeiro/2025
       const day = parseInt(dd, 10);
-      if (day >= 1 && day <= 7)  return 1;
+      if (day >= 1 && day <= 7)   return 1;
       if (day >= 8 && day <= 14) return 2;
       if (day >= 15 && day <= 21) return 3;
-      if (day >= 22 && day <= 28) return 4;
+      if (day >= 22 && day <= 31) return 4;
       return 0;
     }
 
     // --------------------------------------------------------------------
-    // 4) Somar valores por descrição e por semana
-    //    sumsByDesc[desc] = [sem1, sem2, sem3, sem4]
+    // 3) Somar valores por fornecedor
+    //    sums[fornecedor] = [sem1, sem2, sem3, sem4, totalMes]
     // --------------------------------------------------------------------
-    const sumsByDesc = {};
-
+    const sums = {};
     dataset.forEach(item => {
-      const w = getFebruaryWeek(item.date);
-      if (w === 0) return; // ignora se não for fev/2025
-      const desc = item.descricao;
-      if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0,0,0,0];
+      const week = getSemanaDeJaneiro(item.date);
+      if (week === 0) return; // Ignora datas fora de jan/2025
+      const fornecedor = item.vendor;
+
+      if (!sums[fornecedor]) {
+        sums[fornecedor] = [0, 0, 0, 0, 0]; // 4 semanas + 1 total
       }
-      sumsByDesc[desc][w-1] += item.valor;
+      sums[fornecedor][week - 1] += item.value;
+    });
+    // Preenche a posição [4] (total no mês) = soma das 4 semanas
+    Object.keys(sums).forEach(fornecedor => {
+      const arr = sums[fornecedor];
+      arr[4] = arr[0] + arr[1] + arr[2] + arr[3];
     });
 
-    // Lista única de descrições (fornecedores), ordenada
-    const uniqueDescriptions = Object.keys(sumsByDesc).sort();
-
     // --------------------------------------------------------------------
-    // 5) Montar o SELECT de filtro (TODOS + cada descrição)
+    // 4) Montar a lista de fornecedores para o SELECT
     // --------------------------------------------------------------------
-    const descSelect = document.getElementById("descSelect");
+    const fornecedorSelect = document.getElementById("fornecedorSelect");
+    // Opção "Todos"
     const optTodos = document.createElement("option");
     optTodos.value = "TODOS";
     optTodos.text = "Todos";
-    descSelect.appendChild(optTodos);
+    fornecedorSelect.appendChild(optTodos);
 
-    uniqueDescriptions.forEach(desc => {
+    // Lista ordenada de fornecedores
+    const vendorsList = Object.keys(sums).sort();
+    vendorsList.forEach(vendor => {
       const opt = document.createElement("option");
-      opt.value = desc;
-      opt.text = desc;
-      descSelect.appendChild(opt);
+      opt.value = vendor;
+      opt.text = vendor;
+      fornecedorSelect.appendChild(opt);
     });
 
     // --------------------------------------------------------------------
-    // 6) Renderização dos gráficos individuais
+    // 5) Renderizar os gráficos de barras (1 para cada fornecedor)
     // --------------------------------------------------------------------
-    function renderCharts(selectedDesc) {
+    function renderCharts(selectedVendor) {
       const container = document.getElementById("charts-container");
-      container.innerHTML = ""; // limpa gráficos anteriores
+      container.innerHTML = "";
 
-      if (selectedDesc === "TODOS") {
-        // Cria um gráfico para cada fornecedor
-        uniqueDescriptions.forEach(desc => createChart(desc, container));
+      if (selectedVendor === "TODOS") {
+        // Renderiza todos
+        vendorsList.forEach(vendor => createChart(vendor, container));
       } else {
-        createChart(selectedDesc, container);
+        // Renderiza apenas o selecionado
+        createChart(selectedVendor, container);
       }
     }
 
-    // Cria gráfico para UMA descrição (com 4 semanas + total)
-    function createChart(desc, container) {
-      const values = sumsByDesc[desc];
-      if (!values) return;
+    function createChart(fornecedor, container) {
+      const valores = sums[fornecedor]; // [sem1, sem2, sem3, sem4, totalMes]
+      if (!valores) return;
 
-      // Calcula o total
-      const total = values.reduce((acc, val) => acc + val, 0);
-
-      // Monta array com as 4 semanas + "Total"
-      const valuesWithTotal = [...values, total];
-      const categories = [
-        "Semana 1 (1-7)",
-        "Semana 2 (8-14)",
-        "Semana 3 (15-21)",
-        "Semana 4 (22-28)",
-        "Total"
-      ];
-
-      // Título (apenas um H2 no HTML)
+      // Título
       const h2 = document.createElement("h2");
-      h2.textContent = desc;
+      h2.textContent = fornecedor;
       container.appendChild(h2);
 
-      // Div para o gráfico
+      // Div do gráfico
       const chartDiv = document.createElement("div");
       chartDiv.className = "chart-container";
-      const chartId = "chart_" + desc.replace(/\W+/g, "_");
+      const chartId = "chart_" + fornecedor.replace(/\W+/g, "_");
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
-      // Config do ApexCharts
+      // Config ApexCharts (gráfico de barras)
       const options = {
         chart: {
           type: "bar",
@@ -407,12 +321,18 @@
         },
         series: [
           {
-            name: desc,
-            data: valuesWithTotal
+            name: fornecedor,
+            data: valores
           }
         ],
         xaxis: {
-          categories: categories
+          categories: [
+            "Semana 1 (1-7)",
+            "Semana 2 (8-14)",
+            "Semana 3 (15-21)",
+            "Semana 4 (22-31)",
+            "Total no Mês"
+          ]
         },
         dataLabels: {
           formatter: val =>
@@ -425,13 +345,7 @@
           }
         },
         title: {
-          text: `Fornecedor - ${desc}`,
-          align: "center"
-        },
-        subtitle: {
-          text: `Total: R$ ${total.toLocaleString("pt-BR", {
-            minimumFractionDigits: 2
-          })}`,
+          text: `Gastos Semanais - ${fornecedor}`,
           align: "center"
         }
       };
@@ -441,14 +355,14 @@
     }
 
     // --------------------------------------------------------------------
-    // 7) Evento de mudança do SELECT (mostrar gráficos individuais)
+    // 6) Evento de mudança no SELECT: refaz os gráficos de barras
     // --------------------------------------------------------------------
-    descSelect.addEventListener("change", () => {
-      renderCharts(descSelect.value);
+    fornecedorSelect.addEventListener("change", () => {
+      renderCharts(fornecedorSelect.value);
     });
 
     // --------------------------------------------------------------------
-    // 8) Botão "Visão Geral" (gráfico de pizza + card com total geral)
+    // 7) Visão Geral: gráfico de pizza com total de cada fornecedor
     // --------------------------------------------------------------------
     const overviewBtn = document.getElementById("overviewBtn");
     overviewBtn.addEventListener("click", createOverviewChart);
@@ -457,22 +371,20 @@
       const container = document.getElementById("charts-container");
       container.innerHTML = ""; // limpa gráficos anteriores
 
-      // Arrays para o gráfico de pizza
-      const descArray = [];
+      // Vamos pegar apenas o total (índice 4) de cada fornecedor
+      const vendorArray = [];
       const totalArray = [];
 
-      // Monta dados de cada descrição (só o total final)
-      uniqueDescriptions.forEach(desc => {
-        const vals = sumsByDesc[desc];
-        const total = vals.reduce((acc, val) => acc + val, 0);
-        descArray.push(desc);
-        totalArray.push(total);
+      Object.keys(sums).forEach(vendor => {
+        const totalMes = sums[vendor][4];
+        vendorArray.push(vendor);
+        totalArray.push(totalMes);
       });
 
       // Calcula o total geral
       const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
 
-      // Card com o total geral
+      // Cria um "card" mostrando o total geral
       const totalCard = document.createElement("div");
       totalCard.className = "total-card";
       totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
@@ -484,16 +396,16 @@
       chartDiv.id = "overview_chart";
       container.appendChild(chartDiv);
 
-      // Config do ApexCharts (tipo "pie")
+      // Config do ApexCharts (pie)
       const options = {
         chart: {
           type: "pie",
           height: 450
         },
-        series: totalArray,
-        labels: descArray,
+        series: totalArray, // valores
+        labels: vendorArray, // fornecedores
         dataLabels: {
-          formatter: val =>
+          formatter: val => 
             val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%"
         },
         tooltip: {
@@ -503,7 +415,7 @@
           }
         },
         title: {
-          text: "Visão Geral - Fornecedores (Pizza)",
+          text: "Visão Geral - Gastos Totais por Fornecedor (Pizza)",
           align: "center"
         },
         subtitle: {
@@ -517,13 +429,15 @@
     }
 
     // --------------------------------------------------------------------
-    // 9) Função de Tela Cheia
+    // 8) Função Tela Cheia (fundo claro quando em fullscreen)
     // --------------------------------------------------------------------
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
+        // Entrando em fullscreen
         document.body.style.backgroundColor = "#fff";
         document.documentElement.requestFullscreen();
       } else {
+        // Saindo de fullscreen
         document.body.style.backgroundColor = "";
         if (document.exitFullscreen) {
           document.exitFullscreen();
@@ -533,9 +447,9 @@
     window.toggleFullScreen = toggleFullScreen;
 
     // --------------------------------------------------------------------
-    // 10) Renderiza todos os gráficos (individuais) por padrão
+    // 9) Renderiza todos (em barras) por padrão
     // --------------------------------------------------------------------
-    descSelect.value = "TODOS";
+    fornecedorSelect.value = "TODOS";
     renderCharts("TODOS");
   </script>
 </body>
