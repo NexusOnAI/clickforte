@@ -218,6 +218,7 @@
     const rememberMe = document.getElementById("rememberMe");
     const usernameField = document.getElementById("username");
     const passwordField = document.getElementById("password");
+    const iframe = document.getElementById("frame");
 
     window.addEventListener("DOMContentLoaded", function() {
       const savedUsername = localStorage.getItem("savedUsername");
@@ -244,6 +245,8 @@
             localStorage.removeItem("savedPassword");
           }
           loginOverlay.style.display = "none";
+          // Recarrega a página home para reiniciar o efeito
+          iframe.src = "home.html";
         } else {
           alert("Usuário ou senha incorretos!");
         }
