@@ -61,6 +61,9 @@
       text-align: center;
       font-size: 1.5rem;
     }
+    #logoutNotification {
+      display: none;
+    }
     #loginOverlay .login-form .form-control {
       border-radius: 5px;
       box-shadow: none;
@@ -164,6 +167,10 @@
   <div id="loginOverlay">
     <div class="login-form">
       <h3>Acesso Restrito</h3>
+      <!-- Notificação de Logout -->
+      <div id="logoutNotification" class="alert alert-warning text-center" role="alert">
+        Você foi desconectado!
+      </div>
       <form id="formLogin">
         <div class="mb-3">
           <label for="username" class="form-label">Usuário</label>
@@ -219,7 +226,9 @@
     const usernameField = document.getElementById("username");
     const passwordField = document.getElementById("password");
     const iframe = document.getElementById("frame");
+    const logoutNotification = document.getElementById("logoutNotification");
 
+    // Ao carregar a página, verifica se há indicação de que o usuário estava logado
     window.addEventListener("DOMContentLoaded", function() {
       const savedUsername = localStorage.getItem("savedUsername");
       const savedPassword = localStorage.getItem("savedPassword");
@@ -227,6 +236,11 @@
       if (savedPassword) {
         passwordField.value = savedPassword;
         rememberMe.checked = true;
+      }
+      // Se a chave "loggedIn" estiver presente, exibe a notificação e a remove
+      if (localStorage.getItem("loggedIn") === "true") {
+        logoutNotification.style.display = "block";
+        localStorage.removeItem("loggedIn");
       }
     });
 
@@ -244,6 +258,8 @@
             localStorage.removeItem("savedUsername");
             localStorage.removeItem("savedPassword");
           }
+          // Armazena a indicação de que o usuário estava logado, para que na atualização seja exibida a notificação
+          localStorage.setItem("loggedIn", "true");
           loginOverlay.style.display = "none";
           // Recarrega a página home para reiniciar o efeito
           iframe.src = "home.html";
