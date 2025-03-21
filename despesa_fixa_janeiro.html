@@ -2,12 +2,16 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <!-- Força uma largura fixa para simular a visão de desktop -->
+  <meta name="viewport" content="width=1024" />
   <title>Despesas Fixas por Semana - Janeiro/2025</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
+    /* Estilos Globais */
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      padding: 0;
       background-color: #fff;
       color: #212529;
     }
@@ -15,17 +19,14 @@
       margin: 10px 0;
       text-align: center;
     }
+    /* Barra Superior */
     .top-bar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
-      justify-content: center;
-    }
-    .chart-container {
-      margin-bottom: 50px;
-      max-width: 100%;
-      margin: 0 auto 50px;
     }
     .fullscreen-btn {
       cursor: pointer;
@@ -33,22 +34,45 @@
       border: 1px solid #aaa;
       background: #f4f4f4;
       border-radius: 4px;
+      transition: background 0.3s ease;
     }
     .fullscreen-btn:hover {
       background: #e8e8e8;
     }
-    /* Card simples para exibir o total geral */
+    /* Container dos Gráficos */
+    .chart-container {
+      margin: 0 auto 50px;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 10px;
+    }
+    /* Card para o Total Geral */
     .total-card {
       display: inline-block;
-      margin: 10px 0;
+      margin: 10px auto;
       padding: 10px 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
       background-color: #f9f9f9;
       font-weight: bold;
       text-align: center;
-      width: 100%;
+      width: 90%;
+      max-width: 400px;
     }
+    /* Removido o CSS responsivo para mobile para manter a visão de computador */
+    /*
+    @media (max-width: 576px) {
+      body {
+        font-size: 14px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      h2 {
+        font-size: 18px;
+      }
+    }
+    */
   </style>
 </head>
 <body>
@@ -56,18 +80,15 @@
 
   <!-- Barra de filtros e botões -->
   <div class="top-bar">
-    <!-- SELECT para filtrar descrição -->
     <label for="descSelect"><strong>Filtrar Descrição:</strong></label>
     <select id="descSelect">
       <!-- Opções criadas via JavaScript -->
     </select>
 
-    <!-- Botão Tela Cheia -->
     <button class="fullscreen-btn" onclick="toggleFullScreen()">
       Tela Cheia
     </button>
 
-    <!-- Botão Visão Geral -->
     <button id="overviewBtn" class="fullscreen-btn">
       Visão Geral
     </button>
@@ -205,7 +226,7 @@
     ];
 
     // --------------------------------------------------------------------
-    // 2) Converter datas p/ padronizar "MM/DD/YYYY" e valores p/ Number
+    // 2) Converter datas para padronizar "MM/DD/YYYY" e valores para Number
     // --------------------------------------------------------------------
     function parseValor(valorStr) {
       return parseFloat(
@@ -232,7 +253,7 @@
     }));
 
     // --------------------------------------------------------------------
-    // 3) Função para descobrir a semana de janeiro (1..4) ou 0 se fora
+    // 3) Função para determinar a semana de janeiro (1..4) ou 0 se fora
     // --------------------------------------------------------------------
     function getJanuaryWeek(dateStr) {
       const [mm, dd, yyyy] = dateStr.split("/");
@@ -247,18 +268,18 @@
 
     // --------------------------------------------------------------------
     // 4) Somar valores por descrição e por semana
-    //    sumsByDesc[desc] = [sem1, sem2, sem3, sem4]
+    //    sumsByDesc[desc] = [semana1, semana2, semana3, semana4]
     // --------------------------------------------------------------------
     const sumsByDesc = {};
 
     dataset.forEach(item => {
       const w = getJanuaryWeek(item.date);
-      if (w === 0) return; // ignorar se não for janeiro/2025
+      if (w === 0) return; // ignora se não for janeiro/2025
       const desc = item.descricao;
       if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0,0,0,0];
+        sumsByDesc[desc] = [0, 0, 0, 0];
       }
-      sumsByDesc[desc][w-1] += item.valor;
+      sumsByDesc[desc][w - 1] += item.valor;
     });
 
     // Lista única de descrições
@@ -281,7 +302,7 @@
     });
 
     // --------------------------------------------------------------------
-    // 6) Renderização dos gráficos individuais com a UI modernizada
+    // 6) Renderização dos gráficos individuais
     // --------------------------------------------------------------------
     function renderCharts(selectedDesc) {
       const container = document.getElementById("charts-container");
@@ -294,7 +315,7 @@
       }
     }
 
-    // Cria gráfico para UMA descrição (com 4 semanas + total)
+    // Cria gráfico para uma descrição (4 semanas + total)
     function createChart(desc, container) {
       const values = sumsByDesc[desc];
       if (!values) return;
@@ -324,7 +345,7 @@
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
-      // Configuração do ApexCharts com as opções para UI moderna (semelhantes ao relatório moderno)
+      // Configuração do ApexCharts sem ajustes responsivos
       const options = {
         chart: {
           type: "bar",
@@ -406,29 +427,7 @@
         subtitle: {
           text: `Total: R$ ${total.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
           align: "center"
-        },
-        responsive: [
-          {
-            breakpoint: 768,
-            options: {
-              chart: { height: 300 },
-              plotOptions: { bar: { columnWidth: "70%" } },
-              dataLabels: { style: { fontSize: "10px" } },
-              xaxis: { labels: { style: { fontSize: "12px" } } },
-              yaxis: { labels: { style: { fontSize: "10px" } } }
-            }
-          },
-          {
-            breakpoint: 576,
-            options: {
-              chart: { height: 250 },
-              plotOptions: { bar: { columnWidth: "80%" } },
-              dataLabels: { style: { fontSize: "8px" } },
-              xaxis: { labels: { style: { fontSize: "10px" } } },
-              yaxis: { labels: { style: { fontSize: "8px" } } }
-            }
-          }
-        ]
+        }
       };
 
       const chart = new ApexCharts(chartDiv, options);
@@ -436,7 +435,7 @@
     }
 
     // --------------------------------------------------------------------
-    // 7) Evento de mudança do SELECT (mostrar gráficos individuais)
+    // 7) Evento de mudança do SELECT para exibir os gráficos individuais
     // --------------------------------------------------------------------
     descSelect.addEventListener("change", () => {
       renderCharts(descSelect.value);
@@ -456,7 +455,7 @@
       const descArray = [];
       const totalArray = [];
 
-      // Monta dados de cada descrição (só o total final)
+      // Monta os dados de cada descrição (apenas o total final)
       uniqueDescriptions.forEach(desc => {
         const vals = sumsByDesc[desc];
         const total = vals.reduce((acc, val) => acc + val, 0);
@@ -467,7 +466,7 @@
       // Calcula o total geral
       const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
 
-      // === CRIA O "CARD" PARA EXIBIR O TOTAL GERAL ===
+      // Cria o "card" para exibir o total geral
       const totalCard = document.createElement("div");
       totalCard.className = "total-card";
       totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -479,7 +478,7 @@
       chartDiv.id = "overview_chart";
       container.appendChild(chartDiv);
 
-      // Config ApexCharts (tipo "pie")
+      // Configuração do ApexCharts (tipo "pie")
       const options = {
         chart: {
           type: "pie",
@@ -512,7 +511,7 @@
     }
 
     // --------------------------------------------------------------------
-    // 9) Função de Tela Cheia
+    // 9) Função para Tela Cheia
     // --------------------------------------------------------------------
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
@@ -528,7 +527,7 @@
     window.toggleFullScreen = toggleFullScreen;
 
     // --------------------------------------------------------------------
-    // 10) Renderiza todos os gráficos (individuais) por padrão
+    // 10) Renderiza todos os gráficos individuais por padrão
     // --------------------------------------------------------------------
     descSelect.value = "TODOS";
     renderCharts("TODOS");
