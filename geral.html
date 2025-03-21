@@ -9,8 +9,8 @@
   <!-- ApexCharts JS -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    /* Responsividade do gráfico */
-    #chart {
+    /* Responsividade dos gráficos */
+    #chart, #chart2 {
       max-width: 100%;
       margin: 0 auto;
     }
@@ -22,13 +22,23 @@
 </head>
 <body>
   <div class="container my-5">
-    <h2 class="text-center mb-4">Relatório Geral de Gastos</h2>
+    <!-- Gráfico Geral Mensal -->
+    <h2 class="text-center mb-4">Relatório Geral de Gastos (Mensal)</h2>
     <div id="chart"></div>
+
+    <hr class="my-5">
+
+    <!-- Gráfico de Gastos de Janeiro por Semana (4 semanas) -->
+    <h2 class="text-center mb-4">Gastos de Janeiro por Semana</h2>
+    <div id="chart2"></div>
   </div>
 
   <script>
-    // Configuração de gráfico de barras moderno com ApexCharts
-    var options = {
+    /*******************************************************************
+     *               GRÁFICO GERAL MENSAL
+     ******************************************************************/
+    // Valores de exemplo para Janeiro, Fevereiro e Março
+    var optionsMensal = {
       chart: {
         type: 'bar',
         height: 350,
@@ -40,7 +50,6 @@
           borderRadius: 8,
           horizontal: false,
           columnWidth: '50%',
-          distributed: false,
           dataLabels: {
             position: 'top'
           }
@@ -48,8 +57,8 @@
       },
       dataLabels: {
         enabled: true,
-        formatter: function(val) { 
-          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); 
+        formatter: function(val) {
+          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         },
         offsetY: -20,
         style: {
@@ -63,7 +72,6 @@
       }],
       xaxis: {
         categories: ['Janeiro', 'Fevereiro', 'Março'],
-        position: 'bottom',
         labels: {
           style: {
             fontSize: '14px',
@@ -75,8 +83,8 @@
       },
       yaxis: {
         labels: {
-          formatter: function(val) { 
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); 
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
           },
           style: {
             fontSize: '12px',
@@ -90,7 +98,6 @@
           shade: 'light',
           type: "vertical",
           shadeIntensity: 0.3,
-          inverseColors: false,
           opacityFrom: 0.85,
           opacityTo: 0.85,
           stops: [0, 90, 100]
@@ -104,45 +111,118 @@
           }
         }
       },
-      theme: {
-        mode: 'light'
-      },
+      theme: { mode: 'light' },
       responsive: [{
         breakpoint: 768,
         options: {
-          chart: {
-            height: 300
-          },
-          plotOptions: {
-            bar: {
-              columnWidth: '70%'
-            }
-          },
-          dataLabels: {
-            style: {
-              fontSize: '10px'
-            }
-          },
-          xaxis: {
-            labels: {
-              style: {
-                fontSize: '12px'
-              }
-            }
-          },
-          yaxis: {
-            labels: {
-              style: {
-                fontSize: '10px'
-              }
-            }
-          }
+          chart: { height: 300 },
+          plotOptions: { bar: { columnWidth: '70%' } },
+          dataLabels: { style: { fontSize: '10px' } },
+          xaxis: { labels: { style: { fontSize: '12px' } } },
+          yaxis: { labels: { style: { fontSize: '10px' } } }
         }
       }]
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+    var chartMensal = new ApexCharts(document.querySelector("#chart"), optionsMensal);
+    chartMensal.render();
+
+    /*******************************************************************
+     *        GRÁFICO DE GASTOS DE JANEIRO POR SEMANA (4 semanas)
+     ******************************************************************/
+    // Valores já calculados para cada semana:
+    // Semana 1 (dias 1 a 7):   R$ 1.059.106,09
+    // Semana 2 (dias 8 a 14):  R$ 1.390.876,49
+    // Semana 3 (dias 15 a 21): R$ 1.356.480,34
+    // Semana 4 (dias 22 a 31): R$ 1.880.357,16
+    var valoresSemanas = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
+
+    var optionsSemanalJaneiro = {
+      chart: {
+        type: 'bar',
+        height: 350,
+        background: 'transparent',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 8,
+          horizontal: false,
+          columnWidth: '50%',
+          dataLabels: { position: 'top' }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function(val) {
+          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: ["#000"]
+        }
+      },
+      series: [{
+        name: 'Total da Semana',
+        data: valoresSemanas
+      }],
+      xaxis: {
+        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+        labels: {
+          style: {
+            fontSize: '14px',
+            colors: ["#000"]
+          }
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          },
+          style: {
+            fontSize: '12px',
+            colors: ["#000"]
+          }
+        }
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: "vertical",
+          shadeIntensity: 0.3,
+          opacityFrom: 0.85,
+          opacityTo: 0.85,
+          stops: [0, 90, 100]
+        }
+      },
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          }
+        }
+      },
+      theme: { mode: 'light' },
+      responsive: [{
+        breakpoint: 768,
+        options: {
+          chart: { height: 300 },
+          plotOptions: { bar: { columnWidth: '70%' } },
+          dataLabels: { style: { fontSize: '10px' } },
+          xaxis: { labels: { style: { fontSize: '12px' } } },
+          yaxis: { labels: { style: { fontSize: '10px' } } }
+        }
+      }]
+    };
+
+    var chartSemanalJaneiro = new ApexCharts(document.querySelector("#chart2"), optionsSemanalJaneiro);
+    chartSemanalJaneiro.render();
   </script>
 
   <!-- Bootstrap JS Bundle -->
