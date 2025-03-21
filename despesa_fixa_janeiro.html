@@ -406,7 +406,7 @@
             {
               breakpoint: 576,
               options: {
-                chart: { height: 250 },
+                chart: { height: 300 },
                 plotOptions: { bar: { columnWidth: "80%" } },
                 dataLabels: { style: { fontSize: "8px" } },
                 xaxis: { labels: { style: { fontSize: "10px" } } },
@@ -452,13 +452,7 @@
         // Calcula o total geral
         const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
 
-        // Cria a div do gráfico (primeiro)
-        const chartDiv = document.createElement("div");
-        chartDiv.className = "mb-12 w-full mx-auto";
-        chartDiv.id = "overview_chart";
-        container.appendChild(chartDiv);
-
-        // Cria o "card" para exibir o total geral (informações abaixo)
+        // Cria o "card" para exibir o total geral (exibido em cima)
         const totalCard = document.createElement("div");
         totalCard.className =
           "inline-block my-2 px-5 py-2 border border-gray-300 rounded-lg bg-gray-100 font-bold text-center w-full";
@@ -468,11 +462,17 @@
         })}`;
         container.appendChild(totalCard);
 
-        // Configuração do ApexCharts (tipo "pie") com responsividade aprimorada para mobile
+        // Cria a div do gráfico (abaixo do total)
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "mb-12 w-full mx-auto";
+        chartDiv.id = "overview_chart";
+        container.appendChild(chartDiv);
+
+        // Configuração do ApexCharts para gráfico de pizza com maior altura em mobile
         const options = {
           chart: {
             type: "pie",
-            height: 550,
+            height: 550, // altura padrão para desktops
           },
           series: totalArray,
           labels: descArray,
@@ -502,19 +502,11 @@
             {
               breakpoint: 576,
               options: {
-                chart: { height: 350 },
+                chart: { height: 750 }, // aumenta a altura no mobile
                 legend: { position: "bottom" },
-                dataLabels: { style: { fontSize: "10px" } },
+                dataLabels: { style: { fontSize: "14px" } },
               },
-            },
-            {
-              breakpoint: 768,
-              options: {
-                chart: { height: 450 },
-                legend: { position: "bottom" },
-                dataLabels: { style: { fontSize: "12px" } },
-              },
-            },
+            }
           ],
         };
 
