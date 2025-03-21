@@ -2,6 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <!-- Meta tag para responsividade -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Despesas Fixas por Semana - Janeiro/2025</title>
     <!-- Importa o Tailwind via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,30 +16,31 @@
     </h1>
 
     <!-- Barra de filtros e botões -->
-    <div class="flex items-center gap-2.5 mb-5 justify-center">
+    <div class="flex flex-wrap items-center gap-2.5 mb-5 justify-center">
       <label for="descSelect" class="font-semibold">Filtrar Descrição:</label>
+      <!-- A classe w-32 define uma largura menor no mobile; md:w-auto restaura o tamanho padrão em telas maiores -->
       <select
         id="descSelect"
-        class="border border-gray-400 rounded px-2 py-1 focus:outline-none"
+        class="w-32 md:w-auto border border-gray-400 rounded px-2 py-1 text-sm focus:outline-none md:text-base md:px-2 md:py-1"
       >
         <!-- Opções criadas via JavaScript -->
       </select>
       <button
-        class="cursor-pointer px-3 py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none"
+        class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
         onclick="toggleFullScreen()"
       >
         Tela Cheia
       </button>
       <button
         id="overviewBtn"
-        class="cursor-pointer px-3 py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none"
+        class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
       >
         Visão Geral
       </button>
     </div>
 
     <!-- Área para inserir os gráficos dinamicamente -->
-    <div id="charts-container"></div>
+    <div id="charts-container" class="w-full"></div>
 
     <script>
       // --------------------------------------------------------------------
