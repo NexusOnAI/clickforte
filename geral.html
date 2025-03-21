@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
     /* Responsividade dos gráficos */
-    #chart, #chart2, #chart3 {
+    #chart, #chart2, #chart3, #chart4 {
       max-width: 100%;
       margin: 0 auto;
     }
@@ -37,12 +37,18 @@
     <!-- Gráfico de Gastos de Fevereiro por Semana (4 semanas) -->
     <h2 class="text-center mb-4">Gastos de Fevereiro por Semana</h2>
     <div id="chart3"></div>
+
+    <hr class="my-5">
+
+    <!-- Gráfico de Gastos de Março por Semana (4 semanas) -->
+    <h2 class="text-center mb-4">Gastos de Março por Semana</h2>
+    <div id="chart4"></div>
   </div>
 
   <script>
     /*******************************************************************
      *               GRÁFICO GERAL MENSAL COM COLUNA TOTAL
-     ******************************************************************/
+     *******************************************************************/
     // Valores para Janeiro, Fevereiro e Março e o Total (soma dos três)
     var valorJaneiro = 5686819.08,
         valorFevereiro = 6105182.26,
@@ -150,7 +156,7 @@
 
     /*******************************************************************
      *        GRÁFICO DE GASTOS DE JANEIRO POR SEMANA (4 semanas)
-     ******************************************************************/
+     *******************************************************************/
     // Valores já calculados para cada semana de Janeiro:
     // Semana 1 (dias 1 a 7):   R$ 1.059.106,09
     // Semana 2 (dias 8 a 14):  R$ 1.390.876,49
@@ -259,7 +265,7 @@
 
     /*******************************************************************
      *        GRÁFICO DE GASTOS DE FEVEREIRO POR SEMANA (4 semanas)
-     ******************************************************************/
+     *******************************************************************/
     // Distribuição dos gastos de fevereiro (total: R$ 6.105.182,26)
     // Utilizando um fator de ajuste de 1.073 sobre os valores de janeiro:
     // Semana 1: 1059106.09 * 1.073 ≈ R$ 1.347.844,70
@@ -366,6 +372,115 @@
 
     var chartSemanalFev = new ApexCharts(document.querySelector("#chart3"), optionsSemanalFev);
     chartSemanalFev.render();
+
+    /*******************************************************************
+     *        GRÁFICO DE GASTOS DE MARÇO POR SEMANA (4 semanas)
+     *******************************************************************/
+    // Cálculos com base nos dados de março:
+    // Semana 1 (1 a 7):   ≈ R$ 1.516.175,78
+    // Semana 2 (8 a 14):  ≈ R$ 1.634.234,11
+    // Semana 3 (15 a 21): ≈ R$ 793.243,02
+    // Semana 4 (22 a 31): ≈ R$ 0,00 (sem registros)
+    var valoresSemanasMarco = [1516175.78, 1634234.11, 793243.02, 0];
+
+    var optionsSemanalMarco = {
+      chart: {
+        type: 'bar',
+        height: 350,
+        background: 'transparent',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 8,
+          horizontal: false,
+          columnWidth: '50%',
+          dataLabels: { position: 'top' }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function(val) {
+          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: ["#000"]
+        }
+      },
+      series: [{
+        name: 'Total da Semana',
+        data: valoresSemanasMarco
+      }],
+      xaxis: {
+        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+        labels: {
+          style: {
+            fontSize: '14px',
+            colors: ["#000"]
+          }
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          },
+          style: {
+            fontSize: '12px',
+            colors: ["#000"]
+          }
+        }
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: "vertical",
+          shadeIntensity: 0.3,
+          opacityFrom: 0.85,
+          opacityTo: 0.85,
+          stops: [0, 90, 100]
+        }
+      },
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+        }
+      },
+      theme: { mode: 'light' },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            chart: { height: 300 },
+            plotOptions: { bar: { columnWidth: '70%' } },
+            dataLabels: { style: { fontSize: '10px' } },
+            xaxis: { labels: { style: { fontSize: '12px' } } },
+            yaxis: { labels: { style: { fontSize: '10px' } } }
+          }
+        },
+        {
+          breakpoint: 576,
+          options: {
+            chart: { height: 250 },
+            plotOptions: { bar: { columnWidth: '80%' } },
+            dataLabels: { style: { fontSize: '8px' } },
+            xaxis: { labels: { style: { fontSize: '10px' } } },
+            yaxis: { labels: { style: { fontSize: '8px' } } }
+          }
+        }
+      ]
+    };
+
+    var chartSemanalMarco = new ApexCharts(document.querySelector("#chart4"), optionsSemanalMarco);
+    chartSemanalMarco.render();
   </script>
 
   <!-- Bootstrap JS Bundle -->
