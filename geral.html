@@ -22,7 +22,7 @@
 </head>
 <body>
   <div class="container my-5">
-    <!-- Gráfico Geral Mensal -->
+    <!-- Gráfico Geral Mensal com coluna Total -->
     <h2 class="text-center mb-4">Relatório Geral de Gastos (Mensal)</h2>
     <div id="chart"></div>
 
@@ -41,9 +41,14 @@
 
   <script>
     /*******************************************************************
-     *               GRÁFICO GERAL MENSAL
+     *               GRÁFICO GERAL MENSAL COM COLUNA TOTAL
      ******************************************************************/
-    // Valores de exemplo para Janeiro, Fevereiro e Março
+    // Valores para Janeiro, Fevereiro e Março e o Total (soma dos três)
+    var valorJaneiro = 5686819.08,
+        valorFevereiro = 6105182.26,
+        valorMarco = 3943652.91,
+        valorTotal = valorJaneiro + valorFevereiro + valorMarco; // 15735654.25
+
     var optionsMensal = {
       chart: {
         type: 'bar',
@@ -72,10 +77,10 @@
       },
       series: [{
         name: 'Valor Geral',
-        data: [5686819.08, 6105182.26, 3943652.91]
+        data: [valorJaneiro, valorFevereiro, valorMarco, valorTotal]
       }],
       xaxis: {
-        categories: ['Janeiro', 'Fevereiro', 'Março'],
+        categories: ['Janeiro', 'Fevereiro', 'Março', 'Total'],
         labels: {
           style: {
             fontSize: '14px',
