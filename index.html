@@ -143,12 +143,18 @@
         font-size: 16px;
       }
     }
+    /* Improved Menu Styles */
     .menu {
-      text-align: center;
       margin: 10px 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 5px;
+      padding: 0 10px;
     }
     .menu .btn {
-      margin: 5px;
+      flex: 0 0 auto;
       font-size: 0.95rem;
     }
     main {
@@ -204,16 +210,18 @@
     </div>
   </header>
 
+  <!-- Menu com rolagem horizontal estilo roleta para mobile -->
   <div class="menu">
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='home.html'">Home</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='geral.html'">Geral</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_janeiro.html'">Janeiro</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_fevereiro.html'">Fevereiro</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_marco.html'">Março</button>
+    <!-- Adicione mais botões se necessário -->
   </div>
 
   <main>
-    <!-- Após o login, o iframe inicia com a página home "Janeiro" -->
+    <!-- Após o login, o iframe inicia com a página home -->
     <iframe id="frame" src="home.html"></iframe>
   </main>
 
