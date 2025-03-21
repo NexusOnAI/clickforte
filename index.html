@@ -143,15 +143,27 @@
         font-size: 16px;
       }
     }
-    /* Improved Menu Styles */
+    /* Menu Styles */
     .menu {
       margin: 10px 0;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
       display: flex;
-      flex-wrap: nowrap;
       gap: 5px;
       padding: 0 10px;
+    }
+    /* Mobile: menu rolável estilo roleta */
+    @media (max-width: 576px) {
+      .menu {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+      }
+    }
+    /* Desktop: centraliza o menu */
+    @media (min-width: 577px) {
+      .menu {
+        justify-content: center;
+        overflow-x: visible;
+      }
     }
     .menu .btn {
       flex: 0 0 auto;
@@ -210,7 +222,7 @@
     </div>
   </header>
 
-  <!-- Menu com rolagem horizontal estilo roleta para mobile -->
+  <!-- Menu com rolagem horizontal no mobile e centralizado no desktop -->
   <div class="menu">
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='home.html'">Home</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='geral.html'">Geral</button>
