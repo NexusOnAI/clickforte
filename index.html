@@ -178,12 +178,27 @@
       border: none;
       flex: 1;
     }
+    /* Mobile logo in login form */
+    .mobile-logo {
+      display: none;
+    }
+    @media (max-width: 576px) {
+      .mobile-logo {
+        display: block;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+    }
   </style>
 </head>
 <body>
   <!-- Login Overlay -->
   <div id="loginOverlay">
     <div class="login-form">
+      <!-- Mobile Logo for Login Form -->
+      <div class="mobile-logo">
+        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" style="max-width: 100px;">
+      </div>
       <h3>Acesso Restrito</h3>
       <!-- Notificação de Logout -->
       <div id="logoutNotification" class="alert alert-warning text-center" role="alert">
