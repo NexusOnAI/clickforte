@@ -2,15 +2,12 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <!-- Meta tag para responsividade -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Despesas Fixas por Semana - Janeiro/2025</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 10px;
-      padding: 0;
+      margin: 20px;
       background-color: #fff;
       color: #212529;
     }
@@ -24,12 +21,11 @@
       gap: 10px;
       margin-bottom: 20px;
       justify-content: center;
-      flex-wrap: wrap;
     }
     .chart-container {
+      margin-bottom: 50px;
       max-width: 100%;
       margin: 0 auto 50px;
-      padding: 0 10px;
     }
     .fullscreen-btn {
       cursor: pointer;
@@ -37,47 +33,21 @@
       border: 1px solid #aaa;
       background: #f4f4f4;
       border-radius: 4px;
-      font-size: 14px;
     }
     .fullscreen-btn:hover {
       background: #e8e8e8;
     }
+    /* Card simples para exibir o total geral */
     .total-card {
-      display: block;
-      margin: 10px auto;
+      display: inline-block;
+      margin: 10px 0;
       padding: 10px 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
       background-color: #f9f9f9;
       font-weight: bold;
       text-align: center;
-      width: calc(100% - 20px);
-    }
-    /* Estilo para a mensagem centralizada */
-    .centered-message {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 20px 30px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      z-index: 9999;
-      font-size: 16px;
-      text-align: center;
-    }
-    /* Ajustes específicos para telas pequenas */
-    @media (max-width: 576px) {
-      .fullscreen-btn {
-        padding: 6px 10px;
-        font-size: 12px;
-      }
-      .centered-message {
-        font-size: 14px;
-        padding: 15px 20px;
-      }
+      width: 100%;
     }
   </style>
 </head>
@@ -86,15 +56,18 @@
 
   <!-- Barra de filtros e botões -->
   <div class="top-bar">
+    <!-- SELECT para filtrar descrição -->
     <label for="descSelect"><strong>Filtrar Descrição:</strong></label>
     <select id="descSelect">
       <!-- Opções criadas via JavaScript -->
     </select>
 
+    <!-- Botão Tela Cheia -->
     <button class="fullscreen-btn" onclick="toggleFullScreen()">
       Tela Cheia
     </button>
 
+    <!-- Botão Visão Geral -->
     <button id="overviewBtn" class="fullscreen-btn">
       Visão Geral
     </button>
@@ -104,20 +77,10 @@
   <div id="charts-container"></div>
 
   <script>
-    // Função para exibir uma mensagem centralizada na tela
-    function showCenteredMessage(message) {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = "centered-message";
-      messageDiv.innerText = message;
-      document.body.appendChild(messageDiv);
-      setTimeout(() => {
-        messageDiv.remove();
-      }, 2000);
-    }
-
     // --------------------------------------------------------------------
     // 1) Dados brutos de "Despesa Fixa" (com ALUGUEL FABRICA NOVA removido
     //    e substituído por ALAMEDA GLÓRIA, 903 e ALAMEDA GLÓRIA, 919)
+    //    Cada item terá { descricao, date, valorPago }
     // --------------------------------------------------------------------
     const rawData = [
       { descricao: "REEMBOLSO BRUNO CALHADO",                date: "01/02/2025", valorPago: "R$ 50,00" },
@@ -216,7 +179,8 @@
       { descricao: "MERCADO LIVRE",                          date: "1/27/2025",  valorPago: "R$ 273,37" },
       { descricao: "BARUERI",                                date: "1/27/2025",  valorPago: "R$ 205,70" },
       { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO",       date: "1/27/2025",  valorPago: "R$ 7.500,00" },
-      { descricao: "ALUGUEL FABRICA NOVA",                   date: "1/27/2025",  valorPago: "R$ 0,00" }, /* removido */
+      // Removemos "ALUGUEL FABRICA NOVA"
+      // E adicionamos:
       { descricao: "ALAMEDA GLÓRIA, 903",                    date: "1/27/2025",  valorPago: "R$ 13.983,04" },
       { descricao: "ALAMEDA GLÓRIA, 919",                    date: "1/27/2025",  valorPago: "R$ 13.983,04" },
       { descricao: "REEMBOLSO TIAGO",                        date: "1/28/2025",  valorPago: "R$ 15.400,00" },
@@ -241,29 +205,29 @@
     ];
 
     // --------------------------------------------------------------------
-    // 2) Converter datas para padronizar "MM/DD/YYYY" e valores para Number
+    // 2) Converter datas p/ padronizar "MM/DD/YYYY" e valores p/ Number
     // --------------------------------------------------------------------
     function parseValor(valorStr) {
       return parseFloat(
         valorStr
-          .replace("R$", "")
-          .replace(/\s/g, "")
-          .replace(/\./g, "")
-          .replace(",", ".")
+          .replace("R$","")
+          .replace(/\s/g,"")
+          .replace(/\./g,"")
+          .replace(",",".")
       );
     }
 
     function fixDate(dtStr) {
       const parts = dtStr.split("/");
-      const M = parts[0].padStart(2, "0");
-      const D = parts[1].padStart(2, "0");
+      const M = parts[0].padStart(2,"0");
+      const D = parts[1].padStart(2,"0");
       const Y = parts[2];
       return `${M}/${D}/${Y}`;
     }
 
     const dataset = rawData.map(item => ({
       descricao: item.descricao,
-      date: fixDate(item.date), // Formato "MM/DD/YYYY"
+      date: fixDate(item.date), // "MM/DD/YYYY"
       valor: parseValor(item.valorPago)
     }));
 
@@ -274,7 +238,7 @@
       const [mm, dd, yyyy] = dateStr.split("/");
       if (mm !== "01" || yyyy !== "2025") return 0;
       const day = parseInt(dd, 10);
-      if (day >= 1 && day <= 7) return 1;
+      if (day >= 1 && day <= 7)  return 1;
       if (day >= 8 && day <= 14) return 2;
       if (day >= 15 && day <= 21) return 3;
       if (day >= 22 && day <= 31) return 4;
@@ -289,12 +253,12 @@
 
     dataset.forEach(item => {
       const w = getJanuaryWeek(item.date);
-      if (w === 0) return;
+      if (w === 0) return; // ignorar se não for janeiro/2025
       const desc = item.descricao;
       if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0, 0, 0, 0];
+        sumsByDesc[desc] = [0,0,0,0];
       }
-      sumsByDesc[desc][w - 1] += item.valor;
+      sumsByDesc[desc][w-1] += item.valor;
     });
 
     // Lista única de descrições
@@ -317,11 +281,11 @@
     });
 
     // --------------------------------------------------------------------
-    // 6) Renderização dos gráficos individuais com suporte mobile
+    // 6) Renderização dos gráficos individuais com a UI modernizada
     // --------------------------------------------------------------------
     function renderCharts(selectedDesc) {
       const container = document.getElementById("charts-container");
-      container.innerHTML = ""; // Limpa gráficos anteriores
+      container.innerHTML = ""; // limpa gráficos anteriores
 
       if (selectedDesc === "TODOS") {
         uniqueDescriptions.forEach(desc => createChart(desc, container));
@@ -330,12 +294,15 @@
       }
     }
 
-    // Cria gráfico para uma descrição (com 4 semanas + total)
+    // Cria gráfico para UMA descrição (com 4 semanas + total)
     function createChart(desc, container) {
       const values = sumsByDesc[desc];
       if (!values) return;
 
+      // Calcula o total
       const total = values.reduce((acc, val) => acc + val, 0);
+
+      // Array com as 4 semanas + "Total"
       const valuesWithTotal = [...values, total];
       const categories = [
         "Semana 1 (1-7)",
@@ -345,29 +312,25 @@
         "Total"
       ];
 
+      // Título
       const h2 = document.createElement("h2");
       h2.textContent = desc;
       container.appendChild(h2);
 
+      // Div para o gráfico
       const chartDiv = document.createElement("div");
       chartDiv.className = "chart-container";
       const chartId = "chart_" + desc.replace(/\W+/g, "_");
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
+      // Configuração do ApexCharts com as opções para UI moderna (semelhantes ao relatório moderno)
       const options = {
         chart: {
           type: "bar",
           height: 350,
           background: "transparent",
-          toolbar: { show: false },
-          events: {
-            dataPointSelection: function(event, chartContext, config) {
-              const category = config.w.config.xaxis.categories[config.dataPointIndex];
-              const value = config.w.config.series[config.seriesIndex].data[config.dataPointIndex];
-              showCenteredMessage("Coluna: " + category + " - Valor: R$ " + value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            }
-          }
+          toolbar: { show: false }
         },
         plotOptions: {
           bar: {
@@ -487,11 +450,13 @@
 
     function createOverviewChart() {
       const container = document.getElementById("charts-container");
-      container.innerHTML = "";
+      container.innerHTML = ""; // limpa gráficos anteriores
 
+      // Arrays para o gráfico de pizza
       const descArray = [];
       const totalArray = [];
 
+      // Monta dados de cada descrição (só o total final)
       uniqueDescriptions.forEach(desc => {
         const vals = sumsByDesc[desc];
         const total = vals.reduce((acc, val) => acc + val, 0);
@@ -499,18 +464,22 @@
         totalArray.push(total);
       });
 
+      // Calcula o total geral
       const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
 
+      // === CRIA O "CARD" PARA EXIBIR O TOTAL GERAL ===
       const totalCard = document.createElement("div");
       totalCard.className = "total-card";
       totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       container.appendChild(totalCard);
 
+      // Cria a div do gráfico
       const chartDiv = document.createElement("div");
       chartDiv.className = "chart-container";
       chartDiv.id = "overview_chart";
       container.appendChild(chartDiv);
 
+      // Config ApexCharts (tipo "pie")
       const options = {
         chart: {
           type: "pie",
