@@ -48,7 +48,9 @@
       },
       dataLabels: {
         enabled: true,
-        formatter: function(val) { return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); },
+        formatter: function(val) { 
+          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); 
+        },
         offsetY: -20,
         style: {
           fontSize: '12px',
@@ -73,7 +75,9 @@
       },
       yaxis: {
         labels: {
-          formatter: function(val) { return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); },
+          formatter: function(val) { 
+            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); 
+          },
           style: {
             fontSize: '12px',
             colors: ["#000"]
@@ -102,7 +106,39 @@
       },
       theme: {
         mode: 'light'
-      }
+      },
+      responsive: [{
+        breakpoint: 768,
+        options: {
+          chart: {
+            height: 300
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: '70%'
+            }
+          },
+          dataLabels: {
+            style: {
+              fontSize: '10px'
+            }
+          },
+          xaxis: {
+            labels: {
+              style: {
+                fontSize: '12px'
+              }
+            }
+          },
+          yaxis: {
+            labels: {
+              style: {
+                fontSize: '10px'
+              }
+            }
+          }
+        }
+      }]
     };
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
