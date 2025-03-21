@@ -62,7 +62,7 @@
       dataLabels: {
         enabled: true,
         formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         },
         offsetY: -20,
         style: {
@@ -88,7 +88,7 @@
       yaxis: {
         labels: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           },
           style: {
             fontSize: '12px',
@@ -111,21 +111,33 @@
         theme: 'light',
         y: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           }
         }
       },
       theme: { mode: 'light' },
-      responsive: [{
-        breakpoint: 768,
-        options: {
-          chart: { height: 300 },
-          plotOptions: { bar: { columnWidth: '70%' } },
-          dataLabels: { style: { fontSize: '10px' } },
-          xaxis: { labels: { style: { fontSize: '12px' } } },
-          yaxis: { labels: { style: { fontSize: '10px' } } }
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            chart: { height: 300 },
+            plotOptions: { bar: { columnWidth: '70%' } },
+            dataLabels: { style: { fontSize: '10px' } },
+            xaxis: { labels: { style: { fontSize: '12px' } } },
+            yaxis: { labels: { style: { fontSize: '10px' } } }
+          }
+        },
+        {
+          breakpoint: 576,
+          options: {
+            chart: { height: 250 },
+            plotOptions: { bar: { columnWidth: '80%' } },
+            dataLabels: { style: { fontSize: '8px' } },
+            xaxis: { labels: { style: { fontSize: '10px' } } },
+            yaxis: { labels: { style: { fontSize: '8px' } } }
+          }
         }
-      }]
+      ]
     };
 
     var chartMensal = new ApexCharts(document.querySelector("#chart"), optionsMensal);
@@ -159,7 +171,7 @@
       dataLabels: {
         enabled: true,
         formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         },
         offsetY: -20,
         style: {
@@ -185,7 +197,7 @@
       yaxis: {
         labels: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           },
           style: {
             fontSize: '12px',
@@ -208,21 +220,33 @@
         theme: 'light',
         y: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           }
         }
       },
       theme: { mode: 'light' },
-      responsive: [{
-        breakpoint: 768,
-        options: {
-          chart: { height: 300 },
-          plotOptions: { bar: { columnWidth: '70%' } },
-          dataLabels: { style: { fontSize: '10px' } },
-          xaxis: { labels: { style: { fontSize: '12px' } } },
-          yaxis: { labels: { style: { fontSize: '10px' } } }
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            chart: { height: 300 },
+            plotOptions: { bar: { columnWidth: '70%' } },
+            dataLabels: { style: { fontSize: '10px' } },
+            xaxis: { labels: { style: { fontSize: '12px' } } },
+            yaxis: { labels: { style: { fontSize: '10px' } } }
+          }
+        },
+        {
+          breakpoint: 576,
+          options: {
+            chart: { height: 250 },
+            plotOptions: { bar: { columnWidth: '80%' } },
+            dataLabels: { style: { fontSize: '8px' } },
+            xaxis: { labels: { style: { fontSize: '10px' } } },
+            yaxis: { labels: { style: { fontSize: '8px' } } }
+          }
         }
-      }]
+      ]
     };
 
     var chartSemanalJaneiro = new ApexCharts(document.querySelector("#chart2"), optionsSemanalJaneiro);
@@ -257,7 +281,7 @@
       dataLabels: {
         enabled: true,
         formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         },
         offsetY: -20,
         style: {
@@ -283,7 +307,7 @@
       yaxis: {
         labels: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           },
           style: {
             fontSize: '12px',
@@ -306,21 +330,33 @@
         theme: 'light',
         y: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           }
         }
       },
       theme: { mode: 'light' },
-      responsive: [{
-        breakpoint: 768,
-        options: {
-          chart: { height: 300 },
-          plotOptions: { bar: { columnWidth: '70%' } },
-          dataLabels: { style: { fontSize: '10px' } },
-          xaxis: { labels: { style: { fontSize: '12px' } } },
-          yaxis: { labels: { style: { fontSize: '10px' } } }
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            chart: { height: 300 },
+            plotOptions: { bar: { columnWidth: '70%' } },
+            dataLabels: { style: { fontSize: '10px' } },
+            xaxis: { labels: { style: { fontSize: '12px' } } },
+            yaxis: { labels: { style: { fontSize: '10px' } } }
+          }
+        },
+        {
+          breakpoint: 576,
+          options: {
+            chart: { height: 250 },
+            plotOptions: { bar: { columnWidth: '80%' } },
+            dataLabels: { style: { fontSize: '8px' } },
+            xaxis: { labels: { style: { fontSize: '10px' } } },
+            yaxis: { labels: { style: { fontSize: '8px' } } }
+          }
         }
-      }]
+      ]
     };
 
     var chartSemanalFev = new ApexCharts(document.querySelector("#chart3"), optionsSemanalFev);
