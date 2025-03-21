@@ -1,54 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <!-- Força uma largura fixa para simular a visão de desktop -->
-  <meta name="viewport" content="width=1024" />
+  <meta charset="UTF-8">
+  <!-- Para responsividade conforme o Bootstrap -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Despesas Fixas por Semana - Janeiro/2025</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- ApexCharts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    /* Estilos Globais */
+    /* Estilos complementares, se necessário */
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      padding: 0;
       background-color: #fff;
       color: #212529;
     }
-    h1, h2 {
-      margin: 10px 0;
-      text-align: center;
-    }
-    /* Barra Superior */
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .fullscreen-btn {
-      cursor: pointer;
-      padding: 8px 12px;
-      border: 1px solid #aaa;
-      background: #f4f4f4;
-      border-radius: 4px;
-      transition: background 0.3s ease;
-    }
-    .fullscreen-btn:hover {
-      background: #e8e8e8;
-    }
-    /* Container dos Gráficos */
     .chart-container {
       margin: 0 auto 50px;
-      width: 100%;
-      max-width: 100%;
       padding: 0 10px;
     }
-    /* Card para o Total Geral */
     .total-card {
-      display: inline-block;
       margin: 10px auto;
       padding: 10px 20px;
       border: 1px solid #ccc;
@@ -59,43 +30,27 @@
       width: 90%;
       max-width: 400px;
     }
-    /* Removido o CSS responsivo para mobile para manter a visão de computador */
-    /*
-    @media (max-width: 576px) {
-      body {
-        font-size: 14px;
-      }
-      h1 {
-        font-size: 20px;
-      }
-      h2 {
-        font-size: 18px;
-      }
-    }
-    */
   </style>
 </head>
 <body>
-  <h1>Despesas Fixas por Semana - Janeiro/2025</h1>
-
-  <!-- Barra de filtros e botões -->
-  <div class="top-bar">
-    <label for="descSelect"><strong>Filtrar Descrição:</strong></label>
-    <select id="descSelect">
-      <!-- Opções criadas via JavaScript -->
-    </select>
-
-    <button class="fullscreen-btn" onclick="toggleFullScreen()">
-      Tela Cheia
-    </button>
-
-    <button id="overviewBtn" class="fullscreen-btn">
-      Visão Geral
-    </button>
+  <div class="container my-4">
+    <h1 class="text-center mb-4">Despesas Fixas por Semana - Janeiro/2025</h1>
+    <div class="row mb-4 justify-content-center align-items-center">
+      <div class="col-md-4">
+        <label for="descSelect" class="form-label fw-bold">Filtrar Descrição:</label>
+        <select id="descSelect" class="form-select">
+          <!-- Opções serão criadas via JavaScript -->
+        </select>
+      </div>
+      <div class="col-md-auto">
+        <button class="btn btn-secondary" onclick="toggleFullScreen()">Tela Cheia</button>
+      </div>
+      <div class="col-md-auto">
+        <button id="overviewBtn" class="btn btn-primary">Visão Geral</button>
+      </div>
+    </div>
+    <div id="charts-container"></div>
   </div>
-
-  <!-- Área para inserir os gráficos dinamicamente -->
-  <div id="charts-container"></div>
 
   <script>
     // --------------------------------------------------------------------
@@ -231,17 +186,17 @@
     function parseValor(valorStr) {
       return parseFloat(
         valorStr
-          .replace("R$","")
-          .replace(/\s/g,"")
-          .replace(/\./g,"")
-          .replace(",",".")
+          .replace("R$", "")
+          .replace(/\s/g, "")
+          .replace(/\./g, "")
+          .replace(",", ".")
       );
     }
 
     function fixDate(dtStr) {
       const parts = dtStr.split("/");
-      const M = parts[0].padStart(2,"0");
-      const D = parts[1].padStart(2,"0");
+      const M = parts[0].padStart(2, "0");
+      const D = parts[1].padStart(2, "0");
       const Y = parts[2];
       return `${M}/${D}/${Y}`;
     }
@@ -259,7 +214,7 @@
       const [mm, dd, yyyy] = dateStr.split("/");
       if (mm !== "01" || yyyy !== "2025") return 0;
       const day = parseInt(dd, 10);
-      if (day >= 1 && day <= 7)  return 1;
+      if (day >= 1 && day <= 7) return 1;
       if (day >= 8 && day <= 14) return 2;
       if (day >= 15 && day <= 21) return 3;
       if (day >= 22 && day <= 31) return 4;
@@ -336,6 +291,7 @@
       // Título
       const h2 = document.createElement("h2");
       h2.textContent = desc;
+      h2.className = "text-center my-3";
       container.appendChild(h2);
 
       // Div para o gráfico
@@ -345,7 +301,7 @@
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
-      // Configuração do ApexCharts sem ajustes responsivos
+      // Configuração do ApexCharts
       const options = {
         chart: {
           type: "bar",
@@ -532,5 +488,7 @@
     descSelect.value = "TODOS";
     renderCharts("TODOS");
   </script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
