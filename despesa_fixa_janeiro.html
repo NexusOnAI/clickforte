@@ -8,18 +8,24 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      background-color: #fff;
+      color: #212529;
     }
     h1, h2 {
       margin: 10px 0;
+      text-align: center;
     }
     .top-bar {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 20px;
+      justify-content: center;
     }
     .chart-container {
       margin-bottom: 50px;
+      max-width: 100%;
+      margin: 0 auto 50px;
     }
     .fullscreen-btn {
       cursor: pointer;
@@ -40,6 +46,8 @@
       border-radius: 8px;
       background-color: #f9f9f9;
       font-weight: bold;
+      text-align: center;
+      width: 100%;
     }
   </style>
 </head>
@@ -71,7 +79,7 @@
   <script>
     // --------------------------------------------------------------------
     // 1) Dados brutos de "Despesa Fixa" (com ALUGUEL FABRICA NOVA removido
-    //    e substituído por ALMEIDA GLÓRIA, 903 e ALMEDIA GLÓRIA, 919)
+    //    e substituído por ALAMEDA GLÓRIA, 903 e ALAMEDA GLÓRIA, 919)
     //    Cada item terá { descricao, date, valorPago }
     // --------------------------------------------------------------------
     const rawData = [
@@ -103,7 +111,7 @@
       { descricao: "DOUGLAS - ALUGUEL",                      date: "01/09/2025", valorPago: "R$ 708,57" },
       { descricao: "DANIEL - ALUGUEL",                       date: "01/09/2025", valorPago: "R$ 708,57" },
       { descricao: "DENIS - ALUGUEL",                        date: "01/09/2025", valorPago: "R$ 708,57" },
-      { descricao: "Via Brasil Equipamentos",                date: "01/09/2025", valorPago: "R$ 230,00" },
+      { descricao: "Via Brasil Equipamentos",               date: "01/09/2025", valorPago: "R$ 230,00" },
       { descricao: "MERCADO LIVRE",                          date: "01/09/2025", valorPago: "R$ 635,50" },
       { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 355,40" },
       { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 59,00" },
@@ -193,7 +201,7 @@
       { descricao: "Everaldo Muniz de Andrade",              date: "1/31/2025",  valorPago: "R$ 3.100,00" },
       { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 352,00" },
       { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 96,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 40,00" },
+      { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 40,00" }
     ];
 
     // --------------------------------------------------------------------
@@ -273,7 +281,7 @@
     });
 
     // --------------------------------------------------------------------
-    // 6) Renderização dos gráficos individuais
+    // 6) Renderização dos gráficos individuais com a UI modernizada
     // --------------------------------------------------------------------
     function renderCharts(selectedDesc) {
       const container = document.getElementById("charts-container");
@@ -316,11 +324,32 @@
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
-      // Config do ApexCharts
+      // Configuração do ApexCharts com as opções para UI moderna (semelhantes ao relatório moderno)
       const options = {
         chart: {
           type: "bar",
-          height: 350
+          height: 350,
+          background: "transparent",
+          toolbar: { show: false }
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 8,
+            horizontal: false,
+            columnWidth: "50%",
+            dataLabels: { position: "top" }
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          },
+          offsetY: -20,
+          style: {
+            fontSize: "12px",
+            colors: ["#000"]
+          }
         },
         series: [
           {
@@ -329,28 +358,77 @@
           }
         ],
         xaxis: {
-          categories: categories
+          categories: categories,
+          labels: {
+            style: {
+              fontSize: "14px",
+              colors: ["#000"]
+            }
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false }
         },
-        dataLabels: {
-          formatter: val =>
-            "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
-        },
-        tooltip: {
-          y: {
-            formatter: val =>
-              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+        yaxis: {
+          labels: {
+            formatter: function(val) {
+              return "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            },
+            style: {
+              fontSize: "12px",
+              colors: ["#000"]
+            }
           }
         },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shade: "light",
+            type: "vertical",
+            shadeIntensity: 0.3,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+            stops: [0, 90, 100]
+          }
+        },
+        tooltip: {
+          theme: "light",
+          y: {
+            formatter: function(val) {
+              return "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+          }
+        },
+        theme: { mode: "light" },
         title: {
           text: `Despesa Fixa por Semana - ${desc}`,
           align: "center"
         },
         subtitle: {
-          text: `Total: R$ ${total.toLocaleString("pt-BR", {
-            minimumFractionDigits: 2
-          })}`,
+          text: `Total: R$ ${total.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
           align: "center"
-        }
+        },
+        responsive: [
+          {
+            breakpoint: 768,
+            options: {
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "70%" } },
+              dataLabels: { style: { fontSize: "10px" } },
+              xaxis: { labels: { style: { fontSize: "12px" } } },
+              yaxis: { labels: { style: { fontSize: "10px" } } }
+            }
+          },
+          {
+            breakpoint: 576,
+            options: {
+              chart: { height: 250 },
+              plotOptions: { bar: { columnWidth: "80%" } },
+              dataLabels: { style: { fontSize: "8px" } },
+              xaxis: { labels: { style: { fontSize: "10px" } } },
+              yaxis: { labels: { style: { fontSize: "8px" } } }
+            }
+          }
+        ]
       };
 
       const chart = new ApexCharts(chartDiv, options);
@@ -392,8 +470,7 @@
       // === CRIA O "CARD" PARA EXIBIR O TOTAL GERAL ===
       const totalCard = document.createElement("div");
       totalCard.className = "total-card";
-      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       container.appendChild(totalCard);
 
       // Cria a div do gráfico
@@ -408,8 +485,8 @@
           type: "pie",
           height: 450
         },
-        series: totalArray,     // valores
-        labels: descArray,      // rótulos
+        series: totalArray,
+        labels: descArray,
         dataLabels: {
           formatter: val =>
             val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%"
@@ -425,7 +502,7 @@
           align: "center"
         },
         subtitle: {
-          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
           align: "center"
         }
       };
