@@ -1,494 +1,528 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <!-- Para responsividade conforme o Bootstrap -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Despesas Fixas por Semana - Janeiro/2025</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- ApexCharts -->
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <style>
-    /* Estilos complementares, se necessário */
-    body {
-      background-color: #fff;
-      color: #212529;
-    }
-    .chart-container {
-      margin: 0 auto 50px;
-      padding: 0 10px;
-    }
-    .total-card {
-      margin: 10px auto;
-      padding: 10px 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      font-weight: bold;
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container my-4">
-    <h1 class="text-center mb-4">Despesas Fixas por Semana - Janeiro/2025</h1>
-    <div class="row mb-4 justify-content-center align-items-center">
-      <div class="col-md-4">
-        <label for="descSelect" class="form-label fw-bold">Filtrar Descrição:</label>
-        <select id="descSelect" class="form-select">
-          <!-- Opções serão criadas via JavaScript -->
-        </select>
-      </div>
-      <div class="col-md-auto">
-        <button class="btn btn-secondary" onclick="toggleFullScreen()">Tela Cheia</button>
-      </div>
-      <div class="col-md-auto">
-        <button id="overviewBtn" class="btn btn-primary">Visão Geral</button>
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Despesas Fixas por Semana - Janeiro/2025</title>
+    <!-- Importa o Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importa ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  </head>
+  <body class="font-sans m-5 bg-white text-gray-900">
+    <h1 class="my-2 text-center text-2xl font-bold">
+      Despesas Fixas por Semana - Janeiro/2025
+    </h1>
+
+    <!-- Barra de filtros e botões -->
+    <div class="flex items-center gap-2.5 mb-5 justify-center">
+      <label for="descSelect" class="font-semibold">Filtrar Descrição:</label>
+      <select
+        id="descSelect"
+        class="border border-gray-400 rounded px-2 py-1 focus:outline-none"
+      >
+        <!-- Opções criadas via JavaScript -->
+      </select>
+      <button
+        class="cursor-pointer px-3 py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none"
+        onclick="toggleFullScreen()"
+      >
+        Tela Cheia
+      </button>
+      <button
+        id="overviewBtn"
+        class="cursor-pointer px-3 py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none"
+      >
+        Visão Geral
+      </button>
     </div>
+
+    <!-- Área para inserir os gráficos dinamicamente -->
     <div id="charts-container"></div>
-  </div>
 
-  <script>
-    // --------------------------------------------------------------------
-    // 1) Dados brutos de "Despesa Fixa" (com ALUGUEL FABRICA NOVA removido
-    //    e substituído por ALAMEDA GLÓRIA, 903 e ALAMEDA GLÓRIA, 919)
-    //    Cada item terá { descricao, date, valorPago }
-    // --------------------------------------------------------------------
-    const rawData = [
-      { descricao: "REEMBOLSO BRUNO CALHADO",                date: "01/02/2025", valorPago: "R$ 50,00" },
-      { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES",   date: "01/06/2025", valorPago: "R$ 700,00" },
-      { descricao: "LIXEIRO CLICK - DIONEI RIBEIRO",         date: "01/06/2025", valorPago: "R$ 200,00" },
-      { descricao: "MOTORISTA DO CAMINHÃO - JOSÉ MACIEL",    date: "01/06/2025", valorPago: "R$ 270,00" },
-      { descricao: "MUNDIAL GÁS",                            date: "01/06/2025", valorPago: "R$ 1.700,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/06/2025", valorPago: "R$ 104,10" },
-      { descricao: "ERP - VOIGHT",                           date: "01/06/2025", valorPago: "R$ 149,90" },
-      { descricao: "ERP - LETS",                             date: "01/06/2025", valorPago: "R$ 120,89" },
-      { descricao: "ENEL DISTRIBUICAO SAO PAULO",            date: "01/06/2025", valorPago: "R$ 462,36" },
-      { descricao: "JG ASSESSORIA E CONSULTORIA CONTABIL LTDA", date: "01/06/2025", valorPago: "R$ 14.240,00" },
-      { descricao: "SOLUM CONTABILIDADE LTDA",               date: "01/06/2025", valorPago: "R$ 1.245,00" },
-      { descricao: "MERCADO LIVRE",                          date: "01/06/2025", valorPago: "R$ 226,00" },
-      { descricao: "JOZILANIO LIMA",                         date: "01/07/2025", valorPago: "R$ 60,00" },
-      { descricao: "ANTÔNIO PAULO ALVES",                    date: "01/07/2025", valorPago: "R$ 60,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/07/2025", valorPago: "R$ 337,52" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/07/2025", valorPago: "R$ 40,60" },
-      { descricao: "TAXA PARA LICENCIAMENTO AMBIENTAL",      date: "01/07/2025", valorPago: "R$ 591,95" },
-      { descricao: "MERCADO LIVRE",                          date: "01/07/2025", valorPago: "R$ 299,82" },
-      { descricao: "AGA SERVICOS TERCEIRIZADOS LTDA",        date: "01/07/2025", valorPago: "R$ 267,72" },
-      { descricao: "ALUGUEL GALPÃO CLICK ARMAZÉM",           date: "01/08/2025", valorPago: "R$ 105.803,91" },
-      { descricao: "CLARO S.A.",                             date: "01/08/2025", valorPago: "R$ 56,68" },
-      { descricao: "DIME VAREJO SP",                         date: "01/08/2025", valorPago: "R$ 1.481,40" },
-      { descricao: "RECARGA CELULAR DA VOIGHT",              date: "01/09/2025", valorPago: "R$ 50,00" },
-      { descricao: "RECARGA ELULAR DA LETS",                 date: "01/09/2025", valorPago: "R$ 50,00" },
-      { descricao: "UBER",                                   date: "01/09/2025", valorPago: "R$ 5,84" },
-      { descricao: "DOUGLAS - ALUGUEL",                      date: "01/09/2025", valorPago: "R$ 708,57" },
-      { descricao: "DANIEL - ALUGUEL",                       date: "01/09/2025", valorPago: "R$ 708,57" },
-      { descricao: "DENIS - ALUGUEL",                        date: "01/09/2025", valorPago: "R$ 708,57" },
-      { descricao: "Via Brasil Equipamentos",               date: "01/09/2025", valorPago: "R$ 230,00" },
-      { descricao: "MERCADO LIVRE",                          date: "01/09/2025", valorPago: "R$ 635,50" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 355,40" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 59,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 23,90" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "01/10/2025", valorPago: "R$ 345,00" },
-      { descricao: "MM MANUTENÇÃO",                          date: "01/10/2025", valorPago: "R$ 700,00" },
-      { descricao: "MUNDIAL GÁS",                            date: "01/10/2025", valorPago: "R$ 420,00" },
-      { descricao: "Marcos da Silva Chaves",                 date: "01/10/2025", valorPago: "R$ 1.500,00" },
-      { descricao: "MERCADO LIVRE",                          date: "01/10/2025", valorPago: "R$ 54,83" },
-      { descricao: "SABESP",                                 date: "01/10/2025", valorPago: "R$ 1.032,13" },
-      { descricao: "OLIST TINY TECNOLOGIA LTDA",             date: "01/10/2025", valorPago: "R$ 44,90" },
-      { descricao: "OMIEXPERIENCE LTDA.",                    date: "01/10/2025", valorPago: "R$ 6.490,73" },
-      { descricao: "WERK SCHOTT MIRASSOL",                   date: "01/10/2025", valorPago: "R$ 724,80" },
-      { descricao: "FLORESTA (Pais Leme 366)",               date: "01/10/2025", valorPago: "R$ 1.713,36" },
-      { descricao: "ENEL DISTRIBUICAO SAO PAULO",            date: "1/13/2025",  valorPago: "R$ 1.462,62" },
-      { descricao: "WERK SCHOTT MIRASSOL",                   date: "1/13/2025",  valorPago: "R$ 268,04" },
-      { descricao: "ALUGUEL PALETEIRA",                      date: "1/13/2025",  valorPago: "R$ 2.800,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/13/2025",  valorPago: "R$ 82,86" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/13/2025",  valorPago: "R$ 373,35" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/14/2025",  valorPago: "R$ 295,00" },
-      { descricao: "SV SOLUCOES VISUAIS E ESTRUTURAS LTDA",  date: "1/14/2025",  valorPago: "R$ 2.000,00" },
-      { descricao: "PATRAO IMOVEIS E ASSESSORIA LTDA",       date: "1/14/2025",  valorPago: "R$ 13.869,76" },
-      { descricao: "BARUERI",                                date: "1/14/2025",  valorPago: "R$ 145,78" },
-      { descricao: "MERCADO LIVRE",                          date: "1/15/2025",  valorPago: "R$ 290,96" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/15/2025",  valorPago: "R$ 800,00" },
-      { descricao: "MUNDIAL GÁS",                            date: "1/15/2025",  valorPago: "R$ 420,00" },
-      { descricao: "P.H.T COMERCIO E SERVICOS DE MAQUINAS PARA CAFE LTDA", date: "1/16/2025", valorPago: "R$ 350,00" },
-      { descricao: "BERTEL COMERCIAL ELETRICA LTDA",         date: "1/16/2025",  valorPago: "R$ 1.366,93" },
-      { descricao: "MERCADO LIVRE",                          date: "1/16/2025",  valorPago: "R$ 197,08" },
-      { descricao: "CERTIFICADO DIGITAL",                    date: "1/16/2025",  valorPago: "R$ 197,20" },
-      { descricao: "Santos floor",                           date: "1/16/2025",  valorPago: "R$ 1.200,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/16/2025",  valorPago: "R$ 380,40" },
-      { descricao: "MERCADO LIVRE",                          date: "1/17/2025",  valorPago: "R$ 709,72" },
-      { descricao: "BIWISE LTDA",                            date: "1/20/2025",  valorPago: "R$ 949,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/20/2025",  valorPago: "R$ 89,70" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/20/2025",  valorPago: "R$ 21,45" },
-      { descricao: "MERCADO LIVRE",                          date: "1/20/2025",  valorPago: "R$ 123,95" },
-      { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES",   date: "1/20/2025",  valorPago: "R$ 700,00" },
-      { descricao: "ALUGUEL GIRUS 865 - MARCO ANTÔNIO",      date: "1/20/2025",  valorPago: "R$ 20.000,00" },
-      { descricao: "ALUGUEL GIRUS 855 - MARCO ANTÔNIO",      date: "1/20/2025",  valorPago: "R$ 7.500,00" },
-      { descricao: "RECARGA - CELULAR DA VOIGHT",            date: "1/21/2025",  valorPago: "R$ 50,00" },
-      { descricao: "NEPPE MATERIAIS ELETRICOS",              date: "1/21/2025",  valorPago: "R$ 1.168,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/21/2025",  valorPago: "R$ 178,54" },
-      { descricao: "REEMBOLSO BRUNO CALHADO",                date: "1/21/2025",  valorPago: "R$ 16,50" },
-      { descricao: "MERCADO LIVRE",                          date: "1/21/2025",  valorPago: "R$ 4.001,90" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/21/2025",  valorPago: "R$ 194,50" },
-      { descricao: "RECARGA - CELULAR DA LETS",              date: "1/22/2025",  valorPago: "R$ 50,00" },
-      { descricao: "TECNOBANC",                              date: "1/22/2025",  valorPago: "R$ 1.014,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/22/2025",  valorPago: "R$ 764,00" },
-      { descricao: "FIGUEIREDO & FIORI",                     date: "1/22/2025",  valorPago: "R$ 180,00" },
-      { descricao: "REEMBOLSO MARCOS PEDREIRO",              date: "1/22/2025",  valorPago: "R$ 56,80" },
-      { descricao: "2P EXPRESS",                             date: "1/22/2025",  valorPago: "R$ 62,22" },
-      { descricao: "Santos floor",                           date: "1/23/2025",  valorPago: "R$ 4.000,00" },
-      { descricao: "HORIZON NETWORK TELECOMUNICACOES LTDA",  date: "1/23/2025",  valorPago: "R$ 259,80" },
-      { descricao: "REGINALDO",                              date: "1/24/2025",  valorPago: "R$ 4.250,00" },
-      { descricao: "JONAS DA SILVA",                         date: "1/24/2025",  valorPago: "R$ 2.000,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/24/2025",  valorPago: "R$ 60,99" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/24/2025",  valorPago: "R$ 75,00" },
-      { descricao: "INICIATIVA APLICATIVOS",                 date: "1/24/2025",  valorPago: "R$ 260,00" },
-      { descricao: "FUTURO LOG",                             date: "1/24/2025",  valorPago: "R$ 6.000,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/27/2025",  valorPago: "R$ 39,89" },
-      { descricao: "DIÁRIO DO GRANDE ABC",                   date: "1/27/2025",  valorPago: "R$ 480,00" },
-      { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", date: "1/27/2025", valorPago: "R$ 250,00" },
-      { descricao: "BONS VENTOS",                            date: "1/27/2025",  valorPago: "R$ 5.938,65" },
-      { descricao: "MERCADO LIVRE",                          date: "1/27/2025",  valorPago: "R$ 273,37" },
-      { descricao: "BARUERI",                                date: "1/27/2025",  valorPago: "R$ 205,70" },
-      { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO",       date: "1/27/2025",  valorPago: "R$ 7.500,00" },
-      // Removemos "ALUGUEL FABRICA NOVA"
-      // E adicionamos:
-      { descricao: "ALAMEDA GLÓRIA, 903",                    date: "1/27/2025",  valorPago: "R$ 13.983,04" },
-      { descricao: "ALAMEDA GLÓRIA, 919",                    date: "1/27/2025",  valorPago: "R$ 13.983,04" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/28/2025",  valorPago: "R$ 15.400,00" },
-      { descricao: "REEMBOLSO MARCOS PEDREIRO",              date: "1/28/2025",  valorPago: "R$ 157,90" },
-      { descricao: "MERCADO LIVRE",                          date: "1/28/2025",  valorPago: "R$ 737,59" },
-      { descricao: "MERCADO LIVRE",                          date: "1/28/2025",  valorPago: "R$ 206,98" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/29/2025",  valorPago: "R$ 547,42" },
-      { descricao: "MULTIFLEX",                              date: "1/29/2025",  valorPago: "R$ 5.189,45" },
-      { descricao: "WH INDÚSTRIA",                           date: "1/29/2025",  valorPago: "R$ 1.587,71" },
-      { descricao: "MERCADO LIVRE",                          date: "1/29/2025",  valorPago: "R$ 1.059,06" },
-      { descricao: "WH INDÚSTRIA",                           date: "1/30/2025",  valorPago: "R$ 4.098,74" },
-      { descricao: "BARUERI",                                date: "1/30/2025",  valorPago: "R$ 568,90" },
-      { descricao: "ALINE MARIE",                            date: "1/30/2025",  valorPago: "R$ 1.000,00" },
-      { descricao: "MERCADO LIVRE",                          date: "1/30/2025",  valorPago: "R$ 193,07" },
-      { descricao: "REGINALDO",                              date: "1/31/2025",  valorPago: "R$ 4.250,00" },
-      { descricao: "JONAS DA SILVA",                         date: "1/31/2025",  valorPago: "R$ 2.000,00" },
-      { descricao: "SQUALIDUS USINAGEM LTDA",                date: "1/31/2025",  valorPago: "R$ 560,00" },
-      { descricao: "Everaldo Muniz de Andrade",              date: "1/31/2025",  valorPago: "R$ 3.100,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 352,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 96,00" },
-      { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 40,00" }
-    ];
-
-    // --------------------------------------------------------------------
-    // 2) Converter datas para padronizar "MM/DD/YYYY" e valores para Number
-    // --------------------------------------------------------------------
-    function parseValor(valorStr) {
-      return parseFloat(
-        valorStr
-          .replace("R$", "")
-          .replace(/\s/g, "")
-          .replace(/\./g, "")
-          .replace(",", ".")
-      );
-    }
-
-    function fixDate(dtStr) {
-      const parts = dtStr.split("/");
-      const M = parts[0].padStart(2, "0");
-      const D = parts[1].padStart(2, "0");
-      const Y = parts[2];
-      return `${M}/${D}/${Y}`;
-    }
-
-    const dataset = rawData.map(item => ({
-      descricao: item.descricao,
-      date: fixDate(item.date), // "MM/DD/YYYY"
-      valor: parseValor(item.valorPago)
-    }));
-
-    // --------------------------------------------------------------------
-    // 3) Função para determinar a semana de janeiro (1..4) ou 0 se fora
-    // --------------------------------------------------------------------
-    function getJanuaryWeek(dateStr) {
-      const [mm, dd, yyyy] = dateStr.split("/");
-      if (mm !== "01" || yyyy !== "2025") return 0;
-      const day = parseInt(dd, 10);
-      if (day >= 1 && day <= 7) return 1;
-      if (day >= 8 && day <= 14) return 2;
-      if (day >= 15 && day <= 21) return 3;
-      if (day >= 22 && day <= 31) return 4;
-      return 0;
-    }
-
-    // --------------------------------------------------------------------
-    // 4) Somar valores por descrição e por semana
-    //    sumsByDesc[desc] = [semana1, semana2, semana3, semana4]
-    // --------------------------------------------------------------------
-    const sumsByDesc = {};
-
-    dataset.forEach(item => {
-      const w = getJanuaryWeek(item.date);
-      if (w === 0) return; // ignora se não for janeiro/2025
-      const desc = item.descricao;
-      if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0, 0, 0, 0];
-      }
-      sumsByDesc[desc][w - 1] += item.valor;
-    });
-
-    // Lista única de descrições
-    const uniqueDescriptions = Object.keys(sumsByDesc).sort();
-
-    // --------------------------------------------------------------------
-    // 5) Montar o SELECT de filtro (TODOS + cada descrição)
-    // --------------------------------------------------------------------
-    const descSelect = document.getElementById("descSelect");
-    const optTodos = document.createElement("option");
-    optTodos.value = "TODOS";
-    optTodos.text = "Todos";
-    descSelect.appendChild(optTodos);
-
-    uniqueDescriptions.forEach(desc => {
-      const opt = document.createElement("option");
-      opt.value = desc;
-      opt.text = desc;
-      descSelect.appendChild(opt);
-    });
-
-    // --------------------------------------------------------------------
-    // 6) Renderização dos gráficos individuais
-    // --------------------------------------------------------------------
-    function renderCharts(selectedDesc) {
-      const container = document.getElementById("charts-container");
-      container.innerHTML = ""; // limpa gráficos anteriores
-
-      if (selectedDesc === "TODOS") {
-        uniqueDescriptions.forEach(desc => createChart(desc, container));
-      } else {
-        createChart(selectedDesc, container);
-      }
-    }
-
-    // Cria gráfico para uma descrição (4 semanas + total)
-    function createChart(desc, container) {
-      const values = sumsByDesc[desc];
-      if (!values) return;
-
-      // Calcula o total
-      const total = values.reduce((acc, val) => acc + val, 0);
-
-      // Array com as 4 semanas + "Total"
-      const valuesWithTotal = [...values, total];
-      const categories = [
-        "Semana 1 (1-7)",
-        "Semana 2 (8-14)",
-        "Semana 3 (15-21)",
-        "Semana 4 (22-31)",
-        "Total"
+    <script>
+      // --------------------------------------------------------------------
+      // 1) Dados brutos de "Despesa Fixa" (com ALUGUEL FABRICA NOVA removido
+      //    e substituído por ALAMEDA GLÓRIA, 903 e ALAMEDA GLÓRIA, 919)
+      //    Cada item terá { descricao, date, valorPago }
+      // --------------------------------------------------------------------
+      const rawData = [
+        { descricao: "REEMBOLSO BRUNO CALHADO",                date: "01/02/2025", valorPago: "R$ 50,00" },
+        { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES",   date: "01/06/2025", valorPago: "R$ 700,00" },
+        { descricao: "LIXEIRO CLICK - DIONEI RIBEIRO",         date: "01/06/2025", valorPago: "R$ 200,00" },
+        { descricao: "MOTORISTA DO CAMINHÃO - JOSÉ MACIEL",    date: "01/06/2025", valorPago: "R$ 270,00" },
+        { descricao: "MUNDIAL GÁS",                            date: "01/06/2025", valorPago: "R$ 1.700,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/06/2025", valorPago: "R$ 104,10" },
+        { descricao: "ERP - VOIGHT",                           date: "01/06/2025", valorPago: "R$ 149,90" },
+        { descricao: "ERP - LETS",                             date: "01/06/2025", valorPago: "R$ 120,89" },
+        { descricao: "ENEL DISTRIBUICAO SAO PAULO",            date: "01/06/2025", valorPago: "R$ 462,36" },
+        { descricao: "JG ASSESSORIA E CONSULTORIA CONTABIL LTDA", date: "01/06/2025", valorPago: "R$ 14.240,00" },
+        { descricao: "SOLUM CONTABILIDADE LTDA",               date: "01/06/2025", valorPago: "R$ 1.245,00" },
+        { descricao: "MERCADO LIVRE",                          date: "01/06/2025", valorPago: "R$ 226,00" },
+        { descricao: "JOZILANIO LIMA",                         date: "01/07/2025", valorPago: "R$ 60,00" },
+        { descricao: "ANTÔNIO PAULO ALVES",                    date: "01/07/2025", valorPago: "R$ 60,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/07/2025", valorPago: "R$ 337,52" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/07/2025", valorPago: "R$ 40,60" },
+        { descricao: "TAXA PARA LICENCIAMENTO AMBIENTAL",      date: "01/07/2025", valorPago: "R$ 591,95" },
+        { descricao: "MERCADO LIVRE",                          date: "01/07/2025", valorPago: "R$ 299,82" },
+        { descricao: "AGA SERVICOS TERCEIRIZADOS LTDA",        date: "01/07/2025", valorPago: "R$ 267,72" },
+        { descricao: "ALUGUEL GALPÃO CLICK ARMAZÉM",           date: "01/08/2025", valorPago: "R$ 105.803,91" },
+        { descricao: "CLARO S.A.",                             date: "01/08/2025", valorPago: "R$ 56,68" },
+        { descricao: "DIME VAREJO SP",                         date: "01/08/2025", valorPago: "R$ 1.481,40" },
+        { descricao: "RECARGA CELULAR DA VOIGHT",              date: "01/09/2025", valorPago: "R$ 50,00" },
+        { descricao: "RECARGA ELULAR DA LETS",                 date: "01/09/2025", valorPago: "R$ 50,00" },
+        { descricao: "UBER",                                   date: "01/09/2025", valorPago: "R$ 5,84" },
+        { descricao: "DOUGLAS - ALUGUEL",                      date: "01/09/2025", valorPago: "R$ 708,57" },
+        { descricao: "DANIEL - ALUGUEL",                       date: "01/09/2025", valorPago: "R$ 708,57" },
+        { descricao: "DENIS - ALUGUEL",                        date: "01/09/2025", valorPago: "R$ 708,57" },
+        { descricao: "Via Brasil Equipamentos",               date: "01/09/2025", valorPago: "R$ 230,00" },
+        { descricao: "MERCADO LIVRE",                          date: "01/09/2025", valorPago: "R$ 635,50" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 355,40" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 59,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/09/2025", valorPago: "R$ 23,90" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "01/10/2025", valorPago: "R$ 345,00" },
+        { descricao: "MM MANUTENÇÃO",                          date: "01/10/2025", valorPago: "R$ 700,00" },
+        { descricao: "MUNDIAL GÁS",                            date: "01/10/2025", valorPago: "R$ 420,00" },
+        { descricao: "Marcos da Silva Chaves",                 date: "01/10/2025", valorPago: "R$ 1.500,00" },
+        { descricao: "MERCADO LIVRE",                          date: "01/10/2025", valorPago: "R$ 54,83" },
+        { descricao: "SABESP",                                 date: "01/10/2025", valorPago: "R$ 1.032,13" },
+        { descricao: "OLIST TINY TECNOLOGIA LTDA",             date: "01/10/2025", valorPago: "R$ 44,90" },
+        { descricao: "OMIEXPERIENCE LTDA.",                    date: "01/10/2025", valorPago: "R$ 6.490,73" },
+        { descricao: "WERK SCHOTT MIRASSOL",                   date: "01/10/2025", valorPago: "R$ 724,80" },
+        { descricao: "FLORESTA (Pais Leme 366)",               date: "01/10/2025", valorPago: "R$ 1.713,36" },
+        { descricao: "ENEL DISTRIBUICAO SAO PAULO",            date: "1/13/2025",  valorPago: "R$ 1.462,62" },
+        { descricao: "WERK SCHOTT MIRASSOL",                   date: "1/13/2025",  valorPago: "R$ 268,04" },
+        { descricao: "ALUGUEL PALETEIRA",                      date: "1/13/2025",  valorPago: "R$ 2.800,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/13/2025",  valorPago: "R$ 82,86" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/13/2025",  valorPago: "R$ 373,35" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/14/2025",  valorPago: "R$ 295,00" },
+        { descricao: "SV SOLUCOES VISUAIS E ESTRUTURAS LTDA",  date: "1/14/2025",  valorPago: "R$ 2.000,00" },
+        { descricao: "PATRAO IMOVEIS E ASSESSORIA LTDA",       date: "1/14/2025",  valorPago: "R$ 13.869,76" },
+        { descricao: "BARUERI",                                date: "1/14/2025",  valorPago: "R$ 145,78" },
+        { descricao: "MERCADO LIVRE",                          date: "1/15/2025",  valorPago: "R$ 290,96" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/15/2025",  valorPago: "R$ 800,00" },
+        { descricao: "MUNDIAL GÁS",                            date: "1/15/2025",  valorPago: "R$ 420,00" },
+        { descricao: "P.H.T COMERCIO E SERVICOS DE MAQUINAS PARA CAFE LTDA", date: "1/16/2025", valorPago: "R$ 350,00" },
+        { descricao: "BERTEL COMERCIAL ELETRICA LTDA",         date: "1/16/2025",  valorPago: "R$ 1.366,93" },
+        { descricao: "MERCADO LIVRE",                          date: "1/16/2025",  valorPago: "R$ 197,08" },
+        { descricao: "CERTIFICADO DIGITAL",                    date: "1/16/2025",  valorPago: "R$ 197,20" },
+        { descricao: "Santos floor",                           date: "1/16/2025",  valorPago: "R$ 1.200,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/16/2025",  valorPago: "R$ 380,40" },
+        { descricao: "MERCADO LIVRE",                          date: "1/17/2025",  valorPago: "R$ 709,72" },
+        { descricao: "BIWISE LTDA",                            date: "1/20/2025",  valorPago: "R$ 949,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/20/2025",  valorPago: "R$ 89,70" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/20/2025",  valorPago: "R$ 21,45" },
+        { descricao: "MERCADO LIVRE",                          date: "1/20/2025",  valorPago: "R$ 123,95" },
+        { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES",   date: "1/20/2025",  valorPago: "R$ 700,00" },
+        { descricao: "ALUGUEL GIRUS 865 - MARCO ANTÔNIO",      date: "1/20/2025",  valorPago: "R$ 20.000,00" },
+        { descricao: "ALUGUEL GIRUS 855 - MARCO ANTÔNIO",      date: "1/20/2025",  valorPago: "R$ 7.500,00" },
+        { descricao: "RECARGA - CELULAR DA VOIGHT",            date: "1/21/2025",  valorPago: "R$ 50,00" },
+        { descricao: "NEPPE MATERIAIS ELETRICOS",              date: "1/21/2025",  valorPago: "R$ 1.168,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/21/2025",  valorPago: "R$ 178,54" },
+        { descricao: "REEMBOLSO BRUNO CALHADO",                date: "1/21/2025",  valorPago: "R$ 16,50" },
+        { descricao: "MERCADO LIVRE",                          date: "1/21/2025",  valorPago: "R$ 4.001,90" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/21/2025",  valorPago: "R$ 194,50" },
+        { descricao: "RECARGA - CELULAR DA LETS",              date: "1/22/2025",  valorPago: "R$ 50,00" },
+        { descricao: "TECNOBANC",                              date: "1/22/2025",  valorPago: "R$ 1.014,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/22/2025",  valorPago: "R$ 764,00" },
+        { descricao: "FIGUEIREDO & FIORI",                     date: "1/22/2025",  valorPago: "R$ 180,00" },
+        { descricao: "REEMBOLSO MARCOS PEDREIRO",              date: "1/22/2025",  valorPago: "R$ 56,80" },
+        { descricao: "2P EXPRESS",                             date: "1/22/2025",  valorPago: "R$ 62,22" },
+        { descricao: "Santos floor",                           date: "1/23/2025",  valorPago: "R$ 4.000,00" },
+        { descricao: "HORIZON NETWORK TELECOMUNICACOES LTDA",  date: "1/23/2025",  valorPago: "R$ 259,80" },
+        { descricao: "REGINALDO",                              date: "1/24/2025",  valorPago: "R$ 4.250,00" },
+        { descricao: "JONAS DA SILVA",                         date: "1/24/2025",  valorPago: "R$ 2.000,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/24/2025",  valorPago: "R$ 60,99" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/24/2025",  valorPago: "R$ 75,00" },
+        { descricao: "INICIATIVA APLICATIVOS",                 date: "1/24/2025",  valorPago: "R$ 260,00" },
+        { descricao: "FUTURO LOG",                             date: "1/24/2025",  valorPago: "R$ 6.000,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/27/2025",  valorPago: "R$ 39,89" },
+        { descricao: "DIÁRIO DO GRANDE ABC",                   date: "1/27/2025",  valorPago: "R$ 480,00" },
+        { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", date: "1/27/2025", valorPago: "R$ 250,00" },
+        { descricao: "BONS VENTOS",                            date: "1/27/2025",  valorPago: "R$ 5.938,65" },
+        { descricao: "MERCADO LIVRE",                          date: "1/27/2025",  valorPago: "R$ 273,37" },
+        { descricao: "BARUERI",                                date: "1/27/2025",  valorPago: "R$ 205,70" },
+        { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO",       date: "1/27/2025",  valorPago: "R$ 7.500,00" },
+        { descricao: "ALAMEDA GLÓRIA, 903",                    date: "1/27/2025",  valorPago: "R$ 13.983,04" },
+        { descricao: "ALAMEDA GLÓRIA, 919",                    date: "1/27/2025",  valorPago: "R$ 13.983,04" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/28/2025",  valorPago: "R$ 15.400,00" },
+        { descricao: "REEMBOLSO MARCOS PEDREIRO",              date: "1/28/2025",  valorPago: "R$ 157,90" },
+        { descricao: "MERCADO LIVRE",                          date: "1/28/2025",  valorPago: "R$ 737,59" },
+        { descricao: "MERCADO LIVRE",                          date: "1/28/2025",  valorPago: "R$ 206,98" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/29/2025",  valorPago: "R$ 547,42" },
+        { descricao: "MULTIFLEX",                              date: "1/29/2025",  valorPago: "R$ 5.189,45" },
+        { descricao: "WH INDÚSTRIA",                           date: "1/29/2025",  valorPago: "R$ 1.587,71" },
+        { descricao: "MERCADO LIVRE",                          date: "1/29/2025",  valorPago: "R$ 1.059,06" },
+        { descricao: "WH INDÚSTRIA",                           date: "1/30/2025",  valorPago: "R$ 4.098,74" },
+        { descricao: "BARUERI",                                date: "1/30/2025",  valorPago: "R$ 568,90" },
+        { descricao: "ALINE MARIE",                            date: "1/30/2025",  valorPago: "R$ 1.000,00" },
+        { descricao: "MERCADO LIVRE",                          date: "1/30/2025",  valorPago: "R$ 193,07" },
+        { descricao: "REGINALDO",                              date: "1/31/2025",  valorPago: "R$ 4.250,00" },
+        { descricao: "JONAS DA SILVA",                         date: "1/31/2025",  valorPago: "R$ 2.000,00" },
+        { descricao: "SQUALIDUS USINAGEM LTDA",                date: "1/31/2025",  valorPago: "R$ 560,00" },
+        { descricao: "Everaldo Muniz de Andrade",              date: "1/31/2025",  valorPago: "R$ 3.100,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 352,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 96,00" },
+        { descricao: "REEMBOLSO TIAGO",                        date: "1/31/2025",  valorPago: "R$ 40,00" }
       ];
 
-      // Título
-      const h2 = document.createElement("h2");
-      h2.textContent = desc;
-      h2.className = "text-center my-3";
-      container.appendChild(h2);
+      // --------------------------------------------------------------------
+      // 2) Converter datas para "MM/DD/YYYY" e valores para Number
+      // --------------------------------------------------------------------
+      function parseValor(valorStr) {
+        return parseFloat(
+          valorStr
+            .replace("R$", "")
+            .replace(/\s/g, "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+        );
+      }
 
-      // Div para o gráfico
-      const chartDiv = document.createElement("div");
-      chartDiv.className = "chart-container";
-      const chartId = "chart_" + desc.replace(/\W+/g, "_");
-      chartDiv.id = chartId;
-      container.appendChild(chartDiv);
+      function fixDate(dtStr) {
+        const parts = dtStr.split("/");
+        const M = parts[0].padStart(2, "0");
+        const D = parts[1].padStart(2, "0");
+        const Y = parts[2];
+        return `${M}/${D}/${Y}`;
+      }
 
-      // Configuração do ApexCharts
-      const options = {
-        chart: {
-          type: "bar",
-          height: 350,
-          background: "transparent",
-          toolbar: { show: false }
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 8,
-            horizontal: false,
-            columnWidth: "50%",
-            dataLabels: { position: "top" }
-          }
-        },
-        dataLabels: {
-          enabled: true,
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          },
-          offsetY: -20,
-          style: {
-            fontSize: "12px",
-            colors: ["#000"]
-          }
-        },
-        series: [
-          {
-            name: desc,
-            data: valuesWithTotal
-          }
-        ],
-        xaxis: {
-          categories: categories,
-          labels: {
-            style: {
-              fontSize: "14px",
-              colors: ["#000"]
-            }
-          },
-          axisBorder: { show: false },
-          axisTicks: { show: false }
-        },
-        yaxis: {
-          labels: {
-            formatter: function(val) {
-              return "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            },
-            style: {
-              fontSize: "12px",
-              colors: ["#000"]
-            }
-          }
-        },
-        fill: {
-          type: "gradient",
-          gradient: {
-            shade: "light",
-            type: "vertical",
-            shadeIntensity: 0.3,
-            opacityFrom: 0.85,
-            opacityTo: 0.85,
-            stops: [0, 90, 100]
-          }
-        },
-        tooltip: {
-          theme: "light",
-          y: {
-            formatter: function(val) {
-              return "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            }
-          }
-        },
-        theme: { mode: "light" },
-        title: {
-          text: `Despesa Fixa por Semana - ${desc}`,
-          align: "center"
-        },
-        subtitle: {
-          text: `Total: R$ ${total.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-          align: "center"
+      const dataset = rawData.map((item) => ({
+        descricao: item.descricao,
+        date: fixDate(item.date), // "MM/DD/YYYY"
+        valor: parseValor(item.valorPago),
+      }));
+
+      // --------------------------------------------------------------------
+      // 3) Função para descobrir a semana de janeiro (1..4) ou 0 se fora
+      // --------------------------------------------------------------------
+      function getJanuaryWeek(dateStr) {
+        const [mm, dd, yyyy] = dateStr.split("/");
+        if (mm !== "01" || yyyy !== "2025") return 0;
+        const day = parseInt(dd, 10);
+        if (day >= 1 && day <= 7) return 1;
+        if (day >= 8 && day <= 14) return 2;
+        if (day >= 15 && day <= 21) return 3;
+        if (day >= 22 && day <= 31) return 4;
+        return 0;
+      }
+
+      // --------------------------------------------------------------------
+      // 4) Somar valores por descrição e por semana
+      //    sumsByDesc[desc] = [sem1, sem2, sem3, sem4]
+      // --------------------------------------------------------------------
+      const sumsByDesc = {};
+
+      dataset.forEach((item) => {
+        const w = getJanuaryWeek(item.date);
+        if (w === 0) return; // ignora se não for janeiro/2025
+        const desc = item.descricao;
+        if (!sumsByDesc[desc]) {
+          sumsByDesc[desc] = [0, 0, 0, 0];
         }
-      };
-
-      const chart = new ApexCharts(chartDiv, options);
-      chart.render();
-    }
-
-    // --------------------------------------------------------------------
-    // 7) Evento de mudança do SELECT para exibir os gráficos individuais
-    // --------------------------------------------------------------------
-    descSelect.addEventListener("change", () => {
-      renderCharts(descSelect.value);
-    });
-
-    // --------------------------------------------------------------------
-    // 8) Botão "Visão Geral" - gráfico de pizza único com total por descrição
-    // --------------------------------------------------------------------
-    const overviewBtn = document.getElementById("overviewBtn");
-    overviewBtn.addEventListener("click", createOverviewChart);
-
-    function createOverviewChart() {
-      const container = document.getElementById("charts-container");
-      container.innerHTML = ""; // limpa gráficos anteriores
-
-      // Arrays para o gráfico de pizza
-      const descArray = [];
-      const totalArray = [];
-
-      // Monta os dados de cada descrição (apenas o total final)
-      uniqueDescriptions.forEach(desc => {
-        const vals = sumsByDesc[desc];
-        const total = vals.reduce((acc, val) => acc + val, 0);
-        descArray.push(desc);
-        totalArray.push(total);
+        sumsByDesc[desc][w - 1] += item.valor;
       });
 
-      // Calcula o total geral
-      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+      // Lista única de descrições
+      const uniqueDescriptions = Object.keys(sumsByDesc).sort();
 
-      // Cria o "card" para exibir o total geral
-      const totalCard = document.createElement("div");
-      totalCard.className = "total-card";
-      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      container.appendChild(totalCard);
+      // --------------------------------------------------------------------
+      // 5) Montar o SELECT de filtro (TODOS + cada descrição)
+      // --------------------------------------------------------------------
+      const descSelect = document.getElementById("descSelect");
+      const optTodos = document.createElement("option");
+      optTodos.value = "TODOS";
+      optTodos.text = "Todos";
+      descSelect.appendChild(optTodos);
 
-      // Cria a div do gráfico
-      const chartDiv = document.createElement("div");
-      chartDiv.className = "chart-container";
-      chartDiv.id = "overview_chart";
-      container.appendChild(chartDiv);
+      uniqueDescriptions.forEach((desc) => {
+        const opt = document.createElement("option");
+        opt.value = desc;
+        opt.text = desc;
+        descSelect.appendChild(opt);
+      });
 
-      // Configuração do ApexCharts (tipo "pie")
-      const options = {
-        chart: {
-          type: "pie",
-          height: 450
-        },
-        series: totalArray,
-        labels: descArray,
-        dataLabels: {
-          formatter: val =>
-            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%"
-        },
-        tooltip: {
-          y: {
-            formatter: val =>
-              "R$ " + val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
-          }
-        },
-        title: {
-          text: "Visão Geral - Total de Despesas Fixas por Descrição (Pizza)",
-          align: "center"
-        },
-        subtitle: {
-          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-          align: "center"
-        }
-      };
+      // --------------------------------------------------------------------
+      // 6) Renderização dos gráficos individuais com a UI modernizada
+      // --------------------------------------------------------------------
+      function renderCharts(selectedDesc) {
+        const container = document.getElementById("charts-container");
+        container.innerHTML = ""; // limpa gráficos anteriores
 
-      const chart = new ApexCharts(chartDiv, options);
-      chart.render();
-    }
-
-    // --------------------------------------------------------------------
-    // 9) Função para Tela Cheia
-    // --------------------------------------------------------------------
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.body.style.backgroundColor = "#fff";
-        document.documentElement.requestFullscreen();
-      } else {
-        document.body.style.backgroundColor = "";
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
+        if (selectedDesc === "TODOS") {
+          uniqueDescriptions.forEach((desc) => createChart(desc, container));
+        } else {
+          createChart(selectedDesc, container);
         }
       }
-    }
-    window.toggleFullScreen = toggleFullScreen;
 
-    // --------------------------------------------------------------------
-    // 10) Renderiza todos os gráficos individuais por padrão
-    // --------------------------------------------------------------------
-    descSelect.value = "TODOS";
-    renderCharts("TODOS");
-  </script>
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+      // Cria gráfico para UMA descrição (com 4 semanas + total)
+      function createChart(desc, container) {
+        const values = sumsByDesc[desc];
+        if (!values) return;
+
+        // Calcula o total
+        const total = values.reduce((acc, val) => acc + val, 0);
+
+        // Array com as 4 semanas + "Total"
+        const valuesWithTotal = [...values, total];
+        const categories = [
+          "Semana 1 (1-7)",
+          "Semana 2 (8-14)",
+          "Semana 3 (15-21)",
+          "Semana 4 (22-31)",
+          "Total",
+        ];
+
+        // Título
+        const h2 = document.createElement("h2");
+        h2.textContent = desc;
+        h2.className = "my-2 text-center text-xl font-semibold";
+        container.appendChild(h2);
+
+        // Div para o gráfico
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "mb-12 w-full mx-auto";
+        const chartId = "chart_" + desc.replace(/\W+/g, "_");
+        chartDiv.id = chartId;
+        container.appendChild(chartDiv);
+
+        // Configuração do ApexCharts
+        const options = {
+          chart: {
+            type: "bar",
+            height: 350,
+            background: "transparent",
+            toolbar: { show: false },
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 8,
+              horizontal: false,
+              columnWidth: "50%",
+              dataLabels: { position: "top" },
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (val) {
+              return (
+                "R$ " +
+                val.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              );
+            },
+            offsetY: -20,
+            style: {
+              fontSize: "12px",
+              colors: ["#000"],
+            },
+          },
+          series: [
+            {
+              name: desc,
+              data: valuesWithTotal,
+            },
+          ],
+          xaxis: {
+            categories: categories,
+            labels: {
+              style: {
+                fontSize: "14px",
+                colors: ["#000"],
+              },
+            },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+          },
+          yaxis: {
+            labels: {
+              formatter: function (val) {
+                return (
+                  "R$ " +
+                  val.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                );
+              },
+              style: {
+                fontSize: "12px",
+                colors: ["#000"],
+              },
+            },
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              shade: "light",
+              type: "vertical",
+              shadeIntensity: 0.3,
+              opacityFrom: 0.85,
+              opacityTo: 0.85,
+              stops: [0, 90, 100],
+            },
+          },
+          tooltip: {
+            theme: "light",
+            y: {
+              formatter: function (val) {
+                return (
+                  "R$ " +
+                  val.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                );
+              },
+            },
+          },
+          theme: { mode: "light" },
+          title: {
+            text: `Despesa Fixa por Semana - ${desc}`,
+            align: "center",
+          },
+          subtitle: {
+            text: `Total: R$ ${total.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            align: "center",
+          },
+          responsive: [
+            {
+              breakpoint: 768,
+              options: {
+                chart: { height: 300 },
+                plotOptions: { bar: { columnWidth: "70%" } },
+                dataLabels: { style: { fontSize: "10px" } },
+                xaxis: { labels: { style: { fontSize: "12px" } } },
+                yaxis: { labels: { style: { fontSize: "10px" } } },
+              },
+            },
+            {
+              breakpoint: 576,
+              options: {
+                chart: { height: 250 },
+                plotOptions: { bar: { columnWidth: "80%" } },
+                dataLabels: { style: { fontSize: "8px" } },
+                xaxis: { labels: { style: { fontSize: "10px" } } },
+                yaxis: { labels: { style: { fontSize: "8px" } } },
+              },
+            },
+          ],
+        };
+
+        const chart = new ApexCharts(chartDiv, options);
+        chart.render();
+      }
+
+      // --------------------------------------------------------------------
+      // 7) Evento de mudança do SELECT (mostrar gráficos individuais)
+      // --------------------------------------------------------------------
+      descSelect.addEventListener("change", () => {
+        renderCharts(descSelect.value);
+      });
+
+      // --------------------------------------------------------------------
+      // 8) Botão "Visão Geral" - gráfico de pizza único com total por descrição
+      // --------------------------------------------------------------------
+      const overviewBtn = document.getElementById("overviewBtn");
+      overviewBtn.addEventListener("click", createOverviewChart);
+
+      function createOverviewChart() {
+        const container = document.getElementById("charts-container");
+        container.innerHTML = "";
+
+        // Arrays para o gráfico de pizza
+        const descArray = [];
+        const totalArray = [];
+
+        // Monta dados de cada descrição (só o total final)
+        uniqueDescriptions.forEach((desc) => {
+          const vals = sumsByDesc[desc];
+          const total = vals.reduce((acc, val) => acc + val, 0);
+          descArray.push(desc);
+          totalArray.push(total);
+        });
+
+        // Calcula o total geral
+        const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+        // === CRIA O "CARD" PARA EXIBIR O TOTAL GERAL ===
+        const totalCard = document.createElement("div");
+        totalCard.className =
+          "inline-block my-2 px-5 py-2 border border-gray-300 rounded-lg bg-gray-100 font-bold text-center w-full";
+        totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+        container.appendChild(totalCard);
+
+        // Cria a div do gráfico
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "mb-12 w-full mx-auto";
+        chartDiv.id = "overview_chart";
+        container.appendChild(chartDiv);
+
+        // Config ApexCharts (tipo "pie")
+        const options = {
+          chart: {
+            type: "pie",
+            height: 450,
+          },
+          series: totalArray,
+          labels: descArray,
+          dataLabels: {
+            formatter: (val) =>
+              val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%",
+          },
+          tooltip: {
+            y: {
+              formatter: (val) =>
+                "R$ " +
+                val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+            },
+          },
+          title: {
+            text: "Visão Geral - Total de Despesas Fixas por Descrição (Pizza)",
+            align: "center",
+          },
+          subtitle: {
+            text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            align: "center",
+          },
+        };
+
+        const chart = new ApexCharts(chartDiv, options);
+        chart.render();
+      }
+
+      // --------------------------------------------------------------------
+      // 9) Função de Tela Cheia
+      // --------------------------------------------------------------------
+      function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          document.body.style.backgroundColor = "#fff";
+          document.documentElement.requestFullscreen();
+        } else {
+          document.body.style.backgroundColor = "";
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+      window.toggleFullScreen = toggleFullScreen;
+
+      // --------------------------------------------------------------------
+      // 10) Renderiza todos os gráficos (individuais) por padrão
+      // --------------------------------------------------------------------
+      descSelect.value = "TODOS";
+      renderCharts("TODOS");
+    </script>
+  </body>
 </html>
