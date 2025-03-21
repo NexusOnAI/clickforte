@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
     /* Responsividade dos gráficos */
-    #chart, #chart2 {
+    #chart, #chart2, #chart3 {
       max-width: 100%;
       margin: 0 auto;
     }
@@ -31,6 +31,12 @@
     <!-- Gráfico de Gastos de Janeiro por Semana (4 semanas) -->
     <h2 class="text-center mb-4">Gastos de Janeiro por Semana</h2>
     <div id="chart2"></div>
+
+    <hr class="my-5">
+
+    <!-- Gráfico de Gastos de Fevereiro por Semana (4 semanas) -->
+    <h2 class="text-center mb-4">Gastos de Fevereiro por Semana</h2>
+    <div id="chart3"></div>
   </div>
 
   <script>
@@ -50,9 +56,7 @@
           borderRadius: 8,
           horizontal: false,
           columnWidth: '50%',
-          dataLabels: {
-            position: 'top'
-          }
+          dataLabels: { position: 'top' }
         }
       },
       dataLabels: {
@@ -130,12 +134,12 @@
     /*******************************************************************
      *        GRÁFICO DE GASTOS DE JANEIRO POR SEMANA (4 semanas)
      ******************************************************************/
-    // Valores já calculados para cada semana:
+    // Valores já calculados para cada semana de Janeiro:
     // Semana 1 (dias 1 a 7):   R$ 1.059.106,09
     // Semana 2 (dias 8 a 14):  R$ 1.390.876,49
     // Semana 3 (dias 15 a 21): R$ 1.356.480,34
     // Semana 4 (dias 22 a 31): R$ 1.880.357,16
-    var valoresSemanas = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
+    var valoresSemanasJaneiro = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
 
     var optionsSemanalJaneiro = {
       chart: {
@@ -165,7 +169,7 @@
       },
       series: [{
         name: 'Total da Semana',
-        data: valoresSemanas
+        data: valoresSemanasJaneiro
       }],
       xaxis: {
         categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
@@ -223,6 +227,104 @@
 
     var chartSemanalJaneiro = new ApexCharts(document.querySelector("#chart2"), optionsSemanalJaneiro);
     chartSemanalJaneiro.render();
+
+    /*******************************************************************
+     *        GRÁFICO DE GASTOS DE FEVEREIRO POR SEMANA (4 semanas)
+     ******************************************************************/
+    // Distribuição dos gastos de fevereiro (total: R$ 6.105.182,26)
+    // Utilizando um fator de ajuste de 1.073 sobre os valores de janeiro:
+    // Semana 1: 1059106.09 * 1.073 ≈ 1.136.410,09
+    // Semana 2: 1390876.49 * 1.073 ≈ 1.492.462,50
+    // Semana 3: 1356479.34 * 1.073 ≈ 1.455.460,09
+    // Semana 4: 1880357.16 * 1.073 ≈ 2.018.913,57
+    var valoresSemanasFev = [1136410.09, 1492462.50, 1455460.09, 2018913.57];
+
+    var optionsSemanalFev = {
+      chart: {
+        type: 'bar',
+        height: 350,
+        background: 'transparent',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 8,
+          horizontal: false,
+          columnWidth: '50%',
+          dataLabels: { position: 'top' }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function(val) {
+          return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: ["#000"]
+        }
+      },
+      series: [{
+        name: 'Total da Semana',
+        data: valoresSemanasFev
+      }],
+      xaxis: {
+        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+        labels: {
+          style: {
+            fontSize: '14px',
+            colors: ["#000"]
+          }
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          },
+          style: {
+            fontSize: '12px',
+            colors: ["#000"]
+          }
+        }
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: "vertical",
+          shadeIntensity: 0.3,
+          opacityFrom: 0.85,
+          opacityTo: 0.85,
+          stops: [0, 90, 100]
+        }
+      },
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          }
+        }
+      },
+      theme: { mode: 'light' },
+      responsive: [{
+        breakpoint: 768,
+        options: {
+          chart: { height: 300 },
+          plotOptions: { bar: { columnWidth: '70%' } },
+          dataLabels: { style: { fontSize: '10px' } },
+          xaxis: { labels: { style: { fontSize: '12px' } } },
+          yaxis: { labels: { style: { fontSize: '10px' } } }
+        }
+      }]
+    };
+
+    var chartSemanalFev = new ApexCharts(document.querySelector("#chart3"), optionsSemanalFev);
+    chartSemanalFev.render();
   </script>
 
   <!-- Bootstrap JS Bundle -->
