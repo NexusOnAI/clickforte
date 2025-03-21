@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard - Dark Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Dark Style (Dados Fixos)</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -22,7 +22,7 @@
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
     />
 
-    <!-- Estilos em linha (substituindo o styles.css) -->
+    <!-- Estilos embutidos (dark style) -->
     <style>
       body {
         background: #1B213B;
@@ -30,19 +30,6 @@
         font-family: Montserrat, Arial, sans-serif;
         margin: 0;
         padding: 0;
-      }
-
-      .body-bg {
-        background: #F3F4FA !important;
-      }
-
-      h1, h2, h3, h4, h5, h6, strong {
-        font-weight: 600;
-      }
-
-      .box .apexcharts-xaxistooltip {
-        background: #1B213B;
-        color: #fff;
       }
 
       .content-area {
@@ -53,145 +40,55 @@
 
       .box {
         background-color: #262D47;
-        padding: 25px 25px;
+        padding: 25px;
         border-radius: 4px;
+        margin-bottom: 30px;
       }
 
-      .columnbox {
-        padding-right: 15px;
+      h1, h2, h3, h4, h5, h6, strong {
+        font-weight: 600;
       }
 
-      .radialbox {
-        max-height: 333px;
-        margin-bottom: 60px;
-      }
-
-      .apexcharts-legend-series tspan:nth-child(3) {
-        font-weight: bold;
-        font-size: 20px;
-      }
-
-      .edit-on-codepen {
-        text-align: right;
-        width: 100%;
-        padding: 0 20px 40px;
-        position: relative;
-        top: -30px;
-        cursor: pointer;
-      }
-
-      .spinner-border {
-        display: none;
+      /* Ajuste do tooltip no estilo dark */
+      .box .apexcharts-xaxistooltip {
+        background: #1B213B;
+        color: #fff;
       }
     </style>
   </head>
 
   <body>
-    <div id="wrapper">
-      <div class="content-area">
-        <div class="container-fluid">
-          <div class="text-right mt-3 mb-3 d-fixed">
-            <!-- Exemplo de botão para ver código no GitHub -->
-            <a
-              href="https://github.com/apexcharts/apexcharts.js/tree/master/samples/vanilla-js/dashboards/realtime"
-              target="_blank"
-              class="btn btn-outline-warning mr-2"
-            >
-              <span class="btn-text">View Code</span>
-            </a>
-          </div>
-
-          <div class="main">
-            <div class="row mt-4">
-              <div class="col-md-5">
-                <div class="box columnbox mt-4">
-                  <div id="columnchart"></div>
-                </div>
-              </div>
-              <div class="col-md-7">
-                <div class="box mt-4">
-                  <div id="linechart"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-5">
-                <div class="box radialbox mt-4">
-                  <div id="circlechart"></div>
-                </div>
-              </div>
-              <div class="col-md-7">
-                <div class="box mt-4">
-                  <div class="mt-4">
-                    <div id="progress1"></div>
-                  </div>
-                  <div class="mt-4">
-                    <div id="progress2"></div>
-                  </div>
-                  <div class="mt-4">
-                    <div id="progress3"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Exemplo de "Edit on CodePen" -->
-            <div class="row">
-              <div class="float-right edit-on-codepen">
-                <a
-                  target="_blank"
-                  href="https://codepen.io/apexcharts/pen/pxZKqL"
-                >
-                  <img
-                    src="https://raw.githubusercontent.com/apexcharts/apexcharts.js/master/samples/assets/edit-on-codepen.png"
-                    alt="Edit on Codepen"
-                  />
-                </a>
-              </div>
-            </div>
-
-          </div>
-        </div>
+    <div class="content-area">
+      <h1 class="text-center" style="color:#fff;">Relatório de Pagamentos</h1>
+      <div class="box">
+        <!-- Div onde o gráfico será renderizado -->
+        <div id="chart"></div>
       </div>
     </div>
 
     <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
-    <!-- Moment.js -->
+    <!-- Moment.js (opcional, caso queira manipular datas) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <!-- ApexCharts via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <!-- Script principal (substituindo o scripts.js) -->
     <script>
-      // --------------------------
-      // Configurações Globais
-      // --------------------------
+      // --------------------------------------------------------------------
+      // 1) Configurações Globais do ApexCharts (tema dark, etc.)
+      // --------------------------------------------------------------------
       window.Apex = {
         chart: {
           foreColor: '#fff',
-          toolbar: {
-            show: false
-          },
+          toolbar: { show: false },
         },
         colors: ['#FCCF31', '#17ead9', '#f02fc2'],
-        stroke: {
-          width: 3
-        },
-        dataLabels: {
-          enabled: false
-        },
-        grid: {
-          borderColor: "#40475D",
-        },
+        stroke: { width: 3 },
+        dataLabels: { enabled: false },
+        grid: { borderColor: "#40475D" },
         xaxis: {
-          axisTicks: {
-            color: '#333'
-          },
-          axisBorder: {
-            color: "#333"
-          }
+          axisTicks: { color: '#333' },
+          axisBorder: { color: "#333" }
         },
         fill: {
           type: 'gradient',
@@ -200,609 +97,209 @@
           },
         },
         tooltip: {
-          theme: 'dark',
-          x: {
-            formatter: function (val) {
-              return moment(new Date(val)).format("HH:mm:ss")
-            }
-          }
+          theme: 'dark'
         },
         yaxis: {
           decimalsInFloat: 2,
           opposite: true,
-          labels: {
-            offsetX: -10
-          }
+          labels: { offsetX: -10 }
         }
       };
 
-      var trigoStrength = 3
-      var iteration = 11
+      // --------------------------------------------------------------------
+      // 2) Seus dados (todos, inclusive FORNECEDOR, TRANSPORTADORA, RETIRADA etc.)
+      // --------------------------------------------------------------------
+      const dados = [
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "GO SELL", categoria: "RETIRADA", dataPagamento: "20/02/2025", valorPago: "R$ 96.000,00" },
+        { descricao: "GO SELL", categoria: "RETIRADA", dataPagamento: "20/03/2025", valorPago: "R$ 96.500,00" },
+        { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 1.204,00" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 26.153,60" },
+        { descricao: "WIRUTEX", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 2.841,95" },
+        { descricao: "VERTICALPACK EMBALAGENS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 1.101,48" },
+        { descricao: "VERTICAL PACK", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 8.675,10" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 5.261,03" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 4.788,22" },
+        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 87.584,05" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 26.863,15" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 2.902,58" },
+        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 25.315,09" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 67.943,01" },
+        { descricao: "OR DESIGN", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 15.640,00" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "24/03/2025", valorPago: "R$ 3.800,00" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "24/03/2025", valorPago: "R$ 3.800,00" },
+        { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 622,30" },
+        { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 8.827,50" },
+        { descricao: "DZAINER", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 23.128,00" },
+        { descricao: "DZAINER", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 22.400,00" },
+        { descricao: "CIANURETO", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 6.207,00" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 15.905,00" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 4.800,00" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 10.660,00" },
+        { descricao: "ARGO PROVEDOR", categoria: "DESPESA FIXA", dataPagamento: "24/03/2025", valorPago: "R$ 259,80" },
+        { descricao: "FUTURO LOG", categoria: "DESPESA FIXA", dataPagamento: "24/03/2025", valorPago: "R$ 6.000,00" },
+        { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 281,60" },
+        { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 250,00" },
+        { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 7.500,00" },
+        { descricao: "ALUGUEL GIRUS  903 - LUCIANA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
+        { descricao: "ALUGUEL GIRUS  919 - VERA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
+        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 92.903,78" },
+        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 113.238,35" },
+        { descricao: "ISS - MADEIRA EXPRESS", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 1.891,86" },
+        { descricao: "PRD_IMD NAVEGANTES", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 29.000,00" },
+        { descricao: "PAPAI NOEL", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+        { descricao: "CARLOS BALLOTIN", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+        { descricao: "MARCELO ANTUNES", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 3.233,27" },
+        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 28.188,02" },
+        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 30.450,00" },
+        { descricao: "ACM FIBRAS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 55.290,60" },
+        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 92.903,78" },
+        { descricao: "CONTHEY", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 35.747,73" },
+        { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 516,00" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 44.642,21" },
+        { descricao: "ABC SPEEDY WAY TURISMO E TRANSPORTE LTDA", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 5.963,86" },
+        { descricao: "INDUSLOG SERVICOS DE LOGISTICA LTDA", categoria: "DESPESA FIXA", dataPagamento: "27/03/2025", valorPago: "R$ 8.965,06" },
+        { descricao: "PER MOBILI", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 3.358,00" },
+        { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 79.186,62" },
+        { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 92.903,78" },
+        { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 2.095,98" },
+        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 100.900,00" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 3.800,00" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 4.788,22" },
+        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 41.719,94" },
+        { descricao: "FERGRAFPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 16.695,00" },
+        { descricao: "METALURGICA ALBRAS LTDA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 10.876,32" },
+        { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 7.528,69" },
+        { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "28/03/2025", valorPago: "R$ 70.000,00" },
+        { descricao: "MARCO ANTÔNIO", categoria: "RETIRADA", dataPagamento: "28/03/2025", valorPago: "R$ 30.000,00" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 2.590,00" },
+        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 5.299,76" },
+        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 68.757,60" }
+      ];
 
-      function getRandom() {
-        var i = iteration;
-        return (Math.sin(i / trigoStrength) * (i / trigoStrength) + i / trigoStrength + 1) * (trigoStrength * 2)
+      // --------------------------------------------------------------------
+      // 3) Funções de parsing (valor e data)
+      // --------------------------------------------------------------------
+      function parseValorBR(valorBR) {
+        // Ex: "R$ 28.478,55" -> 28478.55
+        return parseFloat(
+          valorBR
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+            .trim()
+        );
       }
 
-      function getRangeRandom(yrange) {
-        return Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min
+      function toISODate(strBR) {
+        // "DD/MM/AAAA" -> "AAAA-MM-DD"
+        const [dia, mes, ano] = strBR.split("/");
+        return `${ano}-${mes}-${dia}`;
       }
 
-      function generateMinuteWiseTimeSeries(baseval, count, yrange) {
-        var i = 0;
-        var series = [];
-        while (i < count) {
-          var x = baseval;
-          var y = (
-            (Math.sin(i / trigoStrength) * (i / trigoStrength) + i / trigoStrength + 1) *
-            (trigoStrength * 2)
-          );
+      // --------------------------------------------------------------------
+      // 4) Agrupamento dos dados por data
+      //    (Somando tudo, independente de categoria)
+      // --------------------------------------------------------------------
+      const somaPorData = {};
 
-          series.push([x, y]);
-          baseval += 300000;
-          i++;
+      dados.forEach(item => {
+        const dataISO = toISODate(item.dataPagamento); 
+        const valorNum = parseValorBR(item.valorPago);
+
+        if (!somaPorData[dataISO]) {
+          somaPorData[dataISO] = 0;
         }
-        return series;
-      }
+        somaPorData[dataISO] += valorNum;
+      });
 
-      function getNewData(baseval, yrange) {
-        var newTime = baseval + 300000;
-        return {
-          x: newTime,
-          y: Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min
-        }
-      }
+      // Transforma em array ordenado por data
+      // Formato para ApexCharts: [ { x: (timestamp), y: (valor) }, ... ]
+      const seriesData = Object.keys(somaPorData)
+        .sort() // ordena cronologicamente
+        .map(dataISO => {
+          // Para o eixo X, podemos usar getTime() ou manter string "2025-03-24"
+          // ApexCharts aceita ambos. Aqui usaremos getTime() para datetime.
+          const dateObj = new Date(dataISO); 
+          return {
+            x: dateObj.getTime(),
+            y: somaPorData[dataISO]
+          };
+        });
 
-      // --------------------------
-      // Column Chart
-      // --------------------------
-      var optionsColumn = {
+      // --------------------------------------------------------------------
+      // 5) Configurar e renderizar o gráfico
+      // --------------------------------------------------------------------
+      const options = {
         chart: {
-          height: 350,
           type: 'bar',
-          animations: {
-            enabled: false
-          },
-          events: {
-            animationEnd: function (chartCtx, opts) {
-              const newData = chartCtx.w.config.series[0].data.slice()
-              newData.shift()
-              window.setTimeout(function () {
-                chartCtx.updateOptions({
-                  series: [{
-                    data: newData
-                  }],
-                  xaxis: {
-                    min: chartCtx.minX,
-                    max: chartCtx.maxX
-                  },
-                  subtitle: {
-                    text: parseInt(getRangeRandom({min: 1, max: 20})).toString() + '%',
-                  }
-                }, false, false)
-              }, 300)
-            }
-          },
-          toolbar: {
-            show: false
-          },
-          zoom: {
-            enabled: false
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          width: 0,
-        },
-        series: [{
-          name: 'Load Average',
-          data: generateMinuteWiseTimeSeries(
-            new Date("12/12/2016 00:20:00").getTime(),
-            12,
-            { min: 10, max: 110 }
-          )
-        }],
-        title: {
-          text: 'Load Average',
-          align: 'left',
-          style: {
-            fontSize: '12px'
-          }
-        },
-        subtitle: {
-          text: '20%',
-          floating: true,
-          align: 'right',
-          offsetY: 0,
-          style: {
-            fontSize: '22px'
-          }
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'vertical',
-            shadeIntensity: 0.5,
-            inverseColors: false,
-            opacityFrom: 1,
-            opacityTo: 0.8,
-            stops: [0, 100]
-          }
-        },
-        xaxis: {
-          type: 'datetime',
-          range: 2700000
-        },
-        legend: {
-          show: true
-        },
-      };
-
-      var chartColumn = new ApexCharts(
-        document.querySelector("#columnchart"),
-        optionsColumn
-      );
-      chartColumn.render();
-
-      // --------------------------
-      // Line Chart
-      // --------------------------
-      var optionsLine = {
-        chart: {
-          height: 350,
-          type: 'line',
-          stacked: true,
-          animations: {
-            enabled: true,
-            easing: 'linear',
-            dynamicAnimation: {
-              speed: 1000
-            }
-          },
-          dropShadow: {
-            enabled: true,
-            opacity: 0.6,
-            blur: 5,
-            left: -7,
-            top: 22
-          },
-          events: {
-            animationEnd: function (chartCtx, opts) {
-              const newData1 = chartCtx.w.config.series[0].data.slice()
-              newData1.shift()
-              const newData2 = chartCtx.w.config.series[1].data.slice()
-              newData2.shift()
-
-              // Apenas para a série de índice 0, para evitar múltiplos updates
-              if (opts.el.node.getAttribute('index') === '0') {
-                window.setTimeout(function () {
-                  chartCtx.updateOptions({
-                    series: [
-                      { data: newData1 },
-                      { data: newData2 }
-                    ],
-                    subtitle: {
-                      text: parseInt(getRandom() * Math.random()).toString(),
-                    }
-                  }, false, false)
-                }, 300)
-              }
-            }
-          },
-          toolbar: {
-            show: false
-          },
-          zoom: {
-            enabled: false
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'straight',
-          width: 5,
-        },
-        grid: {
-          padding: {
-            left: 0,
-            right: 0
-          }
-        },
-        markers: {
-          size: 0,
-          hover: {
-            size: 0
-          }
+          height: 500
         },
         series: [
           {
-            name: 'Running',
-            data: generateMinuteWiseTimeSeries(
-              new Date("12/12/2016 00:20:00").getTime(),
-              12,
-              { min: 30, max: 110 }
-            )
-          },
-          {
-            name: 'Waiting',
-            data: generateMinuteWiseTimeSeries(
-              new Date("12/12/2016 00:20:00").getTime(),
-              12,
-              { min: 30, max: 110 }
-            )
+            name: 'Valor Pago',
+            data: seriesData
           }
         ],
         xaxis: {
           type: 'datetime',
-          range: 2700000
+          // Formato no tooltip/labels
+          labels: {
+            datetimeUTC: false, // Para não ajustar fuso
+            format: 'dd/MM/yyyy'
+          }
+        },
+        yaxis: {
+          labels: {
+            // Formata valores no eixo Y em moeda BR
+            formatter: (val) => {
+              return val.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2
+              });
+            }
+          }
+        },
+        tooltip: {
+          x: {
+            format: 'dd/MM/yyyy'
+          },
+          y: {
+            formatter: (val) => {
+              return val.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+              });
+            }
+          }
         },
         title: {
-          text: 'Processes',
+          text: 'Total de Pagamentos por Data',
           align: 'left',
           style: {
-            fontSize: '12px'
-          }
-        },
-        subtitle: {
-          text: '20',
-          floating: true,
-          align: 'right',
-          offsetY: 0,
-          style: {
-            fontSize: '22px'
-          }
-        },
-        legend: {
-          show: true,
-          floating: true,
-          horizontalAlign: 'left',
-          onItemClick: {
-            toggleDataSeries: false
-          },
-          position: 'top',
-          offsetY: -28,
-          offsetX: 60
-        },
-      };
-
-      var chartLine = new ApexCharts(
-        document.querySelector("#linechart"),
-        optionsLine
-      );
-      chartLine.render();
-
-      // --------------------------
-      // Circle (Radial) Chart
-      // --------------------------
-      var optionsCircle = {
-        chart: {
-          type: 'radialBar',
-          height: 320,
-          offsetY: -30,
-          offsetX: 20
-        },
-        plotOptions: {
-          radialBar: {
-            hollow: {
-              margin: 5,
-              size: '48%',
-              background: 'transparent'
-            },
-            track: {
-              show: true,
-              background: '#40475D',
-              strokeWidth: '10%',
-              opacity: 1,
-              margin: 3
-            }
-          },
-        },
-        series: [71, 63],
-        labels: ['Device 1', 'Device 2'],
-        legend: {
-          show: true,
-          position: 'left',
-          offsetX: -30,
-          offsetY: 10,
-          formatter: function (val, opts) {
-            return val + " - " + opts.w.globals.series[opts.seriesIndex] + '%'
-          }
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'horizontal',
-            shadeIntensity: 0.5,
-            inverseColors: true,
-            opacityFrom: 1,
-            opacityTo: 1,
-            stops: [0, 100]
+            fontSize: '18px'
           }
         }
       };
 
-      var chartCircle = new ApexCharts(
-        document.querySelector('#circlechart'),
-        optionsCircle
-      );
-      chartCircle.render();
-
-      // --------------------------
-      // Progress 1
-      // --------------------------
-      var optionsProgress1 = {
-        chart: {
-          height: 70,
-          type: 'bar',
-          stacked: true,
-          sparkline: {
-            enabled: true
-          }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            barHeight: '20%',
-            colors: {
-              backgroundBarColors: ['#40475D']
-            }
-          },
-        },
-        stroke: {
-          width: 0,
-        },
-        series: [{
-          name: 'Process 1',
-          data: [44]
-        }],
-        title: {
-          floating: true,
-          offsetX: -10,
-          offsetY: 5,
-          text: 'Process 1'
-        },
-        subtitle: {
-          floating: true,
-          align: 'right',
-          offsetY: 0,
-          text: '44%',
-          style: {
-            fontSize: '20px'
-          }
-        },
-        tooltip: {
-          enabled: false
-        },
-        xaxis: {
-          categories: ['Process 1'],
-        },
-        yaxis: {
-          max: 100
-        },
-        fill: {
-          opacity: 1
-        }
-      };
-
-      var chartProgress1 = new ApexCharts(
-        document.querySelector('#progress1'),
-        optionsProgress1
-      );
-      chartProgress1.render();
-
-      // --------------------------
-      // Progress 2
-      // --------------------------
-      var optionsProgress2 = {
-        chart: {
-          height: 70,
-          type: 'bar',
-          stacked: true,
-          sparkline: {
-            enabled: true
-          }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            barHeight: '20%',
-            colors: {
-              backgroundBarColors: ['#40475D']
-            }
-          },
-        },
-        colors: ['#17ead9'],
-        stroke: {
-          width: 0,
-        },
-        series: [{
-          name: 'Process 2',
-          data: [80]
-        }],
-        title: {
-          floating: true,
-          offsetX: -10,
-          offsetY: 5,
-          text: 'Process 2'
-        },
-        subtitle: {
-          floating: true,
-          align: 'right',
-          offsetY: 0,
-          text: '80%',
-          style: {
-            fontSize: '20px'
-          }
-        },
-        tooltip: {
-          enabled: false
-        },
-        xaxis: {
-          categories: ['Process 2'],
-        },
-        yaxis: {
-          max: 100
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            inverseColors: false,
-            gradientToColors: ['#6078ea']
-          }
-        },
-      };
-
-      var chartProgress2 = new ApexCharts(
-        document.querySelector('#progress2'),
-        optionsProgress2
-      );
-      chartProgress2.render();
-
-      // --------------------------
-      // Progress 3
-      // --------------------------
-      var optionsProgress3 = {
-        chart: {
-          height: 70,
-          type: 'bar',
-          stacked: true,
-          sparkline: {
-            enabled: true
-          }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            barHeight: '20%',
-            colors: {
-              backgroundBarColors: ['#40475D']
-            }
-          },
-        },
-        colors: ['#f02fc2'],
-        stroke: {
-          width: 0,
-        },
-        series: [{
-          name: 'Process 3',
-          data: [74]
-        }],
-        fill: {
-          type: 'gradient',
-          gradient: {
-            gradientToColors: ['#6094ea']
-          }
-        },
-        title: {
-          floating: true,
-          offsetX: -10,
-          offsetY: 5,
-          text: 'Process 3'
-        },
-        subtitle: {
-          floating: true,
-          align: 'right',
-          offsetY: 0,
-          text: '74%',
-          style: {
-            fontSize: '20px'
-          }
-        },
-        tooltip: {
-          enabled: false
-        },
-        xaxis: {
-          categories: ['Process 3'],
-        },
-        yaxis: {
-          max: 100
-        },
-      };
-
-      var chartProgress3 = new ApexCharts(
-        document.querySelector('#progress3'),
-        optionsProgress3
-      );
-      chartProgress3.render();
-
-      // --------------------------
-      // Atualizações a cada 3s
-      // --------------------------
-      window.setInterval(function () {
-        iteration++;
-
-        // Atualiza ColumnChart
-        chartColumn.updateSeries([{
-          data: [
-            ...chartColumn.w.config.series[0].data,
-            [
-              chartColumn.w.globals.maxX + 300000,
-              getRandom()
-            ]
-          ]
-        }]);
-
-        // Atualiza LineChart
-        chartLine.updateSeries([
-          {
-            data: [
-              ...chartLine.w.config.series[0].data,
-              [
-                chartLine.w.globals.maxX + 300000,
-                getRandom()
-              ]
-            ]
-          },
-          {
-            data: [
-              ...chartLine.w.config.series[1].data,
-              [
-                chartLine.w.globals.maxX + 300000,
-                getRandom()
-              ]
-            ]
-          }
-        ]);
-
-        // Atualiza CircleChart (radial)
-        chartCircle.updateSeries([
-          getRangeRandom({ min: 10, max: 100 }),
-          getRangeRandom({ min: 10, max: 100 })
-        ]);
-
-        // Atualiza Progress 1
-        var p1Data = getRangeRandom({ min: 10, max: 100 });
-        chartProgress1.updateOptions({
-          series: [{ data: [p1Data] }],
-          subtitle: {
-            text: p1Data + "%"
-          }
-        });
-
-        // Atualiza Progress 2
-        var p2Data = getRangeRandom({ min: 10, max: 100 });
-        chartProgress2.updateOptions({
-          series: [{ data: [p2Data] }],
-          subtitle: {
-            text: p2Data + "%"
-          }
-        });
-
-        // Atualiza Progress 3
-        var p3Data = getRangeRandom({ min: 10, max: 100 });
-        chartProgress3.updateOptions({
-          series: [{ data: [p3Data] }],
-          subtitle: {
-            text: p3Data + "%"
-          }
-        });
-
-      }, 3000);
+      const chart = new ApexCharts(document.querySelector("#chart"), options);
+      chart.render();
     </script>
   </body>
 </html>
