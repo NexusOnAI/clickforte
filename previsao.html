@@ -1,211 +1,216 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Relatório de Pagamentos</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- ApexCharts JS -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <style>
-      body {
-        background-color: #fff;
-        color: #212529;
-        font-family: Arial, sans-serif;
-      }
-      .container {
-        margin-top: 30px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1 class="text-center mb-4">Relatório de Pagamentos</h1>
-      <div id="chart"></div>
-    </div>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatório de Pagamentos</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- ApexCharts JS -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    /* Responsividade do gráfico */
+    #chart {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    body {
+      background-color: #fff;
+      color: #212529;
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Relatório de Pagamentos</h2>
+    <div id="chart"></div>
+  </div>
+  
+  <script>
+    // 1) Dados fornecidos
+    const dados = [
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "GO SELL", categoria: "RETIRADA", dataPagamento: "20/02/2025", valorPago: "R$ 96.000,00" },
+      { descricao: "GO SELL", categoria: "RETIRADA", dataPagamento: "20/03/2025", valorPago: "R$ 96.500,00" },
+      { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 1.204,00" },
+      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 26.153,60" },
+      { descricao: "WIRUTEX", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 2.841,95" },
+      { descricao: "VERTICALPACK EMBALAGENS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 1.101,48" },
+      { descricao: "VERTICAL PACK", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 8.675,10" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 5.261,03" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 4.788,22" },
+      { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 87.584,05" },
+      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 26.863,15" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 2.902,58" },
+      { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 25.315,09" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 67.943,01" },
+      { descricao: "OR DESIGN", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 15.640,00" },
+      { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "24/03/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "24/03/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 622,30" },
+      { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 8.827,50" },
+      { descricao: "DZAINER", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 23.128,00" },
+      { descricao: "DZAINER", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 22.400,00" },
+      { descricao: "CIANURETO", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 6.207,00" },
+      { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 15.905,00" },
+      { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 4.800,00" },
+      { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 10.660,00" },
+      { descricao: "ARGO PROVEDOR", categoria: "DESPESA FIXA", dataPagamento: "24/03/2025", valorPago: "R$ 259,80" },
+      { descricao: "FUTURO LOG", categoria: "DESPESA FIXA", dataPagamento: "24/03/2025", valorPago: "R$ 6.000,00" },
+      { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 281,60" },
+      { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 250,00" },
+      { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 7.500,00" },
+      { descricao: "ALUGUEL GIRUS  903 - LUCIANA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
+      { descricao: "ALUGUEL GIRUS  919 - VERA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 92.903,78" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 113.238,35" },
+      { descricao: "ISS - MADEIRA EXPRESS", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 1.891,86" },
+      { descricao: "PRD_IMD NAVEGANTES", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 29.000,00" },
+      { descricao: "PAPAI NOEL", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "CARLOS BALLOTIN", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "MARCELO ANTUNES", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 3.233,27" },
+      { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 28.188,02" },
+      { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 30.450,00" },
+      { descricao: "ACM FIBRAS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 55.290,60" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 92.903,78" },
+      { descricao: "CONTHEY", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 35.747,73" },
+      { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 516,00" },
+      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 44.642,21" },
+      { descricao: "ABC SPEEDY WAY TURISMO E TRANSPORTE LTDA", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 5.963,86" },
+      { descricao: "INDUSLOG SERVICOS DE LOGISTICA LTDA", categoria: "DESPESA FIXA", dataPagamento: "27/03/2025", valorPago: "R$ 8.965,06" },
+      { descricao: "PER MOBILI", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 3.358,00" },
+      { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 79.186,62" },
+      { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 92.903,78" },
+      { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 2.095,98" },
+      { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 100.900,00" },
+      { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 4.788,22" },
+      { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 41.719,94" },
+      { descricao: "FERGRAFPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 16.695,00" },
+      { descricao: "METALURGICA ALBRAS LTDA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 10.876,32" },
+      { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 7.528,69" },
+      { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "28/03/2025", valorPago: "R$ 70.000,00" },
+      { descricao: "MARCO ANTÔNIO", categoria: "RETIRADA", dataPagamento: "28/03/2025", valorPago: "R$ 30.000,00" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 2.590,00" },
+      { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 5.299,76" },
+      { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 68.757,60" }
+    ];
 
-    <script>
-      // --------------------------------------------------------------------
-      // 1) Dados fornecidos (todos, inclusive FORNECEDOR, TRANSPORTADORA, RETIRADA etc.)
-      // --------------------------------------------------------------------
-      const dados = [
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "03/03/2025", valorPago: "R$ 28.478,55" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "12/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "GO SELL", categoria: "RETIRADA", dataPagamento: "20/02/2025", valorPago: "R$ 96.000,00" },
-        { descricao: "GO SELL", categoria: "RETIRADA", dataPagamento: "20/03/2025", valorPago: "R$ 96.500,00" },
-        { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 1.204,00" },
-        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 26.153,60" },
-        { descricao: "WIRUTEX", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 2.841,95" },
-        { descricao: "VERTICALPACK EMBALAGENS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 1.101,48" },
-        { descricao: "VERTICAL PACK", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 8.675,10" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 5.261,03" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 4.788,22" },
-        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "22/03/2025", valorPago: "R$ 87.584,05" },
-        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA - OF", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 26.863,15" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 2.902,58" },
-        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "23/03/2025", valorPago: "R$ 25.315,09" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 27.943,03" },
-        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 67.943,01" },
-        { descricao: "OR DESIGN", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 15.640,00" },
-        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "24/03/2025", valorPago: "R$ 3.800,00" },
-        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "24/03/2025", valorPago: "R$ 3.800,00" },
-        { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 622,30" },
-        { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 8.827,50" },
-        { descricao: "DZAINER", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 23.128,00" },
-        { descricao: "DZAINER", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 22.400,00" },
-        { descricao: "CIANURETO", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 6.207,00" },
-        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 15.905,00" },
-        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 4.800,00" },
-        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "24/03/2025", valorPago: "R$ 10.660,00" },
-        { descricao: "ARGO PROVEDOR", categoria: "DESPESA FIXA", dataPagamento: "24/03/2025", valorPago: "R$ 259,80" },
-        { descricao: "FUTURO LOG", categoria: "DESPESA FIXA", dataPagamento: "24/03/2025", valorPago: "R$ 6.000,00" },
-        { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 281,60" },
-        { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 250,00" },
-        { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 7.500,00" },
-        { descricao: "ALUGUEL GIRUS  903 - LUCIANA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
-        { descricao: "ALUGUEL GIRUS  919 - VERA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
-        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 92.903,78" },
-        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 113.238,35" },
-        { descricao: "ISS - MADEIRA EXPRESS", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 1.891,86" },
-        { descricao: "PRD_IMD NAVEGANTES", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 29.000,00" },
-        { descricao: "PAPAI NOEL", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
-        { descricao: "CARLOS BALLOTIN", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
-        { descricao: "MARCELO ANTUNES", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 3.233,27" },
-        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 28.188,02" },
-        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 30.450,00" },
-        { descricao: "ACM FIBRAS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 55.290,60" },
-        { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 92.903,78" },
-        { descricao: "CONTHEY", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 35.747,73" },
-        { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 516,00" },
-        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 44.642,21" },
-        { descricao: "ABC SPEEDY WAY TURISMO E TRANSPORTE LTDA", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 5.963,86" },
-        { descricao: "INDUSLOG SERVICOS DE LOGISTICA LTDA", categoria: "DESPESA FIXA", dataPagamento: "27/03/2025", valorPago: "R$ 8.965,06" },
-        { descricao: "PER MOBILI", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 3.358,00" },
-        { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 79.186,62" },
-        { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 92.903,78" },
-        { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 2.095,98" },
-        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 100.900,00" },
-        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 3.800,00" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 4.788,22" },
-        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 41.719,94" },
-        { descricao: "FERGRAFPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 16.695,00" },
-        { descricao: "METALURGICA ALBRAS LTDA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 10.876,32" },
-        { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 7.528,69" },
-        { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "28/03/2025", valorPago: "R$ 70.000,00" },
-        { descricao: "MARCO ANTÔNIO", categoria: "RETIRADA", dataPagamento: "28/03/2025", valorPago: "R$ 30.000,00" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 2.590,00" },
-        { descricao: "MULTIVISÃO - OF LETS", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 5.299,76" },
-        { descricao: "MULTIVISÃO - PF - CAROÇO", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 68.757,60" }
-      ];
+    // 2) Função para converter valores de "R$ X" para número
+    function parseValorBR(valorBR) {
+      return parseFloat(valorBR.replace("R$", "").replace(/\./g, "").replace(",", ".").trim());
+    }
 
-      // --------------------------------------------------------------------
-      // 2) Funções para parse dos dados
-      // --------------------------------------------------------------------
-      function parseValorBR(valorBR) {
-        // Converte "R$ 28.478,55" para 28478.55
-        return parseFloat(
-          valorBR.replace("R$", "").replace(/\./g, "").replace(",", ".").trim()
-        );
+    // 3) Função para converter data de "DD/MM/AAAA" para "AAAA-MM-DD"
+    function toISODate(strBR) {
+      const [dia, mes, ano] = strBR.split("/");
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    // 4) Agrupar os dados por data (somando os valores)
+    const somaPorData = {};
+    dados.forEach(item => {
+      const dataISO = toISODate(item.dataPagamento);
+      const valorNum = parseValorBR(item.valorPago);
+      if (!somaPorData[dataISO]) {
+        somaPorData[dataISO] = 0;
       }
+      somaPorData[dataISO] += valorNum;
+    });
 
-      function toISODate(strBR) {
-        // Converte "DD/MM/AAAA" para "AAAA-MM-DD"
-        const [dia, mes, ano] = strBR.split("/");
-        return `${ano}-${mes}-${dia}`;
-      }
+    // Converter os dados agrupados para o formato do ApexCharts: [{ x: timestamp, y: valor }, ...]
+    const seriesData = Object.keys(somaPorData)
+      .sort()
+      .map(dataISO => ({
+        x: new Date(dataISO).getTime(),
+        y: somaPorData[dataISO]
+      }));
 
-      // --------------------------------------------------------------------
-      // 3) Agrupar os dados por data (somando os valores independentemente da categoria)
-      // --------------------------------------------------------------------
-      const somaPorData = {};
-      dados.forEach(item => {
-        const dataISO = toISODate(item.dataPagamento);
-        const valorNum = parseValorBR(item.valorPago);
-        if (!somaPorData[dataISO]) {
-          somaPorData[dataISO] = 0;
+    // 5) Configuração do gráfico (modelo "XYZ MOTORS" adaptado) com nomes em português
+    var options = {
+      series: [{
+        name: 'Valor Pago',
+        data: seriesData
+      }],
+      chart: {
+        type: 'area',
+        stacked: false,
+        height: 350,
+        zoom: {
+          type: 'x',
+          enabled: true,
+          autoScaleYaxis: true
+        },
+        toolbar: {
+          autoSelected: 'zoom'
+        },
+        background: 'transparent'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      markers: {
+        size: 0
+      },
+      title: {
+        text: 'Total de Pagamentos por Data',
+        align: 'left'
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          inverseColors: false,
+          opacityFrom: 0.5,
+          opacityTo: 0,
+          stops: [0, 90, 100]
         }
-        somaPorData[dataISO] += valorNum;
-      });
-
-      // Converter os dados agrupados para o formato do ApexCharts: [ { x: timestamp, y: valor }, ... ]
-      const seriesData = Object.keys(somaPorData)
-        .sort() // ordena as datas
-        .map(dataISO => {
-          const dateObj = new Date(dataISO);
-          return {
-            x: dateObj.getTime(),
-            y: somaPorData[dataISO]
-          };
-        });
-
-      // --------------------------------------------------------------------
-      // 4) Configurar e renderizar o gráfico
-      // --------------------------------------------------------------------
-      const options = {
-        chart: {
-          type: 'bar',
-          height: 500,
-          background: 'transparent'
-        },
-        series: [
-          {
-            name: 'Valor Pago',
-            data: seriesData
-          }
-        ],
-        xaxis: {
-          type: 'datetime',
-          labels: {
-            datetimeUTC: false,
-            format: 'dd/MM/yyyy'
-          }
-        },
-        yaxis: {
-          labels: {
-            formatter: function (val) {
-              return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-            }
-          }
-        },
-        tooltip: {
-          x: {
-            format: 'dd/MM/yyyy'
-          },
-          y: {
-            formatter: function (val) {
-              return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
           }
         },
         title: {
-          text: 'Total de Pagamentos por Data',
-          align: 'left',
-          style: { fontSize: '18px' }
+          text: 'Valor Pago'
         }
-      };
+      },
+      xaxis: {
+        type: 'datetime'
+      },
+      tooltip: {
+        shared: false,
+        y: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          }
+        }
+      }
+    };
 
-      var chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
-    </script>
-  </body>
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+  </script>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
