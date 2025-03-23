@@ -36,10 +36,9 @@
     .iframe-container iframe {
       border: none;
       transform-origin: top left;
-      /* Os valores de width e height serão ajustados via script */
     }
 
-    /* Botões de controle de zoom */
+    /* Botões de controle */
     .controls {
       position: absolute;
       top: 10px;
@@ -49,7 +48,18 @@
       gap: 10px;
     }
 
-    .controls button {
+    /* Botões de navegação interna (abas da planilha) */
+    .sheet-nav {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 20;
+      display: flex;
+      gap: 10px;
+    }
+
+    .controls button,
+    .sheet-nav button {
       background-color: #007bff;
       border: none;
       color: #fff;
@@ -60,7 +70,8 @@
       transition: background-color 0.3s;
     }
 
-    .controls button:hover {
+    .controls button:hover,
+    .sheet-nav button:hover {
       background-color: #0056b3;
     }
 
@@ -82,11 +93,17 @@
   </style>
 </head>
 <body>
-  <div class="iframe-container">
-    <!-- Botões de controle de zoom -->
+  <div class="iframe-container" id="container">
+    <!-- Botões de navegação interna para mudar de aba na planilha -->
+    <div class="sheet-nav">
+      <button id="btnFornecedores">Fornecedores</button>
+      <button id="btnContas">Contas a Pagar</button>
+    </div>
+    <!-- Botões de controle de zoom e tela cheia -->
     <div class="controls">
       <button id="zoomIn">+</button>
       <button id="zoomOut">-</button>
+      <button id="fullscreen">Tela Cheia</button>
     </div>
     <div class="loading" id="loading">Carregando planilha...</div>
     <iframe 
@@ -104,7 +121,6 @@
 
     // Função para atualizar o zoom do iframe
     function updateZoom() {
-      // Ajusta o tamanho do iframe para compensar o zoom
       iframe.style.transform = `scale(${scale})`;
       iframe.style.width = `${100 / scale}%`;
       iframe.style.height = `${100 / scale}%`;
@@ -124,6 +140,41 @@
       if(scale > 0.3) { // limite mínimo
         scale -= 0.1;
         updateZoom();
+      }
+    });
+
+    // Função para recarregar o iframe periodicamente
+    function refreshIframe() {
+      document.getElementById('loading').style.display = 'flex';
+      iframe.src = iframe.src;
+    }
+
+    // Intervalo de recarregamento (30 segundos)
+    const refreshInterval = 30000;
+    setInterval(refreshIframe, refreshInterval);
+
+    // Botões de navegação para mudar de aba
+    const baseURL = "https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing";
+
+    document.getElementById('btnFornecedores').addEventListener('click', () => {
+      document.getElementById('loading').style.display = 'flex';
+      iframe.src = baseURL + "#gid=0"; // Ajuste o gid conforme necessário
+    });
+
+    document.getElementById('btnContas').addEventListener('click', () => {
+      document.getElementById('loading').style.display = 'flex';
+      iframe.src = baseURL + "#gid=123456789"; // Ajuste o gid conforme necessário
+    });
+
+    // Função para alternar o modo de tela cheia
+    document.getElementById('fullscreen').addEventListener('click', () => {
+      const container = document.getElementById('container');
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => {
+          alert(`Erro ao tentar ativar o modo tela cheia: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
       }
     });
   </script>
