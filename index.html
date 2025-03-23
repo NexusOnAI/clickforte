@@ -109,12 +109,31 @@
       padding: 15px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       flex-wrap: wrap;
     }
-    .header img {
+    .header .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header img.logo {
       height: 40px;
-      margin-right: 10px;
+    }
+    .header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .user-info img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+    .header .user-info span {
+      font-size: 1.1rem;
     }
     /* Desktop: exibe tudo em uma linha */
     .header .header-text {
@@ -189,6 +208,15 @@
         margin-bottom: 20px;
       }
     }
+    /* Botão para alterar foto */
+    #changePhotoBtn {
+      border: none;
+      background: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -230,12 +258,23 @@
 
   <!-- Conteúdo Principal -->
   <header class="header">
-    <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem">
-    <div class="header-text">
-      <span class="main-title">ClickForte Armazenagem</span>
-      <!-- <span class="sub-title">Relatório de Gastos</span> -->
+    <div class="logo-section">
+      <img class="logo" src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem">
+      <div class="header-text">
+        <span class="main-title">ClickForte Armazenagem</span>
+        <!-- <span class="sub-title">Relatório de Gastos</span> -->
+      </div>
+    </div>
+    <!-- Área do usuário (nome e foto) -->
+    <div class="user-info" id="userInfo" style="display: none;">
+      <img id="profileImage" src="https://via.placeholder.com/40" alt="Foto de Perfil">
+      <span id="displayUsername"></span>
+      <button id="changePhotoBtn">Alterar foto</button>
     </div>
   </header>
+
+  <!-- Input file oculto para selecionar a foto da galeria -->
+  <input type="file" id="fileInput" accept="image/*" style="display: none;">
 
   <!-- Menu com rolagem horizontal no mobile e centralizado no desktop -->
   <div class="menu">
@@ -264,8 +303,26 @@
     const passwordField = document.getElementById("password");
     const iframe = document.getElementById("frame");
     const logoutNotification = document.getElementById("logoutNotification");
+    const userInfo = document.getElementById("userInfo");
+    const displayUsername = document.getElementById("displayUsername");
+    const profileImage = document.getElementById("profileImage");
+    const fileInput = document.getElementById("fileInput");
+    const changePhotoBtn = document.getElementById("changePhotoBtn");
 
-    // Ao carregar a página, verifica se há indicação de que o usuário estava logado
+    // Função para atualizar os dados do usuário no cabeçalho
+    function updateUserInfo() {
+      const savedUsername = localStorage.getItem("savedUsername");
+      const savedProfilePic = localStorage.getItem("savedProfilePic");
+      if (savedUsername) {
+        displayUsername.textContent = savedUsername;
+      }
+      if (savedProfilePic) {
+        profileImage.src = savedProfilePic;
+      }
+      userInfo.style.display = "flex";
+    }
+
+    // Verifica se há dados salvos e atualiza o cabeçalho (caso o usuário já esteja logado e refresque a página)
     window.addEventListener("DOMContentLoaded", function() {
       const savedUsername = localStorage.getItem("savedUsername");
       const savedPassword = localStorage.getItem("savedPassword");
@@ -274,13 +331,18 @@
         passwordField.value = savedPassword;
         rememberMe.checked = true;
       }
-      // Se a chave "loggedIn" estiver presente, exibe a notificação e a remove
+      // Exibe notificação de logout, se aplicável
       if (localStorage.getItem("loggedIn") === "true") {
         logoutNotification.style.display = "block";
         localStorage.removeItem("loggedIn");
       }
+      // Se já houver foto de perfil e usuário salvos, atualiza o cabeçalho
+      if (savedUsername) {
+        updateUserInfo();
+      }
     });
 
+    // Evento de submit do formulário de login
     formLogin.addEventListener("submit", function(e) {
       e.preventDefault();
       spinner.style.display = "flex";
@@ -298,13 +360,32 @@
           // Armazena a indicação de que o usuário estava logado, para que na atualização seja exibida a notificação
           localStorage.setItem("loggedIn", "true");
           loginOverlay.style.display = "none";
-          // Recarrega a página home para reiniciar o efeito
           iframe.src = "home.html";
+          updateUserInfo();
         } else {
           alert("Usuário ou senha incorretos!");
         }
         spinner.style.display = "none";
       }, 2000);
+    });
+
+    // Ao clicar no botão para alterar foto, aciona o input file
+    changePhotoBtn.addEventListener("click", function() {
+      fileInput.click();
+    });
+
+    // Ao selecionar uma imagem, converte para DataURL, salva no localStorage e atualiza o cabeçalho
+    fileInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const dataURL = e.target.result;
+          localStorage.setItem("savedProfilePic", dataURL);
+          profileImage.src = dataURL;
+        };
+        reader.readAsDataURL(file);
+      }
     });
   </script>
 </body>
