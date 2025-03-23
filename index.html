@@ -19,6 +19,21 @@
       display: flex;
       flex-direction: column;
     }
+    /* Botões Modernos e Sofisticados */
+    .btn-custom {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      border: none;
+      border-radius: 30px;
+      color: #fff;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .btn-custom:hover {
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
     /* Login Overlay Styles */
     #loginOverlay {
       position: fixed;
@@ -67,9 +82,10 @@
       box-shadow: none;
       font-size: 1rem;
       padding: 10px;
+      border: 1px solid #ccc;
     }
     #loginOverlay .login-form .btn {
-      border-radius: 5px;
+      border-radius: 30px;
       font-weight: bold;
       font-size: 1rem;
       padding: 10px;
@@ -249,7 +265,7 @@
           <input class="form-check-input" type="checkbox" id="rememberMe">
           <label class="form-check-label" for="rememberMe">Lembrar meus dados</label>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        <button type="submit" class="btn btn-custom w-100">Entrar</button>
         <a href="#" class="forgot">Esqueceu a senha?</a>
       </form>
       <div id="spinner">
@@ -265,7 +281,7 @@
     <div class="logo-section">
       <img class="logo" src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem">
       <div class="header-text">
-<!--<span class="main-title">ClickForte Armazenagem</span> -->
+        <!--<span class="main-title">ClickForte Armazenagem</span>-->
       </div>
     </div>
     <!-- Área do usuário (nome e foto) -->
@@ -288,7 +304,7 @@
             <div class="mb-3 text-center">
               <img id="modalProfileImage" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="rounded-circle mb-2" style="width:100px; height:100px; object-fit: cover; border:2px solid #000;">
               <br>
-              <label for="fileInput" class="btn btn-secondary btn-sm">Escolher nova foto</label>
+              <label for="fileInput" class="btn btn-custom btn-sm">Escolher nova foto</label>
               <input type="file" id="fileInput" accept="image/*" style="display: none;">
             </div>
             <div class="mb-3">
@@ -299,7 +315,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="saveProfileBtn">Salvar Alterações</button>
+          <button type="button" class="btn btn-custom" id="saveProfileBtn">Salvar Alterações</button>
         </div>
       </div>
     </div>
@@ -307,12 +323,12 @@
 
   <!-- Menu -->
   <div class="menu">
-    <button class="btn btn-primary" onclick="document.getElementById('frame').src='home.html'">Home</button>
-    <button class="btn btn-primary" onclick="document.getElementById('frame').src='previsao.html'">Previsão</button>
-    <button class="btn btn-primary" onclick="document.getElementById('frame').src='geral.html'">Gastos</button>
-    <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_janeiro.html'">Janeiro</button>
-    <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_fevereiro.html'">Fevereiro</button>
-    <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_marco.html'">Março</button>
+    <button class="btn btn-custom" onclick="document.getElementById('frame').src='home.html'">Home</button>
+    <button class="btn btn-custom" onclick="document.getElementById('frame').src='previsao.html'">Previsão</button>
+    <button class="btn btn-custom" onclick="document.getElementById('frame').src='geral.html'">Gastos</button>
+    <button class="btn btn-custom" onclick="document.getElementById('frame').src='sub_janeiro.html'">Janeiro</button>
+    <button class="btn btn-custom" onclick="document.getElementById('frame').src='sub_fevereiro.html'">Fevereiro</button>
+    <button class="btn btn-custom" onclick="document.getElementById('frame').src='sub_marco.html'">Março</button>
   </div>
 
   <main>
