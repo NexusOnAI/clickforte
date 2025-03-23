@@ -36,7 +36,6 @@
     .iframe-container iframe {
       border: none;
       transform-origin: top left;
-      /* Os valores de width e height serão ajustados via script */
     }
 
     /* Botões de controle de zoom */
@@ -104,7 +103,6 @@
 
     // Função para atualizar o zoom do iframe
     function updateZoom() {
-      // Ajusta o tamanho do iframe para compensar o zoom
       iframe.style.transform = `scale(${scale})`;
       iframe.style.width = `${100 / scale}%`;
       iframe.style.height = `${100 / scale}%`;
@@ -126,6 +124,18 @@
         updateZoom();
       }
     });
+
+    // Função para recarregar o iframe periodicamente
+    function refreshIframe() {
+      // Exibe o loading antes de recarregar
+      document.getElementById('loading').style.display = 'flex';
+      // Recarrega o iframe alterando seu src para ele mesmo
+      iframe.src = iframe.src;
+    }
+
+    // Intervalo de recarregamento (em milissegundos)
+    const refreshInterval = 30000; // 30 segundos
+    setInterval(refreshIframe, refreshInterval);
   </script>
 </body>
 </html>
