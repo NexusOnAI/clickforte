@@ -36,6 +36,7 @@
     .iframe-container iframe {
       border: none;
       transform-origin: top left;
+      /* Os valores de width e height serão ajustados via script */
     }
 
     /* Botões de controle de zoom */
@@ -48,18 +49,7 @@
       gap: 10px;
     }
 
-    /* Botões de navegação interna (abas da planilha) */
-    .sheet-nav {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 20;
-      display: flex;
-      gap: 10px;
-    }
-
-    .controls button,
-    .sheet-nav button {
+    .controls button {
       background-color: #007bff;
       border: none;
       color: #fff;
@@ -70,8 +60,7 @@
       transition: background-color 0.3s;
     }
 
-    .controls button:hover,
-    .sheet-nav button:hover {
+    .controls button:hover {
       background-color: #0056b3;
     }
 
@@ -94,11 +83,6 @@
 </head>
 <body>
   <div class="iframe-container">
-    <!-- Botões de navegação interna para mudar de aba na planilha -->
-    <div class="sheet-nav">
-      <button id="btnFornecedores">Fornecedores</button>
-      <button id="btnContas">Contas a Pagar</button>
-    </div>
     <!-- Botões de controle de zoom -->
     <div class="controls">
       <button id="zoomIn">+</button>
@@ -120,6 +104,7 @@
 
     // Função para atualizar o zoom do iframe
     function updateZoom() {
+      // Ajusta o tamanho do iframe para compensar o zoom
       iframe.style.transform = `scale(${scale})`;
       iframe.style.width = `${100 / scale}%`;
       iframe.style.height = `${100 / scale}%`;
@@ -140,34 +125,6 @@
         scale -= 0.1;
         updateZoom();
       }
-    });
-
-    // Função para recarregar o iframe periodicamente
-    function refreshIframe() {
-      // Exibe o loading antes de recarregar
-      document.getElementById('loading').style.display = 'flex';
-      // Recarrega o iframe alterando seu src para ele mesmo
-      iframe.src = iframe.src;
-    }
-
-    // Intervalo de recarregamento (em milissegundos)
-    const refreshInterval = 30000; // 30 segundos
-    setInterval(refreshIframe, refreshInterval);
-
-    // Botões de navegação para mudar de aba
-    // Ajuste os valores de gid conforme sua planilha
-    const baseURL = "https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing";
-
-    document.getElementById('btnFornecedores').addEventListener('click', () => {
-      // Exemplo: aba "Fornecedores" com gid=0 (substitua se necessário)
-      document.getElementById('loading').style.display = 'flex';
-      iframe.src = baseURL + "#gid=0";
-    });
-
-    document.getElementById('btnContas').addEventListener('click', () => {
-      // Exemplo: aba "Contas a Pagar" com gid=123456789 (substitua se necessário)
-      document.getElementById('loading').style.display = 'flex';
-      iframe.src = baseURL + "#gid=123456789";
     });
   </script>
 </body>
