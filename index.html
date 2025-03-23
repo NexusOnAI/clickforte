@@ -189,6 +189,22 @@
         margin-bottom: 20px;
       }
     }
+    /* Estilos para o Dino Game */
+    #dinoGame {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f7f7f7;
+      z-index: 2000;
+    }
+    #gameCanvas {
+      display: block;
+      margin: 0 auto;
+      background: #fff;
+    }
   </style>
 </head>
 <body>
@@ -253,9 +269,15 @@
     <iframe id="frame" src="home.html"></iframe>
   </main>
 
+  <!-- Div para o Dino Game -->
+  <div id="dinoGame">
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Elementos de login e iframe
     const loginOverlay = document.getElementById("loginOverlay");
     const spinner = document.getElementById("spinner");
     const formLogin = document.getElementById("formLogin");
@@ -278,6 +300,10 @@
       if (localStorage.getItem("loggedIn") === "true") {
         logoutNotification.style.display = "block";
         localStorage.removeItem("loggedIn");
+      }
+      // Verifica o status da conexão ao carregar
+      if (!navigator.onLine) {
+        showDinoGame();
       }
     });
 
@@ -306,6 +332,174 @@
         spinner.style.display = "none";
       }, 2000);
     });
+
+    // Funções para exibir/ocultar o Dino Game em caso de perda ou recuperação da conexão
+    function showDinoGame() {
+      document.getElementById("dinoGame").style.display = "block";
+    }
+    function hideDinoGame() {
+      document.getElementById("dinoGame").style.display = "none";
+    }
+    window.addEventListener("offline", showDinoGame);
+    window.addEventListener("online", hideDinoGame);
+
+    // --- Código do Dino Game ---
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Ajusta as dimensões do canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // Propriedades do dinossauro
+    const dino = {
+      x: 50,
+      y: canvas.height - 150,
+      width: 50,
+      height: 50,
+      velocityY: 0,
+      jumpForce: 15,
+      isJumping: false,
+      gravity: 0.8
+    };
+
+    // Obstáculos
+    let obstacles = [];
+    let obstacleTimer = 0;
+    const obstacleInterval = 1500; // intervalo em milissegundos
+    let lastTime = 0;
+    let gameOver = false;
+
+    // Função para reiniciar o jogo
+    function restartGame() {
+      obstacles = [];
+      dino.y = canvas.height - 150;
+      dino.velocityY = 0;
+      dino.isJumping = false;
+      obstacleTimer = 0;
+      lastTime = 0;
+      gameOver = false;
+      window.requestAnimationFrame(gameLoop);
+    }
+
+    // Evento para pular com a tecla espaço ou toque na tela
+    window.addEventListener("keydown", function(e) {
+      if (e.code === "Space" || e.code === "ArrowUp") {
+        if (!dino.isJumping) {
+          dino.velocityY = -dino.jumpForce;
+          dino.isJumping = true;
+        }
+      }
+      // Reinicia o jogo se estiver game over e a tecla Enter for pressionada
+      if (gameOver && e.code === "Enter") {
+        restartGame();
+      }
+    });
+    canvas.addEventListener("touchstart", function(e) {
+      if (!dino.isJumping) {
+        dino.velocityY = -dino.jumpForce;
+        dino.isJumping = true;
+      }
+    });
+
+    // Função para atualizar o estado do jogo
+    function update(deltaTime) {
+      // Atualiza posição do dino
+      dino.velocityY += dino.gravity;
+      dino.y += dino.velocityY;
+      if (dino.y + dino.height >= canvas.height - 100) {
+        dino.y = canvas.height - 100 - dino.height;
+        dino.velocityY = 0;
+        dino.isJumping = false;
+      }
+
+      // Geração de obstáculos
+      obstacleTimer += deltaTime;
+      if (obstacleTimer > obstacleInterval) {
+        const size = Math.random() * 30 + 20;
+        const obstacle = {
+          x: canvas.width,
+          y: canvas.height - 100 - size,
+          width: size,
+          height: size,
+          speed: 6
+        };
+        obstacles.push(obstacle);
+        obstacleTimer = 0;
+      }
+
+      // Atualiza posição dos obstáculos
+      for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].x -= obstacles[i].speed;
+      }
+      // Remove obstáculos que saíram da tela
+      obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
+
+      // Verifica colisão
+      obstacles.forEach(ob => {
+        if (
+          dino.x < ob.x + ob.width &&
+          dino.x + dino.width > ob.x &&
+          dino.y < ob.y + ob.height &&
+          dino.y + dino.height > ob.y
+        ) {
+          gameOver = true;
+        }
+      });
+    }
+
+    // Função para desenhar o jogo
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Desenha o chão
+      ctx.fillStyle = "#444";
+      ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
+
+      // Desenha o dino
+      ctx.fillStyle = "#228B22";
+      ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+
+      // Desenha os obstáculos
+      ctx.fillStyle = "#B22222";
+      obstacles.forEach(ob => {
+        ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+      });
+
+      // Se game over, exibe mensagem
+      if (gameOver) {
+        ctx.fillStyle = "#000";
+        ctx.font = "48px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
+        ctx.font = "24px sans-serif";
+        ctx.fillText("Pressione Enter para reiniciar", canvas.width / 2, canvas.height / 2 + 40);
+      }
+    }
+
+    // Loop principal do jogo
+    function gameLoop(timestamp) {
+      if (!lastTime) lastTime = timestamp;
+      const deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+
+      if (!gameOver) {
+        update(deltaTime);
+      }
+      draw();
+      if (!gameOver) {
+        window.requestAnimationFrame(gameLoop);
+      }
+    }
+
+    // Inicia o jogo se a internet estiver off-line
+    if (!navigator.onLine) {
+      window.requestAnimationFrame(gameLoop);
+    }
+    // --- Fim do código do Dino Game ---
   </script>
 </body>
 </html>
