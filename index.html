@@ -31,7 +31,7 @@
       z-index: 1000;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       padding: 15px;
     }
     #loginOverlay::before {
@@ -51,8 +51,6 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
       width: 100%;
       max-width: 320px;
-      position: relative;
-      margin-right: 10px;
     }
     #loginOverlay .login-form h3 {
       font-weight: 600;
@@ -106,7 +104,7 @@
     .header {
       background-color: #000;
       color: #fff;
-      padding: 15px;
+      padding: 10px 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -123,12 +121,13 @@
     .header-text {
       display: flex;
       flex-direction: column;
+      font-size: 1rem;
     }
     .header-text .main-title {
-      font-size: 24px;
+      font-size: 1.2rem;
       font-weight: 400;
     }
-    /* Área do usuário: melhorada com modal para editar perfil */
+    /* Área do usuário: otimizada para mobile */
     .user-info {
       display: flex;
       align-items: center;
@@ -136,6 +135,7 @@
       background: rgba(255,255,255,0.1);
       padding: 5px 10px;
       border-radius: 30px;
+      cursor: pointer;
     }
     .user-info img {
       width: 45px;
@@ -143,19 +143,18 @@
       object-fit: cover;
       border-radius: 50%;
       border: 2px solid #fff;
-      cursor: pointer;
       transition: transform 0.2s;
     }
     .user-info img:hover {
       transform: scale(1.1);
     }
     .user-info span {
-      font-size: 1.1rem;
-      cursor: pointer;
+      font-size: 1rem;
+      white-space: nowrap;
     }
     /* Menu Styles */
     .menu {
-      margin: 10px 0;
+      margin: 5px 0;
       display: flex;
       gap: 5px;
       padding: 0 10px;
@@ -170,12 +169,12 @@
     @media (min-width: 577px) {
       .menu {
         justify-content: center;
-        overflow-x: visible;
       }
     }
     .menu .btn {
       flex: 0 0 auto;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+      padding: 7px 10px;
     }
     main {
       flex: 1;
@@ -195,6 +194,33 @@
         display: block;
         text-align: center;
         margin-bottom: 20px;
+      }
+      /* Ajuste de fontes e espaçamentos para o login */
+      #loginOverlay .login-form {
+        padding: 20px 15px;
+      }
+      #loginOverlay .login-form h3 {
+        font-size: 1.3rem;
+      }
+      #loginOverlay .login-form .form-control {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+      #loginOverlay .login-form .btn {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+    }
+    /* Modal ajustes para mobile */
+    @media (max-width: 576px) {
+      .modal-dialog {
+        margin: 10px;
+      }
+      .modal-content {
+        font-size: 0.9rem;
+      }
+      #modalUsername {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -350,14 +376,16 @@
       }
     });
 
-    // Login
+    // Login - utiliza o nome de usuário salvo (se existir) ou o padrão "admin"
     formLogin.addEventListener("submit", function(e) {
       e.preventDefault();
       spinner.style.display = "flex";
       setTimeout(function() {
+        // Validação: se houver nome salvo, utiliza-o; caso contrário, o padrão "admin"
+        const validUsername = localStorage.getItem("savedUsername") || "admin";
         const username = usernameField.value;
         const password = passwordField.value;
-        if (username === "admin" && password === "admin123") {
+        if (username === validUsername && password === "admin123") {
           if (rememberMe.checked) {
             localStorage.setItem("savedUsername", username);
             localStorage.setItem("savedPassword", password);
