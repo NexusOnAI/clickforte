@@ -3,60 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planilha no Iframe com Zoom Out</title>
+  <title>Planilha Embutida</title>
   <style>
-    /* Estilos globais */
-    body, html {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    /* Container principal */
-    .container {
-      max-width: 1200px;
-      margin: 20px auto;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-
-    /* Cabeçalho do container */
-    .header {
-      padding: 15px;
-      background: #007BFF;
-      color: #fff;
-      text-align: center;
-    }
-
-    /* Wrapper para o iframe */
-    .iframe-wrapper {
+    .iframe-container {
       position: relative;
       width: 100%;
-      height: calc(100vh - 80px); /* Altura ajustada considerando o cabeçalho */
+      max-width: 1200px;
+      height: 90vh;
       overflow: hidden;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
     }
 
-    .iframe-wrapper iframe {
-      width: 125%; /* Aumenta a largura para compensar o scale */
-      height: 125%; /* Aumenta a altura para compensar o scale */
+    /* Estilo para o iframe com zoom inicial de 50% */
+    .iframe-container iframe {
       border: none;
-      transform: scale(0.8); /* Aplica o zoom out */
       transform-origin: top left;
+      /* Os valores de width e height serão ajustados via script */
+    }
+
+    /* Botões de controle de zoom */
+    .controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 20;
+      display: flex;
+      gap: 10px;
+    }
+
+    .controls button {
+      background-color: #007bff;
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .controls button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Loading overlay */
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: #555;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Minha Planilha com Zoom Out</h1>
+  <div class="iframe-container">
+    <!-- Botões de controle de zoom -->
+    <div class="controls">
+      <button id="zoomIn">+</button>
+      <button id="zoomOut">-</button>
     </div>
-    <div class="iframe-wrapper">
-      <!-- Substitua a URL pelo link desejado -->
-      <iframe src="https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?gid=416223728#gid=416223728" title="Conteúdo do Iframe"></iframe>
-    </div>
+    <div class="loading" id="loading">Carregando planilha...</div>
+    <iframe 
+      id="sheetFrame"
+      src="https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing" 
+      title="Planilha Google"
+      onload="document.getElementById('loading').style.display='none'">
+    </iframe>
   </div>
+
+  <script>
+    // Zoom inicial em 50%
+    let scale = 0.5;
+    const iframe = document.getElementById('sheetFrame');
+
+    // Função para atualizar o zoom do iframe
+    function updateZoom() {
+      // Ajusta o tamanho do iframe para compensar o zoom
+      iframe.style.transform = `scale(${scale})`;
+      iframe.style.width = `${100 / scale}%`;
+      iframe.style.height = `${100 / scale}%`;
+    }
+
+    updateZoom();
+
+    // Eventos dos botões de zoom
+    document.getElementById('zoomIn').addEventListener('click', () => {
+      if(scale < 1.5) { // limite máximo
+        scale += 0.1;
+        updateZoom();
+      }
+    });
+
+    document.getElementById('zoomOut').addEventListener('click', () => {
+      if(scale > 0.3) { // limite mínimo
+        scale -= 0.1;
+        updateZoom();
+      }
+    });
+  </script>
 </body>
 </html>
