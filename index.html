@@ -116,6 +116,7 @@
       height: 40px;
       margin-right: 10px;
     }
+    /* Desktop: exibe tudo em uma linha */
     .header .header-text {
       display: flex;
       flex-direction: row;
@@ -130,6 +131,7 @@
       font-size: 24px;
       font-weight: 400;
     }
+    /* Mobile: exibe "Relatório de Gastos" abaixo do nome */
     @media (max-width: 576px) {
       .header .header-text {
         flex-direction: column;
@@ -148,6 +150,7 @@
       gap: 5px;
       padding: 0 10px;
     }
+    /* Mobile: menu rolável estilo roleta */
     @media (max-width: 576px) {
       .menu {
         overflow-x: auto;
@@ -155,6 +158,7 @@
         flex-wrap: nowrap;
       }
     }
+    /* Desktop: centraliza o menu */
     @media (min-width: 577px) {
       .menu {
         justify-content: center;
@@ -185,32 +189,18 @@
         margin-bottom: 20px;
       }
     }
-    /* Estilos para o Dino Game */
-    #dinoGame {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #f7f7f7;
-      z-index: 2000;
-    }
-    #gameCanvas {
-      display: block;
-      margin: 0 auto;
-      background: #fff;
-    }
   </style>
 </head>
 <body>
   <!-- Login Overlay -->
   <div id="loginOverlay">
     <div class="login-form">
+      <!-- Mobile Logo for Login Form -->
       <div class="mobile-logo">
         <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" style="max-width: 100px;">
       </div>
       <h3>Acesso Restrito</h3>
+      <!-- Notificação de Logout -->
       <div id="logoutNotification" class="alert alert-warning text-center" role="alert">
         Você foi desconectado!
       </div>
@@ -243,9 +233,11 @@
     <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem">
     <div class="header-text">
       <span class="main-title">ClickForte Armazenagem</span>
+      <!-- <span class="sub-title">Relatório de Gastos</span> -->
     </div>
   </header>
 
+  <!-- Menu com rolagem horizontal no mobile e centralizado no desktop -->
   <div class="menu">
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='home.html'">Home</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='previsao.html'">Previsão</button>
@@ -253,21 +245,17 @@
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_janeiro.html'">Janeiro</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_fevereiro.html'">Fevereiro</button>
     <button class="btn btn-primary" onclick="document.getElementById('frame').src='sub_marco.html'">Março</button>
+    <!-- Adicione mais botões se necessário -->
   </div>
 
   <main>
+    <!-- Após o login, o iframe inicia com a página home -->
     <iframe id="frame" src="home.html"></iframe>
   </main>
-
-  <!-- Div para o Dino Game -->
-  <div id="dinoGame">
-    <canvas id="gameCanvas"></canvas>
-  </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Elementos de login e iframe
     const loginOverlay = document.getElementById("loginOverlay");
     const spinner = document.getElementById("spinner");
     const formLogin = document.getElementById("formLogin");
@@ -277,6 +265,7 @@
     const iframe = document.getElementById("frame");
     const logoutNotification = document.getElementById("logoutNotification");
 
+    // Ao carregar a página, verifica se há indicação de que o usuário estava logado
     window.addEventListener("DOMContentLoaded", function() {
       const savedUsername = localStorage.getItem("savedUsername");
       const savedPassword = localStorage.getItem("savedPassword");
@@ -285,12 +274,10 @@
         passwordField.value = savedPassword;
         rememberMe.checked = true;
       }
+      // Se a chave "loggedIn" estiver presente, exibe a notificação e a remove
       if (localStorage.getItem("loggedIn") === "true") {
         logoutNotification.style.display = "block";
         localStorage.removeItem("loggedIn");
-      }
-      if (!navigator.onLine) {
-        showDinoGame();
       }
     });
 
@@ -308,8 +295,10 @@
             localStorage.removeItem("savedUsername");
             localStorage.removeItem("savedPassword");
           }
+          // Armazena a indicação de que o usuário estava logado, para que na atualização seja exibida a notificação
           localStorage.setItem("loggedIn", "true");
           loginOverlay.style.display = "none";
+          // Recarrega a página home para reiniciar o efeito
           iframe.src = "home.html";
         } else {
           alert("Usuário ou senha incorretos!");
@@ -317,170 +306,6 @@
         spinner.style.display = "none";
       }, 2000);
     });
-
-    function showDinoGame() {
-      document.getElementById("dinoGame").style.display = "block";
-    }
-    function hideDinoGame() {
-      document.getElementById("dinoGame").style.display = "none";
-    }
-    window.addEventListener("offline", showDinoGame);
-    window.addEventListener("online", hideDinoGame);
-
-    // --- Código do Dino Game ---
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    // Ajusta as dimensões do canvas para preencher a tela (inclusive no mobile)
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
-    // Carregamento dos ícones
-    const dinoImage = new Image();
-    // Substitua a URL abaixo pelo ícone desejado para o dinossauro
-    dinoImage.src = "https://via.placeholder.com/50?text=Dino";
-
-    const obstacleImage = new Image();
-    // Substitua a URL abaixo pelo ícone desejado para o obstáculo
-    obstacleImage.src = "https://via.placeholder.com/50?text=Obs";
-
-    // Propriedades do dinossauro
-    const dino = {
-      x: 50,
-      y: canvas.height - 150,
-      width: 50,
-      height: 50,
-      velocityY: 0,
-      jumpForce: 15,
-      isJumping: false,
-      gravity: 0.8
-    };
-
-    // Obstáculos
-    let obstacles = [];
-    let obstacleTimer = 0;
-    const obstacleInterval = 1500;
-    let lastTime = 0;
-    let gameOver = false;
-
-    function restartGame() {
-      obstacles = [];
-      dino.y = canvas.height - 150;
-      dino.velocityY = 0;
-      dino.isJumping = false;
-      obstacleTimer = 0;
-      lastTime = 0;
-      gameOver = false;
-      window.requestAnimationFrame(gameLoop);
-    }
-
-    window.addEventListener("keydown", function(e) {
-      if (e.code === "Space" || e.code === "ArrowUp") {
-        if (!dino.isJumping) {
-          dino.velocityY = -dino.jumpForce;
-          dino.isJumping = true;
-        }
-      }
-      if (gameOver && e.code === "Enter") {
-        restartGame();
-      }
-    });
-    canvas.addEventListener("touchstart", function(e) {
-      if (!dino.isJumping) {
-        dino.velocityY = -dino.jumpForce;
-        dino.isJumping = true;
-      }
-    });
-
-    function update(deltaTime) {
-      dino.velocityY += dino.gravity;
-      dino.y += dino.velocityY;
-      if (dino.y + dino.height >= canvas.height - 100) {
-        dino.y = canvas.height - 100 - dino.height;
-        dino.velocityY = 0;
-        dino.isJumping = false;
-      }
-      obstacleTimer += deltaTime;
-      if (obstacleTimer > obstacleInterval) {
-        // Define tamanho baseado na largura do ícone
-        const size = 50;
-        const obstacle = {
-          x: canvas.width,
-          y: canvas.height - 100 - size,
-          width: size,
-          height: size,
-          speed: 6
-        };
-        obstacles.push(obstacle);
-        obstacleTimer = 0;
-      }
-      for (let i = 0; i < obstacles.length; i++) {
-        obstacles[i].x -= obstacles[i].speed;
-      }
-      obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
-      obstacles.forEach(ob => {
-        if (
-          dino.x < ob.x + ob.width &&
-          dino.x + dino.width > ob.x &&
-          dino.y < ob.y + ob.height &&
-          dino.y + dino.height > ob.y
-        ) {
-          gameOver = true;
-        }
-      });
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#444";
-      ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
-      // Desenha o dinossauro com o ícone
-      if (dinoImage.complete) {
-        ctx.drawImage(dinoImage, dino.x, dino.y, dino.width, dino.height);
-      } else {
-        ctx.fillStyle = "#228B22";
-        ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
-      }
-      // Desenha os obstáculos com o ícone
-      obstacles.forEach(ob => {
-        if (obstacleImage.complete) {
-          ctx.drawImage(obstacleImage, ob.x, ob.y, ob.width, ob.height);
-        } else {
-          ctx.fillStyle = "#B22222";
-          ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
-        }
-      });
-      if (gameOver) {
-        ctx.fillStyle = "#000";
-        ctx.font = "48px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
-        ctx.font = "24px sans-serif";
-        ctx.fillText("Pressione Enter para reiniciar", canvas.width / 2, canvas.height / 2 + 40);
-      }
-    }
-
-    function gameLoop(timestamp) {
-      if (!lastTime) lastTime = timestamp;
-      const deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-      if (!gameOver) {
-        update(deltaTime);
-      }
-      draw();
-      if (!gameOver) {
-        window.requestAnimationFrame(gameLoop);
-      }
-    }
-
-    if (!navigator.onLine) {
-      window.requestAnimationFrame(gameLoop);
-    }
-    // --- Fim do código do Dino Game ---
   </script>
 </body>
 </html>
