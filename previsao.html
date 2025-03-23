@@ -22,7 +22,7 @@
 </head>
 <body>
   <div class="container my-5">
-    <h2 class="text-center mb-4">Relatório de Pagamentos</h2>
+    <h2 class="text-center mb-4">Previsão de Gastos</h2>
     <div id="chart"></div>
   </div>
   
@@ -143,15 +143,14 @@
         y: somaPorData[dataISO]
       }));
 
-    // 5) Configuração do gráfico (modelo "XYZ MOTORS" adaptado) com nomes em português
+    // 5) Configuração do gráfico de colunas com nomes em português
     var options = {
       series: [{
         name: 'Valor Pago',
         data: seriesData
       }],
       chart: {
-        type: 'area',
-        stacked: false,
+        type: 'bar',
         height: 350,
         zoom: {
           type: 'x',
@@ -163,25 +162,18 @@
         },
         background: 'transparent'
       },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%'
+        }
+      },
       dataLabels: {
         enabled: false
-      },
-      markers: {
-        size: 0
       },
       title: {
         text: 'Total de Pagamentos por Data',
         align: 'left'
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shadeIntensity: 1,
-          inverseColors: false,
-          opacityFrom: 0.5,
-          opacityTo: 0,
-          stops: [0, 90, 100]
-        }
       },
       yaxis: {
         labels: {
