@@ -3,42 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planilha Embutida</title>
+  <title>Planilha Embutida - Tela Cheia no Celular</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: Arial, sans-serif;
       background-color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 0px;
+      /* Removendo centralização para ocupar todo o espaço */
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
-
     .iframe-container {
       position: relative;
       width: 100%;
+      height: 100%;
+      /* Para desktop, pode manter o max-width se desejar */
       max-width: 1200px;
-      height: 90vh;
-      overflow: hidden;
+      margin: 0 auto;
       background-color: #fff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
     }
-
     /* Estilo para o iframe com zoom inicial de 50% */
     .iframe-container iframe {
       border: none;
       transform-origin: top left;
       /* Os valores de width e height serão ajustados via script */
     }
-
     /* Botões de controle */
     .controls {
       position: absolute;
@@ -48,7 +44,6 @@
       display: flex;
       gap: 10px;
     }
-
     .controls button {
       background-color: #007bff;
       border: none;
@@ -59,11 +54,9 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-
     .controls button:hover {
       background-color: #0056b3;
     }
-
     /* Loading overlay */
     .loading {
       position: absolute;
@@ -78,6 +71,18 @@
       font-size: 18px;
       color: #555;
       z-index: 10;
+    }
+    /* Media query para celular: ocupar 100% da tela sem margens extras */
+    @media (max-width: 768px) {
+      .iframe-container {
+        max-width: 100%;
+        border-radius: 0;
+        height: 100vh;
+      }
+      .controls button {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
     }
   </style>
 </head>
@@ -106,10 +111,10 @@
     // Função para atualizar o zoom do iframe
     function updateZoom() {
       iframe.style.transform = `scale(${scale})`;
+      // Ajustar a largura e altura para compensar o zoom
       iframe.style.width = `${100 / scale}%`;
       iframe.style.height = `${100 / scale}%`;
     }
-
     updateZoom();
 
     // Eventos dos botões de zoom
