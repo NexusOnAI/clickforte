@@ -1,457 +1,251 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClickFort Armazenagem - Relatório de Gastos</title>
-  <link rel="icon" type="image/x-icon" href="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Previsão Próximos Dias</title>
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- ApexCharts JS -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
+    /* Responsividade do gráfico */
+    #chart {
+      max-width: 100%;
+      margin: 0 auto;
     }
     body {
-      background-color: #f2f2f2;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-    }
-    /* Botões Modernos com Gradiente Azul */
-    .btn-custom {
-      background: linear-gradient(135deg, #1e90ff, #2575fc);
-      border: none;
-      border-radius: 30px;
-      color: #fff;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .btn-custom:hover {
-      background: linear-gradient(135deg, #2575fc, #1e90ff);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
-    /* Login Overlay Styles */
-    #loginOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url("https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0") no-repeat center center;
-      background-size: cover;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-    }
-    #loginOverlay::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      z-index: -1;
-    }
-    #loginOverlay .login-form {
-      background: #fff;
-      padding: 25px 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 320px;
-    }
-    #loginOverlay .login-form h3 {
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #333;
-      text-align: center;
-      font-size: 1.5rem;
-    }
-    #logoutNotification {
-      display: none;
-    }
-    #loginOverlay .login-form .form-control {
-      border-radius: 5px;
-      box-shadow: none;
-      font-size: 1rem;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-    #loginOverlay .login-form .btn {
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 1rem;
-      padding: 10px;
-    }
-    #loginOverlay .login-form .forgot {
-      display: block;
-      text-align: right;
-      margin-top: 10px;
-      color: #007bff;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    .form-check-label {
-      margin-left: 5px;
-      font-size: 0.9rem;
-    }
-    /* Spinner Styles */
-    #spinner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      display: none;
-    }
-    /* Header Styles */
-    .header {
-      background-color: #000;
-      color: #fff;
-      padding: 10px 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      border-radius: 0px 0px 20px 20px;
-    }
-    .logo-section {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-section img.logo {
-      height: 40px;
-    }
-    .header-text {
-      display: flex;
-      flex-direction: column;
-      font-size: 1rem;
-    }
-    .header-text .main-title {
-      font-size: 1.2rem;
-      font-weight: 400;
-    }
-    /* Área do usuário: otimizada para mobile */
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255,255,255,0.1);
-      padding: 5px 10px;
-      border-radius: 30px;
-      cursor: pointer;
-    }
-    .user-info img {
-      width: 45px;
-      height: 45px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 2px solid #fff;
-      transition: transform 0.2s;
-    }
-    .user-info img:hover {
-      transform: scale(1.1);
-    }
-    .user-info span {
-      font-size: 1rem;
-      white-space: nowrap;
-    }
-    /* Menu Styles */
-    .menu {
-      margin: 5px 0;
-      display: flex;
-      gap: 5px;
-      padding: 0 10px;
-    }
-    @media (max-width: 576px) {
-      .menu {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        flex-wrap: nowrap;
-      }
-    }
-    @media (min-width: 577px) {
-      .menu {
-        justify-content: center;
-      }
-    }
-    .menu .btn {
-      flex: 0 0 auto;
-      font-size: 0.9rem;
-      padding: 7px 10px;
-    }
-    main {
-      flex: 1;
-      display: flex;
-    }
-    iframe {
-      width: 100%;
-      border: none;
-      flex: 1;
-      border-radius: 30px 30px 0px 0px;
-    }
-    /* Mobile logo in login form */
-    .mobile-logo {
-      display: none;
-    }
-    @media (max-width: 576px) {
-      .mobile-logo {
-        display: block;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      /* Ajuste de fontes e espaçamentos para o login */
-      #loginOverlay .login-form {
-        padding: 20px 15px;
-      }
-      #loginOverlay .login-form h3 {
-        font-size: 1.3rem;
-      }
-      #loginOverlay .login-form .form-control {
-        font-size: 0.9rem;
-        padding: 8px;
-      }
-      #loginOverlay .login-form .btn {
-        font-size: 0.9rem;
-        padding: 8px;
-      }
-    }
-    /* Modal ajustes para mobile */
-    @media (max-width: 576px) {
-      .modal-dialog {
-        margin: 10px;
-      }
-      .modal-content {
-        font-size: 0.9rem;
-      }
-      #modalUsername {
-        font-size: 0.9rem;
-      }
+      background-color: #fff;
+      color: #212529;
     }
   </style>
 </head>
 <body>
-  <!-- Login Overlay -->
-  <div id="loginOverlay">
-    <div class="login-form">
-      <div class="mobile-logo">
-        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" style="max-width: 100px;">
-      </div>
-      <h3>Acesso Restrito</h3>
-      <div id="logoutNotification" class="alert alert-warning text-center" role="alert">
-        Você foi desconectado!
-      </div>
-      <form id="formLogin">
-        <div class="mb-3">
-          <label for="username" class="form-label">Usuário</label>
-          <input type="text" class="form-control" id="username" placeholder="Digite seu usuário" required>
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="password" placeholder="Digite sua senha" required>
-        </div>
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" id="rememberMe">
-          <label class="form-check-label" for="rememberMe">Lembrar meus dados</label>
-        </div>
-        <button type="submit" class="btn btn-custom w-100">Entrar</button>
-        <a href="#" class="forgot">Esqueceu a senha?</a>
-      </form>
-      <div id="spinner">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Carregando...</span>
-        </div>
-      </div>
-    </div>
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Previsão de Gastos para os Próximos Dias (25/03 a 31/03)</h2>
+    <div id="chart"></div>
+    <!-- Local onde exibiremos o total geral -->
+    <h4 class="text-center mt-4" id="totalGeral"></h4>
   </div>
-
-  <!-- Conteúdo Principal -->
-  <header class="header">
-    <div class="logo-section">
-      <img class="logo" src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickFort Armazenagem">
-      <div class="header-text">
-        <!--<span class="main-title">ClickForte Armazenagem</span>-->
-      </div>
-    </div>
-    <!-- Área do usuário (nome e foto) -->
-    <div class="user-info" id="userInfo" style="display: none;" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-      <img id="profileImage" src="https://via.placeholder.com/45" alt="Foto de Perfil">
-      <span id="displayUsername"></span>
-    </div>
-  </header>
-
-  <!-- Modal para editar perfil -->
-  <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editProfileModalLabel">Editar Perfil</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editProfileForm">
-            <div class="mb-3 text-center">
-              <img id="modalProfileImage" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="rounded-circle mb-2" style="width:100px; height:100px; object-fit: cover; border:2px solid #000;">
-              <br>
-              <label for="fileInput" class="btn btn-custom btn-sm">Escolher nova foto</label>
-              <input type="file" id="fileInput" accept="image/*" style="display: none;">
-            </div>
-            <div class="mb-3">
-              <label for="modalUsername" class="form-label">Nome de Usuário</label>
-              <input type="text" class="form-control" id="modalUsername" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-custom" id="saveProfileBtn">Salvar Alterações</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Menu -->
-  <div class="menu">
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='home.html'">Home</button>
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='integracao.html'">Integração</button>
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='previsao.html'">Previsão</button>
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='geral.html'">Gastos</button>
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='sub_janeiro.html'">Janeiro</button>
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='sub_fevereiro.html'">Fevereiro</button>
-    <button class="btn btn-custom" onclick="document.getElementById('frame').src='sub_marco.html'">Março</button>
-  </div>
-
-  <main>
-    <iframe id="frame" src="home.html"></iframe>
-  </main>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
-    const loginOverlay = document.getElementById("loginOverlay");
-    const spinner = document.getElementById("spinner");
-    const formLogin = document.getElementById("formLogin");
-    const rememberMe = document.getElementById("rememberMe");
-    const usernameField = document.getElementById("username");
-    const passwordField = document.getElementById("password");
-    const iframe = document.getElementById("frame");
-    const logoutNotification = document.getElementById("logoutNotification");
-    const userInfo = document.getElementById("userInfo");
-    const displayUsername = document.getElementById("displayUsername");
-    const profileImage = document.getElementById("profileImage");
+    // Lista de dados SOMENTE dos dias 25/03/2025 a 31/03/2025
+    const dadosProximosDias = [
+      // 25/03/2025
+      { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 281,60" },
+      { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 250,00" },
+      { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 7.500,00" },
+      { descricao: "ALUGUEL GIRUS  903 - LUCIANA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
+      { descricao: "ALUGUEL GIRUS  919 - VERA BALAGUER", categoria: "DESPESA FIXA", dataPagamento: "25/03/2025", valorPago: "R$ 14.073,65" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 92.903,78" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 113.238,35" },
+      { descricao: "ISS - MADEIRA EXPRESS", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 1.891,86" },
+      { descricao: "PRD_IMD NAVEGANTES", categoria: "FORNECEDOR", dataPagamento: "25/03/2025", valorPago: "R$ 29.000,00" },
+      { descricao: "PAPAI NOEL", categoria: "IMPOSTO", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "CARLOS BALLOTIN", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "MARCELO ANTUNES", categoria: "RETIRADA", dataPagamento: "25/03/2025", valorPago: "R$ 50.000,00" },
 
-    // Elementos do modal de edição de perfil
-    const modalProfileImage = document.getElementById("modalProfileImage");
-    const modalUsername = document.getElementById("modalUsername");
-    const fileInput = document.getElementById("fileInput");
-    const saveProfileBtn = document.getElementById("saveProfileBtn");
+      // 26/03/2025
+      { descricao: "MULTIVISÃO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 3.233,27" },
+      { descricao: "CAROÇO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 28.188,02" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 24.532,41" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 24.532,41" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 24.532,41" },
+      { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 30.450,00" },
+      { descricao: "ACM FIBRAS", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 55.290,60" },
+      { descricao: "ARAUCO", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 92.903,78" },
+      { descricao: "CONTHEY", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 35.747,73" },
+      { descricao: "BIGFER MATRIZ", categoria: "FORNECEDOR", dataPagamento: "26/03/2025", valorPago: "R$ 516,00" },
 
-    // Atualiza a área de usuário no cabeçalho
-    function updateUserInfo() {
-      const savedUsername = localStorage.getItem("savedUsername");
-      const savedProfilePic = localStorage.getItem("savedProfilePic");
-      if (savedUsername) {
-        displayUsername.textContent = savedUsername;
-        modalUsername.value = savedUsername;
-      }
-      if (savedProfilePic) {
-        profileImage.src = savedProfilePic;
-        modalProfileImage.src = savedProfilePic;
-      } else {
-        profileImage.src = "https://via.placeholder.com/45";
-        modalProfileImage.src = "https://via.placeholder.com/100";
-      }
-      userInfo.style.display = "flex";
+      // 27/03/2025
+      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 44.642,21" },
+      { descricao: "ABC SPEEDY WAY TURISMO E TRANSPORTE LTDA", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 5.963,86" },
+      { descricao: "INDUSLOG SERVICOS DE LOGISTICA LTDA", categoria: "DESPESA FIXA", dataPagamento: "27/03/2025", valorPago: "R$ 8.965,06" },
+      { descricao: "PER MOBILI", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 3.358,00" },
+      { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 79.186,62" },
+      { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 92.903,78" },
+      { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 2.095,98" },
+      { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 100.900,00" },
+      { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "27/03/2025", valorPago: "R$ 3.800,00" },
+      { descricao: "MULTIVISÃO", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 4.788,22" },
+      { descricao: "CAROÇO", categoria: "FORNECEDOR", dataPagamento: "27/03/2025", valorPago: "R$ 41.719,94" },
+
+      // 28/03/2025
+      { descricao: "FERGRAFPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 16.695,00" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 24.998,21" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 24.998,21" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 24.998,21" },
+      { descricao: "METALURGICA ALBRAS LTDA", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 10.876,32" },
+      { descricao: "VPLASTIC", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 7.528,69" },
+      { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "28/03/2025", valorPago: "R$ 70.000,00" },
+      { descricao: "MARCO ANTÔNIO", categoria: "RETIRADA", dataPagamento: "28/03/2025", valorPago: "R$ 30.000,00" },
+      { descricao: "MULTIVISÃO", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 2.590,00" },
+      { descricao: "MULTIVISÃO", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 5.299,76" },
+      { descricao: "CAROÇO", categoria: "FORNECEDOR", dataPagamento: "28/03/2025", valorPago: "R$ 68.757,60" },
+
+      // 29/03/2025
+      { descricao: "BIGFER INDUSTRIA E C", categoria: "FORNECEDOR", dataPagamento: "29/03/2025", valorPago: "R$ 1.459,05" },
+      { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA", categoria: "FORNECEDOR", dataPagamento: "29/03/2025", valorPago: "R$ 40.732,34" },
+
+      // 30/03/2025
+      { descricao: "CAROÇO", categoria: "FORNECEDOR", dataPagamento: "30/03/2025", valorPago: "R$ 17.369,27" },
+      { descricao: "ALINE MARIE", categoria: "DESPESA FIXA", dataPagamento: "30/03/2025", valorPago: "R$ 1.000,00" },
+      { descricao: "ARAUCO PREVISAO", categoria: "FORNECEDOR", dataPagamento: "30/03/2025", valorPago: "R$ 370.000,00" },
+
+      // 31/03/2025
+      { descricao: "ARAUCO - ACLUB", categoria: "FORNECEDOR", dataPagamento: "31/03/2025", valorPago: "R$ 79.186,62" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "31/03/2025", valorPago: "R$ 24.532,41" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "31/03/2025", valorPago: "R$ 24.532,41" },
+      { descricao: "EUCATEX RAFA", categoria: "FORNECEDOR", dataPagamento: "31/03/2025", valorPago: "R$ 24.532,41" }
+    ];
+
+    // Função para converter valor "R$ X" em número
+    function parseValorBR(valorBR) {
+      return parseFloat(valorBR.replace("R$", "").replace(/\./g, "").replace(",", ".").trim());
     }
 
-    // Carrega dados salvos no localStorage ao carregar a página
-    window.addEventListener("DOMContentLoaded", function() {
-      const savedUsername = localStorage.getItem("savedUsername");
-      const savedPassword = localStorage.getItem("savedPassword");
-      if (savedUsername) usernameField.value = savedUsername;
-      if (savedPassword) {
-        passwordField.value = savedPassword;
-        rememberMe.checked = true;
+    // Função para converter data "DD/MM/AAAA" em formato ISO "AAAA-MM-DD"
+    function toISODate(strBR) {
+      const [dia, mes, ano] = strBR.split("/");
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    // Agrupar valores por data
+    const somaPorData = {};
+    dadosProximosDias.forEach(item => {
+      const dataISO = toISODate(item.dataPagamento);
+      const valorNum = parseValorBR(item.valorPago);
+      if (!somaPorData[dataISO]) {
+        somaPorData[dataISO] = 0;
       }
-      if (localStorage.getItem("loggedIn") === "true") {
-        logoutNotification.style.display = "block";
-        localStorage.removeItem("loggedIn");
-      }
-      if (savedUsername) {
-        updateUserInfo();
-      }
+      somaPorData[dataISO] += valorNum;
     });
 
-    // Login - utiliza o nome de usuário salvo (se existir) ou o padrão "admin"
-    formLogin.addEventListener("submit", function(e) {
-      e.preventDefault();
-      spinner.style.display = "flex";
-      setTimeout(function() {
-        // Validação: se houver nome salvo, utiliza-o; caso contrário, o padrão "admin"
-        const validUsername = localStorage.getItem("savedUsername") || "admin";
-        const username = usernameField.value;
-        const password = passwordField.value;
-        if (username === validUsername && password === "admin123") {
-          if (rememberMe.checked) {
-            localStorage.setItem("savedUsername", username);
-            localStorage.setItem("savedPassword", password);
-          } else {
-            localStorage.removeItem("savedUsername");
-            localStorage.removeItem("savedPassword");
-          }
-          localStorage.setItem("loggedIn", "true");
-          loginOverlay.style.display = "none";
-          iframe.src = "home.html";
-          updateUserInfo();
-        } else {
-          alert("Usuário ou senha incorretos!");
+    // Converter em formato para ApexCharts [{ x: timestamp, y: valor }, ...]
+    const seriesData = Object.keys(somaPorData)
+      .sort()
+      .map(dataISO => ({
+        x: new Date(dataISO).getTime(),
+        y: somaPorData[dataISO]
+      }));
+
+    // Calcular o total geral (soma de todos os dias)
+    const totalGeral = Object.values(somaPorData).reduce((acc, val) => acc + val, 0);
+
+    /*******************************************************************
+     *             CONFIGURAÇÃO DO GRÁFICO (ESTILO SEMELHANTE)
+     *******************************************************************/
+    var options = {
+      chart: {
+        type: 'bar',
+        height: 350,
+        background: 'transparent',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 8,
+          horizontal: false,
+          columnWidth: '50%',
+          dataLabels: { position: 'top' }
         }
-        spinner.style.display = "none";
-      }, 2000);
-    });
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function(val) {
+          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: ["#000"]
+        }
+      },
+      series: [{
+        name: 'Valor Total',
+        data: seriesData
+      }],
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          format: 'dd/MM',
+          style: {
+            fontSize: '14px',
+            colors: ["#000"]
+          }
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          },
+          style: {
+            fontSize: '12px',
+            colors: ["#000"]
+          }
+        },
+        title: {
+          text: 'Valor Pago'
+        }
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: "vertical",
+          shadeIntensity: 0.3,
+          opacityFrom: 0.85,
+          opacityTo: 0.85,
+          stops: [0, 90, 100]
+        }
+      },
+      tooltip: {
+        theme: 'light',
+        x: {
+          format: 'dd/MM/yyyy'
+        },
+        y: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            chart: { height: 300 },
+            plotOptions: { bar: { columnWidth: '70%' } },
+            dataLabels: { style: { fontSize: '10px' } },
+            xaxis: { labels: { style: { fontSize: '12px' } } },
+            yaxis: { labels: { style: { fontSize: '10px' } } }
+          }
+        },
+        {
+          breakpoint: 576,
+          options: {
+            chart: { height: 250 },
+            plotOptions: { bar: { columnWidth: '80%' } },
+            dataLabels: { style: { fontSize: '8px' } },
+            xaxis: { labels: { style: { fontSize: '10px' } } },
+            yaxis: { labels: { style: { fontSize: '8px' } } }
+          }
+        }
+      ]
+    };
 
-    // Seleção de nova foto pelo modal
-    fileInput.addEventListener("change", function() {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const dataURL = e.target.result;
-          modalProfileImage.src = dataURL;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
 
-    // Salva alterações do modal de perfil
-    saveProfileBtn.addEventListener("click", function() {
-      const newUsername = modalUsername.value.trim();
-      const newProfilePic = modalProfileImage.src;
-      if(newUsername !== ""){
-        localStorage.setItem("savedUsername", newUsername);
-        localStorage.setItem("savedProfilePic", newProfilePic);
-        updateUserInfo();
-        // Fecha o modal
-        const modalEl = document.getElementById('editProfileModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-      } else {
-        alert("O nome de usuário não pode estar vazio.");
-      }
-    });
+    // Exibir o total geral formatado no elemento #totalGeral
+    document.getElementById('totalGeral').textContent =
+      "Total Geral: R$ " + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   </script>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
