@@ -24,6 +24,8 @@
   <div class="container my-5">
     <h2 class="text-center mb-4">Previsão de Gastos para os Próximos Dias (25/03 a 31/03)</h2>
     <div id="chart"></div>
+    <!-- Local onde exibiremos o total geral -->
+    <h4 class="text-center mt-4" id="totalGeral"></h4>
   </div>
   
   <script>
@@ -126,6 +128,9 @@
         x: new Date(dataISO).getTime(),
         y: somaPorData[dataISO]
       }));
+
+    // Calcular o total geral (soma de todos os dias)
+    const totalGeral = Object.values(somaPorData).reduce((acc, val) => acc + val, 0);
 
     /*******************************************************************
      *             CONFIGURAÇÃO DO GRÁFICO (ESTILO SEMELHANTE)
@@ -234,6 +239,10 @@
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
+
+    // Exibir o total geral formatado no elemento #totalGeral
+    document.getElementById('totalGeral').textContent =
+      "Total Geral: R$ " + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   </script>
 
   <!-- Bootstrap JS Bundle -->
