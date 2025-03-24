@@ -134,6 +134,14 @@
     }
     .logo-section img.logo {
       height: 50px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 1s ease-out;
+    }
+    /* Logo animation - quando adicionamos a classe .animate, o logo aparece com efeito */
+    .logo-section img.logo.animate {
+      opacity: 1;
+      transform: scale(1);
     }
     .header-text {
       display: flex;
@@ -286,7 +294,7 @@
         <!--<span class="main-title">ClickForte Armazenagem</span>-->
       </div>
     </div>
-    <!-- Área do usuário (nome e foto) -->
+    <!-- Área do usuário: otimizada para mobile -->
     <div class="user-info" id="userInfo" style="display: none;" data-bs-toggle="modal" data-bs-target="#editProfileModal">
       <img id="profileImage" src="https://via.placeholder.com/45" alt="Foto de Perfil">
       <span id="displayUsername"></span>
@@ -416,6 +424,8 @@
           loginOverlay.style.display = "none";
           iframe.src = "home.html";
           updateUserInfo();
+          // Adiciona animação interativa ao logo após login
+          document.querySelector(".logo").classList.add("animate");
         } else {
           alert("Usuário ou senha incorretos!");
         }
