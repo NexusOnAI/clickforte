@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planilha Embutida - Tela Cheia</title>
+  <title>Planilha Embutida - Visualização Completa</title>
   <style>
     * {
       margin: 0;
@@ -23,11 +23,11 @@
       height: 100%;
       background-color: #fff;
     }
-    /* Estilo para o iframe com zoom inicial de 50% */
+    /* Estilo para o iframe */
     .iframe-container iframe {
       border: none;
       transform-origin: top left;
-      /* O tamanho do iframe será ajustado via script conforme o zoom */
+      /* A largura e altura serão ajustadas via script conforme o zoom */
     }
     /* Botões de controle */
     .controls {
@@ -66,13 +66,6 @@
       color: #555;
       z-index: 10;
     }
-    /* Media query para dispositivos móveis */
-    @media (max-width: 768px) {
-      .controls button {
-        font-size: 14px;
-        padding: 6px 10px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -93,20 +86,22 @@
   </div>
 
   <script>
-    // Zoom inicial em 50%
-    let scale = 0.5;
+    // Detecta se é dispositivo mobile (tela pequena)
+    const isMobile = window.innerWidth < 768;
+    // Define o zoom inicial: se mobile, usa 1 para mostrar a planilha inteira; se desktop, pode usar outro valor
+    let scale = isMobile ? 1 : 0.5;
     const iframe = document.getElementById('sheetFrame');
     
     // Função para atualizar o zoom do iframe
     function updateZoom() {
       iframe.style.transform = `scale(${scale})`;
-      // Ajusta a largura e altura para que o iframe ocupe 100% da área da container
+      // Ajusta largura e altura para que o iframe ocupe 100% do container mesmo com o zoom aplicado
       iframe.style.width = `${100 / scale}%`;
       iframe.style.height = `${100 / scale}%`;
     }
     updateZoom();
 
-    // Eventos dos botões de zoom
+    // Eventos dos botões de zoom (ativos tanto para mobile quanto para desktop)
     document.getElementById('zoomIn').addEventListener('click', () => {
       if(scale < 1.5) { // limite máximo
         scale += 0.1;
