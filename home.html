@@ -243,12 +243,12 @@
       function getPaymentDayLabel() {
         const today = new Date();
         // Compara somente a parte da data (ignorando horário)
-        if(today.toDateString() === paymentDate.toDateString()){
+        if (today.toDateString() === paymentDate.toDateString()){
           return "hoje";
         }
         const paymentTomorrow = new Date(paymentDate);
         paymentTomorrow.setDate(paymentTomorrow.getDate() + 1);
-        if(today.toDateString() === paymentTomorrow.toDateString()){
+        if (today.toDateString() === paymentTomorrow.toDateString()){
           return "ontem";
         }
         // Se for outra data, retorna a data formatada
@@ -292,12 +292,14 @@
         typeMessage(greetingText, callback);
       }
 
-      // Monta a mensagem informativa dinâmica utilizando o rótulo correto para o dia do pagamento
-      const mensagemAtualizacao = `Última atualização do relatório financeiro foi ${getPaymentDayLabel()} às 18:42. Valor pago ${getPaymentDayLabel()}: R$ 317.629,58.`;
+      // Monta as mensagens informativas dinâmicas utilizando o rótulo correto para o dia do pagamento
+      const mensagemAtualizacao = `Última atualização do relatório financeiro foi ${getPaymentDayLabel()} às 18:42.`;
+      const mensagemValor = `Valor pago ${getPaymentDayLabel()}: R$ 317.629,58.`;
 
       // Mensagens informativas para o relatório
       const informMessages = [
         mensagemAtualizacao,
+        mensagemValor,
         "Há uma nova atualização nos gastos da quarta semana de março.",
         "Previsão de pagamentos para amanhã: R$ 389.851,03.",
         "Nossos desenvolvedores estão trabalhando para trazer mais informações."
