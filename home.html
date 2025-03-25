@@ -134,8 +134,7 @@
       const agora = new Date();
       const saudacao = definirSaudacao();
       const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      const dataFormatada = agora.toLocaleDateString('pt-BR');
-      const mensagem = `${saudacao}! Há uma nova atualização: novos gastos foram atualizados para a data de hoje (${dataFormatada}) às ${horaFormatada}.`;
+      const mensagem = `${saudacao}! Há uma nova atualização: novos gastos foram atualizados para a quarta semana de março às ${horaFormatada}.`;
       const toastElement = document.getElementById("greetingToast");
       toastElement.querySelector(".toast-body").textContent = mensagem;
       const toast = new bootstrap.Toast(toastElement);
