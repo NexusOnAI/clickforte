@@ -261,9 +261,26 @@
         }, 50);
       }
 
-      // Mensagens informativas para o relatório
+      // Cálculo dinâmico da mensagem de atualização
+      const now = new Date();
+      // Definindo a última atualização como o mesmo dia com horário fixo (18:42)
+      const lastUpdate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 42);
+      // Calcula a diferença em dias (considerando somente datas)
+      const diffTime = now.setHours(0,0,0,0) - lastUpdate.setHours(0,0,0,0);
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      let updateMessage;
+      if (diffDays === 0) {
+        updateMessage = "Última atualização do relatório financeiro foi hoje às 18:42.";
+      } else if (diffDays === 1) {
+        updateMessage = "Última atualização do relatório financeiro foi ontem às 18:42.";
+      } else {
+        updateMessage = "Última atualização do relatório financeiro foi em " + new Date(lastUpdate).toLocaleDateString('pt-BR') + " às 18:42.";
+      }
+
+      // Mensagens informativas para o relatório, utilizando a mensagem dinâmica
       const informMessages = [
-        "Última atualização do relatório financeiro foi hoje às 18:42.",
+        updateMessage,
         "Há uma nova atualização nos gastos da quarta semana de março.",
         "Previsão de pagamentos para amanhã: R$ 389.851,03.",
         "Nossos desenvolvedores estão trabalhando para trazer mais informações."
