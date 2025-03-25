@@ -236,6 +236,25 @@
       const closeChat = document.getElementById("closeChat");
       const chatBody = document.getElementById("chatBody");
 
+      // Data fixa do pagamento (definida para hoje)
+      const paymentDate = new Date("2025-03-25T00:00:00");
+
+      // Função para retornar o rótulo correto ("hoje" ou "ontem")
+      function getPaymentDayLabel() {
+        const today = new Date();
+        // Compara somente a parte da data (ignorando horário)
+        if(today.toDateString() === paymentDate.toDateString()){
+          return "hoje";
+        }
+        const paymentTomorrow = new Date(paymentDate);
+        paymentTomorrow.setDate(paymentTomorrow.getDate() + 1);
+        if(today.toDateString() === paymentTomorrow.toDateString()){
+          return "ontem";
+        }
+        // Se for outra data, retorna a data formatada
+        return paymentDate.toLocaleDateString();
+      }
+
       // Fecha o chat ao clicar no botão de fechar
       closeChat.addEventListener("click", function() {
         chatBox.style.display = "none";
@@ -273,9 +292,12 @@
         typeMessage(greetingText, callback);
       }
 
+      // Monta a mensagem informativa dinâmica utilizando o rótulo correto para o dia do pagamento
+      const mensagemAtualizacao = `Última atualização do relatório financeiro foi ${getPaymentDayLabel()} às 18:42. Valor pago ${getPaymentDayLabel()}: R$ 317.629,58.`;
+
       // Mensagens informativas para o relatório
       const informMessages = [
-        "Última atualização do relatório financeiro foi hoje às 18:42.",
+        mensagemAtualizacao,
         "Há uma nova atualização nos gastos da quarta semana de março.",
         "Previsão de pagamentos para amanhã: R$ 389.851,03.",
         "Nossos desenvolvedores estão trabalhando para trazer mais informações."
