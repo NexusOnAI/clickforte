@@ -119,7 +119,6 @@
       const agora = new Date();
       const hora = agora.getHours();
       let saudacao = "";
-
       if (hora < 12) {
         saudacao = "Bom dia";
       } else if (hora < 18) {
@@ -132,8 +131,10 @@
 
     // Configura a mensagem do toast e exibe-o
     document.addEventListener("DOMContentLoaded", function() {
+      const agora = new Date();
       const saudacao = definirSaudacao();
-      const mensagem = `${saudacao}! Nosso time de TI está trabalhando para melhorar as informações.`;
+      const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const mensagem = `${saudacao}! Há uma nova atualização: novos gastos foram atualizados para a quarta semana de março às ${horaFormatada}.`;
       const toastElement = document.getElementById("greetingToast");
       toastElement.querySelector(".toast-body").textContent = mensagem;
       const toast = new bootstrap.Toast(toastElement);
