@@ -44,12 +44,6 @@
       margin-bottom: 20px;
       animation: fadeInDown 1s ease-out;
     }
-    .content h2 {
-      font-size: 2rem;
-      font-weight: 500;
-      margin-bottom: 20px;
-      animation: fadeInDown 1s ease-out;
-    }
     .content p {
       font-size: 1.5rem;
       animation: fadeInUp 1s ease-out;
@@ -192,9 +186,6 @@
       .content h1 {
         font-size: 2.5rem;
       }
-      .content h2 {
-        font-size: 1.5rem;
-      }
       .content p {
         font-size: 1.2rem;
       }
@@ -215,8 +206,6 @@
   <div class="overlay"></div>
   <div class="content container">
     <h1>Bem-vindo a ClickForte Armazenagem</h1>
-    <!-- Elemento para a saudação de acordo com o horário -->
-    <h2 id="greeting"></h2>
     <p>Ambiente de relatório de gastos e previsão</p>
   </div>
 
@@ -242,27 +231,10 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Atualiza a saudação de acordo com o horário atual
-      const greetingElement = document.getElementById("greeting");
-      const now = new Date();
-      const hour = now.getHours();
-      let greetingText = "";
-      if (hour < 12) {
-        greetingText = "Bom dia!";
-      } else if (hour < 18) {
-        greetingText = "Boa tarde!";
-      } else {
-        greetingText = "Boa noite!";
-      }
-      greetingElement.innerText = greetingText;
-
       const notificationButton = document.getElementById("notificationButton");
       const chatBox = document.getElementById("chatBox");
       const closeChat = document.getElementById("closeChat");
       const chatBody = document.getElementById("chatBody");
-
-      // Exibe o chat automaticamente ao carregar a página
-      chatBox.style.display = "flex";
 
       // Fecha o chat ao clicar no botão de fechar
       closeChat.addEventListener("click", function() {
@@ -284,6 +256,21 @@
             if (callback) callback();
           }
         }, 50);
+      }
+
+      // Cria e exibe a saudação de acordo com o horário atual no chat
+      function showGreeting(callback) {
+        const now = new Date();
+        const hour = now.getHours();
+        let greetingText = "";
+        if (hour < 12) {
+          greetingText = "Bom dia!";
+        } else if (hour < 18) {
+          greetingText = "Boa tarde!";
+        } else {
+          greetingText = "Boa noite!";
+        }
+        typeMessage(greetingText, callback);
       }
 
       // Mensagens informativas para o relatório
@@ -314,8 +301,9 @@
         }
       }
 
-      // Inicia a exibição automática das mensagens informativas
-      showInformativeMessages();
+      // Exibe o chat automaticamente e inicia com a saudação seguida das mensagens informativas
+      chatBox.style.display = "flex";
+      showGreeting(showInformativeMessages);
 
       // Reabre o chat se estiver fechado ao clicar no ícone
       notificationButton.addEventListener("click", function() {
