@@ -278,8 +278,20 @@
         updateMessage = "Última atualização do relatório financeiro foi em " + new Date(lastUpdate).toLocaleDateString('pt-BR') + " às 18:42.";
       }
 
-      // Mensagens informativas para o relatório, utilizando a mensagem dinâmica
+      // Determina a saudação conforme o horário
+      let greeting;
+      const hour = now.getHours();
+      if (hour < 12) {
+        greeting = "Bom dia!";
+      } else if (hour < 18) {
+        greeting = "Boa tarde!";
+      } else {
+        greeting = "Boa noite!";
+      }
+
+      // Mensagens informativas para o relatório, utilizando a saudação dinâmica e a mensagem de atualização
       const informMessages = [
+        greeting,
         updateMessage,
         "Há uma nova atualização nos gastos da quarta semana de março.",
         "Previsão de pagamentos para amanhã: R$ 389.851,03.",
