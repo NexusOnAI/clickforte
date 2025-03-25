@@ -131,10 +131,8 @@
 
     // Configura a mensagem do toast e exibe-o
     document.addEventListener("DOMContentLoaded", function() {
-      const agora = new Date();
       const saudacao = definirSaudacao();
-      const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      const mensagem = `${saudacao}! Há uma nova atualização: novos gastos foram atualizados para a quarta semana de março às ${horaFormatada}.`;
+      const mensagem = `${saudacao}! Há uma nova atualização: novos gastos foram atualizados para a quarta semana de março.`;
       const toastElement = document.getElementById("greetingToast");
       toastElement.querySelector(".toast-body").textContent = mensagem;
       const toast = new bootstrap.Toast(toastElement);
