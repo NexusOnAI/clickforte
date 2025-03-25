@@ -13,7 +13,7 @@
       background: url("https://www.sagrupo.com/wp-content/uploads/2021/01/shutterstock_1714734415-scaled.jpg") no-repeat center center fixed;
       background-size: cover;
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
     }
     /* Overlay para suavizar o fundo */
@@ -23,7 +23,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       z-index: 1;
     }
     /* Conteúdo centralizado */
@@ -39,67 +39,83 @@
       padding: 20px;
     }
     .content h1 {
-      font-size: 4rem;
-      font-weight: bold;
+      font-size: 3.5rem;
+      font-weight: 700;
       margin-bottom: 20px;
       animation: fadeInDown 1s ease-out;
     }
     .content p {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       animation: fadeInUp 1s ease-out;
     }
-    /* Chat Box em tema dark */
+    /* Chat Box em tema dark com UI aprimorada */
     .chat-box {
       position: fixed;
-      bottom: 90px; /* Posicionado acima do ícone */
+      bottom: 90px;
       right: 20px;
-      width: 300px;
-      max-height: 400px;
-      background-color: #1e1e1e;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      width: 320px;
+      max-height: 420px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
       z-index: 1100;
+      transition: transform 0.3s ease;
+    }
+    .chat-box:hover {
+      transform: scale(1.02);
     }
     .chat-header {
-      background-color: #333;
-      color: #fff;
-      padding: 10px;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
+      background: linear-gradient(135deg, #2d2d2d, #3a3a3a);
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .chat-header h5 {
       margin: 0;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    .chat-header h5 i {
+      margin-right: 8px;
+    }
+    .chat-header button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      color: #fff;
+      cursor: pointer;
     }
     .chat-body {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       overflow-y: auto;
-      background-color: #2b2b2b;
-      color: #fff;
+      background-color: #292929;
     }
     .chat-message {
-      margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 8px;
-      max-width: 80%;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 85%;
       word-wrap: break-word;
+      font-size: 0.95rem;
+      line-height: 1.4;
     }
     .chat-message.received {
-      background-color: #444;
+      background-color: #3b3b3b;
       align-self: flex-start;
-      color: #fff;
+      color: #f1f1f1;
     }
     .typing-indicator {
       font-style: italic;
       font-size: 0.9rem;
-      color: #ccc;
-      margin-bottom: 10px;
+      color: #bbb;
+      margin-bottom: 8px;
     }
     /* Ícone de Chat fixo */
     .notification-icon {
@@ -115,9 +131,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
       cursor: pointer;
       z-index: 1100;
+      transition: background-color 0.2s ease;
     }
     .notification-icon:hover {
       background-color: #0b5ed7;
@@ -125,7 +142,7 @@
     @keyframes fadeInDown {
       from {
         opacity: 0;
-        transform: translateY(-50px);
+        transform: translateY(-40px);
       }
       to {
         opacity: 1;
@@ -135,20 +152,20 @@
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateY(40px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-    /* Ajustes para dispositivos móveis */
+    /* Ajustes responsivos */
     @media (max-width: 768px) {
       .content h1 {
         font-size: 2.5rem;
       }
       .content p {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
       }
       .chat-box {
         width: 90%;
@@ -178,8 +195,10 @@
   <!-- Chat Box em tema dark -->
   <div class="chat-box" id="chatBox">
     <div class="chat-header">
-      <h5>Chat de Suporte</h5>
-      <button type="button" class="btn-close btn-close-white" id="closeChat" aria-label="Fechar"></button>
+      <h5><i class="bi bi-robot"></i> Chat de Suporte</h5>
+      <button type="button" id="closeChat" aria-label="Fechar">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
     <div class="chat-body" id="chatBody">
       <!-- As mensagens serão adicionadas aqui via script -->
@@ -210,14 +229,15 @@
         chatBody.appendChild(messageElement);
         let index = 0;
         const interval = setInterval(() => {
-          messageElement.innerHTML = "<strong>Robô:</strong> " + message.slice(0, index);
+          // Ícone fixo de robô aparece sempre no início da mensagem
+          messageElement.innerHTML = `<i class="bi bi-robot me-1"></i><strong>Robô:</strong> ` + message.slice(0, index);
           index++;
           chatBody.scrollTop = chatBody.scrollHeight;
           if (index > message.length) {
             clearInterval(interval);
             if (callback) callback();
           }
-        }, 50); // Velocidade da digitação
+        }, 50);
       }
 
       // Mensagens informativas para o relatório
@@ -230,7 +250,7 @@
       // Exibe as mensagens informativas com intervalos entre elas
       function showInformativeMessages(index = 0) {
         if (index < informMessages.length) {
-          // Adiciona indicador de digitação
+          // Indicador de digitação
           const typingIndicator = document.createElement("div");
           typingIndicator.classList.add("typing-indicator");
           typingIndicator.innerText = "Robô está digitando...";
@@ -247,10 +267,10 @@
         }
       }
 
-      // Inicia a exibição automática das mensagens informativas
+      // Inicia a exibição automática das mensagens
       showInformativeMessages();
 
-      // Permite reabrir o chat se estiver fechado ao clicar no ícone
+      // Reabre o chat se estiver fechado ao clicar no ícone
       notificationButton.addEventListener("click", function() {
         chatBox.style.display = "flex";
       });
