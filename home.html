@@ -56,6 +56,25 @@
     .toast-container {
       z-index: 1050;
     }
+    .toast {
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+    .toast .toast-body {
+      font-size: 1.1rem;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+    }
+    .toast img {
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .toast .btn-close {
+      margin-left: auto;
+      margin-right: 5px;
+    }
     /* Animações */
     @keyframes fadeInDown {
       from {
@@ -88,6 +107,13 @@
       .btn-report {
         font-size: 1rem;
         padding: 8px 16px;
+      }
+      .toast .toast-body {
+        font-size: 1rem;
+      }
+      .toast img {
+        width: 50px;
+        height: 50px;
       }
     }
   </style>
