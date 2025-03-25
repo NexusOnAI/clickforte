@@ -261,8 +261,9 @@
         }, 50);
       }
 
-      // Cálculo dinâmico da mensagem de atualização
-      const now = new Date();
+      // Obtém a data e hora no fuso horário de Brasília (America/Sao_Paulo)
+      const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+
       // Definindo a última atualização como o mesmo dia com horário fixo (18:42)
       const lastUpdate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 42);
       // Calcula a diferença em dias (considerando somente datas)
@@ -278,7 +279,7 @@
         updateMessage = "Última atualização do relatório financeiro foi em " + new Date(lastUpdate).toLocaleDateString('pt-BR') + " às 18:42.";
       }
 
-      // Determina a saudação conforme o horário atual
+      // Determina a saudação conforme o horário de Brasília
       let greeting;
       const hour = now.getHours();
       if (hour < 12) {
