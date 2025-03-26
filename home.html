@@ -236,23 +236,17 @@
       const closeChat = document.getElementById("closeChat");
       const chatBody = document.getElementById("chatBody");
 
-      // Data fixa do pagamento (definida para hoje)
+      // Data fixa do pagamento (definida para 25/03/2025)
       const paymentDate = new Date("2025-03-25T00:00:00");
 
-      // Função para retornar o rótulo correto ("hoje" ou "ontem")
+      // Função para retornar o rótulo correto ("hoje" ou "ontem") de forma alternada
       function getPaymentDayLabel() {
         const today = new Date();
-        // Compara somente a parte da data (ignorando horário)
-        if (today.toDateString() === paymentDate.toDateString()){
-          return "hoje";
-        }
-        const paymentTomorrow = new Date(paymentDate);
-        paymentTomorrow.setDate(paymentTomorrow.getDate() + 1);
-        if (today.toDateString() === paymentTomorrow.toDateString()){
-          return "ontem";
-        }
-        // Se for outra data, retorna a data formatada
-        return paymentDate.toLocaleDateString();
+        // Calcula a diferença em dias entre hoje e a data de pagamento
+        const diffTime = today - paymentDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        // Se a diferença for par, exibe "hoje", se ímpar, "ontem"
+        return (diffDays % 2 === 0) ? "hoje" : "ontem";
       }
 
       // Fecha o chat ao clicar no botão de fechar
