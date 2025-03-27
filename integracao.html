@@ -12,7 +12,7 @@
       transform: scale(1.02);
       box-shadow: 0 10px 15px rgba(0,0,0,0.1);
     }
-    /* Estilos para o modal de sobreposição que cobre toda a tela */
+    /* Modal que cobre toda a tela */
     #modalOverlay {
       display: none;
       position: fixed;
@@ -32,15 +32,33 @@
       background: #fff;
       overflow: hidden;
     }
-    #modalContent iframe {
+    /* Iframe ocupa toda a área do modal */
+    #planilhaIframe {
       width: 100%;
       height: 100%;
       border: none;
+      zoom: 1;
+    }
+    /* Controles do modal (zoom, fullscreen e fechar) */
+    #modalControls {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+    #modalControls button {
+      background: rgba(255,255,255,0.8);
+      border: none;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body class="bg-gray-100 p-8">
-  <h1 class="text-center text-4xl font-bold mb-8">Integração com Planilhas Online</h1>
+  <h1 class="text-center text-4xl font-bold mb-8">Integração com Excel</h1>
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
     <!-- Card 1 -->
     <div onclick="openModal('https://office.live.com/start/Excel.aspx?auth=1&id=planilha1')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
@@ -49,7 +67,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
         </svg>
       </div>
-      <h2 class="text-xl font-semibold text-center">Planilha 1</h2>
+      <h2 class="text-xl font-semibold text-center">01 - ATC Girus - Janeiro</h2>
       <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
     </div>
     <!-- Card 2 -->
@@ -59,7 +77,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
         </svg>
       </div>
-      <h2 class="text-xl font-semibold text-center">Planilha 2</h2>
+      <h2 class="text-xl font-semibold text-center">02 - ATC Girus - Fevereiro</h2>
       <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
     </div>
     <!-- Card 3 -->
@@ -79,7 +97,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
         </svg>
       </div>
-      <h2 class="text-xl font-semibold text-center">Planilha 4</h2>
+      <h2 class="text-xl font-semibold text-center">04 - ATC Girus - Abril</h2>
       <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
     </div>
   </div>
@@ -87,29 +105,73 @@
   <!-- Modal de sobreposição que ocupa toda a tela -->
   <div id="modalOverlay" class="flex">
     <div id="modalContent">
-      <button onclick="closeModal()" class="absolute top-0 right-0 m-4 z-10">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white hover:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
+      <!-- Controles do modal -->
+      <div id="modalControls">
+        <button onclick="zoomIn()" title="Aumentar zoom">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+        </button>
+        <button onclick="zoomOut()" title="Diminuir zoom">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+          </svg>
+        </button>
+        <button onclick="toggleFullScreen()" title="Tela cheia">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3H5a2 2 0 00-2 2v3m0 8v3a2 2 0 002 2h3m8-16h3a2 2 0 012 2v3m0 8v3a2 2 0 01-2 2h-3"/>
+          </svg>
+        </button>
+        <button onclick="closeModal()" title="Fechar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600 hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
       <iframe id="planilhaIframe" src=""></iframe>
     </div>
   </div>
 
   <script>
-    // Abre o modal e define o src do iframe com o link da planilha
+    let zoomLevel = 1;
+    
     function openModal(url) {
       const modalOverlay = document.getElementById("modalOverlay");
       const iframe = document.getElementById("planilhaIframe");
       iframe.src = url;
+      zoomLevel = 1;
+      iframe.style.zoom = zoomLevel;
       modalOverlay.style.display = "flex";
     }
-    // Fecha o modal e limpa o src do iframe
+    
     function closeModal() {
       const modalOverlay = document.getElementById("modalOverlay");
       const iframe = document.getElementById("planilhaIframe");
       iframe.src = "";
       modalOverlay.style.display = "none";
+    }
+    
+    function zoomIn() {
+      zoomLevel += 0.1;
+      document.getElementById("planilhaIframe").style.zoom = zoomLevel;
+    }
+    
+    function zoomOut() {
+      if (zoomLevel > 0.2) {
+        zoomLevel -= 0.1;
+        document.getElementById("planilhaIframe").style.zoom = zoomLevel;
+      }
+    }
+    
+    function toggleFullScreen() {
+      const modalContent = document.getElementById("modalContent");
+      if (!document.fullscreenElement) {
+        modalContent.requestFullscreen().catch(err => {
+          alert(`Erro ao ativar tela cheia: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
     }
   </script>
 </body>
