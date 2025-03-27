@@ -2,145 +2,115 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planilha Embutida - Visualização Completa</title>
+  <title>Tela de Integração - Planilhas Online</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    .card {
+      transition: all 0.2s;
     }
-    html, body {
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    /* Estilos para o modal de sobreposição que cobre toda a tela */
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background-color: #ffffff;
+      background-color: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
     }
-    .iframe-container {
+    #modalContent {
       position: relative;
       width: 100%;
       height: 100%;
-      background-color: #fff;
+      background: #fff;
+      overflow: hidden;
     }
-    /* Estilo para o iframe */
-    .iframe-container iframe {
+    #modalContent iframe {
+      width: 100%;
+      height: 100%;
       border: none;
-      transform-origin: top left;
-      /* A largura e altura serão ajustadas via script conforme o zoom */
-    }
-    /* Botões de controle */
-    .controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 20;
-      display: flex;
-      gap: 10px;
-    }
-    .controls button {
-      background-color: #007bff;
-      border: none;
-      color: #fff;
-      padding: 8px 12px;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .controls button:hover {
-      background-color: #0056b3;
-    }
-    /* Loading overlay */
-    .loading {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      color: #555;
-      z-index: 10;
     }
   </style>
 </head>
-<body>
-  <div class="iframe-container" id="iframeContainer">
-    <!-- Botões de controle -->
-    <div class="controls">
-      <button id="zoomIn">+</button>
-      <button id="zoomOut">-</button>
-      <button id="fullscreen">Tela Cheia</button>
+<body class="bg-gray-100 p-8">
+  <h1 class="text-center text-4xl font-bold mb-8">Integração com Planilhas Online</h1>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <!-- Card 1 -->
+    <div onclick="openModal('https://office.live.com/start/Excel.aspx?auth=1&id=planilha1')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
+      <div class="flex items-center justify-center h-20 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-center">Planilha 1</h2>
+      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
     </div>
-    <div class="loading" id="loading">Carregando planilha...</div>
-    <iframe 
-      id="sheetFrame"
-      src="https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing" 
-      title="Planilha Google"
-      onload="document.getElementById('loading').style.display='none'">
-    </iframe>
+    <!-- Card 2 -->
+    <div onclick="openModal('https://office.live.com/start/Excel.aspx?auth=1&id=planilha2')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
+      <div class="flex items-center justify-center h-20 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-center">Planilha 2</h2>
+      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+    </div>
+    <!-- Card 3 -->
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
+      <div class="flex items-center justify-center h-20 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-center">03 - ATC Girus - Março</h2>
+      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+    </div>
+    <!-- Card 4 -->
+    <div onclick="openModal('https://office.live.com/start/Excel.aspx?auth=1&id=planilha4')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
+      <div class="flex items-center justify-center h-20 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-semibold text-center">Planilha 4</h2>
+      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+    </div>
+  </div>
+
+  <!-- Modal de sobreposição que ocupa toda a tela -->
+  <div id="modalOverlay" class="flex">
+    <div id="modalContent">
+      <button onclick="closeModal()" class="absolute top-0 right-0 m-4 z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white hover:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <iframe id="planilhaIframe" src=""></iframe>
+    </div>
   </div>
 
   <script>
-    // Detecta se é dispositivo mobile (tela pequena)
-    const isMobile = window.innerWidth < 768;
-    // Define o zoom inicial: se mobile, usa 1 para mostrar a planilha inteira; se desktop, pode usar outro valor
-    let scale = isMobile ? 1 : 0.5;
-    const iframe = document.getElementById('sheetFrame');
-    
-    // Função para atualizar o zoom do iframe
-    function updateZoom() {
-      iframe.style.transform = `scale(${scale})`;
-      // Ajusta largura e altura para que o iframe ocupe 100% do container mesmo com o zoom aplicado
-      iframe.style.width = `${100 / scale}%`;
-      iframe.style.height = `${100 / scale}%`;
+    // Abre o modal e define o src do iframe com o link da planilha
+    function openModal(url) {
+      const modalOverlay = document.getElementById("modalOverlay");
+      const iframe = document.getElementById("planilhaIframe");
+      iframe.src = url;
+      modalOverlay.style.display = "flex";
     }
-    updateZoom();
-
-    // Eventos dos botões de zoom (ativos tanto para mobile quanto para desktop)
-    document.getElementById('zoomIn').addEventListener('click', () => {
-      if(scale < 1.5) { // limite máximo
-        scale += 0.1;
-        updateZoom();
-      }
-    });
-
-    document.getElementById('zoomOut').addEventListener('click', () => {
-      if(scale > 0.3) { // limite mínimo
-        scale -= 0.1;
-        updateZoom();
-      }
-    });
-
-    // Evento para o botão de tela cheia
-    document.getElementById('fullscreen').addEventListener('click', () => {
-      const container = document.getElementById('iframeContainer');
-      if (!document.fullscreenElement) {
-        if (container.requestFullscreen) {
-          container.requestFullscreen();
-        } else if (container.mozRequestFullScreen) { /* Firefox */
-          container.mozRequestFullScreen();
-        } else if (container.webkitRequestFullscreen) { /* Chrome, Safari e Opera */
-          container.webkitRequestFullscreen();
-        } else if (container.msRequestFullscreen) { /* IE/Edge */
-          container.msRequestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { /* Firefox */
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari e Opera */
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE/Edge */
-          document.msExitFullscreen();
-        }
-      }
-    });
+    // Fecha o modal e limpa o src do iframe
+    function closeModal() {
+      const modalOverlay = document.getElementById("modalOverlay");
+      const iframe = document.getElementById("planilhaIframe");
+      iframe.src = "";
+      modalOverlay.style.display = "none";
+    }
   </script>
 </body>
 </html>
