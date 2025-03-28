@@ -13,6 +13,13 @@
     iframe {
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+
+    /* Remover outline ao clicar em itens */
+    button:focus,
+    a:focus,
+    input:focus {
+      outline: none;
+    }
   </style>
 </head>
 <body class="bg-black h-screen overflow-hidden">
@@ -71,118 +78,274 @@
         <span id="profileName" class="font-bold hidden sm:inline">Nome do Usuário</span>
       </div>
     </header>
+
     <div class="flex flex-1">
-      <!-- Sidebar Desktop com scroll interno para as opções, mantendo logo e perfil fixos -->
-      <nav class="hidden md:flex flex-col bg-black text-white w-64 shadow-lg rounded-r-[30px]">
-        <!-- Cabeçalho fixo -->
-        <div class="sticky top-0 bg-black p-5">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="mx-auto mb-5 max-w-[90%]" />
-          <h2 class="text-2xl text-center">Menu</h2>
+      <!-- Sidebar Desktop com radius no lado direito -->
+      <nav
+        class="hidden md:flex flex-col bg-[#0c0c0c] text-gray-300 w-64 shadow-lg h-screen rounded-r-[30px]"
+      >
+        <!-- Topo fixo (logo) -->
+        <div class="sticky top-0 p-5 bg-[#0c0c0c] flex flex-col items-center border-b border-gray-800 rounded-tr-[30px]">
+          <img
+            src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png"
+            alt="Logo"
+            class="mx-auto mb-5 max-w-[90%]"
+          />
+          <h2 class="text-xl font-semibold">Menu</h2>
         </div>
-        <!-- Área de opções com scroll -->
-        <div class="overflow-y-auto flex-grow px-5">
-          <a href="#" onclick="loadPage('home.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-transform hover:bg-white/20 hover:translate-x-2 active">
+
+        <!-- Área de navegação com rolagem -->
+        <div class="overflow-y-auto flex-grow p-5 space-y-1">
+          <a
+            href="#"
+            onclick="loadPage('home.html'); return false;"
+            class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active"
+          >
             <i class="bi bi-house-door-fill"></i>
             <span>Home</span>
           </a>
-          <a href="#" onclick="loadPage('integracao.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-transform hover:bg-white/20 hover:translate-x-2">
+          <a
+            href="#"
+            onclick="loadPage('integracao.html'); return false;"
+            class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1"
+          >
             <i class="bi bi-arrows-angle-contract"></i>
             <span>Integração</span>
           </a>
-          <!-- Previsão com submenu aprimorado e scroll interno -->
+
+          <!-- Previsão com submenu -->
           <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/20 hover:translate-x-2 w-full">
-              <span><i class="bi bi-calendar-event-fill"></i> Previsão</span>
+            <button
+              onclick="togglePrevisaoSubmenu('desktop')"
+              class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full"
+            >
+              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
               <i id="desktopPrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
             </button>
-            <div id="desktopPrevisaoSubmenu" class="pl-8 mt-2 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_janeiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Janeiro</a>
-              <a href="#" onclick="loadPage('previsao_fevereiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Fevereiro</a>
-              <a href="#" onclick="loadPage('previsao_marco.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Março</a>
-              <a href="#" onclick="loadPage('previsao_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Dezembro</a>
+            <div
+              id="desktopPrevisaoSubmenu"
+              class="pl-8 mt-1 overflow-y-auto transition-all max-h-0"
+            >
+              <a
+                href="#"
+                onclick="loadPage('previsao_janeiro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Janeiro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_fevereiro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Fevereiro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_marco.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Março</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_abril.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Abril</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_maio.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Maio</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_junho.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Junho</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_julho.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Julho</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_agosto.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Agosto</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_setembro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Setembro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_outubro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Outubro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_novembro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Novembro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_dezembro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Dezembro</a>
             </div>
           </div>
-          <a href="#" onclick="loadPage('geral.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-transform hover:bg-white/20 hover:translate-x-2">
+
+          <a
+            href="#"
+            onclick="loadPage('geral.html'); return false;"
+            class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1"
+          >
             <i class="bi bi-wallet2"></i>
             <span>Gastos</span>
           </a>
         </div>
+
         <!-- Rodapé fixo com perfil -->
-        <div class="sticky bottom-0 bg-black p-5">
+        <div class="sticky bottom-0 bg-[#0c0c0c] p-5 border-t border-gray-800 rounded-br-[30px]">
           <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover" />
-            <span id="sidebarProfileName" class="font-bold">Nome do Usuário</span>
+            <img
+              id="sidebarProfileImg"
+              src="https://via.placeholder.com/40"
+              alt="Perfil"
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <span id="sidebarProfileName" class="font-bold text-gray-200">Nome do Usuário</span>
           </div>
         </div>
       </nav>
+
       <!-- Conteúdo Principal -->
       <main class="flex flex-col flex-1">
         <iframe id="mainFrame" src="home.html" class="flex-1 w-full"></iframe>
       </main>
     </div>
 
-    <!-- Sidebar Mobile (Overlay) -->
-    <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden">
-      <div class="w-64 bg-black text-white h-full flex flex-col">
+    <!-- Sidebar Mobile (Overlay), também com radius no lado direito -->
+    <div
+      id="mobileSidebar"
+      class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden"
+    >
+      <div class="w-64 bg-[#0c0c0c] text-gray-300 h-screen flex flex-col rounded-r-[30px]">
         <!-- Cabeçalho fixo -->
-        <div class="sticky top-0 bg-black p-5 flex justify-between items-center">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="max-w-[80%]" />
+        <div class="sticky top-0 bg-[#0c0c0c] p-5 flex justify-between items-center border-b border-gray-800 rounded-tr-[30px]">
+          <!-- Logo menor no mobile -->
+          <img
+            src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png"
+            alt="Logo"
+            class="max-w-[60%]"
+          />
           <button onclick="toggleMobileSidebar()">
             <i class="bi bi-x-lg text-2xl"></i>
           </button>
         </div>
+
         <!-- Área de opções com scroll -->
-        <div class="overflow-y-auto flex-grow px-5">
-          <h2 class="text-2xl text-center mb-5">Menu</h2>
-          <a href="#" onclick="loadPage('home.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-transform hover:bg-white/20 hover:translate-x-2 active">
+        <div class="overflow-y-auto flex-grow p-5 space-y-1">
+          <h2 class="text-xl font-semibold text-center mb-2">Menu</h2>
+          <a
+            href="#"
+            onclick="loadPage('home.html'); toggleMobileSidebar(); return false;"
+            class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active"
+          >
             <i class="bi bi-house-door-fill"></i>
             <span>Home</span>
           </a>
-          <a href="#" onclick="loadPage('integracao.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-transform hover:bg-white/20 hover:translate-x-2">
+          <a
+            href="#"
+            onclick="loadPage('integracao.html'); toggleMobileSidebar(); return false;"
+            class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1"
+          >
             <i class="bi bi-arrows-angle-contract"></i>
             <span>Integração</span>
           </a>
+
           <!-- Previsão com submenu no mobile -->
           <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/20 hover:translate-x-2 w-full">
-              <span><i class="bi bi-calendar-event-fill"></i> Previsão</span>
+            <button
+              onclick="togglePrevisaoSubmenu('mobile')"
+              class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full"
+            >
+              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
               <i id="mobilePrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
             </button>
-            <div id="mobilePrevisaoSubmenu" class="pl-8 mt-2 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_janeiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Janeiro</a>
-              <a href="#" onclick="loadPage('previsao_fevereiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Fevereiro</a>
-              <a href="#" onclick="loadPage('previsao_marco.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Março</a>
-              <a href="#" onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/20">Dezembro</a>
+            <div
+              id="mobilePrevisaoSubmenu"
+              class="pl-8 mt-1 overflow-y-auto transition-all max-h-0"
+            >
+              <a
+                href="#"
+                onclick="loadPage('previsao_janeiro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Janeiro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_fevereiro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Fevereiro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_marco.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Março</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Abril</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_maio.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Maio</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_junho.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Junho</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_julho.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Julho</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_agosto.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Agosto</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_setembro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Setembro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_outubro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Outubro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_novembro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Novembro</a>
+              <a
+                href="#"
+                onclick="loadPage('previsao_dezembro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+              >Dezembro</a>
             </div>
           </div>
-          <a href="#" onclick="loadPage('geral.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-transform hover:bg-white/20 hover:translate-x-2">
+
+          <a
+            href="#"
+            onclick="loadPage('geral.html'); toggleMobileSidebar(); return false;"
+            class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1"
+          >
             <i class="bi bi-wallet2"></i>
             <span>Gastos</span>
           </a>
         </div>
-        <!-- Rodapé fixo com perfil -->
-        <div class="sticky bottom-0 bg-black p-5">
-          <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover" />
-            <span id="sidebarProfileName" class="font-bold">Nome do Usuário</span>
-          </div>
-        </div>
+
+        <!-- No mobile não tem perfil no rodapé. -->
+        <div class="rounded-br-[30px]"></div>
       </div>
     </div>
   </div>
