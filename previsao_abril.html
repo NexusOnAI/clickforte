@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Previsão de Gastos - Abril</title>
+  <!-- Import do ApexCharts -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+  <h1>Previsão de Gastos por Semana (Abril de 2025)</h1>
+  <div id="chart"></div>
+
+  <script>
+    // Valores consolidados por semana + total geral, obtidos dos dados
+    const valores = [
+      1243741.99, // Semana 1
+      1129550.35, // Semana 2
+      1106477.07, // Semana 3
+      928634.11,  // Semana 4
+      4408403.52  // Total Geral
+    ];
+
+    // Configuração do gráfico
+    const options = {
+      series: [{
+        name: 'Gastos (R$)',
+        data: valores
+      }],
+      chart: {
+        type: 'bar',
+        height: 400
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          dataLabels: {
+            position: 'top' // Exibe os valores acima das colunas
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val) {
+          // Formata como moeda brasileira
+          return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: ["#304758"]
+        }
+      },
+      xaxis: {
+        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Total'],
+        position: 'bottom'
+      },
+      yaxis: {
+        labels: {
+          formatter: function (val) {
+            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+        },
+        title: {
+          text: 'Valores em R$'
+        }
+      },
+      title: {
+        text: 'Previsão de Gastos Semanais - Abril/2025',
+        align: 'center'
+      }
+    };
+
+    // Renderiza o gráfico
+    const chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+  </script>
+</body>
+</html>
