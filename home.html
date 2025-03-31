@@ -242,10 +242,8 @@
       // Função para retornar o rótulo correto ("hoje" ou "ontem") de forma alternada
       function getPaymentDayLabel() {
         const today = new Date();
-        // Calcula a diferença em dias entre hoje e a data de pagamento
         const diffTime = today - paymentDate;
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        // Se a diferença for par, exibe "hoje", se ímpar, "ontem"
         return (diffDays % 2 === 0) ? "hoje" : "ontem";
       }
 
@@ -271,6 +269,15 @@
         }, 50);
       }
 
+      // Função para exibir um gif da tela do computador no chat
+      function showGif() {
+        const gifMessage = document.createElement("div");
+        gifMessage.classList.add("chat-message", "received");
+        gifMessage.innerHTML = `<img src="https://i.imgur.com/2gGLuZz.mp4" alt="Tela do Computador" style="width:100%; border-radius:16px;" />`;
+        chatBody.appendChild(gifMessage);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
       // Cria e exibe a saudação de acordo com o horário atual no chat
       function showGreeting(callback) {
         const now = new Date();
@@ -286,11 +293,10 @@
         typeMessage(greetingText, callback);
       }
 
-      // Monta as mensagens informativas dinâmicas utilizando o rótulo correto para o dia do pagamento
+      // Monta as mensagens informativas dinâmicas
       const mensagemAtualizacao = `Última atualização do relatório financeiro em 31/03 às 19:20.`;
       const mensagemValor = `Valor pago em 28/03: R$ 364.419,99.`;
 
-      // Mensagens informativas para o relatório
       const informMessages = [
         mensagemAtualizacao,
         mensagemValor,
@@ -305,7 +311,6 @@
       // Exibe as mensagens informativas com intervalos entre elas
       function showInformativeMessages(index = 0) {
         if (index < informMessages.length) {
-          // Exibe indicador de digitação
           const typingIndicator = document.createElement("div");
           typingIndicator.classList.add("typing-indicator");
           typingIndicator.innerText = "Robô está digitando...";
@@ -322,9 +327,12 @@
         }
       }
 
-      // Exibe o chat automaticamente e inicia com a saudação seguida das mensagens informativas
+      // Exibe o chat automaticamente e inicia com a saudação, exibe o gif e depois as mensagens informativas
       chatBox.style.display = "flex";
-      showGreeting(showInformativeMessages);
+      showGreeting(function() {
+        showGif();
+        showInformativeMessages();
+      });
 
       // Reabre o chat se estiver fechado ao clicar no ícone
       notificationButton.addEventListener("click", function() {
