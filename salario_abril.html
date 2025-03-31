@@ -51,25 +51,35 @@
   <div id="charts-container" class="w-full"></div>
 
   <script>
-    // --------------------------------------------------------------------
-    // 1) Dados de "Salários" para Abril/2025
-    //    Cada item: { descricao, date, valorPago }
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 1) DADOS DE SALÁRIOS (Abril/2025)
+     *    Cada item: { descricao, date, valorPago }
+     ***************************************************************/
     const rawData = [
-      { descricao: "IGNACIO", date: "14/04/2025", valorPago: "R$ 6.500,00" },
-      { descricao: "GUILHERME - SEGURANÇA", date: "15/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA", date: "15/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA", date: "15/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "ALVARO", date: "20/04/2025", valorPago: "R$ 10.000,00" },
-      // Observação: "INDUSLOG - FOLHA SALÁRIAL" está escrito como SALARIO (sem acento),
-      // mas vamos considerar como "SALÁRIO" para manter a consistência
-      { descricao: "INDUSLOG - FOLHA SALARIAL", date: "20/04/2025", valorPago: "R$ 61.217,30" },
-      { descricao: "REGINA", date: "20/04/2025", valorPago: "R$ 5.000,00" }
+      { descricao: "GUILHERME - SEGURANÇA",               date: "02/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA",     date: "02/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA",         date: "02/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "INDUSLOG - FOLHA SALÁRIAL",           date: "04/04/2025", valorPago: "R$ 52.330,76" },
+      { descricao: "LUIZ CARLOS DE OLIVEIRA",             date: "05/04/2025", valorPago: "R$ 8.000,00" },
+      { descricao: "FELIPE CORREIA",                      date: "05/04/2025", valorPago: "R$ 20.000,00" },
+      { descricao: "LUCAS MOMEZZO",                       date: "10/04/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "GABRIEL CORREIA",                     date: "14/04/2025", valorPago: "R$ 5.000,00" },
+      { descricao: "EVANDERSON SILVA",                    date: "14/04/2025", valorPago: "R$ 5.000,00" },
+      { descricao: "REGIANE CRISTINA DE ARAUJO",          date: "14/04/2025", valorPago: "R$ 4.080,90" },
+      { descricao: "CARLA ZANQUETI",                      date: "14/04/2025", valorPago: "R$ 9.000,00" },
+      { descricao: "ALCAR SERVICOS ADMINISTRATIVOS",      date: "14/04/2025", valorPago: "R$ 21.000,00" },
+      { descricao: "IGNACIO",                             date: "14/04/2025", valorPago: "R$ 6.500,00" },
+      { descricao: "GUILHERME - SEGURANÇA",               date: "15/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA",     date: "15/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA",         date: "15/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "ALVARO",                              date: "20/04/2025", valorPago: "R$ 10.000,00" },
+      { descricao: "INDUSLOG - FOLHA SALÁRIAL",           date: "20/04/2025", valorPago: "R$ 61.217,30" },
+      { descricao: "REGINA",                              date: "20/04/2025", valorPago: "R$ 5.000,00" }
     ];
 
-    // --------------------------------------------------------------------
-    // 2) Funções para conversão de valores e datas
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 2) Funções para conversão de valores e datas
+     ***************************************************************/
     function parseValor(valorStr) {
       return parseFloat(
         valorStr
@@ -80,16 +90,16 @@
       );
     }
 
-    // Converte "DD/MM/AAAA" em "MM/DD/AAAA"
+    // Converte "DD/MM/AAAA" para "MM/DD/AAAA"
     function fixDate(dtStr) {
       const [dd, mm, yyyy] = dtStr.split("/");
       return `${mm}/${dd}/${yyyy}`; // "MM/DD/YYYY"
     }
 
-    // --------------------------------------------------------------------
-    // 3) Determinar a semana de Abril/2025 (1..5) ou 0 se fora
-    //    1ª sem: 01..04, 2ª: 05..11, 3ª: 12..18, 4ª: 19..25, 5ª: 26..30
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 3) Determinar a semana de Abril/2025 (1..5) ou 0 se fora
+     *    1ª sem: 01..04, 2ª: 05..11, 3ª: 12..18, 4ª: 19..25, 5ª: 26..30
+     ***************************************************************/
     function getAprilWeek(dateStr) {
       const [mm, dd, yyyy] = dateStr.split("/");
       if (yyyy !== "2025") return -1; // fora do ano => fora
@@ -104,10 +114,10 @@
       return 0; // 31 => fora
     }
 
-    // --------------------------------------------------------------------
-    // 4) Preparar dataset e agrupar
-    //    sumsByDesc[descricao] = [sem1, sem2, sem3, sem4, sem5, foraAbril]
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 4) Preparar dataset e agrupar
+     *    sumsByDesc[descricao] = [sem1, sem2, sem3, sem4, sem5, foraAbril]
+     ***************************************************************/
     const dataset = rawData.map(item => ({
       descricao: item.descricao,
       date: fixDate(item.date),
@@ -120,8 +130,9 @@
       const w = getAprilWeek(item.date);
       const desc = item.descricao;
 
+      // Se não existir, cria array de 6 posições
       if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0, 0, 0, 0, 0, 0]; // 6 colunas
+        sumsByDesc[desc] = [0, 0, 0, 0, 0, 0];
       }
 
       if (w > 0 && w <= 5) {
@@ -135,9 +146,9 @@
     // Lista de descrições únicas (ordenada)
     const uniqueDescriptions = Object.keys(sumsByDesc).sort();
 
-    // --------------------------------------------------------------------
-    // 5) Preenche SELECT de filtro (TODOS + cada descrição)
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 5) Preenche SELECT de filtro (TODOS + cada descrição)
+     ***************************************************************/
     const descSelect = document.getElementById("descSelect");
     const optTodos = document.createElement("option");
     optTodos.value = "TODOS";
@@ -151,12 +162,12 @@
       descSelect.appendChild(opt);
     });
 
-    // --------------------------------------------------------------------
-    // 6) Renderizar gráficos conforme filtro
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 6) Renderizar gráficos conforme filtro
+     ***************************************************************/
     function renderCharts(selectedDesc) {
       const container = document.getElementById("charts-container");
-      container.innerHTML = ""; // limpa anteriores
+      container.innerHTML = ""; // limpa gráficos anteriores
 
       if (selectedDesc === "TODOS") {
         uniqueDescriptions.forEach(d => createChart(d, container));
@@ -198,7 +209,7 @@
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
-      // Config do ApexCharts
+      // Configuração do ApexCharts
       const options = {
         chart: {
           type: "bar",
@@ -321,9 +332,9 @@
       chart.render();
     }
 
-    // --------------------------------------------------------------------
-    // 7) Visão Geral (pizza) - soma total por descrição
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 7) Visão Geral (pizza) - soma total por descrição
+     ***************************************************************/
     const overviewBtn = document.getElementById("overviewBtn");
     overviewBtn.addEventListener("click", createOverviewChart);
 
@@ -331,7 +342,7 @@
       const container = document.getElementById("charts-container");
       container.innerHTML = "";
 
-      // Arrays para gráfico de pizza
+      // Arrays para o gráfico de pizza
       const descArray = [];
       const totalArray = [];
 
@@ -408,9 +419,9 @@
       chart.render();
     }
 
-    // --------------------------------------------------------------------
-    // 8) Função de Tela Cheia
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 8) Função de Tela Cheia
+     ***************************************************************/
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
@@ -422,15 +433,15 @@
     }
     window.toggleFullScreen = toggleFullScreen;
 
-    // --------------------------------------------------------------------
-    // 9) Renderiza todos os gráficos por padrão (opção "TODOS")
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 9) Renderiza todos os gráficos por padrão (opção "TODOS")
+     ***************************************************************/
     descSelect.value = "TODOS";
     renderCharts("TODOS");
 
-    // --------------------------------------------------------------------
-    // 10) Evento de mudança no SELECT
-    // --------------------------------------------------------------------
+    /***************************************************************
+     * 10) Evento de mudança no SELECT
+     ***************************************************************/
     descSelect.addEventListener("change", () => {
       renderCharts(descSelect.value);
     });
