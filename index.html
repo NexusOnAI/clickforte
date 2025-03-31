@@ -198,7 +198,7 @@
               id="desktopPrevisaoSubmenu"
               class="pl-8 mt-1 overflow-y-auto transition-all max-h-0"
             >
-            <!--
+              <!--
               <a
                 href="#"
                 onclick="loadPage('previsao_janeiro.html'); return false;"
@@ -476,7 +476,7 @@
               id="mobilePrevisaoSubmenu"
               class="pl-8 mt-1 overflow-y-auto transition-all max-h-0"
             >
-            <!--
+              <!--
               <a
                 href="#"
                 onclick="loadPage('previsao_janeiro.html'); toggleMobileSidebar(); return false;"
@@ -575,62 +575,62 @@
                 href="#"
                 onclick="loadPage('sub_janeiro.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Janeiro</a>
+                >Janeiro</a>
               <a
                 href="#"
                 onclick="loadPage('sub_fevereiro.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Fevereiro</a>
+                >Fevereiro</a>
               <a
                 href="#"
                 onclick="loadPage('sub_marco.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Março</a>
+                >Março</a>
               <a
                 href="#"
                 onclick="loadPage('sub_abril.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Abril</a>
+                >Abril</a>
               <a
                 href="#"
                 onclick="loadPage('sub_maio.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Maio</a>
+                >Maio</a>
               <a
                 href="#"
                 onclick="loadPage('sub_junho.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Junho</a>
+                >Junho</a>
               <a
                 href="#"
                 onclick="loadPage('sub_julho.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Julho</a>
+                >Julho</a>
               <a
                 href="#"
                 onclick="loadPage('sub_agosto.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Agosto</a>
+                >Agosto</a>
               <a
                 href="#"
                 onclick="loadPage('sub_setembro.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Setembro</a>
+                >Setembro</a>
               <a
                 href="#"
                 onclick="loadPage('sub_outubro.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Outubro</a>
+                >Outubro</a>
               <a
                 href="#"
                 onclick="loadPage('sub_novembro.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Novembro</a>
+                >Novembro</a>
               <a
                 href="#"
                 onclick="loadPage('sub_dezembro.html'); toggleMobileSidebar(); return false;"
                 class="block nav-link p-1 rounded hover:bg-white/10"
-              >Dezembro</a>
+                >Dezembro</a>
             </div>
           </div>
 
@@ -797,20 +797,16 @@
       if (savedUsername) {
         document.getElementById("profileName").textContent = savedUsername;
         document.getElementById("profileNameInput").value = savedUsername;
-        document.getElementById("sidebarProfileName").textContent =
-          savedUsername;
+        document.getElementById("sidebarProfileName").textContent = savedUsername;
       }
       if (savedProfilePic) {
         document.getElementById("profileImg").src = savedProfilePic;
         document.getElementById("modalProfileImg").src = savedProfilePic;
         document.getElementById("sidebarProfileImg").src = savedProfilePic;
       } else {
-        document.getElementById("profileImg").src =
-          "https://via.placeholder.com/40";
-        document.getElementById("modalProfileImg").src =
-          "https://via.placeholder.com/100";
-        document.getElementById("sidebarProfileImg").src =
-          "https://via.placeholder.com/40";
+        document.getElementById("profileImg").src = "https://via.placeholder.com/40";
+        document.getElementById("modalProfileImg").src = "https://via.placeholder.com/100";
+        document.getElementById("sidebarProfileImg").src = "https://via.placeholder.com/40";
       }
     }
 
@@ -826,10 +822,12 @@
 
     formLogin.addEventListener("submit", function (e) {
       e.preventDefault();
+      // Exibe o spinner com o ícone de carregamento
+      spinner.innerHTML = `<div class="spinner-border text-blue-500" role="status"><span class="sr-only">Carregando...</span></div>`;
       spinner.classList.remove("hidden");
       spinner.classList.add("flex");
+
       setTimeout(function () {
-        // Aqui você pode trocar 'admin' e 'admin123' para o que desejar
         const validUsername = localStorage.getItem("savedUsername") || "admin";
         const username = usernameField.value;
         const password = passwordField.value;
@@ -843,15 +841,24 @@
           }
           // Ao fazer login, define a flag "loggedIn"
           localStorage.setItem("loggedIn", "true");
-          loginOverlay.style.display = "none";
-          document.getElementById("dashboard").classList.remove("hidden");
-          iframe.src = "home.html";
-          updateUserInfo();
+
+          // Exibe o ícone de sucesso dentro do spinner
+          spinner.innerHTML = `<i class="bi bi-check-circle-fill text-green-500 text-5xl"></i>`;
+          // Aguarda 1 segundo para mostrar o sucesso e, em seguida, prossegue
+          setTimeout(function () {
+            loginOverlay.style.display = "none";
+            document.getElementById("dashboard").classList.remove("hidden");
+            iframe.src = "home.html";
+            updateUserInfo();
+            // Oculta o spinner
+            spinner.classList.add("hidden");
+            spinner.classList.remove("flex");
+          }, 1000);
         } else {
           alert("Usuário ou senha incorretos!");
+          spinner.classList.add("hidden");
+          spinner.classList.remove("flex");
         }
-        spinner.classList.add("hidden");
-        spinner.classList.remove("flex");
       }, 2000);
     });
 
@@ -885,23 +892,19 @@
     });
 
     // Salva alterações do modal de perfil
-    document
-      .getElementById("profileForm")
-      .addEventListener("submit", function (e) {
-        e.preventDefault();
-        const newName = document
-          .getElementById("profileNameInput")
-          .value.trim();
-        const newImg = document.getElementById("modalProfileImg").src;
-        if (newName !== "") {
-          localStorage.setItem("savedUsername", newName);
-          localStorage.setItem("savedProfilePic", newImg);
-          updateUserInfo();
-          closeProfileModal();
-        } else {
-          alert("O nome de usuário não pode estar vazio.");
-        }
-      });
+    document.getElementById("profileForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const newName = document.getElementById("profileNameInput").value.trim();
+      const newImg = document.getElementById("modalProfileImg").src;
+      if (newName !== "") {
+        localStorage.setItem("savedUsername", newName);
+        localStorage.setItem("savedProfilePic", newImg);
+        updateUserInfo();
+        closeProfileModal();
+      } else {
+        alert("O nome de usuário não pode estar vazio.");
+      }
+    });
   </script>
 </body>
 </html>
