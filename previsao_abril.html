@@ -9,7 +9,7 @@
   <!-- ApexCharts via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    /* Garante que os gráficos se ajustem à largura disponível */
+    /* Garante que o gráfico se ajuste à largura disponível */
     #chart {
       max-width: 100%;
       margin: 0 auto;
@@ -27,39 +27,39 @@
     <!-- Tabela de Detalhes -->
     <h3 class="text-center text-xl font-semibold mb-4">Detalhes das Semanas</h3>
     <div class="overflow-x-auto">
-      <table class="min-w-full border border-gray-200">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="py-2 px-4 text-left text-gray-700">Semana</th>
-            <th class="py-2 px-4 text-left text-gray-700">Período</th>
-            <th class="py-2 px-4 text-right text-gray-700">Valor</th>
+      <table class="min-w-full divide-y divide-gray-200 table-auto">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-6 py-3 text-left text-gray-700 text-sm font-medium">Semana</th>
+            <th class="px-6 py-3 text-left text-gray-700 text-sm font-medium">Período</th>
+            <th class="px-6 py-3 text-right text-gray-700 text-sm font-medium">Valor</th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="border-t">
-            <td class="py-2 px-4 text-gray-600">1ª Semana</td>
-            <td class="py-2 px-4 text-gray-600">01/04 a 04/04</td>
-            <td class="py-2 px-4 text-gray-600 text-right">R$ 792.526,95</td>
+        <tbody class="divide-y divide-gray-100">
+          <tr class="bg-white">
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">1ª Semana</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">01/04 a 04/04</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 792.526,95</td>
           </tr>
-          <tr class="border-t bg-gray-50">
-            <td class="py-2 px-4 text-gray-600">2ª Semana</td>
-            <td class="py-2 px-4 text-gray-600">05/04 a 11/04</td>
-            <td class="py-2 px-4 text-gray-600 text-right">R$ 1.392.767,13</td>
+          <tr class="bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">2ª Semana</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">05/04 a 11/04</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 1.392.767,13</td>
           </tr>
-          <tr class="border-t">
-            <td class="py-2 px-4 text-gray-600">3ª Semana</td>
-            <td class="py-2 px-4 text-gray-600">12/04 a 18/04</td>
-            <td class="py-2 px-4 text-gray-600 text-right">R$ 783.853,75</td>
+          <tr class="bg-white">
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">3ª Semana</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">12/04 a 18/04</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 783.853,75</td>
           </tr>
-          <tr class="border-t bg-gray-50">
-            <td class="py-2 px-4 text-gray-600">4ª Semana</td>
-            <td class="py-2 px-4 text-gray-600">19/04 a 25/04</td>
-            <td class="py-2 px-4 text-gray-600 text-right">R$ 1.316.467,26</td>
+          <tr class="bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">4ª Semana</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">19/04 a 25/04</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 1.316.467,26</td>
           </tr>
-          <tr class="border-t">
-            <td class="py-2 px-4 text-gray-600">5ª Semana</td>
-            <td class="py-2 px-4 text-gray-600">26/04 a 30/04</td>
-            <td class="py-2 px-4 text-gray-600 text-right">R$ 166.578,32</td>
+          <tr class="bg-white">
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">5ª Semana</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">26/04 a 30/04</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 166.578,32</td>
           </tr>
         </tbody>
       </table>
@@ -98,7 +98,7 @@
         offsetY: -20,
         style: {
           fontSize: '12px',
-          colors: ["#000"] // Seguindo o padrão da UI exemplificada
+          colors: ["#000"]
         }
       },
       series: [{
