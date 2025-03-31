@@ -269,12 +269,30 @@
         }, 50);
       }
 
-      // Função para exibir um gif da tela do computador no chat
-      function showGif() {
-        const gifMessage = document.createElement("div");
-        gifMessage.classList.add("chat-message", "received");
-        gifMessage.innerHTML = `<img src="https://i.imgur.com/2gGLuZz.mp4" alt="Tela do Computador" style="width:100%; border-radius:16px;" />`;
-        chatBody.appendChild(gifMessage);
+      // Função para exibir a mensagem informando sobre a alteração de nome de usuário e foto
+      function showUserInfoMessage(callback) {
+        const infoMessage = document.createElement("div");
+        infoMessage.classList.add("chat-message", "received");
+        infoMessage.innerHTML = `<i class="bi bi-info-circle me-1"></i><strong>Aviso:</strong> Agora você pode alterar o nome de usuário e a foto.`;
+        chatBody.appendChild(infoMessage);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        setTimeout(() => {
+          if (callback) callback();
+        }, 1500);
+      }
+
+      // Função para exibir um vídeo MP4 da tela do computador no chat
+      function showVideo() {
+        // Cria o elemento para o vídeo
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("chat-message", "received");
+        videoContainer.innerHTML = `
+          <video controls style="width:100%; border-radius:16px;">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            Seu navegador não suporta o elemento de vídeo.
+          </video>
+        `;
+        chatBody.appendChild(videoContainer);
         chatBody.scrollTop = chatBody.scrollHeight;
       }
 
@@ -302,8 +320,8 @@
         mensagemValor,
         "Nova atualização na área de previsões para Abril.",
         "Previsão de pagamento para o mês de Abril: R$ 4.452.193,41",
-        "valor total de pagamentos em 31/03: R$ 743.129,03",
-        "Previsão de pagamento para 01/04/: R$ 124.462,61",
+        "Valor total de pagamentos em 31/03: R$ 743.129,03",
+        "Previsão de pagamento para 01/04: R$ 124.462,61",
         "O relatório de março encontra-se com algumas informações desatualizadas. Em breve trataremos este erro.",
         "Para mais informações contate o time de TI."
       ];
@@ -327,11 +345,13 @@
         }
       }
 
-      // Exibe o chat automaticamente e inicia com a saudação, exibe o gif e depois as mensagens informativas
+      // Exibe o chat automaticamente e inicia com a saudação, exibe a mensagem de alteração de usuário e foto, o vídeo e depois as mensagens informativas
       chatBox.style.display = "flex";
       showGreeting(function() {
-        showGif();
-        showInformativeMessages();
+        showUserInfoMessage(function() {
+          showVideo();
+          showInformativeMessages();
+        });
       });
 
       // Reabre o chat se estiver fechado ao clicar no ícone
