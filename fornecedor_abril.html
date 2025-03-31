@@ -51,13 +51,67 @@
   <div id="charts-container" class="w-full"></div>
 
   <script>
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 1) Dados de Fornecedores
-    //    Cada linha: { fornecedor, date, valorPago }
-    //    O campo "fornecedor" combina Nome e Código entre parênteses
-    //    para facilitar o filtro e a identificação.
-    // ------------------------------------------------------------
+    //    Cada item: { fornecedor, date, valorPago }
+    //    Nome do fornecedor + possível código entre parênteses.
+    // --------------------------------------------------------------------
     const rawData = [
+      { fornecedor: "RESTAMP", date: "01/04/2025", valorPago: "R$ 50.900,00" },
+      { fornecedor: "METALURGICA ALBRAS LTDA (251673)", date: "01/04/2025", valorPago: "R$ 1.540,27" },
+      { fornecedor: "RESTAMP", date: "01/04/2025", valorPago: "R$ 16.500,00" },
+      { fornecedor: "DESING PLAST", date: "02/04/2025", valorPago: "R$ 5.846,40" },
+      { fornecedor: "MULTIVISÃO (226901)", date: "02/04/2025", valorPago: "R$ 4.788,22" },
+      { fornecedor: "CAROÇO (PF=226901)", date: "02/04/2025", valorPago: "R$ 41.719,94" },
+      { fornecedor: "BIGFER MATRIZ (2327106)", date: "02/04/2025", valorPago: "R$ 1.400,69" },
+      { fornecedor: "ARAUCO (325541)", date: "02/04/2025", valorPago: "R$ 92.903,78" },
+      { fornecedor: "ACM FIBRAS", date: "02/04/2025", valorPago: "R$ 51.292,63" },
+      { fornecedor: "VERTICALPACK EMBALAGENS (5184)", date: "03/04/2025", valorPago: "R$ 186,47" },
+      { fornecedor: "VERTICAL PACK (PF=5284)", date: "03/04/2025", valorPago: "R$ 1.459,35" },
+      { fornecedor: "ARAUCO (325604)", date: "03/04/2025", valorPago: "R$ 92.903,78" },
+      { fornecedor: "METALURGICA ALBRAS LTDA (251573)", date: "04/04/2025", valorPago: "R$ 9.099,09" },
+      { fornecedor: "ARAUCO (325242)", date: "04/04/2025", valorPago: "R$ 92.903,78" },
+      { fornecedor: "VN EPS", date: "04/04/2025", valorPago: "R$ 20.064,00" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (226946)", date: "04/04/2025", valorPago: "R$ 16.143,14" },
+      { fornecedor: "VERTICALPACK EMBALAGENS (5193)", date: "04/04/2025", valorPago: "R$ 1.035,00" },
+      { fornecedor: "VERTICAL PACK (PF=5293)", date: "04/04/2025", valorPago: "R$ 8.100,00" },
+      { fornecedor: "ARAUCO - ACLUB (297813)", date: "AGUARDANDO A COBRANÇA", valorPago: "R$ 79.186,62" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227016)", date: "05/04/2025", valorPago: "R$ 14.935,11" },
+      { fornecedor: "SOLUM CONTABILIDADE", date: "05/04/2025", valorPago: "R$ 1.245,00" },
+      { fornecedor: "MULTIVISÃO (226947)", date: "05/04/2025", valorPago: "R$ 4.031,91" },
+      { fornecedor: "CAROÇO (PF=226947)", date: "05/04/2025", valorPago: "R$ 35.165,07" },
+      { fornecedor: "SUL FORMATO INDUSTRIA E COMERCIO DE ACESSORIOS PLASTICOS LTDA (6665)", date: "05/04/2025", valorPago: "R$ 6.403,42" },
+      { fornecedor: "SUL FORMATO (PF=6665)", date: "05/04/2025", valorPago: "R$ 19.593,58" },
+      { fornecedor: "CAVIMAR IND. (3875)", date: "05/04/2025", valorPago: "R$ 7.837,50" },
+      { fornecedor: "VERTICALPACK EMBALAGENS (5195)", date: "05/04/2025", valorPago: "R$ 764,31" },
+      { fornecedor: "VERTICAL PACK (PF=5195)", date: "05/04/2025", valorPago: "R$ 5.981,58" },
+      { fornecedor: "BIGFER MATRIZ (2328928)", date: "06/04/2025", valorPago: "R$ 1.204,00" },
+      { fornecedor: "MULTIVISÃO (227017)", date: "06/04/2025", valorPago: "R$ 3.230,00" },
+      { fornecedor: "CAROÇO (PF=227017)", date: "06/04/2025", valorPago: "R$ 28.148,28" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227089)", date: "06/04/2025", valorPago: "R$ 14.935,11" },
+      { fornecedor: "DZAINER (OF)", date: "07/04/2025", valorPago: "R$ 23.128,00" },
+      { fornecedor: "DZAINER (PF)", date: "07/04/2025", valorPago: "R$ 22.400,00" },
+      { fornecedor: "EUCATEX RAFA (307302)", date: "07/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (307303)", date: "07/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (307304)", date: "07/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "JOMARCA (867488)", date: "07/04/2025", valorPago: "R$ 3.541,01" },
+      { fornecedor: "METALURGICA ALBRAS LTDA (251673)", date: "08/04/2025", valorPago: "R$ 1.329,37" },
+      { fornecedor: "Arauco do Brasil - Jaguariaiva (325406)", date: "08/04/2025", valorPago: "R$ 92.903,78" },
+      { fornecedor: "QM-FR (650948)", date: "08/04/2025", valorPago: "R$ 31.520,00" },
+      { fornecedor: "PRD_IMD NAVEGANTES (320175)", date: "09/04/2025", valorPago: "R$ 30.708,83" },
+      { fornecedor: "VERTICALPACK EMBALAGENS (5202)", date: "09/04/2025", valorPago: "R$ 2.296,87" },
+      { fornecedor: "VERTICAL PACK (PF=5202)", date: "09/04/2025", valorPago: "R$ 17.975,52" },
+      { fornecedor: "VPLAST (26928)", date: "09/04/2025", valorPago: "R$ 4.435,62" },
+      { fornecedor: "ACM FIBRAS (6892)", date: "09/04/2025", valorPago: "R$ 65.571,35" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227105)", date: "09/04/2025", valorPago: "R$ 51.316,80" },
+      { fornecedor: "MULTIVISÃO (227088)", date: "09/04/2025", valorPago: "R$ 3.498,12" },
+      { fornecedor: "CAROÇO (PF=227088)", date: "09/04/2025", valorPago: "R$ 30.485,97" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227145)", date: "10/04/2025", valorPago: "R$ 46.689,47" },
+      { fornecedor: "OR DESIGN (388413)", date: "10/04/2025", valorPago: "R$ 11.040,32" },
+      { fornecedor: "OR DESIGN (398383)", date: "10/04/2025", valorPago: "R$ 34.501,00" },
+      { fornecedor: "MULTIVISÃO (227106)", date: "10/04/2025", valorPago: "R$ 3.010,49" },
+      { fornecedor: "MULTIVISÃO (227107)", date: "10/04/2025", valorPago: "R$ 4.591,88" },
+      { fornecedor: "CAROÇO (PF=227106, 227107)", date: "10/04/2025", valorPago: "R$ 64.998,34" },
       { fornecedor: "VERTICALPACK EMBALAGENS (5208)", date: "11/04/2025", valorPago: "R$ 1.219,33" },
       { fornecedor: "RESTAMP", date: "11/04/2025", valorPago: "R$ 44.700,00" },
       { fornecedor: "VERTICAL PACK (PF=5208)", date: "11/04/2025", valorPago: "R$ 9.542,61" },
@@ -89,7 +143,7 @@
       { fornecedor: "MULTIVISÃO (227389)", date: "19/04/2025", valorPago: "R$ 6.134,61" },
       { fornecedor: "CAROÇO (PF=227372, 227389)", date: "19/04/2025", valorPago: "R$ 57.714,47" },
       { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227478)", date: "20/04/2025", valorPago: "R$ 44.809,97" },
-      { fornecedor: "NEWFIX (346520)", date: "20/03/2025", valorPago: "R$ 2.927,21" },  // Fora de abril
+      { fornecedor: "NEWFIX (346520)", date: "20/03/2025", valorPago: "R$ 2.927,21" },  // Fora de Abril
       { fornecedor: "EUCATEX RAFA (307990)", date: "20/04/2025", valorPago: "R$ 27.943,03" },
       { fornecedor: "EUCATEX RAFA (307991)", date: "20/04/2025", valorPago: "R$ 27.943,03" },
       { fornecedor: "EUCATEX RAFA (307992)", date: "20/04/2025", valorPago: "R$ 27.943,03" },
@@ -101,7 +155,7 @@
       { fornecedor: "REPACK EMBALAGENS (13820)", date: "21/04/2025", valorPago: "R$ 4.920,00" },
       { fornecedor: "OR DESIGN (389718)", date: "22/04/2025", valorPago: "R$ 15.640,00" },
       { fornecedor: "PRD_IMD NAVEGANTES (317307)", date: "22/04/2025", valorPago: "R$ 29.000,00" },
-      { fornecedor: "ALLPARTS (54347)", date: "22/03/2025", valorPago: "R$ 1.453,89" }, // Fora de abril
+      { fornecedor: "ALLPARTS (54347)", date: "22/03/2025", valorPago: "R$ 1.453,89" }, // Fora de Abril
       { fornecedor: "EUCATEX RAFA (308115)", date: "22/04/2025", valorPago: "R$ 24.532,41" },
       { fornecedor: "EUCATEX RAFA (308116)", date: "22/04/2025", valorPago: "R$ 24.532,41" },
       { fornecedor: "EUCATEX RAFA (308117)", date: "22/04/2025", valorPago: "R$ 24.532,41" },
@@ -120,20 +174,19 @@
       { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227644)", date: "25/04/2025", valorPago: "R$ 39.394,42" },
       { fornecedor: "OR DESIGN (401880)", date: "25/04/2025", valorPago: "R$ 55.200,00" },
       { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227693)", date: "26/04/2025", valorPago: "R$ 35.105,00" },
-      { fornecedor: "MULTIVISÃO (227651)", date: "26/03/2025", valorPago: "R$ 2.228,97" }, // Fora de abril
-      { fornecedor: "CAROÇO (PF=227651)", date: "26/03/2025", valorPago: "R$ 19.436,62" }, // Fora de abril
+      { fornecedor: "MULTIVISÃO (227651)", date: "26/03/2025", valorPago: "R$ 2.228,97" }, // Fora de Abril
+      { fornecedor: "CAROÇO (PF=227651)", date: "26/03/2025", valorPago: "R$ 19.436,62" }, // Fora de Abril
       { fornecedor: "MULTIVISÃO (227694)", date: "27/04/2025", valorPago: "R$ 2.130,05" },
       { fornecedor: "CAROÇO (PF=227694)", date: "27/04/2025", valorPago: "R$ 18.565,99" },
       { fornecedor: "DZAINER (OF)", date: "28/04/2025", valorPago: "R$ 23.128,00" },
       { fornecedor: "DZAINER (PF)", date: "28/04/2025", valorPago: "R$ 22.400,00" },
       { fornecedor: "REPACK EMBALAGENS (13820)", date: "28/04/2025", valorPago: "R$ 4.920,00" },
-      { fornecedor: "BIGFER MATRIZ (2346446)", date: "29/04/2025", valorPago: "R$ 2.663,69" },
-      { fornecedor: "RESTAMP", date: "09/05/2025", valorPago: "R$ 16.125,00" } // Fora de abril
+      { fornecedor: "BIGFER MATRIZ (2346446)", date: "29/04/2025", valorPago: "R$ 2.663,69" }
     ];
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 2) Conversão de valores e datas
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     function parseValor(valorStr) {
       return parseFloat(
         valorStr
@@ -146,36 +199,40 @@
 
     // Converte "DD/MM/AAAA" em "MM/DD/AAAA"
     function fixDate(dtStr) {
+      // Caso haja algo como "AGUARDANDO A COBRANÇA", tratamos como "fora de abril"
+      if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dtStr)) {
+        // Retorna algo que cairá no "fora de abril"
+        return "00/00/9999";
+      }
       const [dd, mm, yyyy] = dtStr.split("/");
       return `${mm}/${dd}/${yyyy}`;
     }
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 3) Determinar a semana de Abril/2025 (1..5) ou 0 se fora de Abril
-    //    Retornaremos 6 colunas: 5 para as semanas + 1 para "Fora de Abril"
-    // ------------------------------------------------------------
+    //    Vamos usar 6 colunas: 5 para as semanas + 1 para "Fora de Abril"
+    // --------------------------------------------------------------------
     function getAprilWeek(dateStr) {
-      // dateStr no formato "MM/DD/AAAA"
       const [mm, dd, yyyy] = dateStr.split("/");
-      if (yyyy !== "2025") return -1; // outro ano => Fora de Abril
-      if (mm !== "04") return 0;      // se não for 04 => Fora de Abril
+      if (yyyy !== "2025") return -1; // outro ano => fora
+      if (mm !== "04") return 0;      // não é abril => fora
 
       const day = parseInt(dd, 10);
-      if (day >= 1 && day <= 4)  return 1;  // 01/04 a 04/04
-      if (day >= 5 && day <= 11) return 2;  // 05/04 a 11/04
-      if (day >= 12 && day <= 18) return 3; // 12/04 a 18/04
-      if (day >= 19 && day <= 25) return 4; // 19/04 a 25/04
-      if (day >= 26 && day <= 30) return 5; // 26/04 a 30/04
-      return 0; // Ex: 31/04 (inexistente) => Fora de Abril
+      if (day >= 1 && day <= 4)  return 1; // 1ª semana
+      if (day >= 5 && day <= 11) return 2; // 2ª semana
+      if (day >= 12 && day <= 18) return 3; // 3ª semana
+      if (day >= 19 && day <= 25) return 4; // 4ª semana
+      if (day >= 26 && day <= 30) return 5; // 5ª semana
+      return 0; // 31/04 não existe => fora
     }
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 4) Preparar dataset parseado e agrupar
     //    sumsByForn[fornecedor] = [sem1, sem2, sem3, sem4, sem5, foraAbril]
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     const dataset = rawData.map(item => ({
       fornecedor: item.fornecedor,
-      date: fixDate(item.date), // "MM/DD/AAAA"
+      date: fixDate(item.date),
       valor: parseValor(item.valorPago)
     }));
 
@@ -184,27 +241,24 @@
     dataset.forEach(item => {
       const w = getAprilWeek(item.date);
       const desc = item.fornecedor;
-
-      // Cria array de 6 posições se não existir
       if (!sumsByForn[desc]) {
         sumsByForn[desc] = [0, 0, 0, 0, 0, 0];
       }
 
       if (w > 0 && w <= 5) {
-        // É 1..5 => dentro de Abril
         sumsByForn[desc][w - 1] += item.valor;
       } else {
-        // 0 ou -1 => Fora de Abril
+        // w = 0 ou -1 => Fora de Abril
         sumsByForn[desc][5] += item.valor;
       }
     });
 
-    // Lista de fornecedores únicos
+    // Lista de fornecedores (ordenada)
     const uniqueFornecedores = Object.keys(sumsByForn).sort();
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 5) Preenche SELECT de filtro
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     const descSelect = document.getElementById("descSelect");
     const optTodos = document.createElement("option");
     optTodos.value = "TODOS";
@@ -218,9 +272,9 @@
       descSelect.appendChild(opt);
     });
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 6) Renderizar gráficos conforme filtro
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     function renderCharts(selectedForn) {
       const container = document.getElementById("charts-container");
       container.innerHTML = ""; // limpa anteriores
@@ -242,7 +296,6 @@
 
       // Array com as 6 colunas + "Total"
       const valuesWithTotal = [...values, total];
-      // Categorias: 5 semanas + "Fora de Abril" + "Total"
       const categories = [
         "1ª Sem (1-4)",
         "2ª Sem (5-11)",
@@ -389,9 +442,9 @@
       chart.render();
     }
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 7) Visão Geral (pizza) - soma total por fornecedor
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     const overviewBtn = document.getElementById("overviewBtn");
     overviewBtn.addEventListener("click", createOverviewChart);
 
@@ -400,14 +453,14 @@
       container.innerHTML = "";
 
       // Arrays para gráfico de pizza
-      const descArray = [];
+      const fornArray = [];
       const totalArray = [];
 
       // Monta dados de cada fornecedor (somando todas as colunas)
       uniqueFornecedores.forEach(forn => {
         const vals = sumsByForn[forn];
         const total = vals.reduce((acc, val) => acc + val, 0);
-        descArray.push(forn);
+        fornArray.push(forn);
         totalArray.push(total);
       });
 
@@ -430,14 +483,14 @@
       chartDiv.id = "overview_chart";
       container.appendChild(chartDiv);
 
-      // Configuração do ApexCharts para pizza
+      // Config do ApexCharts (pizza)
       const options = {
         chart: {
           type: "pie",
           height: 550,
         },
         series: totalArray,
-        labels: descArray,
+        labels: fornArray,
         dataLabels: {
           formatter: (val) =>
             val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%",
@@ -464,7 +517,7 @@
           {
             breakpoint: 576,
             options: {
-              chart: { height: 750 }, // maior no mobile
+              chart: { height: 750 },
               legend: { position: "bottom" },
               dataLabels: { style: { fontSize: "14px" } },
             },
@@ -476,9 +529,9 @@
       chart.render();
     }
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 8) Função de Tela Cheia
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
@@ -490,15 +543,15 @@
     }
     window.toggleFullScreen = toggleFullScreen;
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 9) Renderiza todos os gráficos por padrão (opção "TODOS")
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     descSelect.value = "TODOS";
     renderCharts("TODOS");
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     // 10) Evento de mudança no SELECT
-    // ------------------------------------------------------------
+    // --------------------------------------------------------------------
     descSelect.addEventListener("change", () => {
       renderCharts(descSelect.value);
     });
