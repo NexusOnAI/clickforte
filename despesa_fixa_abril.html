@@ -52,9 +52,8 @@
 
   <script>
     // --------------------------------------------------------------------
-    // 1) Dados brutos de "Despesa Fixa" para Abril/2025
-    //    Cada item: { descricao, date, valorPago }
-    //    Status "Em Aberto" não é usado no gráfico, mas poderia ser incluído no campo "descricao" se desejado.
+    // 1) Dados brutos de "Despesa Fixa"
+    //    Incluindo item de 22/03/2025 (BIWISE LTDA) que não está em Abril.
     // --------------------------------------------------------------------
     const rawData = [
       { descricao: "NEW VETOR SERVICOS TERCEIRIZADOS LTDA", date: "01/04/2025", valorPago: "R$ 18.856,84" },
@@ -82,7 +81,7 @@
       { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES", date: "20/04/2025", valorPago: "R$ 700,00" },
       { descricao: "ALUGUEL GIRUS 865 - MARCO ANTÔNIO", date: "20/04/2025", valorPago: "R$ 20.000,00" },
       { descricao: "ALUGUEL GIRUS 855 - MARCO ANTÔNIO", date: "20/04/2025", valorPago: "R$ 7.500,00" },
-      { descricao: "BIWISE LTDA", date: "22/03/2025", valorPago: "R$ 949,00" }, // OBS: fora de abril, não entra no gráfico
+      { descricao: "BIWISE LTDA", date: "22/03/2025", valorPago: "R$ 949,00" }, // Fora de abril
       { descricao: "HORIZON NETWORK TELECOMUNICACOES LTDA", date: "23/04/2025", valorPago: "R$ 259,80" },
       { descricao: "INICIATIVA FABRICA DE APLICATIVOS LTDA", date: "23/04/2025", valorPago: "R$ 250,00" },
       { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", date: "23/04/2025", valorPago: "R$ 250,00" },
@@ -96,7 +95,7 @@
 
     // --------------------------------------------------------------------
     // 2) Funções de parsing: converter "R$ 1.000,00" em número
-    //    e converter "DD/MM/AAAA" em "MM/DD/AAAA" para facilitar manipulação
+    //    e converter "DD/MM/AAAA" em "MM/DD/AAAA" para facilitar cálculos
     // --------------------------------------------------------------------
     function parseValor(valorStr) {
       return parseFloat(
@@ -108,60 +107,71 @@
       );
     }
 
-    // Converte "DD/MM/2025" para "MM/DD/2025"
+    // Converte "DD/MM/AAAA" para "MM/DD/AAAA"
     function fixDate(dtStr) {
       const [dd, mm, yyyy] = dtStr.split("/");
       return `${mm}/${dd}/${yyyy}`;
     }
 
     // --------------------------------------------------------------------
-    // 3) Descobrir qual semana de Abril (1..5) ou 0 se não é Abril/2025
+    // 3) Determinar qual semana de Abril/2025 (1..5) ou 0 se não é Abril
     // --------------------------------------------------------------------
     function getAprilWeek(dateStr) {
-      // dateStr estará em formato "MM/DD/AAAA" depois de fixDate
+      // dateStr estará em formato "MM/DD/AAAA"
       const [mm, dd, yyyy] = dateStr.split("/");
-      if (mm !== "04" || yyyy !== "2025") return 0;
+      if (yyyy !== "2025") return -1; // Se não for 2025, também marcamos como "fora de abril"
+      if (mm !== "04") return 0;      // Retorna 0 para "fora de abril"
 
       const day = parseInt(dd, 10);
-      if (day >= 1 && day <= 4)  return 1; // 01/04 a 04/04
-      if (day >= 5 && day <= 11) return 2; // 05/04 a 11/04
+      if (day >= 1 && day <= 4)  return 1;  // 01/04 a 04/04
+      if (day >= 5 && day <= 11) return 2;  // 05/04 a 11/04
       if (day >= 12 && day <= 18) return 3; // 12/04 a 18/04
       if (day >= 19 && day <= 25) return 4; // 19/04 a 25/04
       if (day >= 26 && day <= 30) return 5; // 26/04 a 30/04
-      return 0; // se for 31 ou fora de abril, descarta
+      return 0; // se for 31/04 (inexistente) ou algo fora
     }
 
     // --------------------------------------------------------------------
-    // 4) Monta dataset parseado, filtra somente mês/ano de Abril/2025
+    // 4) Preparar dataset parseado
     // --------------------------------------------------------------------
     const dataset = rawData.map(item => ({
       descricao: item.descricao,
-      date: fixDate(item.date),      // converte p/ "MM/DD/2025"
+      date: fixDate(item.date), // "MM/DD/2025"
       valor: parseValor(item.valorPago)
     }));
 
     // --------------------------------------------------------------------
-    // 5) Somar valores por descrição e por semana
-    //    sumsByDesc[desc] = array com 5 posições (uma para cada semana)
+    // 5) Agora, vamos ter 6 colunas de soma:
+    //    - Índices 0..4 para as semanas 1..5 de abril
+    //    - Índice 5 para "Fora de Abril"
+    //
+    //    sumsByDesc[descricao] = [sem1, sem2, sem3, sem4, sem5, foraAbril]
     // --------------------------------------------------------------------
     const sumsByDesc = {};
 
-    dataset.forEach((item) => {
+    dataset.forEach(item => {
       const w = getAprilWeek(item.date);
-      if (w === 0) return; // ignora se não for Abril/2025
-
       const desc = item.descricao;
+
+      // Se a descrição ainda não existe, cria array de 6 posições
       if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0, 0, 0, 0, 0]; // 5 semanas
+        sumsByDesc[desc] = [0, 0, 0, 0, 0, 0];
       }
-      sumsByDesc[desc][w - 1] += item.valor;
+
+      if (w > 0 && w <= 5) {
+        // w = 1..5 (dentro de abril)
+        sumsByDesc[desc][w - 1] += item.valor;
+      } else {
+        // w = 0 ou -1 => Fora de abril
+        sumsByDesc[desc][5] += item.valor;
+      }
     });
 
     // Lista de descrições únicas (ordenadas)
     const uniqueDescriptions = Object.keys(sumsByDesc).sort();
 
     // --------------------------------------------------------------------
-    // 6) Preenche o SELECT de filtro (TODOS + cada descrição)
+    // 6) Preenche o SELECT de filtro (opção "TODOS" + cada descrição)
     // --------------------------------------------------------------------
     const descSelect = document.getElementById("descSelect");
 
@@ -170,7 +180,7 @@
     optTodos.text = "Todos";
     descSelect.appendChild(optTodos);
 
-    uniqueDescriptions.forEach((desc) => {
+    uniqueDescriptions.forEach(desc => {
       const opt = document.createElement("option");
       opt.value = desc;
       opt.text = desc;
@@ -178,39 +188,42 @@
     });
 
     // --------------------------------------------------------------------
-    // 7) Função para renderizar gráficos (barras) de acordo com o filtro
+    // 7) Renderizar gráficos conforme o filtro
     // --------------------------------------------------------------------
     function renderCharts(selectedDesc) {
       const container = document.getElementById("charts-container");
       container.innerHTML = ""; // limpa gráficos anteriores
 
       if (selectedDesc === "TODOS") {
-        uniqueDescriptions.forEach((desc) => createChart(desc, container));
+        uniqueDescriptions.forEach(d => createChart(d, container));
       } else {
         createChart(selectedDesc, container);
       }
     }
 
-    // Cria gráfico de barras para UMA descrição (5 semanas + total)
+    // Cria gráfico de barras para UMA descrição (6 colunas + total)
     function createChart(desc, container) {
       const values = sumsByDesc[desc];
       if (!values) return;
 
-      // Soma total da descrição
+      // Soma total (todas as 6 colunas)
       const total = values.reduce((acc, val) => acc + val, 0);
 
-      // Array com as 5 semanas + "Total"
+      // Montamos um array com as 6 colunas + "Total"
       const valuesWithTotal = [...values, total];
+
+      // Categorias: 5 semanas + "Fora de Abril" + "Total"
       const categories = [
         "1ª Sem (1-4)",
         "2ª Sem (5-11)",
         "3ª Sem (12-18)",
         "4ª Sem (19-25)",
         "5ª Sem (26-30)",
+        "Fora de Abril",
         "Total"
       ];
 
-      // Título
+      // Título (h2)
       const h2 = document.createElement("h2");
       h2.textContent = desc;
       h2.className = "my-2 text-center text-xl font-semibold";
@@ -223,7 +236,7 @@
       chartDiv.id = chartId;
       container.appendChild(chartDiv);
 
-      // Configuração do ApexCharts
+      // Configurações do ApexCharts
       const options = {
         chart: {
           type: "bar",
@@ -242,13 +255,10 @@
         dataLabels: {
           enabled: true,
           formatter: function (val) {
-            return (
-              "R$ " +
-              val.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })
-            );
+            return "R$ " + val.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
           },
           offsetY: -20,
           style: {
@@ -276,13 +286,10 @@
         yaxis: {
           labels: {
             formatter: function (val) {
-              return (
-                "R$ " +
-                val.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-              );
+              return "R$ " + val.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
             },
             style: {
               fontSize: "12px",
@@ -305,13 +312,10 @@
           theme: "light",
           y: {
             formatter: function (val) {
-              return (
-                "R$ " +
-                val.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-              );
+              return "R$ " + val.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
             },
           },
         },
@@ -323,7 +327,7 @@
         subtitle: {
           text: `Total: R$ ${total.toLocaleString("pt-BR", {
             minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            maximumFractionDigits: 2
           })}`,
           align: "center",
         },
@@ -369,8 +373,8 @@
       const descArray = [];
       const totalArray = [];
 
-      // Monta dados de cada descrição (só o total final)
-      uniqueDescriptions.forEach((desc) => {
+      // Monta dados de cada descrição (somando as 6 colunas)
+      uniqueDescriptions.forEach(desc => {
         const vals = sumsByDesc[desc];
         const total = vals.reduce((acc, val) => acc + val, 0);
         descArray.push(desc);
@@ -416,7 +420,7 @@
           },
         },
         title: {
-          text: "Visão Geral - Total de Despesas Fixas (Abril/2025)",
+          text: "Visão Geral - Total de Despesas Fixas (Abril/2025 + Fora de Abril)",
           align: "center",
         },
         subtitle: {
