@@ -56,25 +56,25 @@
      *    Cada item: { descricao, date, valorPago }
      ***************************************************************/
     const rawData = [
-      { descricao: "GUILHERME - SEGURANÇA",               date: "02/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA",     date: "02/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA",         date: "02/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "INDUSLOG - FOLHA SALÁRIAL",           date: "04/04/2025", valorPago: "R$ 52.330,76" },
-      { descricao: "LUIZ CARLOS DE OLIVEIRA",             date: "05/04/2025", valorPago: "R$ 8.000,00" },
-      { descricao: "FELIPE CORREIA",                      date: "05/04/2025", valorPago: "R$ 20.000,00" },
-      { descricao: "LUCAS MOMEZZO",                       date: "10/04/2025", valorPago: "R$ 50.000,00" },
-      { descricao: "GABRIEL CORREIA",                     date: "14/04/2025", valorPago: "R$ 5.000,00" },
-      { descricao: "EVANDERSON SILVA",                    date: "14/04/2025", valorPago: "R$ 5.000,00" },
-      { descricao: "REGIANE CRISTINA DE ARAUJO",          date: "14/04/2025", valorPago: "R$ 4.080,90" },
-      { descricao: "CARLA ZANQUETI",                      date: "14/04/2025", valorPago: "R$ 9.000,00" },
-      { descricao: "ALCAR SERVICOS ADMINISTRATIVOS",      date: "14/04/2025", valorPago: "R$ 21.000,00" },
-      { descricao: "IGNACIO",                             date: "14/04/2025", valorPago: "R$ 6.500,00" },
-      { descricao: "GUILHERME - SEGURANÇA",               date: "15/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA",     date: "15/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA",         date: "15/04/2025", valorPago: "R$ 2.000,00" },
-      { descricao: "ALVARO",                              date: "20/04/2025", valorPago: "R$ 10.000,00" },
-      { descricao: "INDUSLOG - FOLHA SALÁRIAL",           date: "20/04/2025", valorPago: "R$ 61.217,30" },
-      { descricao: "REGINA",                              date: "20/04/2025", valorPago: "R$ 5.000,00" }
+      { descricao: "GUILHERME - SEGURANÇA",           date: "02/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA", date: "02/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA",     date: "02/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "INDUSLOG - FOLHA SALÁRIAL",       date: "04/04/2025", valorPago: "R$ 52.330,76" },
+      { descricao: "LUIZ CARLOS DE OLIVEIRA",         date: "05/04/2025", valorPago: "R$ 8.000,00" },
+      { descricao: "FELIPE CORREIA",                  date: "05/04/2025", valorPago: "R$ 20.000,00" },
+      { descricao: "LUCAS MOMEZZO",                   date: "10/04/2025", valorPago: "R$ 50.000,00" },
+      { descricao: "GABRIEL CORREIA",                 date: "14/04/2025", valorPago: "R$ 5.000,00" },
+      { descricao: "EVANDERSON SILVA",                date: "14/04/2025", valorPago: "R$ 5.000,00" },
+      { descricao: "REGIANE CRISTINA DE ARAUJO",      date: "14/04/2025", valorPago: "R$ 4.080,90" },
+      { descricao: "CARLA ZANQUETI",                  date: "14/04/2025", valorPago: "R$ 9.000,00" },
+      { descricao: "ALCAR SERVICOS ADMINISTRATIVOS",  date: "14/04/2025", valorPago: "R$ 21.000,00" },
+      { descricao: "IGNACIO",                         date: "14/04/2025", valorPago: "R$ 6.500,00" },
+      { descricao: "GUILHERME - SEGURANÇA",           date: "15/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA", date: "15/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA",     date: "15/04/2025", valorPago: "R$ 2.000,00" },
+      { descricao: "ALVARO",                          date: "20/04/2025", valorPago: "R$ 10.000,00" },
+      { descricao: "INDUSLOG - FOLHA SALÁRIAL",       date: "20/04/2025", valorPago: "R$ 61.217,30" },
+      { descricao: "REGINA",                          date: "20/04/2025", valorPago: "R$ 5.000,00" }
     ];
 
     /***************************************************************
@@ -130,9 +130,8 @@
       const w = getAprilWeek(item.date);
       const desc = item.descricao;
 
-      // Se não existir, cria array de 6 posições
       if (!sumsByDesc[desc]) {
-        sumsByDesc[desc] = [0, 0, 0, 0, 0, 0];
+        sumsByDesc[desc] = [0, 0, 0, 0, 0, 0]; // 6 colunas
       }
 
       if (w > 0 && w <= 5) {
