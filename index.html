@@ -36,41 +36,6 @@
     ::-webkit-scrollbar-track {
       background-color: #222;  /* Cor do trilho */
     }
-    
-    /* Estilo do ícone do chat */
-    .notification-icon {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #0d6efd;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-      cursor: pointer;
-      z-index: 1100;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-    }
-    .notification-icon:hover {
-      background-color: #0b5ed7;
-      transform: scale(1.05);
-    }
-
-    /* Ajustes responsivos */
-    @media (max-width: 768px) {
-      .notification-icon {
-        /* Ajusta o ícone do chat para ficar um pouco mais acima no mobile */
-        bottom: 30px;
-        right: 15px;
-        width: 50px;
-        height: 50px;
-      }
-    }
   </style>
 </head>
 <body class="bg-black h-screen overflow-hidden">
@@ -233,6 +198,26 @@
               id="desktopPrevisaoSubmenu"
               class="pl-8 mt-1 overflow-y-auto transition-all max-h-0"
             >
+            <!--
+              <a
+                href="#"
+                onclick="loadPage('previsao_janeiro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+                >Janeiro</a
+              >
+              <a
+                href="#"
+                onclick="loadPage('previsao_fevereiro.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+                >Fevereiro</a
+              >
+              <a
+                href="#"
+                onclick="loadPage('previsao_marco.html'); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+                >Março</a
+              > 
+              -->
               <a
                 href="#"
                 onclick="loadPage('previsao_abril.html'); return false;"
@@ -491,6 +476,26 @@
               id="mobilePrevisaoSubmenu"
               class="pl-8 mt-1 overflow-y-auto transition-all max-h-0"
             >
+            <!--
+              <a
+                href="#"
+                onclick="loadPage('previsao_janeiro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+                >Janeiro</a
+              >
+              <a
+                href="#"
+                onclick="loadPage('previsao_fevereiro.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+                >Fevereiro</a
+              >
+              <a
+                href="#"
+                onclick="loadPage('previsao_marco.html'); toggleMobileSidebar(); return false;"
+                class="block nav-link p-1 rounded hover:bg-white/10"
+                >Março</a
+              >
+              -->
               <a
                 href="#"
                 onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;"
@@ -708,11 +713,6 @@
       </form>
     </div>
   </div>
-
-  <!-- Botão do ícone do chat (exemplo de posicionamento) -->
-  <button class="notification-icon" id="chatIcon" title="Chat">
-    <i class="bi bi-chat-dots-fill text-xl"></i>
-  </button>
 
   <!-- Scripts -->
   <script>
