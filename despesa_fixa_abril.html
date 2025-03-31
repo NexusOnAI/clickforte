@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Meta tag para responsividade -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Despesas Fixas por Semana - Abril/2025</title>
+  <!-- Impede rolagem horizontal acidental -->
+  <style>
+    html, body {
+      overflow-x: hidden;
+    }
+  </style>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ApexCharts via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body class="font-sans m-5 bg-white text-gray-900">
+  <!-- Título principal -->
+  <h1 class="my-2 text-center text-2xl font-bold">
+    Despesas Fixas por Semana - Abril/2025
+  </h1>
+
+  <!-- Barra de filtros e botões -->
+  <div class="flex flex-wrap items-center gap-2.5 mb-5 justify-center">
+    <label for="descSelect" class="font-semibold">Filtrar Descrição:</label>
+    <select
+      id="descSelect"
+      class="w-32 md:w-auto border border-gray-400 rounded px-2 py-1 text-sm focus:outline-none md:text-base md:px-2 md:py-1"
+    >
+      <!-- Opções criadas via JavaScript -->
+    </select>
+
+    <button
+      class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
+      onclick="toggleFullScreen()"
+    >
+      Tela Cheia
+    </button>
+
+    <button
+      id="overviewBtn"
+      class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
+    >
+      Visão Geral
+    </button>
+  </div>
+
+  <!-- Área para inserir os gráficos dinamicamente -->
+  <div id="charts-container" class="w-full"></div>
+
+  <script>
+    // --------------------------------------------------------------------
+    // 1) Dados brutos de "Despesa Fixa" para Abril/2025
+    //    Cada item: { descricao, date, valorPago }
+    //    Status "Em Aberto" não é usado no gráfico, mas poderia ser incluído no campo "descricao" se desejado.
+    // --------------------------------------------------------------------
+    const rawData = [
+      { descricao: "NEW VETOR SERVICOS TERCEIRIZADOS LTDA", date: "01/04/2025", valorPago: "R$ 18.856,84" },
+      { descricao: "NEW VETOR SERVICOS TERCEIRIZADOS LTDA", date: "01/04/2025", valorPago: "R$ 4.789,80" },
+      { descricao: "NEW VETOR SERVICOS TERCEIRIZADOS LTDA", date: "01/04/2025", valorPago: "R$ 4.200,11" },
+      { descricao: "CTI INTERNET", date: "01/04/2025", valorPago: "R$ 583,26" },
+      { descricao: "AGA SERVICOS TERCEIRIZADOS LTDA 1251", date: "03/04/2025", valorPago: "R$ 267,72" },
+      { descricao: "JG ASSESSORIA E CONSULTORIA CONTABIL LTDA", date: "05/04/2025", valorPago: "R$ 14.240,00" },
+      { descricao: "SOLUM CONTABILIDADE LTDA", date: "05/04/2025", valorPago: "R$ 1.245,00" },
+      { descricao: "LIXEIRO GIRUS - WELLINGTON  RODRIGUES", date: "05/04/2025", valorPago: "R$ 700,00" },
+      { descricao: "LIXEIRO CLICK - DIONEI RIBEIRO", date: "05/04/2025", valorPago: "R$ 200,00" },
+      { descricao: "MOTORISTA DO CAMINHÃO - JOSÉ MACIEL", date: "05/04/2025", valorPago: "R$ 500,00" },
+      { descricao: "FUTURO LOG", date: "05/04/2025", valorPago: "R$ 6.000,00" },
+      { descricao: "ALUGUEL GALPÃO CLICK ARMAZÉM", date: "07/04/2025", valorPago: "R$ 98.094,57" },
+      { descricao: "CLARO S.A.", date: "08/04/2025", valorPago: "R$ 60,63" },
+      { descricao: "PLANALTO ADMINISTRACAO DE BENS PROPRIOS LTDA", date: "10/04/2025", valorPago: "R$ 133.560,00" },
+      { descricao: "OMIEXPERIENCE LTDA.", date: "10/04/2025", valorPago: "R$ 6.490,73" },
+      { descricao: "OLIST TINY TECNOLOGIA LTDA", date: "10/04/2025", valorPago: "R$ 44,90" },
+      { descricao: "ERP - LETS", date: "10/04/2025", valorPago: "R$ 149,90" },
+      { descricao: "ERP - VOIGHT", date: "10/04/2025", valorPago: "R$ 120,89" },
+      { descricao: "ALUGUEL PALETEIRA", date: "11/04/2025", valorPago: "R$ 2.800,00" },
+      { descricao: "PATRAO IMOVEIS E ASSESSORIA LTDA", date: "15/04/2025", valorPago: "R$ 13.869,76" },
+      { descricao: "P.H.T COMERCIO E SERVICOS DE MAQUINAS PARA CAFE LTDA", date: "16/04/2025", valorPago: "R$ 413,00" },
+      { descricao: "TRANS NEW", date: "16/04/2025", valorPago: "R$ 6.729,04" },
+      { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES", date: "20/04/2025", valorPago: "R$ 700,00" },
+      { descricao: "ALUGUEL GIRUS 865 - MARCO ANTÔNIO", date: "20/04/2025", valorPago: "R$ 20.000,00" },
+      { descricao: "ALUGUEL GIRUS 855 - MARCO ANTÔNIO", date: "20/04/2025", valorPago: "R$ 7.500,00" },
+      { descricao: "BIWISE LTDA", date: "22/03/2025", valorPago: "R$ 949,00" }, // OBS: fora de abril, não entra no gráfico
+      { descricao: "HORIZON NETWORK TELECOMUNICACOES LTDA", date: "23/04/2025", valorPago: "R$ 259,80" },
+      { descricao: "INICIATIVA FABRICA DE APLICATIVOS LTDA", date: "23/04/2025", valorPago: "R$ 250,00" },
+      { descricao: "XPTO ADMINISTRADORA DE BENS PROPRIOS LTDA", date: "23/04/2025", valorPago: "R$ 250,00" },
+      { descricao: "FUTURO LOG", date: "24/04/2025", valorPago: "R$ 6.000,00" },
+      { descricao: "PORTARIA VECTORE", date: "25/04/2025", valorPago: "R$ 25.406,00" },
+      { descricao: "ALUGUEL GIRUS 902 - MARCO ANTÔNIO", date: "25/04/2025", valorPago: "R$ 7.500,00" },
+      { descricao: "ALUGUEL FABRICA NOVA", date: "25/04/2025", valorPago: "R$ 14.073,65" },
+      { descricao: "ALUGUEL FABRICA NOVA", date: "25/04/2025", valorPago: "R$ 14.073,65" },
+      { descricao: "ALINE MARIE", date: "30/04/2025", valorPago: "R$ 1.000,00" }
+    ];
+
+    // --------------------------------------------------------------------
+    // 2) Funções de parsing: converter "R$ 1.000,00" em número
+    //    e converter "DD/MM/AAAA" em "MM/DD/AAAA" para facilitar manipulação
+    // --------------------------------------------------------------------
+    function parseValor(valorStr) {
+      return parseFloat(
+        valorStr
+          .replace("R$", "")
+          .replace(/\s/g, "")
+          .replace(/\./g, "")
+          .replace(",", ".")
+      );
+    }
+
+    // Converte "DD/MM/2025" para "MM/DD/2025"
+    function fixDate(dtStr) {
+      const [dd, mm, yyyy] = dtStr.split("/");
+      return `${mm}/${dd}/${yyyy}`;
+    }
+
+    // --------------------------------------------------------------------
+    // 3) Descobrir qual semana de Abril (1..5) ou 0 se não é Abril/2025
+    // --------------------------------------------------------------------
+    function getAprilWeek(dateStr) {
+      // dateStr estará em formato "MM/DD/AAAA" depois de fixDate
+      const [mm, dd, yyyy] = dateStr.split("/");
+      if (mm !== "04" || yyyy !== "2025") return 0;
+
+      const day = parseInt(dd, 10);
+      if (day >= 1 && day <= 4)  return 1; // 01/04 a 04/04
+      if (day >= 5 && day <= 11) return 2; // 05/04 a 11/04
+      if (day >= 12 && day <= 18) return 3; // 12/04 a 18/04
+      if (day >= 19 && day <= 25) return 4; // 19/04 a 25/04
+      if (day >= 26 && day <= 30) return 5; // 26/04 a 30/04
+      return 0; // se for 31 ou fora de abril, descarta
+    }
+
+    // --------------------------------------------------------------------
+    // 4) Monta dataset parseado, filtra somente mês/ano de Abril/2025
+    // --------------------------------------------------------------------
+    const dataset = rawData.map(item => ({
+      descricao: item.descricao,
+      date: fixDate(item.date),      // converte p/ "MM/DD/2025"
+      valor: parseValor(item.valorPago)
+    }));
+
+    // --------------------------------------------------------------------
+    // 5) Somar valores por descrição e por semana
+    //    sumsByDesc[desc] = array com 5 posições (uma para cada semana)
+    // --------------------------------------------------------------------
+    const sumsByDesc = {};
+
+    dataset.forEach((item) => {
+      const w = getAprilWeek(item.date);
+      if (w === 0) return; // ignora se não for Abril/2025
+
+      const desc = item.descricao;
+      if (!sumsByDesc[desc]) {
+        sumsByDesc[desc] = [0, 0, 0, 0, 0]; // 5 semanas
+      }
+      sumsByDesc[desc][w - 1] += item.valor;
+    });
+
+    // Lista de descrições únicas (ordenadas)
+    const uniqueDescriptions = Object.keys(sumsByDesc).sort();
+
+    // --------------------------------------------------------------------
+    // 6) Preenche o SELECT de filtro (TODOS + cada descrição)
+    // --------------------------------------------------------------------
+    const descSelect = document.getElementById("descSelect");
+
+    const optTodos = document.createElement("option");
+    optTodos.value = "TODOS";
+    optTodos.text = "Todos";
+    descSelect.appendChild(optTodos);
+
+    uniqueDescriptions.forEach((desc) => {
+      const opt = document.createElement("option");
+      opt.value = desc;
+      opt.text = desc;
+      descSelect.appendChild(opt);
+    });
+
+    // --------------------------------------------------------------------
+    // 7) Função para renderizar gráficos (barras) de acordo com o filtro
+    // --------------------------------------------------------------------
+    function renderCharts(selectedDesc) {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = ""; // limpa gráficos anteriores
+
+      if (selectedDesc === "TODOS") {
+        uniqueDescriptions.forEach((desc) => createChart(desc, container));
+      } else {
+        createChart(selectedDesc, container);
+      }
+    }
+
+    // Cria gráfico de barras para UMA descrição (5 semanas + total)
+    function createChart(desc, container) {
+      const values = sumsByDesc[desc];
+      if (!values) return;
+
+      // Soma total da descrição
+      const total = values.reduce((acc, val) => acc + val, 0);
+
+      // Array com as 5 semanas + "Total"
+      const valuesWithTotal = [...values, total];
+      const categories = [
+        "1ª Sem (1-4)",
+        "2ª Sem (5-11)",
+        "3ª Sem (12-18)",
+        "4ª Sem (19-25)",
+        "5ª Sem (26-30)",
+        "Total"
+      ];
+
+      // Título
+      const h2 = document.createElement("h2");
+      h2.textContent = desc;
+      h2.className = "my-2 text-center text-xl font-semibold";
+      container.appendChild(h2);
+
+      // Div para o gráfico
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "mb-12 w-full mx-auto";
+      const chartId = "chart_" + desc.replace(/\W+/g, "_");
+      chartDiv.id = chartId;
+      container.appendChild(chartDiv);
+
+      // Configuração do ApexCharts
+      const options = {
+        chart: {
+          type: "bar",
+          height: 350,
+          background: "transparent",
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 8,
+            horizontal: false,
+            columnWidth: "50%",
+            dataLabels: { position: "top" },
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val) {
+            return (
+              "R$ " +
+              val.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            );
+          },
+          offsetY: -20,
+          style: {
+            fontSize: "12px",
+            colors: ["#000"],
+          },
+        },
+        series: [
+          {
+            name: desc,
+            data: valuesWithTotal,
+          },
+        ],
+        xaxis: {
+          categories: categories,
+          labels: {
+            style: {
+              fontSize: "14px",
+              colors: ["#000"],
+            },
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return (
+                "R$ " +
+                val.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              );
+            },
+            style: {
+              fontSize: "12px",
+              colors: ["#000"],
+            },
+          },
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shade: "light",
+            type: "vertical",
+            shadeIntensity: 0.3,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+            stops: [0, 90, 100],
+          },
+        },
+        tooltip: {
+          theme: "light",
+          y: {
+            formatter: function (val) {
+              return (
+                "R$ " +
+                val.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              );
+            },
+          },
+        },
+        theme: { mode: "light" },
+        title: {
+          text: `Despesa Fixa - ${desc}`,
+          align: "center",
+        },
+        subtitle: {
+          text: `Total: R$ ${total.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`,
+          align: "center",
+        },
+        responsive: [
+          {
+            breakpoint: 768,
+            options: {
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "70%" } },
+              dataLabels: { style: { fontSize: "10px" } },
+              xaxis: { labels: { style: { fontSize: "12px" } } },
+              yaxis: { labels: { style: { fontSize: "10px" } } },
+            },
+          },
+          {
+            breakpoint: 576,
+            options: {
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "80%" } },
+              dataLabels: { style: { fontSize: "8px" } },
+              xaxis: { labels: { style: { fontSize: "10px" } } },
+              yaxis: { labels: { style: { fontSize: "8px" } } },
+            },
+          },
+        ],
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 8) Botão "Visão Geral" - gráfico de pizza com total por descrição
+    // --------------------------------------------------------------------
+    const overviewBtn = document.getElementById("overviewBtn");
+    overviewBtn.addEventListener("click", createOverviewChart);
+
+    function createOverviewChart() {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = "";
+
+      // Arrays para o gráfico de pizza
+      const descArray = [];
+      const totalArray = [];
+
+      // Monta dados de cada descrição (só o total final)
+      uniqueDescriptions.forEach((desc) => {
+        const vals = sumsByDesc[desc];
+        const total = vals.reduce((acc, val) => acc + val, 0);
+        descArray.push(desc);
+        totalArray.push(total);
+      });
+
+      // Total geral
+      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+      // "Card" para exibir o total geral
+      const totalCard = document.createElement("div");
+      totalCard.className =
+        "inline-block my-2 px-5 py-2 border border-gray-300 rounded-lg bg-gray-100 font-bold text-center w-full";
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+      container.appendChild(totalCard);
+
+      // Div do gráfico de pizza
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "mb-12 w-full mx-auto";
+      chartDiv.id = "overview_chart";
+      container.appendChild(chartDiv);
+
+      // Configuração do ApexCharts para gráfico de pizza
+      const options = {
+        chart: {
+          type: "pie",
+          height: 550, // altura para desktop
+        },
+        series: totalArray,
+        labels: descArray,
+        dataLabels: {
+          formatter: (val) =>
+            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%",
+        },
+        tooltip: {
+          y: {
+            formatter: (val) =>
+              "R$ " +
+              val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+          },
+        },
+        title: {
+          text: "Visão Geral - Total de Despesas Fixas (Abril/2025)",
+          align: "center",
+        },
+        subtitle: {
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`,
+          align: "center",
+        },
+        responsive: [
+          {
+            breakpoint: 576,
+            options: {
+              chart: { height: 750 }, // altura maior no mobile
+              legend: { position: "bottom" },
+              dataLabels: { style: { fontSize: "14px" } },
+            },
+          },
+        ],
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 9) Função de Tela Cheia
+    // --------------------------------------------------------------------
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+    window.toggleFullScreen = toggleFullScreen;
+
+    // --------------------------------------------------------------------
+    // 10) Renderiza todos os gráficos por padrão (opção "TODOS")
+    // --------------------------------------------------------------------
+    descSelect.value = "TODOS";
+    renderCharts("TODOS");
+
+    // --------------------------------------------------------------------
+    // 11) Evento de mudança no SELECT (filtra os gráficos por descrição)
+    // --------------------------------------------------------------------
+    descSelect.addEventListener("change", () => {
+      renderCharts(descSelect.value);
+    });
+  </script>
+</body>
+</html>
