@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Meta tag para responsividade -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fornecedores - Abril/2025</title>
+  <!-- Evita rolagem horizontal -->
+  <style>
+    html, body {
+      overflow-x: hidden;
+    }
+  </style>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ApexCharts via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body class="font-sans m-5 bg-white text-gray-900">
+  <!-- Título principal -->
+  <h1 class="my-2 text-center text-2xl font-bold">
+    Fornecedores - Abril/2025
+  </h1>
+
+  <!-- Barra de filtros e botões -->
+  <div class="flex flex-wrap items-center gap-2.5 mb-5 justify-center">
+    <label for="descSelect" class="font-semibold">Filtrar Fornecedor:</label>
+    <select
+      id="descSelect"
+      class="w-32 md:w-auto border border-gray-400 rounded px-2 py-1 text-sm focus:outline-none md:text-base md:px-2 md:py-1"
+    >
+      <!-- Opções criadas via JavaScript -->
+    </select>
+
+    <button
+      class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
+      onclick="toggleFullScreen()"
+    >
+      Tela Cheia
+    </button>
+
+    <button
+      id="overviewBtn"
+      class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
+    >
+      Visão Geral
+    </button>
+  </div>
+
+  <!-- Área para inserir os gráficos dinamicamente -->
+  <div id="charts-container" class="w-full"></div>
+
+  <script>
+    // ------------------------------------------------------------
+    // 1) Dados de Fornecedores
+    //    Cada linha: { fornecedor, date, valorPago }
+    //    O campo "fornecedor" combina Nome e Código entre parênteses
+    //    para facilitar o filtro e a identificação.
+    // ------------------------------------------------------------
+    const rawData = [
+      { fornecedor: "VERTICALPACK EMBALAGENS (5208)", date: "11/04/2025", valorPago: "R$ 1.219,33" },
+      { fornecedor: "RESTAMP", date: "11/04/2025", valorPago: "R$ 44.700,00" },
+      { fornecedor: "VERTICAL PACK (PF=5208)", date: "11/04/2025", valorPago: "R$ 9.542,61" },
+      { fornecedor: "MULTIVISÃO (227144)", date: "11/04/2025", valorPago: "R$ 1.673,27" },
+      { fornecedor: "CAROÇO (PF=227144)", date: "11/04/2025", valorPago: "R$ 55.119,51" },
+      { fornecedor: "METALURGICA ALBRAS LTDA (251573)", date: "11/04/2025", valorPago: "R$ 9.099,09" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227251)", date: "13/04/2025", valorPago: "R$ 46.806,54" },
+      { fornecedor: "DZAINER (OF)", date: "14/04/2025", valorPago: "R$ 23.128,00" },
+      { fornecedor: "DZAINER (PF)", date: "14/04/2025", valorPago: "R$ 22.400,00" },
+      { fornecedor: "BIGFER MATRIZ (2346446)", date: "14/04/2025", valorPago: "R$ 2.663,69" },
+      { fornecedor: "VPLAST ACESSORIOS (26972)", date: "14/04/2025", valorPago: "R$ 3.387,12" },
+      { fornecedor: "REPACK EMBALAGENS (13820)", date: "14/04/2025", valorPago: "R$ 4.920,00" },
+      { fornecedor: "CAVIMAR IND. (3876)", date: "15/04/2025", valorPago: "R$ 7.837,50" },
+      { fornecedor: "METALURGICA ALBRAS LTDA (251673)", date: "15/04/2025", valorPago: "R$ 1.329,36" },
+      { fornecedor: "VPLAST ACESSORIOS (27003)", date: "15/04/2025", valorPago: "R$ 26.845,00" },
+      { fornecedor: "MULTIVISÃO (227252)", date: "16/04/2025", valorPago: "R$ 1.677,37" },
+      { fornecedor: "MULTIVISÃO (227283)", date: "16/04/2025", valorPago: "R$ 4.779,19" },
+      { fornecedor: "MULTIVISÃO (227304)", date: "16/04/2025", valorPago: "R$ 166,55" },
+      { fornecedor: "CAROÇO (PF=227252, 227283, 227304)", date: "16/04/2025", valorPago: "R$ 57.720,79" },
+      { fornecedor: "OR DESIGN (389073)", date: "16/04/2025", valorPago: "R$ 18.399,92" },
+      { fornecedor: "ALLPARTS (54307)", date: "17/04/2025", valorPago: "R$ 52.249,25" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227336)", date: "17/04/2025", valorPago: "R$ 33.590,23" },
+      { fornecedor: "MULTIVISÃO (227337)", date: "17/04/2025", valorPago: "R$ 2.736,13" },
+      { fornecedor: "CAROÇO (PF=227337)", date: "17/04/2025", valorPago: "R$ 23.839,96" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227371)", date: "18/04/2025", valorPago: "R$ 70.606,48" },
+      { fornecedor: "OR DESIGN (400830)", date: "18/04/2025", valorPago: "R$ 78.660,00" },
+      { fornecedor: "BIGFER MATRIZ (2347889)", date: "18/04/2025", valorPago: "R$ 1.119,20" },
+      { fornecedor: "MULTIVISÃO (227372)", date: "19/04/2025", valorPago: "R$ 484,56" },
+      { fornecedor: "MULTIVISÃO (227389)", date: "19/04/2025", valorPago: "R$ 6.134,61" },
+      { fornecedor: "CAROÇO (PF=227372, 227389)", date: "19/04/2025", valorPago: "R$ 57.714,47" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227478)", date: "20/04/2025", valorPago: "R$ 44.809,97" },
+      { fornecedor: "NEWFIX (346520)", date: "20/03/2025", valorPago: "R$ 2.927,21" },  // Fora de abril
+      { fornecedor: "EUCATEX RAFA (307990)", date: "20/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (307991)", date: "20/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (307992)", date: "20/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (307993)", date: "20/04/2025", valorPago: "R$ 24.532,41" },
+      { fornecedor: "EUCATEX RAFA (307994)", date: "20/04/2025", valorPago: "R$ 24.532,41" },
+      { fornecedor: "DZAINER (OF)", date: "21/04/2025", valorPago: "R$ 23.128,00" },
+      { fornecedor: "DZAINER (PF)", date: "21/04/2025", valorPago: "R$ 22.400,00" },
+      { fornecedor: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA (24987)", date: "21/04/2025", valorPago: "R$ 540,00" },
+      { fornecedor: "REPACK EMBALAGENS (13820)", date: "21/04/2025", valorPago: "R$ 4.920,00" },
+      { fornecedor: "OR DESIGN (389718)", date: "22/04/2025", valorPago: "R$ 15.640,00" },
+      { fornecedor: "PRD_IMD NAVEGANTES (317307)", date: "22/04/2025", valorPago: "R$ 29.000,00" },
+      { fornecedor: "ALLPARTS (54347)", date: "22/03/2025", valorPago: "R$ 1.453,89" }, // Fora de abril
+      { fornecedor: "EUCATEX RAFA (308115)", date: "22/04/2025", valorPago: "R$ 24.532,41" },
+      { fornecedor: "EUCATEX RAFA (308116)", date: "22/04/2025", valorPago: "R$ 24.532,41" },
+      { fornecedor: "EUCATEX RAFA (308117)", date: "22/04/2025", valorPago: "R$ 24.532,41" },
+      { fornecedor: "EUCATEX RAFA (308118)", date: "22/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (308119)", date: "22/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "EUCATEX RAFA (308120)", date: "22/04/2025", valorPago: "R$ 27.943,03" },
+      { fornecedor: "MULTIVISÃO (227479)", date: "23/04/2025", valorPago: "R$ 2.678,31" },
+      { fornecedor: "MULTIVISÃO (227505)", date: "23/04/2025", valorPago: "R$ 761,99" },
+      { fornecedor: "MULTIVISÃO (227506)", date: "23/04/2025", valorPago: "R$ 4.668,97" },
+      { fornecedor: "CAROÇO (PF=227479, 227505, 227506)", date: "23/04/2025", valorPago: "R$ 70.693,21" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227528)", date: "23/04/2025", valorPago: "R$ 24.618,18" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227535)", date: "23/04/2025", valorPago: "R$ 5.807,30" },
+      { fornecedor: "PRD_IMD NAVEGANTES (320175)", date: "23/04/2025", valorPago: "R$ 30.429,49" },
+      { fornecedor: "MULTIVISÃO (227529)", date: "24/04/2025", valorPago: "R$ 3.561,75" },
+      { fornecedor: "CAROÇO (PF=227529)", date: "24/04/2025", valorPago: "R$ 31.028,34" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227644)", date: "25/04/2025", valorPago: "R$ 39.394,42" },
+      { fornecedor: "OR DESIGN (401880)", date: "25/04/2025", valorPago: "R$ 55.200,00" },
+      { fornecedor: "MULTIVISAO INDUSTRIA E COMERCIO LTDA (227693)", date: "26/04/2025", valorPago: "R$ 35.105,00" },
+      { fornecedor: "MULTIVISÃO (227651)", date: "26/03/2025", valorPago: "R$ 2.228,97" }, // Fora de abril
+      { fornecedor: "CAROÇO (PF=227651)", date: "26/03/2025", valorPago: "R$ 19.436,62" }, // Fora de abril
+      { fornecedor: "MULTIVISÃO (227694)", date: "27/04/2025", valorPago: "R$ 2.130,05" },
+      { fornecedor: "CAROÇO (PF=227694)", date: "27/04/2025", valorPago: "R$ 18.565,99" },
+      { fornecedor: "DZAINER (OF)", date: "28/04/2025", valorPago: "R$ 23.128,00" },
+      { fornecedor: "DZAINER (PF)", date: "28/04/2025", valorPago: "R$ 22.400,00" },
+      { fornecedor: "REPACK EMBALAGENS (13820)", date: "28/04/2025", valorPago: "R$ 4.920,00" },
+      { fornecedor: "BIGFER MATRIZ (2346446)", date: "29/04/2025", valorPago: "R$ 2.663,69" },
+      { fornecedor: "RESTAMP", date: "09/05/2025", valorPago: "R$ 16.125,00" } // Fora de abril
+    ];
+
+    // ------------------------------------------------------------
+    // 2) Conversão de valores e datas
+    // ------------------------------------------------------------
+    function parseValor(valorStr) {
+      return parseFloat(
+        valorStr
+          .replace("R$", "")
+          .replace(/\s/g, "")
+          .replace(/\./g, "")
+          .replace(",", ".")
+      );
+    }
+
+    // Converte "DD/MM/AAAA" em "MM/DD/AAAA"
+    function fixDate(dtStr) {
+      const [dd, mm, yyyy] = dtStr.split("/");
+      return `${mm}/${dd}/${yyyy}`;
+    }
+
+    // ------------------------------------------------------------
+    // 3) Determinar a semana de Abril/2025 (1..5) ou 0 se fora de Abril
+    //    Retornaremos 6 colunas: 5 para as semanas + 1 para "Fora de Abril"
+    // ------------------------------------------------------------
+    function getAprilWeek(dateStr) {
+      // dateStr no formato "MM/DD/AAAA"
+      const [mm, dd, yyyy] = dateStr.split("/");
+      if (yyyy !== "2025") return -1; // outro ano => Fora de Abril
+      if (mm !== "04") return 0;      // se não for 04 => Fora de Abril
+
+      const day = parseInt(dd, 10);
+      if (day >= 1 && day <= 4)  return 1;  // 01/04 a 04/04
+      if (day >= 5 && day <= 11) return 2;  // 05/04 a 11/04
+      if (day >= 12 && day <= 18) return 3; // 12/04 a 18/04
+      if (day >= 19 && day <= 25) return 4; // 19/04 a 25/04
+      if (day >= 26 && day <= 30) return 5; // 26/04 a 30/04
+      return 0; // Ex: 31/04 (inexistente) => Fora de Abril
+    }
+
+    // ------------------------------------------------------------
+    // 4) Preparar dataset parseado e agrupar
+    //    sumsByForn[fornecedor] = [sem1, sem2, sem3, sem4, sem5, foraAbril]
+    // ------------------------------------------------------------
+    const dataset = rawData.map(item => ({
+      fornecedor: item.fornecedor,
+      date: fixDate(item.date), // "MM/DD/AAAA"
+      valor: parseValor(item.valorPago)
+    }));
+
+    const sumsByForn = {};
+
+    dataset.forEach(item => {
+      const w = getAprilWeek(item.date);
+      const desc = item.fornecedor;
+
+      // Cria array de 6 posições se não existir
+      if (!sumsByForn[desc]) {
+        sumsByForn[desc] = [0, 0, 0, 0, 0, 0];
+      }
+
+      if (w > 0 && w <= 5) {
+        // É 1..5 => dentro de Abril
+        sumsByForn[desc][w - 1] += item.valor;
+      } else {
+        // 0 ou -1 => Fora de Abril
+        sumsByForn[desc][5] += item.valor;
+      }
+    });
+
+    // Lista de fornecedores únicos
+    const uniqueFornecedores = Object.keys(sumsByForn).sort();
+
+    // ------------------------------------------------------------
+    // 5) Preenche SELECT de filtro
+    // ------------------------------------------------------------
+    const descSelect = document.getElementById("descSelect");
+    const optTodos = document.createElement("option");
+    optTodos.value = "TODOS";
+    optTodos.text = "Todos";
+    descSelect.appendChild(optTodos);
+
+    uniqueFornecedores.forEach(forn => {
+      const opt = document.createElement("option");
+      opt.value = forn;
+      opt.text = forn;
+      descSelect.appendChild(opt);
+    });
+
+    // ------------------------------------------------------------
+    // 6) Renderizar gráficos conforme filtro
+    // ------------------------------------------------------------
+    function renderCharts(selectedForn) {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = ""; // limpa anteriores
+
+      if (selectedForn === "TODOS") {
+        uniqueFornecedores.forEach(f => createChart(f, container));
+      } else {
+        createChart(selectedForn, container);
+      }
+    }
+
+    // Cria gráfico de barras para UM fornecedor (6 colunas + total)
+    function createChart(forn, container) {
+      const values = sumsByForn[forn];
+      if (!values) return;
+
+      // Soma total
+      const total = values.reduce((acc, val) => acc + val, 0);
+
+      // Array com as 6 colunas + "Total"
+      const valuesWithTotal = [...values, total];
+      // Categorias: 5 semanas + "Fora de Abril" + "Total"
+      const categories = [
+        "1ª Sem (1-4)",
+        "2ª Sem (5-11)",
+        "3ª Sem (12-18)",
+        "4ª Sem (19-25)",
+        "5ª Sem (26-30)",
+        "Fora de Abril",
+        "Total"
+      ];
+
+      // Título
+      const h2 = document.createElement("h2");
+      h2.textContent = forn;
+      h2.className = "my-2 text-center text-xl font-semibold";
+      container.appendChild(h2);
+
+      // Div para o gráfico
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "mb-12 w-full mx-auto";
+      const chartId = "chart_" + forn.replace(/\W+/g, "_");
+      chartDiv.id = chartId;
+      container.appendChild(chartDiv);
+
+      // Config do ApexCharts
+      const options = {
+        chart: {
+          type: "bar",
+          height: 350,
+          background: "transparent",
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 8,
+            horizontal: false,
+            columnWidth: "50%",
+            dataLabels: { position: "top" },
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val) {
+            return "R$ " + val.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+          },
+          offsetY: -20,
+          style: {
+            fontSize: "12px",
+            colors: ["#000"],
+          },
+        },
+        series: [
+          {
+            name: forn,
+            data: valuesWithTotal,
+          },
+        ],
+        xaxis: {
+          categories: categories,
+          labels: {
+            style: {
+              fontSize: "14px",
+              colors: ["#000"],
+            },
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return "R$ " + val.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            },
+            style: {
+              fontSize: "12px",
+              colors: ["#000"],
+            },
+          },
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shade: "light",
+            type: "vertical",
+            shadeIntensity: 0.3,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+            stops: [0, 90, 100],
+          },
+        },
+        tooltip: {
+          theme: "light",
+          y: {
+            formatter: function (val) {
+              return "R$ " + val.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            },
+          },
+        },
+        theme: { mode: "light" },
+        title: {
+          text: `Fornecedor - ${forn}`,
+          align: "center",
+        },
+        subtitle: {
+          text: `Total: R$ ${total.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`,
+          align: "center",
+        },
+        responsive: [
+          {
+            breakpoint: 768,
+            options: {
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "70%" } },
+              dataLabels: { style: { fontSize: "10px" } },
+              xaxis: { labels: { style: { fontSize: "12px" } } },
+              yaxis: { labels: { style: { fontSize: "10px" } } },
+            },
+          },
+          {
+            breakpoint: 576,
+            options: {
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "80%" } },
+              dataLabels: { style: { fontSize: "8px" } },
+              xaxis: { labels: { style: { fontSize: "10px" } } },
+              yaxis: { labels: { style: { fontSize: "8px" } } },
+            },
+          },
+        ],
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // ------------------------------------------------------------
+    // 7) Visão Geral (pizza) - soma total por fornecedor
+    // ------------------------------------------------------------
+    const overviewBtn = document.getElementById("overviewBtn");
+    overviewBtn.addEventListener("click", createOverviewChart);
+
+    function createOverviewChart() {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = "";
+
+      // Arrays para gráfico de pizza
+      const descArray = [];
+      const totalArray = [];
+
+      // Monta dados de cada fornecedor (somando todas as colunas)
+      uniqueFornecedores.forEach(forn => {
+        const vals = sumsByForn[forn];
+        const total = vals.reduce((acc, val) => acc + val, 0);
+        descArray.push(forn);
+        totalArray.push(total);
+      });
+
+      // Total geral
+      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+      // "Card" exibindo o total geral
+      const totalCard = document.createElement("div");
+      totalCard.className =
+        "inline-block my-2 px-5 py-2 border border-gray-300 rounded-lg bg-gray-100 font-bold text-center w-full";
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+      container.appendChild(totalCard);
+
+      // Div do gráfico de pizza
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "mb-12 w-full mx-auto";
+      chartDiv.id = "overview_chart";
+      container.appendChild(chartDiv);
+
+      // Configuração do ApexCharts para pizza
+      const options = {
+        chart: {
+          type: "pie",
+          height: 550,
+        },
+        series: totalArray,
+        labels: descArray,
+        dataLabels: {
+          formatter: (val) =>
+            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%",
+        },
+        tooltip: {
+          y: {
+            formatter: (val) =>
+              "R$ " +
+              val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+          },
+        },
+        title: {
+          text: "Visão Geral - Fornecedores (Abril + Fora de Abril)",
+          align: "center",
+        },
+        subtitle: {
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`,
+          align: "center",
+        },
+        responsive: [
+          {
+            breakpoint: 576,
+            options: {
+              chart: { height: 750 }, // maior no mobile
+              legend: { position: "bottom" },
+              dataLabels: { style: { fontSize: "14px" } },
+            },
+          },
+        ],
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // ------------------------------------------------------------
+    // 8) Função de Tela Cheia
+    // ------------------------------------------------------------
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+    window.toggleFullScreen = toggleFullScreen;
+
+    // ------------------------------------------------------------
+    // 9) Renderiza todos os gráficos por padrão (opção "TODOS")
+    // ------------------------------------------------------------
+    descSelect.value = "TODOS";
+    renderCharts("TODOS");
+
+    // ------------------------------------------------------------
+    // 10) Evento de mudança no SELECT
+    // ------------------------------------------------------------
+    descSelect.addEventListener("change", () => {
+      renderCharts(descSelect.value);
+    });
+  </script>
+</body>
+</html>
