@@ -38,15 +38,23 @@
     >
       Tela Cheia
     </button>
+
+    <button
+      id="overviewBtn"
+      class="cursor-pointer px-2 py-1 md:px-3 md:py-2 border border-gray-400 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none text-sm"
+    >
+      Visão Geral
+    </button>
   </div>
 
-  <!-- Área para inserir o gráfico dinamicamente -->
+  <!-- Área para inserir os gráficos dinamicamente -->
   <div id="charts-container" class="w-full"></div>
 
   <script>
     // --------------------------------------------------------------------
     // 1) Dados de Fornecedores
     //    Cada item: { fornecedor, date, valorPago }
+    //    Nome do fornecedor + possível código entre parênteses.
     // --------------------------------------------------------------------
     const rawData = [
       { fornecedor: "RESTAMP", date: "01/04/2025", valorPago: "R$ 50.900,00" },
@@ -177,7 +185,7 @@
     ];
 
     // --------------------------------------------------------------------
-    // 2) Conversão de valores
+    // 2) Conversão de valores e datas
     // --------------------------------------------------------------------
     function parseValor(valorStr) {
       return parseFloat(
@@ -189,28 +197,67 @@
       );
     }
 
+    // Converte "DD/MM/AAAA" em "MM/DD/AAAA"
+    function fixDate(dtStr) {
+      // Caso haja algo como "AGUARDANDO A COBRANÇA", tratamos como "fora de abril"
+      if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dtStr)) {
+        // Retorna algo que cairá no "fora de abril"
+        return "00/00/9999";
+      }
+      const [dd, mm, yyyy] = dtStr.split("/");
+      return `${mm}/${dd}/${yyyy}`;
+    }
+
     // --------------------------------------------------------------------
-    // 3) Preparar dataset parseado e agrupar por fornecedor (valor total)
+    // 3) Determinar a semana de Abril/2025 (1..5) ou 0 se fora de Abril
+    //    Vamos usar 6 colunas: 5 para as semanas + 1 para "Fora de Abril"
+    // --------------------------------------------------------------------
+    function getAprilWeek(dateStr) {
+      const [mm, dd, yyyy] = dateStr.split("/");
+      if (yyyy !== "2025") return -1; // outro ano => fora
+      if (mm !== "04") return 0;      // não é abril => fora
+
+      const day = parseInt(dd, 10);
+      if (day >= 1 && day <= 4)  return 1; // 1ª semana
+      if (day >= 5 && day <= 11) return 2; // 2ª semana
+      if (day >= 12 && day <= 18) return 3; // 3ª semana
+      if (day >= 19 && day <= 25) return 4; // 4ª semana
+      if (day >= 26 && day <= 30) return 5; // 5ª semana
+      return 0; // 31/04 não existe => fora
+    }
+
+    // --------------------------------------------------------------------
+    // 4) Preparar dataset parseado e agrupar
+    //    sumsByForn[fornecedor] = [sem1, sem2, sem3, sem4, sem5, foraAbril]
     // --------------------------------------------------------------------
     const dataset = rawData.map(item => ({
       fornecedor: item.fornecedor,
+      date: fixDate(item.date),
       valor: parseValor(item.valorPago)
     }));
 
-    // Agrupa os valores por fornecedor
-    const totalByForn = {};
+    const sumsByForn = {};
+
     dataset.forEach(item => {
-      if (!totalByForn[item.fornecedor]) {
-        totalByForn[item.fornecedor] = 0;
+      const w = getAprilWeek(item.date);
+      const desc = item.fornecedor;
+      if (!sumsByForn[desc]) {
+        sumsByForn[desc] = [0, 0, 0, 0, 0, 0];
       }
-      totalByForn[item.fornecedor] += item.valor;
+
+      if (w > 0 && w <= 5) {
+        sumsByForn[desc][w - 1] += item.valor;
+      } else {
+        // w = 0 ou -1 => Fora de Abril
+        sumsByForn[desc][5] += item.valor;
+      }
     });
 
     // Lista de fornecedores (ordenada)
-    const uniqueFornecedores = Object.keys(totalByForn).sort();
+    const uniqueFornecedores = Object.keys(sumsByForn).sort();
 
     // --------------------------------------------------------------------
-    // 4) Preenche SELECT de filtro
+    // 5) Preenche SELECT de filtro
     // --------------------------------------------------------------------
     const descSelect = document.getElementById("descSelect");
     const optTodos = document.createElement("option");
@@ -226,128 +273,169 @@
     });
 
     // --------------------------------------------------------------------
-    // 5) Renderizar gráfico conforme filtro
+    // 6) Renderizar gráficos conforme filtro
     // --------------------------------------------------------------------
     function renderCharts(selectedForn) {
       const container = document.getElementById("charts-container");
       container.innerHTML = ""; // limpa anteriores
 
       if (selectedForn === "TODOS") {
-        createAggregateChart(uniqueFornecedores);
+        uniqueFornecedores.forEach(f => createChart(f, container));
       } else {
-        createAggregateChart([selectedForn]);
+        createChart(selectedForn, container);
       }
     }
 
-    // Cria gráfico de barras agregando os valores por fornecedor
-    function createAggregateChart(fornecedores) {
-      const labels = [];
-      const totals = [];
-      fornecedores.forEach(forn => {
-        labels.push(forn);
-        totals.push(totalByForn[forn]);
-      });
+    // Cria gráfico de barras para UM fornecedor (6 colunas + total)
+    function createChart(forn, container) {
+      const values = sumsByForn[forn];
+      if (!values) return;
 
-      // Card com total geral
-      const grandTotal = totals.reduce((acc, val) => acc + val, 0);
-      const totalCard = document.createElement("div");
-      totalCard.className =
-        "inline-block my-2 px-5 py-2 border border-gray-300 rounded-lg bg-gray-100 font-bold text-center w-full";
-      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`;
-      document.getElementById("charts-container").appendChild(totalCard);
+      // Soma total
+      const total = values.reduce((acc, val) => acc + val, 0);
+
+      // Array com as 6 colunas + "Total"
+      const valuesWithTotal = [...values, total];
+      const categories = [
+        "1ª Sem (1-4)",
+        "2ª Sem (5-11)",
+        "3ª Sem (12-18)",
+        "4ª Sem (19-25)",
+        "5ª Sem (26-30)",
+        "Fora de Abril",
+        "Total"
+      ];
+
+      // Título
+      const h2 = document.createElement("h2");
+      h2.textContent = forn;
+      h2.className = "my-2 text-center text-xl font-semibold";
+      container.appendChild(h2);
 
       // Div para o gráfico
       const chartDiv = document.createElement("div");
       chartDiv.className = "mb-12 w-full mx-auto";
-      chartDiv.id = "aggregate_chart";
-      document.getElementById("charts-container").appendChild(chartDiv);
+      const chartId = "chart_" + forn.replace(/\W+/g, "_");
+      chartDiv.id = chartId;
+      container.appendChild(chartDiv);
 
+      // Config do ApexCharts
       const options = {
         chart: {
           type: "bar",
-          height: 450,
+          height: 350,
           background: "transparent",
-          toolbar: { show: false }
+          toolbar: { show: false },
         },
-        series: [{
-          name: "Valor Total",
-          data: totals
-        }],
-        xaxis: {
-          categories: labels,
-          labels: {
-            style: {
-              fontSize: "14px",
-              colors: ["#000"]
-            }
+        plotOptions: {
+          bar: {
+            borderRadius: 8,
+            horizontal: false,
+            columnWidth: "50%",
+            dataLabels: { position: "top" },
           },
-          axisBorder: { show: false },
-          axisTicks: { show: false }
-        },
-        yaxis: {
-          labels: {
-            formatter: function (val) {
-              return "R$ " + val.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              });
-            },
-            style: {
-              fontSize: "12px",
-              colors: ["#000"]
-            }
-          }
         },
         dataLabels: {
           enabled: true,
           formatter: function (val) {
             return "R$ " + val.toLocaleString("pt-BR", {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2
+              maximumFractionDigits: 2,
             });
           },
+          offsetY: -20,
           style: {
             fontSize: "12px",
-            colors: ["#000"]
-          }
+            colors: ["#000"],
+          },
         },
-        title: {
-          text: "Valor Total por Fornecedor",
-          align: "center"
+        series: [
+          {
+            name: forn,
+            data: valuesWithTotal,
+          },
+        ],
+        xaxis: {
+          categories: categories,
+          labels: {
+            style: {
+              fontSize: "14px",
+              colors: ["#000"],
+            },
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return "R$ " + val.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            },
+            style: {
+              fontSize: "12px",
+              colors: ["#000"],
+            },
+          },
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shade: "light",
+            type: "vertical",
+            shadeIntensity: 0.3,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+            stops: [0, 90, 100],
+          },
         },
         tooltip: {
+          theme: "light",
           y: {
             formatter: function (val) {
               return "R$ " + val.toLocaleString("pt-BR", {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               });
-            }
-          }
+            },
+          },
+        },
+        theme: { mode: "light" },
+        title: {
+          text: `Fornecedor - ${forn}`,
+          align: "center",
+        },
+        subtitle: {
+          text: `Total: R$ ${total.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`,
+          align: "center",
         },
         responsive: [
           {
             breakpoint: 768,
             options: {
-              chart: { height: 400 },
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "70%" } },
               dataLabels: { style: { fontSize: "10px" } },
               xaxis: { labels: { style: { fontSize: "12px" } } },
-              yaxis: { labels: { style: { fontSize: "10px" } } }
-            }
+              yaxis: { labels: { style: { fontSize: "10px" } } },
+            },
           },
           {
             breakpoint: 576,
             options: {
-              chart: { height: 350 },
+              chart: { height: 300 },
+              plotOptions: { bar: { columnWidth: "80%" } },
               dataLabels: { style: { fontSize: "8px" } },
               xaxis: { labels: { style: { fontSize: "10px" } } },
-              yaxis: { labels: { style: { fontSize: "8px" } } }
-            }
-          }
-        ]
+              yaxis: { labels: { style: { fontSize: "8px" } } },
+            },
+          },
+        ],
       };
 
       const chart = new ApexCharts(chartDiv, options);
@@ -355,7 +443,94 @@
     }
 
     // --------------------------------------------------------------------
-    // 6) Função de Tela Cheia
+    // 7) Visão Geral (pizza) - soma total por fornecedor
+    // --------------------------------------------------------------------
+    const overviewBtn = document.getElementById("overviewBtn");
+    overviewBtn.addEventListener("click", createOverviewChart);
+
+    function createOverviewChart() {
+      const container = document.getElementById("charts-container");
+      container.innerHTML = "";
+
+      // Arrays para gráfico de pizza
+      const fornArray = [];
+      const totalArray = [];
+
+      // Monta dados de cada fornecedor (somando todas as colunas)
+      uniqueFornecedores.forEach(forn => {
+        const vals = sumsByForn[forn];
+        const total = vals.reduce((acc, val) => acc + val, 0);
+        fornArray.push(forn);
+        totalArray.push(total);
+      });
+
+      // Total geral
+      const grandTotal = totalArray.reduce((acc, val) => acc + val, 0);
+
+      // "Card" exibindo o total geral
+      const totalCard = document.createElement("div");
+      totalCard.className =
+        "inline-block my-2 px-5 py-2 border border-gray-300 rounded-lg bg-gray-100 font-bold text-center w-full";
+      totalCard.textContent = `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+      container.appendChild(totalCard);
+
+      // Div do gráfico de pizza
+      const chartDiv = document.createElement("div");
+      chartDiv.className = "mb-12 w-full mx-auto";
+      chartDiv.id = "overview_chart";
+      container.appendChild(chartDiv);
+
+      // Config do ApexCharts (pizza)
+      const options = {
+        chart: {
+          type: "pie",
+          height: 550,
+        },
+        series: totalArray,
+        labels: fornArray,
+        dataLabels: {
+          formatter: (val) =>
+            val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%",
+        },
+        tooltip: {
+          y: {
+            formatter: (val) =>
+              "R$ " +
+              val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+          },
+        },
+        title: {
+          text: "Visão Geral - Fornecedores (Abril + Fora de Abril)",
+          align: "center",
+        },
+        subtitle: {
+          text: `Total Geral: R$ ${grandTotal.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`,
+          align: "center",
+        },
+        responsive: [
+          {
+            breakpoint: 576,
+            options: {
+              chart: { height: 750 },
+              legend: { position: "bottom" },
+              dataLabels: { style: { fontSize: "14px" } },
+            },
+          },
+        ],
+      };
+
+      const chart = new ApexCharts(chartDiv, options);
+      chart.render();
+    }
+
+    // --------------------------------------------------------------------
+    // 8) Função de Tela Cheia
     // --------------------------------------------------------------------
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
@@ -369,13 +544,13 @@
     window.toggleFullScreen = toggleFullScreen;
 
     // --------------------------------------------------------------------
-    // 7) Renderiza o gráfico por padrão (opção "TODOS")
+    // 9) Renderiza todos os gráficos por padrão (opção "TODOS")
     // --------------------------------------------------------------------
     descSelect.value = "TODOS";
     renderCharts("TODOS");
 
     // --------------------------------------------------------------------
-    // 8) Evento de mudança no SELECT
+    // 10) Evento de mudança no SELECT
     // --------------------------------------------------------------------
     descSelect.addEventListener("change", () => {
       renderCharts(descSelect.value);
