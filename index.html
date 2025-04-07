@@ -65,10 +65,21 @@
       position: relative;
       z-index: 10;
     }
+    /* Tela de Transição (segunda tela) */
+    #transitionScreen {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
   </style>
 </head>
 <body class="bg-black min-h-screen overflow-y-auto">
-  <!-- Login Overlay -->
+  <!-- Tela de Login -->
   <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-cover bg-center" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
     <div class="absolute inset-0 bg-black opacity-60"></div>
     <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
@@ -83,11 +94,11 @@
       <form id="formLogin">
         <div class="mb-4">
           <label for="username" class="block text-gray-700 mb-1">Usuário</label>
-          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
         </div>
         <div class="mb-4">
           <label for="password" class="block text-gray-700 mb-1">Senha</label>
-          <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
         </div>
         <div class="flex items-center mb-4">
           <input type="checkbox" id="rememberMe" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded" />
@@ -98,13 +109,17 @@
         </button>
         <a href="#" class="block text-center mt-3 text-blue-500 text-sm">Esqueceu a senha?</a>
       </form>
-      <!-- Spinner -->
+      <!-- Spinner/GIF opcional (caso queira usar em alguma situação) -->
       <div id="spinner" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl hidden">
-        <div class="spinner-border text-blue-500" role="status">
-          <span class="sr-only">Carregando...</span>
-        </div>
+        <!-- Conteúdo alterado dinamicamente -->
       </div>
     </div>
+  </div>
+
+  <!-- Tela de Transição (segunda tela após login) -->
+  <div id="transitionScreen" class="flex">
+    <img src="https://usagif.com/wp-content/uploads/gify/cash-a-bag-of-money-transparent-background-usagif.gif" alt="Dando com a mão" class="w-20 h-20 mb-4" style="width: 250px; height: 200px;" />
+    <p class="text-xl font-semibold text-gray-800">Bem-vindo!</p>
   </div>
 
   <!-- Dashboard Principal (oculto enquanto não logado) -->
@@ -140,7 +155,9 @@
           </a>
           <div class="nav-link flex flex-col">
             <button onclick="togglePrevisaoSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
+              <span class="flex items-center gap-2">
+                <i class="bi bi-calendar-event-fill"></i> Previsão
+              </span>
               <i id="desktopPrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
             </button>
             <div id="desktopPrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
@@ -157,7 +174,9 @@
           </div>
           <div class="nav-link flex flex-col">
             <button onclick="toggleGastosSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-wallet2"></i> Gastos</span>
+              <span class="flex items-center gap-2">
+                <i class="bi bi-wallet2"></i> Gastos
+              </span>
               <i id="desktopGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
             </button>
             <div id="desktopGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
@@ -403,15 +422,20 @@
           }
           localStorage.setItem("loggedIn", "true");
 
-          spinner.innerHTML = `<i class="bi bi-check-circle-fill text-green-500 text-5xl"></i>`;
+          // Exibe a tela de transição com o GIF e a mensagem
+          loginOverlay.style.display = "none";
+          const transitionScreen = document.getElementById("transitionScreen");
+          transitionScreen.style.display = "flex";
+
+          // Após 1,5 segundos, oculta a tela de transição e mostra o dashboard/home
           setTimeout(function () {
-            loginOverlay.style.display = "none";
+            transitionScreen.style.display = "none";
             document.getElementById("dashboard").classList.remove("hidden");
             iframe.src = "home.html";
             updateUserInfo();
             spinner.classList.add("hidden");
             spinner.classList.remove("flex");
-          }, 1000);
+          }, 1500);
         } else {
           alert("Usuário ou senha incorretos!");
           spinner.classList.add("hidden");
