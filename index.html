@@ -8,13 +8,14 @@
   <title>Sistema com Login e Dashboard</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Bootstrap Icons (opcional para ícones) -->
+  <!-- Bootstrap Icons (para ícones) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <style>
     /* Reset e ajustes para iOS e demais dispositivos móveis */
     html, body {
       margin: 0;
       padding: 0;
+      min-height: -webkit-fill-available;
       -webkit-text-size-adjust: 100%;
       -webkit-overflow-scrolling: touch;
     }
@@ -24,7 +25,15 @@
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
-
+    html {
+      height: -webkit-fill-available;
+    }
+    /* Ajuste para o h-screen no mobile usando a variável --vh */
+    @media (max-width: 768px) {
+      .h-screen {
+        height: calc(var(--vh, 1vh) * 100);
+      }
+    }
     /* Estilo para o iframe: fundo branco e sem bordas */
     iframe {
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -33,14 +42,12 @@
       width: 100%;
       height: 100%;
     }
-
     /* Remover outline ao focar em botões, links e inputs */
     button:focus,
     a:focus,
     input:focus {
       outline: none;
     }
-
     /* Estilo moderno para barras de rolagem */
     ::-webkit-scrollbar {
       width: 6px;
@@ -54,7 +61,7 @@
     }
   </style>
 </head>
-<body class="bg-black min-h-screen overflow-y-auto">
+<body class="bg-black h-screen overflow-hidden">
   <!-- Login Overlay -->
   <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-cover bg-center" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
     <div class="absolute inset-0 bg-black opacity-60"></div>
@@ -95,9 +102,9 @@
   </div>
 
   <!-- Dashboard Principal (oculto enquanto não logado) -->
-  <div id="dashboard" class="hidden flex flex-col min-h-screen overflow-y-auto">
-    <!-- Header para mobile (fixo no topo para aparecer em todos os dispositivos, inclusive iPhone) -->
-    <header id="profileHeader" class="md:hidden sticky top-0 z-50 flex justify-between items-center p-4 bg-black border-b border-black/10 text-white cursor-pointer" style="padding-top: env(safe-area-inset-top);">
+  <div id="dashboard" class="hidden h-full flex flex-col">
+    <!-- Header para mobile -->
+    <header id="profileHeader" class="md:hidden flex justify-between items-center p-4 bg-black border-b border-black/10 text-white cursor-pointer">
       <div class="flex items-center">
         <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="mr-4">
           <i class="bi bi-list text-2xl"></i>
@@ -272,6 +279,16 @@
       </form>
     </div>
   </div>
+
+  <!-- Script para definir a variável --vh para mobile -->
+  <script>
+    function setVhProperty() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVhProperty();
+    window.addEventListener('resize', setVhProperty);
+  </script>
 
   <!-- Scripts -->
   <script>
