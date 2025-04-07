@@ -1,469 +1,408 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>ClickForte | Financeiro</title>
-  
-  <!-- Bootstrap CSS via CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Bootstrap Icons (para ícones) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bem-vindo a ClickForte Armazenagem</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
   <style>
-    /* Reset e ajustes para iOS e demais dispositivos móveis */
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: -webkit-fill-available;
-      -webkit-text-size-adjust: 100%;
-      -webkit-overflow-scrolling: touch;
-    }
     body {
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
+      background: url("https://www.sagrupo.com/wp-content/uploads/2021/01/shutterstock_1714734415-scaled.jpg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
     }
-    html {
-      height: -webkit-fill-available;
-    }
-    /* Ajuste para o h-screen no mobile usando a variável --vh */
-    @media (max-width: 768px) {
-      .h-screen {
-        height: calc(var(--vh, 1vh) * 100);
-      }
-    }
-    /* Estilo para o iframe: fundo branco e sem bordas */
-    iframe {
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      background-color: #fff;
-      border: none;
+    /* Overlay para suavizar o fundo */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1;
     }
-    /* Remover outline ao focar em botões, links e inputs */
-    button:focus,
-    a:focus,
-    input:focus {
-      outline: none;
+    /* Conteúdo centralizado */
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
     }
-    /* Estilo moderno para barras de rolagem */
-    ::-webkit-scrollbar {
-      width: 6px;
+    .content h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease-out;
     }
-    ::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 9999px;
+    .content p {
+      font-size: 1.5rem;
+      animation: fadeInUp 1s ease-out;
     }
-    ::-webkit-scrollbar-track {
-      background-color: #222;
+    /* Chat Box em tema dark com UI aprimorada */
+    .chat-box {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      max-height: 420px;
+      background: linear-gradient(135deg, #1e1e1e, #292929);
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1100;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+    .chat-box:hover {
+      transform: scale(1.02);
+    }
+    .chat-header {
+      background: linear-gradient(135deg, #2d2d2d, #3a3a3a);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header h5 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    .chat-header h5 i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    .chat-header button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      color: #fff;
+      cursor: pointer;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      background-color: #242424;
+    }
+    .chat-message {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 85%;
+      word-wrap: break-word;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      opacity: 0;
+      animation: messageFadeIn 0.4s forwards;
+    }
+    .chat-message.received {
+      background-color: #3b3b3b;
+      align-self: flex-start;
+      color: #f1f1f1;
+    }
+    .typing-indicator {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #bbb;
+      margin-bottom: 8px;
+    }
+    /* Ícone de Chat fixo */
+    .notification-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #0d6efd;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      z-index: 1100;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .notification-icon:hover {
+      background-color: #0b5ed7;
+      transform: scale(1.05);
+    }
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes messageFadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    /* Ajustes responsivos para tablets e telas menores */
+    @media (max-width: 768px) {
+      .content h1 {
+        font-size: 2.5rem;
+      }
+      .content p {
+        font-size: 1.2rem;
+      }
+      .chat-box {
+        width: 90%;
+        right: 5%;
+      }
+      .notification-icon {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        right: 15px;
+      }
+    }
+    /* Ajustes responsivos para celulares e iPhones */
+    @media (max-width: 576px) {
+      .content h1 {
+        font-size: 2rem;
+      }
+      .content p {
+        font-size: 1rem;
+      }
+      .chat-box {
+        width: 95%;
+        right: 2.5%;
+        bottom: 80px;
+        max-height: 70vh;
+      }
+      .chat-header h5 {
+        font-size: 1rem;
+      }
+      .chat-message {
+        font-size: 0.85rem;
+      }
+      /* Aumenta o bottom para posicionar o botão mais para cima */
+      .notification-icon {
+        width: 45px;
+        height: 45px;
+        bottom: 40px;
+        right: 10px;
+      }
+    }
+    /* Ajustes específicos para iPhones com telas muito pequenas */
+    @media (max-width: 414px) {
+      .content h1 {
+        font-size: 1.8rem;
+      }
+      .content p {
+        font-size: 0.9rem;
+      }
+      .chat-box {
+        bottom: 70px;
+      }
+      /* Aumenta o bottom para posicionar o botão mais para cima */
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        bottom: 30px;
+        right: 8px;
+      }
     }
   </style>
 </head>
-<body class="bg-black h-screen overflow-hidden">
-  <!-- Login Overlay -->
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-cover bg-center" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
-    <div class="absolute inset-0 bg-black opacity-60"></div>
-    <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
-      <!-- Logo para mobile -->
-      <div class="block sm:hidden text-center mb-4">
-        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" class="mx-auto max-w-[100px]" />
-      </div>
-      <h3 class="text-center text-2xl font-semibold text-gray-800 mb-4">Acesso Restrito</h3>
-      <div id="logoutNotification" class="hidden mb-4 p-2 text-sm text-yellow-800 bg-yellow-200 rounded text-center">
-        Você foi desconectado!
-      </div>
-      <form id="formLogin">
-        <div class="mb-4">
-          <label for="username" class="block text-gray-700 mb-1">Usuário</label>
-          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        </div>
-        <div class="mb-4">
-          <label for="password" class="block text-gray-700 mb-1">Senha</label>
-          <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
-        </div>
-        <div class="flex items-center mb-4">
-          <input type="checkbox" id="rememberMe" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded" />
-          <label for="rememberMe" class="ml-2 text-gray-700 text-sm">Lembrar meus dados</label>
-        </div>
-        <button type="submit" class="w-full py-2 rounded-full font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg transform transition hover:from-blue-600 hover:to-blue-500 hover:-translate-y-1">
-          Entrar
-        </button>
-        <a href="#" class="block text-center mt-3 text-blue-500 text-sm">Esqueceu a senha?</a>
-      </form>
-      <!-- Spinner -->
-      <div id="spinner" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl hidden">
-        <div class="spinner-border text-blue-500" role="status">
-          <span class="sr-only">Carregando...</span>
-        </div>
-      </div>
+<body>
+  <div class="overlay"></div>
+  <div class="content container">
+    <h1>Bem-vindo a ClickForte Armazenagem</h1>
+    <p>Ambiente de relatório de gastos e previsão</p>
+  </div>
+
+  <!-- Ícone de Chat -->
+  <button class="notification-icon" id="notificationButton" title="Chat">
+    <i class="bi bi-robot" style="font-size: 1.8rem;"></i>
+  </button>
+
+  <!-- Chat Box em tema dark -->
+  <div class="chat-box" id="chatBox">
+    <div class="chat-header">
+      <h5><i class="bi bi-robot"></i> Chat de Suporte</h5>
+      <button type="button" id="closeChat" aria-label="Fechar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <!-- As mensagens serão adicionadas aqui via script -->
     </div>
   </div>
 
-  <!-- Dashboard Principal (oculto enquanto não logado) -->
-  <div id="dashboard" class="hidden h-full flex flex-col">
-    <!-- Header para mobile -->
-    <header id="profileHeader" class="md:hidden flex justify-between items-center p-4 bg-black border-b border-black/10 text-white cursor-pointer">
-      <div class="flex items-center">
-        <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="mr-4">
-          <i class="bi bi-list text-2xl"></i>
-        </button>
-      </div>
-      <div class="flex items-center" onclick="openProfileModal()">
-        <img id="profileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full mr-2 object-cover" />
-        <span id="profileName" class="font-bold">Nome do Usuário</span>
-      </div>
-    </header>
-
-    <div class="flex flex-1">
-      <!-- Sidebar Desktop -->
-      <nav class="hidden md:flex flex-col bg-[#0c0c0c] text-gray-300 w-64 shadow-lg h-screen rounded-r-[30px]">
-        <div class="sticky top-0 p-5 bg-[#0c0c0c] flex flex-col items-center border-b border-gray-800">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="mx-auto mb-5 max-w-[120px]" />
-          <h2 class="text-xl font-semibold">Menu</h2>
-        </div>
-        <div class="overflow-y-auto flex-grow p-5 space-y-1">
-          <a href="#" onclick="loadPage('home.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Home</span>
-          </a>
-          <a href="#" onclick="loadPage('integracao.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-arrows-angle-contract"></i>
-            <span>Integração</span>
-          </a>
-          <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
-              <i id="desktopPrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
-            </button>
-            <div id="desktopPrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
-          </div>
-          <div class="nav-link flex flex-col">
-            <button onclick="toggleGastosSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-wallet2"></i> Gastos</span>
-              <i id="desktopGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
-            </button>
-            <div id="desktopGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('sub_janeiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('sub_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('sub_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('sub_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('sub_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('sub_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('sub_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('sub_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('sub_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
-          </div>
-          <a href="#" onclick="loadPage('geral.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-graph-up"></i>
-            <span>Relatório Geral</span>
-          </a>
-        </div>
-        <div class="sticky bottom-0 bg-[#0c0c0c] p-5 border-t border-gray-800">
-          <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover" />
-            <span id="sidebarProfileName" class="font-bold text-gray-200">Nome do Usuário</span>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Conteúdo Principal -->
-      <main class="flex flex-col flex-1">
-        <iframe id="mainFrame" src="home.html" class="flex-1 w-full" style="background-color: #fff;"></iframe>
-      </main>
-    </div>
-
-    <!-- Sidebar Mobile -->
-    <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden">
-      <div class="w-64 bg-[#0c0c0c] text-gray-300 h-screen flex flex-col rounded-r-[30px]">
-        <div class="sticky top-0 bg-[#0c0c0c] p-5 flex justify-between items-center border-b border-gray-800">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="max-w-[60%]" />
-          <button onclick="toggleMobileSidebar()">
-            <i class="bi bi-x-lg text-2xl"></i>
-          </button>
-        </div>
-        <div class="overflow-y-auto flex-grow p-5 space-y-1">
-          <h2 class="text-xl font-semibold text-center mb-2">Menu</h2>
-          <a href="#" onclick="loadPage('home.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Home</span>
-          </a>
-          <a href="#" onclick="loadPage('integracao.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-arrows-angle-contract"></i>
-            <span>Integração</span>
-          </a>
-          <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
-              <i id="mobilePrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
-            </button>
-            <div id="mobilePrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
-          </div>
-          <div class="nav-link flex flex-col">
-            <button onclick="toggleGastosSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-wallet2"></i> Gastos Mensal</span>
-              <i id="mobileGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
-            </button>
-            <div id="mobileGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('sub_janeiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('sub_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('sub_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('sub_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('sub_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('sub_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('sub_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('sub_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('sub_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
-          </div>
-          <a href="#" onclick="loadPage('geral.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-graph-up"></i>
-            <span>Relatório Geral</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Edição do Perfil -->
-  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-xl w-11/12 md:w-1/3 p-6">
-      <form id="profileForm">
-        <div class="flex justify-between items-center border-b pb-2 mb-4">
-          <h5 class="text-xl font-semibold">Editar Perfil</h5>
-          <button type="button" onclick="closeProfileModal()" class="text-gray-600 text-2xl">&times;</button>
-        </div>
-        <div class="text-center mb-4">
-          <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover" />
-        </div>
-        <div class="mb-4">
-          <label for="profilePic" class="block text-gray-700 mb-1">Nova Foto de Perfil</label>
-          <input type="file" id="profilePic" accept="image/*" class="w-full p-2 border rounded" />
-        </div>
-        <div class="mb-4">
-          <label for="profileNameInput" class="block text-gray-700 mb-1">Nome do Usuário</label>
-          <input type="text" id="profileNameInput" placeholder="Digite seu nome" class="w-full p-2 border rounded" />
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Salvar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Script para definir a variável --vh para mobile -->
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function setVhProperty() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    setVhProperty();
-    window.addEventListener('resize', setVhProperty);
-  </script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const notificationButton = document.getElementById("notificationButton");
+      const chatBox = document.getElementById("chatBox");
+      const closeChat = document.getElementById("closeChat");
+      const chatBody = document.getElementById("chatBody");
 
-  <!-- Scripts -->
-  <script>
-    // Função para carregar páginas no iframe
-    function loadPage(pageUrl) {
-      document.querySelectorAll(".nav-link a").forEach((link) => link.classList.remove("active"));
-      if (event.target.closest("a")) {
-        event.target.closest("a").classList.add("active");
+      // Data fixa do pagamento (definida para 25/03/2025)
+      const paymentDate = new Date("2025-03-25T00:00:00");
+
+      // Função para retornar o rótulo correto ("hoje" ou "ontem") de forma alternada
+      function getPaymentDayLabel() {
+        const today = new Date();
+        const diffTime = today - paymentDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        return (diffDays % 2 === 0) ? "hoje" : "ontem";
       }
-      document.getElementById("mainFrame").src = pageUrl;
-    }
 
-    // Alterna visibilidade do menu mobile
-    function toggleMobileSidebar() {
-      document.getElementById("mobileSidebar").classList.toggle("hidden");
-    }
+      // Fecha o chat ao clicar no botão de fechar
+      closeChat.addEventListener("click", function() {
+        chatBox.style.display = "none";
+      });
 
-    // Alterna submenu Previsão
-    function togglePrevisaoSubmenu(mode) {
-      const submenu = mode === "desktop" ? document.getElementById("desktopPrevisaoSubmenu") : document.getElementById("mobilePrevisaoSubmenu");
-      const icon = mode === "desktop" ? document.getElementById("desktopPrevisaoIcon") : document.getElementById("mobilePrevisaoIcon");
-
-      if (submenu.classList.contains("max-h-0")) {
-        submenu.classList.remove("max-h-0");
-        submenu.classList.add("max-h-[300px]");
-        icon.classList.add("rotate-180");
-      } else {
-        submenu.classList.remove("max-h-[300px]");
-        submenu.classList.add("max-h-0");
-        icon.classList.remove("rotate-180");
-      }
-    }
-
-    // Alterna submenu Gastos
-    function toggleGastosSubmenu(mode) {
-      const submenu = mode === "desktop" ? document.getElementById("desktopGastosSubmenu") : document.getElementById("mobileGastosSubmenu");
-      const icon = mode === "desktop" ? document.getElementById("desktopGastosIcon") : document.getElementById("mobileGastosIcon");
-
-      if (submenu.classList.contains("max-h-0")) {
-        submenu.classList.remove("max-h-0");
-        submenu.classList.add("max-h-[300px]");
-        icon.classList.add("rotate-180");
-      } else {
-        submenu.classList.remove("max-h-[300px]");
-        submenu.classList.add("max-h-0");
-        icon.classList.remove("rotate-180");
-      }
-    }
-
-    // Modal de perfil
-    function openProfileModal() {
-      document.getElementById("profileModal").classList.remove("hidden");
-      document.getElementById("profileModal").classList.add("flex");
-    }
-    function closeProfileModal() {
-      document.getElementById("profileModal").classList.remove("flex");
-      document.getElementById("profileModal").classList.add("hidden");
-    }
-
-    // Atualiza informações do usuário com base no localStorage
-    function updateUserInfo() {
-      const savedUsername = localStorage.getItem("savedUsername");
-      const savedProfilePic = localStorage.getItem("savedProfilePic");
-      if (savedUsername) {
-        document.getElementById("profileName").textContent = savedUsername;
-        document.getElementById("profileNameInput").value = savedUsername;
-        document.getElementById("sidebarProfileName").textContent = savedUsername;
-      }
-      if (savedProfilePic) {
-        document.getElementById("profileImg").src = savedProfilePic;
-        document.getElementById("modalProfileImg").src = savedProfilePic;
-        document.getElementById("sidebarProfileImg").src = savedProfilePic;
-      } else {
-        document.getElementById("profileImg").src = "https://via.placeholder.com/40";
-        document.getElementById("modalProfileImg").src = "https://via.placeholder.com/100";
-        document.getElementById("sidebarProfileImg").src = "https://via.placeholder.com/40";
-      }
-    }
-
-    // Login
-    const loginOverlay = document.getElementById("loginOverlay");
-    const spinner = document.getElementById("spinner");
-    const formLogin = document.getElementById("formLogin");
-    const rememberMe = document.getElementById("rememberMe");
-    const usernameField = document.getElementById("username");
-    const passwordField = document.getElementById("password");
-    const iframe = document.getElementById("mainFrame");
-    const logoutNotification = document.getElementById("logoutNotification");
-
-    formLogin.addEventListener("submit", function (e) {
-      e.preventDefault();
-      spinner.innerHTML = `<div class="spinner-border text-blue-500" role="status"><span class="sr-only">Carregando...</span></div>`;
-      spinner.classList.remove("hidden");
-      spinner.classList.add("flex");
-
-      setTimeout(function () {
-        const validUsername = localStorage.getItem("savedUsername") || "admin";
-        const username = usernameField.value;
-        const password = passwordField.value;
-        if (username === validUsername && password === "admin123") {
-          if (rememberMe.checked) {
-            localStorage.setItem("savedUsername", username);
-            localStorage.setItem("savedPassword", password);
-          } else {
-            localStorage.removeItem("savedUsername");
-            localStorage.removeItem("savedPassword");
+      // Função para adicionar mensagem com efeito de digitação letra por letra
+      function typeMessage(message, callback) {
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("chat-message", "received");
+        chatBody.appendChild(messageElement);
+        let index = 0;
+        const interval = setInterval(() => {
+          messageElement.innerHTML = `<i class="bi bi-robot me-1"></i><strong>Robô:</strong> ` + message.slice(0, index);
+          index++;
+          chatBody.scrollTop = chatBody.scrollHeight;
+          if (index > message.length) {
+            clearInterval(interval);
+            if (callback) callback();
           }
-          localStorage.setItem("loggedIn", "true");
+        }, 50);
+      }
 
-          spinner.innerHTML = `<i class="bi bi-check-circle-fill text-green-500 text-5xl"></i>`;
-          setTimeout(function () {
-            loginOverlay.style.display = "none";
-            document.getElementById("dashboard").classList.remove("hidden");
-            iframe.src = "home.html";
-            updateUserInfo();
-            spinner.classList.add("hidden");
-            spinner.classList.remove("flex");
-          }, 1000);
+      // Função para exibir a mensagem informando sobre a alteração de nome de usuário e foto
+      function showUserInfoMessage(callback) {
+        const infoMessage = document.createElement("div");
+        infoMessage.classList.add("chat-message", "received");
+        infoMessage.innerHTML = `<i class="bi bi-info-circle me-1"></i><strong>Aviso:</strong> Agora você pode alterar o nome de usuário e a foto.`;
+        chatBody.appendChild(infoMessage);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        setTimeout(() => {
+          if (callback) callback();
+        }, 1500);
+      }
+
+      // Função para exibir um vídeo MP4 da tela do computador no chat
+      function showVideo() {
+        // Cria o elemento para o vídeo
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("chat-message", "received");
+        videoContainer.innerHTML = `
+          <video controls style="width:100%; border-radius:16px;">
+            <source src="https://i.imgur.com/2gGLuZz.mp4" type="video/mp4">
+            Seu navegador não suporta o elemento de vídeo.
+          </video>
+        `;
+        chatBody.appendChild(videoContainer);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      // Cria e exibe a saudação de acordo com o horário atual no chat
+      function showGreeting(callback) {
+        const now = new Date();
+        const hour = now.getHours();
+        let greetingText = "";
+        if (hour < 12) {
+          greetingText = "Bom dia!";
+        } else if (hour < 18) {
+          greetingText = "Boa tarde!";
         } else {
-          alert("Usuário ou senha incorretos!");
-          spinner.classList.add("hidden");
-          spinner.classList.remove("flex");
+          greetingText = "Boa noite!";
         }
-      }, 2000);
-    });
-
-    // Ao carregar a página, remove flag de login e preenche dados salvos
-    window.addEventListener("DOMContentLoaded", function () {
-      localStorage.removeItem("loggedIn");
-      const savedUsername = localStorage.getItem("savedUsername");
-      const savedPassword = localStorage.getItem("savedPassword");
-      if (savedUsername) usernameField.value = savedUsername;
-      if (savedPassword) {
-        passwordField.value = savedPassword;
-        rememberMe.checked = true;
+        typeMessage(greetingText, callback);
       }
-      loginOverlay.style.display = "flex";
-      document.getElementById("dashboard").classList.add("hidden");
-    });
 
-    // Atualiza imagem do modal ao selecionar nova foto
-    document.getElementById("profilePic").addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          document.getElementById("modalProfileImg").src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+      // Monta as mensagens informativas dinâmicas
+      const mensagemAtualizacao = `Última atualização em 07/04 às 11:54.`;
+      const mensagemValor = `Confira as novas atualizações na área de previsões para Abril.`;
 
-    // Salva alterações do modal de perfil
-    document.getElementById("profileForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const newName = document.getElementById("profileNameInput").value.trim();
-      const newImg = document.getElementById("modalProfileImg").src;
-      if (newName !== "") {
-        localStorage.setItem("savedUsername", newName);
-        localStorage.setItem("savedProfilePic", newImg);
-        updateUserInfo();
-        closeProfileModal();
-      } else {
-        alert("O nome de usuário não pode estar vazio.");
+      const informMessages = [
+        mensagemAtualizacao,
+        mensagemValor,
+        "Previsão de gastos para Abril: R$ 5.615.717,22",
+        "Previsão de pagamento para 07/04: R$ 743.971,06",
+        "Para mais informações contate o time de TI."
+      ];
+
+      // Exibe as mensagens informativas com intervalos entre elas
+      function showInformativeMessages(index = 0) {
+        if (index < informMessages.length) {
+          const typingIndicator = document.createElement("div");
+          typingIndicator.classList.add("typing-indicator");
+          typingIndicator.innerText = "Robô está digitando...";
+          chatBody.appendChild(typingIndicator);
+          chatBody.scrollTop = chatBody.scrollHeight;
+          setTimeout(() => {
+            chatBody.removeChild(typingIndicator);
+            typeMessage(informMessages[index], function() {
+              setTimeout(() => {
+                showInformativeMessages(index + 1);
+              }, 1000);
+            });
+          }, 1500);
+        }
       }
+
+      // Exibe o chat automaticamente e inicia com a saudação, exibe a mensagem de alteração de usuário e foto, o vídeo e depois as mensagens informativas
+      chatBox.style.display = "flex";
+      showGreeting(function() {
+        showUserInfoMessage(function() {
+          showVideo();
+          showInformativeMessages();
+        });
+      });
+
+      // Reabre o chat se estiver fechado ao clicar no ícone
+      notificationButton.addEventListener("click", function() {
+        chatBox.style.display = "flex";
+      });
     });
   </script>
-
-  <!-- Bootstrap JS Bundle via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
