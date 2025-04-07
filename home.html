@@ -181,7 +181,7 @@
         opacity: 1;
       }
     }
-    /* Ajustes responsivos */
+    /* Ajustes responsivos para tablets e telas menores */
     @media (max-width: 768px) {
       .content h1 {
         font-size: 2.5rem;
@@ -198,6 +198,51 @@
         height: 50px;
         bottom: 15px;
         right: 15px;
+      }
+    }
+    /* Ajustes responsivos para celulares e iPhones */
+    @media (max-width: 576px) {
+      .content h1 {
+        font-size: 2rem;
+      }
+      .content p {
+        font-size: 1rem;
+      }
+      .chat-box {
+        width: 95%;
+        right: 2.5%;
+        bottom: 80px;
+        max-height: 70vh;
+      }
+      .chat-header h5 {
+        font-size: 1rem;
+      }
+      .chat-message {
+        font-size: 0.85rem;
+      }
+      .notification-icon {
+        width: 45px;
+        height: 45px;
+        bottom: 10px;
+        right: 10px;
+      }
+    }
+    /* Ajustes específicos para iPhones com telas muito pequenas */
+    @media (max-width: 414px) {
+      .content h1 {
+        font-size: 1.8rem;
+      }
+      .content p {
+        font-size: 0.9rem;
+      }
+      .chat-box {
+        bottom: 70px;
+      }
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        bottom: 8px;
+        right: 8px;
       }
     }
   </style>
