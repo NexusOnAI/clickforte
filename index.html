@@ -59,6 +59,12 @@
     ::-webkit-scrollbar-track {
       background-color: #222;
     }
+    /* Ajuste para exibir o header corretamente no iPhone */
+    #profileHeader {
+      padding-top: calc(env(safe-area-inset-top) + 1rem);
+      position: relative;
+      z-index: 10;
+    }
   </style>
 </head>
 <body class="bg-black h-screen overflow-hidden">
