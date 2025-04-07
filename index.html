@@ -6,8 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>ClickForte | Financeiro</title>
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
   <!-- Bootstrap Icons (para ícones) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <style>
@@ -24,6 +22,10 @@
       padding-bottom: env(safe-area-inset-bottom);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
+      background-color: black;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
     }
     html {
       height: -webkit-fill-available;
@@ -65,42 +67,452 @@
       position: relative;
       z-index: 10;
     }
+    
+    /* Utilitários */
+    .hidden { display: none; }
+    .flex { display: flex; }
+    
+    /* Login Overlay */
+    #loginOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+      background-size: cover;
+      background-position: center;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .overlay-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      opacity: 0.6;
+    }
+    #loginContainer {
+      position: relative;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 384px;
+      padding: 24px;
+    }
+    .mobile-logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 640px) {
+      .mobile-logo { display: none; }
+    }
+    .login-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 16px;
+    }
+    #logoutNotification {
+      margin-bottom: 16px;
+      padding: 8px;
+      font-size: 14px;
+      color: #b45309;
+      background-color: #fef08a;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      color: #4a5568;
+      margin-bottom: 4px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #d2d6dc;
+      border-radius: 4px;
+    }
+    .form-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #63b3ed;
+    }
+    .form-check {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .form-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #d2d6dc;
+      border-radius: 3px;
+    }
+    .form-check-label {
+      margin-left: 8px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(to right, #4299e1, #3182ce);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(to right, #3182ce, #4299e1);
+      transform: translateY(-4px);
+    }
+    .forgot-password {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      color: #4299e1;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+    #spinner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Dashboard */
+    #dashboard {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Header Mobile */
+    #profileHeader {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background-color: black;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      color: white;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      #profileHeader {
+        display: flex;
+      }
+    }
+    #mobileMenuBtn {
+      margin-right: 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: white;
+    }
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 8px;
+      object-fit: cover;
+    }
+    .profile-name {
+      font-weight: bold;
+    }
+    
+    /* Área do Dashboard */
+    #dashboardContent {
+      display: flex;
+      flex: 1;
+    }
+    
+    /* Sidebar Desktop */
+    #desktopSidebar {
+      display: none;
+      flex-direction: column;
+      background-color: #0c0c0c;
+      color: #e2e8f0;
+      width: 256px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      height: 100vh;
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+    @media (min-width: 768px) {
+      #desktopSidebar {
+        display: flex;
+      }
+    }
+    #desktopSidebarHeader {
+      position: sticky;
+      top: 0;
+      padding: 20px;
+      background-color: #0c0c0c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-bottom: 1px solid #2d3748;
+    }
+    #desktopSidebarHeader img {
+      margin-bottom: 20px;
+      max-width: 120px;
+    }
+    #desktopSidebarHeader h2 {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+    #desktopNavItems {
+      overflow-y: auto;
+      flex-grow: 1;
+      padding: 20px;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: inherit;
+      transition: background-color 0.2s, transform 0.2s;
+      margin-bottom: 8px;
+    }
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+      transform: translateX(4px);
+    }
+    .nav-link.active {
+      background-color: rgba(255,255,255,0.2);
+    }
+    /* Submenus */
+    .submenu {
+      display: flex;
+      flex-direction: column;
+    }
+    .submenu-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+    .submenu-toggle:hover {
+      background-color: rgba(255,255,255,0.1);
+      transform: translateX(4px);
+    }
+    .submenu-items {
+      padding-left: 20px;
+      margin-top: 4px;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      max-height: 0;
+    }
+    .submenu-link {
+      display: block;
+      padding: 4px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: inherit;
+      transition: background-color 0.2s;
+      margin-bottom: 4px;
+    }
+    .submenu-link:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    
+    #desktopSidebarFooter {
+      position: sticky;
+      bottom: 0;
+      background-color: #0c0c0c;
+      padding: 20px;
+      border-top: 1px solid #2d3748;
+    }
+    #desktopSidebarFooter .profile-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .sidebar-profile-name {
+      font-weight: bold;
+      color: #e2e8f0;
+    }
+    
+    /* Conteúdo Principal */
+    #mainContent {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    #mainFrame {
+      flex: 1;
+      width: 100%;
+      background-color: #fff;
+    }
+    
+    /* Sidebar Mobile */
+    #mobileSidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 50;
+      display: none;
+    }
+    #mobileSidebarContent {
+      width: 256px;
+      background-color: #0c0c0c;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+    #mobileSidebarHeader {
+      position: sticky;
+      top: 0;
+      background-color: #0c0c0c;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2d3748;
+    }
+    #mobileSidebarHeader button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: white;
+    }
+    #mobileNavItems {
+      overflow-y: auto;
+      flex-grow: 1;
+      padding: 20px;
+    }
+    #mobileMenuTitle {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: white;
+    }
+    
+    /* Modal de Perfil */
+    #profileModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #profileModalContent {
+      background-color: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      padding: 24px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .modal-profile-img {
+      display: block;
+      margin: 0 auto 16px auto;
+      border-radius: 50%;
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .btn-cancel {
+      padding: 8px 16px;
+      background-color: #ccc;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
   </style>
 </head>
-<body class="bg-black h-screen overflow-hidden">
+<body>
   <!-- Login Overlay -->
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-cover bg-center" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
-    <div class="absolute inset-0 bg-black opacity-60"></div>
-    <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
+  <div id="loginOverlay" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
+    <div class="overlay-bg"></div>
+    <div id="loginContainer">
       <!-- Logo para mobile -->
-      <div class="block sm:hidden text-center mb-4">
-        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" class="mx-auto max-w-[100px]" />
+      <div class="mobile-logo">
+        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" style="margin: 0 auto; max-width: 100px; display: block;" />
       </div>
-      <h3 class="text-center text-2xl font-semibold text-gray-800 mb-4">Acesso Restrito</h3>
-      <div id="logoutNotification" class="hidden mb-4 p-2 text-sm text-yellow-800 bg-yellow-200 rounded text-center">
+      <h3 class="login-title">Acesso Restrito</h3>
+      <div id="logoutNotification" class="hidden">
         Você foi desconectado!
       </div>
       <form id="formLogin">
-        <div class="mb-4">
-          <label for="username" class="block text-gray-700 mb-1">Usuário</label>
-          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <div class="form-group">
+          <label for="username" class="form-label">Usuário</label>
+          <input type="text" id="username" placeholder="Digite seu usuário" required class="form-input" />
         </div>
-        <div class="mb-4">
-          <label for="password" class="block text-gray-700 mb-1">Senha</label>
-          <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <div class="form-group">
+          <label for="password" class="form-label">Senha</label>
+          <input type="password" id="password" placeholder="Digite sua senha" required class="form-input" />
         </div>
-        <div class="flex items-center mb-4">
-          <input type="checkbox" id="rememberMe" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded" />
-          <label for="rememberMe" class="ml-2 text-gray-700 text-sm">Lembrar meus dados</label>
+        <div class="form-check">
+          <input type="checkbox" id="rememberMe" class="form-checkbox" />
+          <label for="rememberMe" class="form-check-label">Lembrar meus dados</label>
         </div>
-        <button type="submit" class="w-full py-2 rounded-full font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg transform transition hover:from-blue-600 hover:to-blue-500 hover:-translate-y-1">
-          Entrar
-        </button>
-        <a href="#" class="block text-center mt-3 text-blue-500 text-sm">Esqueceu a senha?</a>
+        <button type="submit" class="btn-submit">Entrar</button>
+        <a href="#" class="forgot-password">Esqueceu a senha?</a>
       </form>
       <!-- Spinner -->
-      <div id="spinner" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl hidden">
-        <div class="spinner-border text-blue-500" role="status">
+      <div id="spinner" class="hidden flex">
+        <div class="spinner-border" role="status">
           <span class="sr-only">Carregando...</span>
         </div>
       </div>
@@ -108,149 +520,147 @@
   </div>
 
   <!-- Dashboard Principal (oculto enquanto não logado) -->
-  <div id="dashboard" class="hidden h-full flex flex-col">
+  <div id="dashboard" class="hidden">
     <!-- Header para mobile -->
-    <header id="profileHeader" class="md:hidden flex justify-between items-center p-4 bg-black border-b border-black/10 text-white cursor-pointer">
-      <div class="flex items-center">
-        <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="mr-4">
-          <i class="bi bi-list text-2xl"></i>
-        </button>
-      </div>
-      <div class="flex items-center" onclick="openProfileModal()">
-        <img id="profileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full mr-2 object-cover" />
-        <span id="profileName" class="font-bold">Nome do Usuário</span>
+    <header id="profileHeader">
+      <button id="mobileMenuBtn" onclick="toggleMobileSidebar()">
+        <i class="bi bi-list"></i>
+      </button>
+      <div onclick="openProfileModal()" class="flex" style="align-items: center;">
+        <img id="profileImg" src="https://via.placeholder.com/40" alt="Perfil" class="profile-img" />
+        <span id="profileName" class="profile-name">Nome do Usuário</span>
       </div>
     </header>
 
-    <div class="flex flex-1">
+    <div id="dashboardContent">
       <!-- Sidebar Desktop -->
-      <nav class="hidden md:flex flex-col bg-[#0c0c0c] text-gray-300 w-64 shadow-lg h-screen rounded-r-[30px]">
-        <div class="sticky top-0 p-5 bg-[#0c0c0c] flex flex-col items-center border-b border-gray-800">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="mx-auto mb-5 max-w-[120px]" />
-          <h2 class="text-xl font-semibold">Menu</h2>
+      <nav id="desktopSidebar">
+        <div id="desktopSidebarHeader">
+          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" />
+          <h2>Menu</h2>
         </div>
-        <div class="overflow-y-auto flex-grow p-5 space-y-1">
-          <a href="#" onclick="loadPage('home.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active">
+        <div id="desktopNavItems">
+          <a href="#" onclick="loadPage('home.html'); return false;" class="nav-link active">
             <i class="bi bi-house-door-fill"></i>
             <span>Home</span>
           </a>
-          <a href="#" onclick="loadPage('integracao.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
+          <a href="#" onclick="loadPage('integracao.html'); return false;" class="nav-link">
             <i class="bi bi-arrows-angle-contract"></i>
             <span>Integração</span>
           </a>
-          <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
-              <i id="desktopPrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
+          <div class="submenu">
+            <button onclick="togglePrevisaoSubmenu('desktop')" class="submenu-toggle">
+              <span><i class="bi bi-calendar-event-fill"></i> Previsão</span>
+              <i id="desktopPrevisaoIcon" class="bi bi-caret-down"></i>
             </button>
-            <div id="desktopPrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
+            <div id="desktopPrevisaoSubmenu" class="submenu-items">
+              <a href="#" onclick="loadPage('previsao_abril.html'); return false;" class="submenu-link">Abril</a>
+              <a href="#" onclick="loadPage('previsao_maio.html'); return false;" class="submenu-link">Maio</a>
+              <a href="#" onclick="loadPage('previsao_junho.html'); return false;" class="submenu-link">Junho</a>
+              <a href="#" onclick="loadPage('previsao_julho.html'); return false;" class="submenu-link">Julho</a>
+              <a href="#" onclick="loadPage('previsao_agosto.html'); return false;" class="submenu-link">Agosto</a>
+              <a href="#" onclick="loadPage('previsao_setembro.html'); return false;" class="submenu-link">Setembro</a>
+              <a href="#" onclick="loadPage('previsao_outubro.html'); return false;" class="submenu-link">Outubro</a>
+              <a href="#" onclick="loadPage('previsao_novembro.html'); return false;" class="submenu-link">Novembro</a>
+              <a href="#" onclick="loadPage('previsao_dezembro.html'); return false;" class="submenu-link">Dezembro</a>
             </div>
           </div>
-          <div class="nav-link flex flex-col">
-            <button onclick="toggleGastosSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-wallet2"></i> Gastos</span>
-              <i id="desktopGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
+          <div class="submenu">
+            <button onclick="toggleGastosSubmenu('desktop')" class="submenu-toggle">
+              <span><i class="bi bi-wallet2"></i> Gastos</span>
+              <i id="desktopGastosIcon" class="bi bi-caret-down"></i>
             </button>
-            <div id="desktopGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('sub_janeiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('sub_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('sub_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('sub_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('sub_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('sub_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('sub_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('sub_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('sub_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
+            <div id="desktopGastosSubmenu" class="submenu-items">
+              <a href="#" onclick="loadPage('sub_janeiro.html'); return false;" class="submenu-link">Janeiro</a>
+              <a href="#" onclick="loadPage('sub_fevereiro.html'); return false;" class="submenu-link">Fevereiro</a>
+              <a href="#" onclick="loadPage('sub_marco.html'); return false;" class="submenu-link">Março</a>
+              <a href="#" onclick="loadPage('sub_abril.html'); return false;" class="submenu-link">Abril</a>
+              <a href="#" onclick="loadPage('sub_maio.html'); return false;" class="submenu-link">Maio</a>
+              <a href="#" onclick="loadPage('sub_junho.html'); return false;" class="submenu-link">Junho</a>
+              <a href="#" onclick="loadPage('sub_julho.html'); return false;" class="submenu-link">Julho</a>
+              <a href="#" onclick="loadPage('sub_agosto.html'); return false;" class="submenu-link">Agosto</a>
+              <a href="#" onclick="loadPage('sub_setembro.html'); return false;" class="submenu-link">Setembro</a>
+              <a href="#" onclick="loadPage('sub_outubro.html'); return false;" class="submenu-link">Outubro</a>
+              <a href="#" onclick="loadPage('sub_novembro.html'); return false;" class="submenu-link">Novembro</a>
+              <a href="#" onclick="loadPage('sub_dezembro.html'); return false;" class="submenu-link">Dezembro</a>
             </div>
           </div>
-          <a href="#" onclick="loadPage('geral.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
+          <a href="#" onclick="loadPage('geral.html'); return false;" class="nav-link">
             <i class="bi bi-graph-up"></i>
             <span>Relatório Geral</span>
           </a>
         </div>
-        <div class="sticky bottom-0 bg-[#0c0c0c] p-5 border-t border-gray-800">
-          <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover" />
-            <span id="sidebarProfileName" class="font-bold text-gray-200">Nome do Usuário</span>
+        <div id="desktopSidebarFooter">
+          <div class="profile-container" onclick="openProfileModal()">
+            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="profile-img" />
+            <span id="sidebarProfileName" class="sidebar-profile-name">Nome do Usuário</span>
           </div>
         </div>
       </nav>
 
       <!-- Conteúdo Principal -->
-      <main class="flex flex-col flex-1">
-        <iframe id="mainFrame" src="home.html" class="flex-1 w-full" style="background-color: #fff;"></iframe>
+      <main id="mainContent">
+        <iframe id="mainFrame" src="home.html"></iframe>
       </main>
     </div>
 
     <!-- Sidebar Mobile -->
-    <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden">
-      <div class="w-64 bg-[#0c0c0c] text-gray-300 h-screen flex flex-col rounded-r-[30px]">
-        <div class="sticky top-0 bg-[#0c0c0c] p-5 flex justify-between items-center border-b border-gray-800">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="max-w-[60%]" />
+    <div id="mobileSidebar" class="hidden">
+      <div id="mobileSidebarContent">
+        <div id="mobileSidebarHeader">
+          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" style="max-width: 60%;" />
           <button onclick="toggleMobileSidebar()">
-            <i class="bi bi-x-lg text-2xl"></i>
+            <i class="bi bi-x-lg"></i>
           </button>
         </div>
-        <div class="overflow-y-auto flex-grow p-5 space-y-1">
-          <h2 class="text-xl font-semibold text-center mb-2">Menu</h2>
-          <a href="#" onclick="loadPage('home.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active">
+        <div id="mobileNavItems">
+          <h2 id="mobileMenuTitle">Menu</h2>
+          <a href="#" onclick="loadPage('home.html'); toggleMobileSidebar(); return false;" class="nav-link active">
             <i class="bi bi-house-door-fill"></i>
             <span>Home</span>
           </a>
-          <a href="#" onclick="loadPage('integracao.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
+          <a href="#" onclick="loadPage('integracao.html'); toggleMobileSidebar(); return false;" class="nav-link">
             <i class="bi bi-arrows-angle-contract"></i>
             <span>Integração</span>
           </a>
-          <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
-              <i id="mobilePrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
+          <div class="submenu">
+            <button onclick="togglePrevisaoSubmenu('mobile')" class="submenu-toggle">
+              <span><i class="bi bi-calendar-event-fill"></i> Previsão</span>
+              <i id="mobilePrevisaoIcon" class="bi bi-caret-down"></i>
             </button>
-            <div id="mobilePrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
+            <div id="mobilePrevisaoSubmenu" class="submenu-items">
+              <a href="#" onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;" class="submenu-link">Abril</a>
+              <a href="#" onclick="loadPage('previsao_maio.html'); toggleMobileSidebar(); return false;" class="submenu-link">Maio</a>
+              <a href="#" onclick="loadPage('previsao_junho.html'); toggleMobileSidebar(); return false;" class="submenu-link">Junho</a>
+              <a href="#" onclick="loadPage('previsao_julho.html'); toggleMobileSidebar(); return false;" class="submenu-link">Julho</a>
+              <a href="#" onclick="loadPage('previsao_agosto.html'); toggleMobileSidebar(); return false;" class="submenu-link">Agosto</a>
+              <a href="#" onclick="loadPage('previsao_setembro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Setembro</a>
+              <a href="#" onclick="loadPage('previsao_outubro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Outubro</a>
+              <a href="#" onclick="loadPage('previsao_novembro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Novembro</a>
+              <a href="#" onclick="loadPage('previsao_dezembro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Dezembro</a>
             </div>
           </div>
-          <div class="nav-link flex flex-col">
-            <button onclick="toggleGastosSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-wallet2"></i> Gastos Mensal</span>
-              <i id="mobileGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
+          <div class="submenu">
+            <button onclick="toggleGastosSubmenu('mobile')" class="submenu-toggle">
+              <span><i class="bi bi-wallet2"></i> Gastos Mensal</span>
+              <i id="mobileGastosIcon" class="bi bi-caret-down"></i>
             </button>
-            <div id="mobileGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('sub_janeiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('sub_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('sub_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('sub_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('sub_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('sub_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('sub_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('sub_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('sub_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
+            <div id="mobileGastosSubmenu" class="submenu-items">
+              <a href="#" onclick="loadPage('sub_janeiro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Janeiro</a>
+              <a href="#" onclick="loadPage('sub_fevereiro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Fevereiro</a>
+              <a href="#" onclick="loadPage('sub_marco.html'); toggleMobileSidebar(); return false;" class="submenu-link">Março</a>
+              <a href="#" onclick="loadPage('sub_abril.html'); toggleMobileSidebar(); return false;" class="submenu-link">Abril</a>
+              <a href="#" onclick="loadPage('sub_maio.html'); toggleMobileSidebar(); return false;" class="submenu-link">Maio</a>
+              <a href="#" onclick="loadPage('sub_junho.html'); toggleMobileSidebar(); return false;" class="submenu-link">Junho</a>
+              <a href="#" onclick="loadPage('sub_julho.html'); toggleMobileSidebar(); return false;" class="submenu-link">Julho</a>
+              <a href="#" onclick="loadPage('sub_agosto.html'); toggleMobileSidebar(); return false;" class="submenu-link">Agosto</a>
+              <a href="#" onclick="loadPage('sub_setembro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Setembro</a>
+              <a href="#" onclick="loadPage('sub_outubro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Outubro</a>
+              <a href="#" onclick="loadPage('sub_novembro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Novembro</a>
+              <a href="#" onclick="loadPage('sub_dezembro.html'); toggleMobileSidebar(); return false;" class="submenu-link">Dezembro</a>
             </div>
           </div>
-          <a href="#" onclick="loadPage('geral.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
+          <a href="#" onclick="loadPage('geral.html'); toggleMobileSidebar(); return false;" class="nav-link">
             <i class="bi bi-graph-up"></i>
             <span>Relatório Geral</span>
           </a>
@@ -258,30 +668,31 @@
       </div>
     </div>
 
-  <!-- Modal de Edição do Perfil -->
-  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-xl w-11/12 md:w-1/3 p-6">
-      <form id="profileForm">
-        <div class="flex justify-between items-center border-b pb-2 mb-4">
-          <h5 class="text-xl font-semibold">Editar Perfil</h5>
-          <button type="button" onclick="closeProfileModal()" class="text-gray-600 text-2xl">&times;</button>
-        </div>
-        <div class="text-center mb-4">
-          <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover" />
-        </div>
-        <div class="mb-4">
-          <label for="profilePic" class="block text-gray-700 mb-1">Nova Foto de Perfil</label>
-          <input type="file" id="profilePic" accept="image/*" class="w-full p-2 border rounded" />
-        </div>
-        <div class="mb-4">
-          <label for="profileNameInput" class="block text-gray-700 mb-1">Nome do Usuário</label>
-          <input type="text" id="profileNameInput" placeholder="Digite seu nome" class="w-full p-2 border rounded" />
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Salvar</button>
-        </div>
-      </form>
+    <!-- Modal de Edição do Perfil -->
+    <div id="profileModal" class="hidden">
+      <div id="profileModalContent">
+        <form id="profileForm">
+          <div class="modal-header">
+            <h5>Editar Perfil</h5>
+            <button type="button" onclick="closeProfileModal()" style="font-size: 24px; color: #666; background: none; border: none; cursor: pointer;">&times;</button>
+          </div>
+          <div style="text-align: center; margin-bottom: 16px;">
+            <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="modal-profile-img" />
+          </div>
+          <div class="form-group">
+            <label for="profilePic" class="form-label">Nova Foto de Perfil</label>
+            <input type="file" id="profilePic" accept="image/*" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="profileNameInput" class="form-label">Nome do Usuário</label>
+            <input type="text" id="profileNameInput" placeholder="Digite seu nome" class="form-input" />
+          </div>
+          <div class="modal-buttons">
+            <button type="button" onclick="closeProfileModal()" class="btn-cancel">Cancelar</button>
+            <button type="submit" class="btn-submit">Salvar</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -299,7 +710,8 @@
   <script>
     // Função para carregar páginas no iframe
     function loadPage(pageUrl) {
-      document.querySelectorAll(".nav-link a").forEach((link) => link.classList.remove("active"));
+      // Remove a classe active de todos os links
+      document.querySelectorAll(".nav-link").forEach((link) => link.classList.remove("active"));
       if (event.target.closest("a")) {
         event.target.closest("a").classList.add("active");
       }
@@ -308,49 +720,58 @@
 
     // Alterna visibilidade do menu mobile
     function toggleMobileSidebar() {
-      document.getElementById("mobileSidebar").classList.toggle("hidden");
+      const mobileSidebar = document.getElementById("mobileSidebar");
+      if(mobileSidebar.style.display === "none" || mobileSidebar.style.display === "") {
+        mobileSidebar.style.display = "block";
+      } else {
+        mobileSidebar.style.display = "none";
+      }
     }
 
     // Alterna submenu Previsão
     function togglePrevisaoSubmenu(mode) {
-      const submenu = mode === "desktop" ? document.getElementById("desktopPrevisaoSubmenu") : document.getElementById("mobilePrevisaoSubmenu");
-      const icon = mode === "desktop" ? document.getElementById("desktopPrevisaoIcon") : document.getElementById("mobilePrevisaoIcon");
-
-      if (submenu.classList.contains("max-h-0")) {
-        submenu.classList.remove("max-h-0");
-        submenu.classList.add("max-h-[300px]");
-        icon.classList.add("rotate-180");
+      let submenu, icon;
+      if (mode === "desktop") {
+        submenu = document.getElementById("desktopPrevisaoSubmenu");
+        icon = document.getElementById("desktopPrevisaoIcon");
       } else {
-        submenu.classList.remove("max-h-[300px]");
-        submenu.classList.add("max-h-0");
-        icon.classList.remove("rotate-180");
+        submenu = document.getElementById("mobilePrevisaoSubmenu");
+        icon = document.getElementById("mobilePrevisaoIcon");
+      }
+      if (submenu.style.maxHeight === "0px" || submenu.style.maxHeight === "" ) {
+        submenu.style.maxHeight = "300px";
+        icon.classList.add("rotate");
+      } else {
+        submenu.style.maxHeight = "0";
+        icon.classList.remove("rotate");
       }
     }
 
     // Alterna submenu Gastos
     function toggleGastosSubmenu(mode) {
-      const submenu = mode === "desktop" ? document.getElementById("desktopGastosSubmenu") : document.getElementById("mobileGastosSubmenu");
-      const icon = mode === "desktop" ? document.getElementById("desktopGastosIcon") : document.getElementById("mobileGastosIcon");
-
-      if (submenu.classList.contains("max-h-0")) {
-        submenu.classList.remove("max-h-0");
-        submenu.classList.add("max-h-[300px]");
-        icon.classList.add("rotate-180");
+      let submenu, icon;
+      if (mode === "desktop") {
+        submenu = document.getElementById("desktopGastosSubmenu");
+        icon = document.getElementById("desktopGastosIcon");
       } else {
-        submenu.classList.remove("max-h-[300px]");
-        submenu.classList.add("max-h-0");
-        icon.classList.remove("rotate-180");
+        submenu = document.getElementById("mobileGastosSubmenu");
+        icon = document.getElementById("mobileGastosIcon");
+      }
+      if (submenu.style.maxHeight === "0px" || submenu.style.maxHeight === "") {
+        submenu.style.maxHeight = "300px";
+        icon.classList.add("rotate");
+      } else {
+        submenu.style.maxHeight = "0";
+        icon.classList.remove("rotate");
       }
     }
 
     // Modal de perfil
     function openProfileModal() {
-      document.getElementById("profileModal").classList.remove("hidden");
-      document.getElementById("profileModal").classList.add("flex");
+      document.getElementById("profileModal").style.display = "flex";
     }
     function closeProfileModal() {
-      document.getElementById("profileModal").classList.remove("flex");
-      document.getElementById("profileModal").classList.add("hidden");
+      document.getElementById("profileModal").style.display = "none";
     }
 
     // Atualiza informações do usuário com base no localStorage
@@ -385,7 +806,7 @@
 
     formLogin.addEventListener("submit", function (e) {
       e.preventDefault();
-      spinner.innerHTML = `<div class="spinner-border text-blue-500" role="status"><span class="sr-only">Carregando...</span></div>`;
+      spinner.innerHTML = `<div class="spinner-border" role="status"><span class="sr-only">Carregando...</span></div>`;
       spinner.classList.remove("hidden");
       spinner.classList.add("flex");
 
@@ -403,7 +824,7 @@
           }
           localStorage.setItem("loggedIn", "true");
 
-          spinner.innerHTML = `<i class="bi bi-check-circle-fill text-green-500 text-5xl"></i>`;
+          spinner.innerHTML = `<i class="bi bi-check-circle-fill" style="color: green; font-size: 40px;"></i>`;
           setTimeout(function () {
             loginOverlay.style.display = "none";
             document.getElementById("dashboard").classList.remove("hidden");
