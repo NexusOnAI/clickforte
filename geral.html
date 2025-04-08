@@ -28,32 +28,31 @@
 
     <hr class="my-5">
 
-    <!-- Gráfico de Gastos de Janeiro por Semana (4 semanas) -->
+    <!-- Gráfico de Gastos de Janeiro por Semana -->
     <h2 class="text-center mb-4">Gastos de Janeiro por Semana</h2>
     <div id="chart2"></div>
 
     <hr class="my-5">
 
-    <!-- Gráfico de Gastos de Fevereiro por Semana (4 semanas) -->
+    <!-- Gráfico de Gastos de Fevereiro por Semana -->
     <h2 class="text-center mb-4">Gastos de Fevereiro por Semana</h2>
     <div id="chart3"></div>
 
     <hr class="my-5">
 
-    <!-- Gráfico de Gastos de Março por Semana (4 semanas) -->
+    <!-- Gráfico de Gastos de Março por Semana -->
     <h2 class="text-center mb-4">Gastos de Março por Semana</h2>
     <div id="chart4"></div>
   </div>
 
   <script>
     /*******************************************************************
-     *               GRÁFICO GERAL MENSAL COM COLUNA TOTAL
+     *            GRÁFICO GERAL MENSAL COM COLUNA TOTAL
      *******************************************************************/
-    // Valores para Janeiro, Fevereiro e Março e o Total (soma dos três)
     var valorJaneiro = 5686819.08,
         valorFevereiro = 6105182.26,
         valorMarco = 6995663.47,
-        valorTotal = valorJaneiro + valorFevereiro + valorMarco; // 15735654.25
+        valorTotal = valorJaneiro + valorFevereiro + valorMarco;
 
     var optionsMensal = {
       chart: {
@@ -155,29 +154,16 @@
     chartMensal.render();
 
     /*******************************************************************
-     *        GRÁFICO DE GASTOS DE JANEIRO POR SEMANA (4 semanas)
+     *          GRÁFICO DE GASTOS DE JANEIRO POR SEMANA (ÁREA)
      *******************************************************************/
-    // Valores já calculados para cada semana de Janeiro:
-    // Semana 1 (dias 1 a 7):   R$ 1.059.106,09
-    // Semana 2 (dias 8 a 14):  R$ 1.390.876,49
-    // Semana 3 (dias 15 a 21): R$ 1.356.480,34
-    // Semana 4 (dias 22 a 31): R$ 1.880.357,16
     var valoresSemanasJaneiro = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
 
     var optionsSemanalJaneiro = {
       chart: {
-        type: 'bar',
+        type: 'area',
         height: 350,
         background: 'transparent',
         toolbar: { show: false }
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 8,
-          horizontal: false,
-          columnWidth: '50%',
-          dataLabels: { position: 'top' }
-        }
       },
       dataLabels: {
         enabled: true,
@@ -241,7 +227,6 @@
           breakpoint: 768,
           options: {
             chart: { height: 300 },
-            plotOptions: { bar: { columnWidth: '70%' } },
             dataLabels: { style: { fontSize: '10px' } },
             xaxis: { labels: { style: { fontSize: '12px' } } },
             yaxis: { labels: { style: { fontSize: '10px' } } }
@@ -251,7 +236,6 @@
           breakpoint: 576,
           options: {
             chart: { height: 250 },
-            plotOptions: { bar: { columnWidth: '80%' } },
             dataLabels: { style: { fontSize: '8px' } },
             xaxis: { labels: { style: { fontSize: '10px' } } },
             yaxis: { labels: { style: { fontSize: '8px' } } }
@@ -264,30 +248,16 @@
     chartSemanalJaneiro.render();
 
     /*******************************************************************
-     *        GRÁFICO DE GASTOS DE FEVEREIRO POR SEMANA (4 semanas)
+     *          GRÁFICO DE GASTOS DE FEVEREIRO POR SEMANA (ÁREA)
      *******************************************************************/
-    // Distribuição dos gastos de fevereiro (total: R$ 6.105.182,26)
-    // Utilizando um fator de ajuste de 1.073 sobre os valores de janeiro:
-    // Semana 1: 1059106.09 * 1.073 ≈ R$ 1.347.844,70
-    // Semana 2: 1390876.49 * 1.073 ≈ R$ 1.351.449,96
-    // Semana 3: 1356479.34 * 1.073 ≈ R$ 1.707.533,26
-    // Semana 4: 1880357.16 * 1.073 ≈ R$ 1.698.354,34
     var valoresSemanasFev = [1347844.70, 1351449.96, 1707533.26, 1698354.34];
 
     var optionsSemanalFev = {
       chart: {
-        type: 'bar',
+        type: 'area',
         height: 350,
         background: 'transparent',
         toolbar: { show: false }
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 8,
-          horizontal: false,
-          columnWidth: '50%',
-          dataLabels: { position: 'top' }
-        }
       },
       dataLabels: {
         enabled: true,
@@ -351,7 +321,6 @@
           breakpoint: 768,
           options: {
             chart: { height: 300 },
-            plotOptions: { bar: { columnWidth: '70%' } },
             dataLabels: { style: { fontSize: '10px' } },
             xaxis: { labels: { style: { fontSize: '12px' } } },
             yaxis: { labels: { style: { fontSize: '10px' } } }
@@ -361,7 +330,6 @@
           breakpoint: 576,
           options: {
             chart: { height: 250 },
-            plotOptions: { bar: { columnWidth: '80%' } },
             dataLabels: { style: { fontSize: '8px' } },
             xaxis: { labels: { style: { fontSize: '10px' } } },
             yaxis: { labels: { style: { fontSize: '8px' } } }
@@ -374,29 +342,16 @@
     chartSemanalFev.render();
 
     /*******************************************************************
-     *        GRÁFICO DE GASTOS DE MARÇO POR SEMANA (4 semanas)
+     *          GRÁFICO DE GASTOS DE MARÇO POR SEMANA (ÁREA)
      *******************************************************************/
-    // Cálculos com base nos dados de março:
-    // Semana 1 (1 a 7):   ≈ R$ 1.516.175,78
-    // Semana 2 (8 a 14):  ≈ R$ 1.634.234,11
-    // Semana 3 (15 a 21): ≈ R$ 1.343.905,08
-    // Semana 4 (22 a 31): ≈ R$ 2.501.348,50
     var valoresSemanasMarco = [1516175.78, 1634234.11, 1343905.08, 2501348.50];
 
     var optionsSemanalMarco = {
       chart: {
-        type: 'bar',
+        type: 'area',
         height: 350,
         background: 'transparent',
         toolbar: { show: false }
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 8,
-          horizontal: false,
-          columnWidth: '50%',
-          dataLabels: { position: 'top' }
-        }
       },
       dataLabels: {
         enabled: true,
@@ -460,7 +415,6 @@
           breakpoint: 768,
           options: {
             chart: { height: 300 },
-            plotOptions: { bar: { columnWidth: '70%' } },
             dataLabels: { style: { fontSize: '10px' } },
             xaxis: { labels: { style: { fontSize: '12px' } } },
             yaxis: { labels: { style: { fontSize: '10px' } } }
@@ -470,7 +424,6 @@
           breakpoint: 576,
           options: {
             chart: { height: 250 },
-            plotOptions: { bar: { columnWidth: '80%' } },
             dataLabels: { style: { fontSize: '8px' } },
             xaxis: { labels: { style: { fontSize: '10px' } } },
             yaxis: { labels: { style: { fontSize: '8px' } } }
