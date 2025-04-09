@@ -1,416 +1,867 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bem-vindo a ClickForte Armazenagem</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfólio | Evanderson</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/x-icon" href="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f44b.gif">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
   <style>
-    body {
-      background: url("https://www.sagrupo.com/wp-content/uploads/2021/01/shutterstock_1714734415-scaled.jpg") no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    /* Overlay para suavizar o fundo */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.65);
-      z-index: 1;
+    .glow:hover {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+      border-color: rgba(59, 130, 246, 0.9);
+      transition: all 0.3s ease-in-out;
     }
-    /* Conteúdo centralizado */
-    .content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      padding: 20px;
+    /* Cursor do texto digitando (Hero) */
+    .cursor {
+      border-right: .1em solid #fff;
+      animation: blink 0.7s step-end infinite;
     }
-    .content h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 20px;
-      animation: fadeInDown 1s ease-out;
+    @keyframes blink {
+      0%, 100% { border-color: transparent; }
+      50% { border-color: #fff; }
     }
-    .content p {
-      font-size: 1.5rem;
-      animation: fadeInUp 1s ease-out;
-    }
-    /* Chat Box em tema dark com UI aprimorada */
-    .chat-box {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      width: 320px;
-      max-height: 420px;
-      background: linear-gradient(135deg, #1e1e1e, #292929);
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 1100;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
-    }
-    .chat-box:hover {
-      transform: scale(1.02);
-    }
-    .chat-header {
-      background: linear-gradient(135deg, #2d2d2d, #3a3a3a);
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .chat-header h5 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-    }
-    .chat-header h5 i {
-      margin-right: 8px;
-      font-size: 1.2rem;
-    }
-    .chat-header button {
-      background: transparent;
-      border: none;
-      font-size: 1.2rem;
-      color: #fff;
-      cursor: pointer;
-    }
-    .chat-body {
-      flex: 1;
-      padding: 14px;
-      overflow-y: auto;
-      background-color: #242424;
-    }
-    .chat-message {
-      margin-bottom: 12px;
-      padding: 10px 14px;
-      border-radius: 16px;
-      max-width: 85%;
-      word-wrap: break-word;
-      font-size: 0.95rem;
-      line-height: 1.4;
-      opacity: 0;
-      animation: messageFadeIn 0.4s forwards;
-    }
-    .chat-message.received {
-      background-color: #3b3b3b;
-      align-self: flex-start;
-      color: #f1f1f1;
-    }
-    .typing-indicator {
-      font-style: italic;
-      font-size: 0.9rem;
-      color: #bbb;
-      margin-bottom: 8px;
-    }
-    /* Ícone de Chat fixo */
-    .notification-icon {
+
+    /* Estilos para o chatbot */
+    #chatbot {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background-color: #0d6efd;
+      width: 320px;
+      max-width: 95%;
+      background: rgba(31, 41, 55, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      overflow: hidden;
+      z-index: 100;
+    }
+    #chatbot-header {
+      background-color: #2563eb;
       color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
+      padding: 10px;
+      font-weight: bold;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
       cursor: pointer;
-      z-index: 1100;
-      transition: background-color 0.2s ease, transform 0.2s ease;
     }
-    .notification-icon:hover {
-      background-color: #0b5ed7;
-      transform: scale(1.05);
+    #chatbot-body {
+      padding: 10px;
+      color: #d1d5db;
+      font-size: 0.9rem;
+      max-height: 300px;
+      overflow-y: auto;
     }
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #chatbot-input-area {
+      display: flex;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: rgba(31, 41, 55, 0.8);
     }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #chatbot-input {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #fff;
     }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+    #chatbot-send {
+      background: #2563eb;
+      border: none;
+      color: #fff;
+      padding: 0 16px;
+      cursor: pointer;
     }
-    @keyframes messageFadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+    #chatbot-send:hover {
+      background-color: #1e40af;
     }
-    /* Ajustes responsivos para tablets e telas menores */
+    .chat-options {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chat-option-btn {
+      cursor: pointer;
+      background: #1f2937;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      transition: background 0.2s, color 0.2s;
+    }
+    .chat-option-btn:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+    #typing-indicator {
+      font-style: italic;
+      color: #9ca3af;
+    }
+
+    /* Estilos para menu mobile */
+    .mobile-nav {
+      display: none;
+    }
     @media (max-width: 768px) {
-      .content h1 {
-        font-size: 2.5rem;
+      .desktop-nav {
+        display: none;
       }
-      .content p {
-        font-size: 1.2rem;
-      }
-      .chat-box {
-        width: 90%;
-        right: 5%;
-      }
-      .notification-icon {
-        width: 50px;
-        height: 50px;
-        bottom: 15px;
-        right: 15px;
-      }
-    }
-    /* Ajustes responsivos para celulares e iPhones */
-    @media (max-width: 576px) {
-      .content h1 {
-        font-size: 2rem;
-      }
-      .content p {
-        font-size: 1rem;
-      }
-      .chat-box {
-        width: 95%;
-        right: 2.5%;
-        bottom: 80px;
-        max-height: 70vh;
-      }
-      .chat-header h5 {
-        font-size: 1rem;
-      }
-      .chat-message {
-        font-size: 0.85rem;
-      }
-      /* Aumenta o bottom para posicionar o botão mais para cima */
-      .notification-icon {
-        width: 45px;
-        height: 45px;
-        bottom: 40px;
-        right: 10px;
-      }
-    }
-    /* Ajustes específicos para iPhones com telas muito pequenas */
-    @media (max-width: 414px) {
-      .content h1 {
-        font-size: 1.8rem;
-      }
-      .content p {
-        font-size: 0.9rem;
-      }
-      .chat-box {
-        bottom: 70px;
-      }
-      /* Aumenta o bottom para posicionar o botão mais para cima */
-      .notification-icon {
-        width: 40px;
-        height: 40px;
-        bottom: 30px;
-        right: 8px;
+      .mobile-nav {
+        display: block;
       }
     }
   </style>
 </head>
-<body>
-  <!-- Mensagem de alerta fixa -->
-  <div class="alert alert-warning alert-dismissible fade show fixed-top text-center m-0" role="alert" style="z-index: 1200;">
-    Confira as atualizações do Relatório Geral!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
 
-  <div class="overlay"></div>
-  <div class="content container">
-    <h1>Bem-vindo a ClickForte Armazenagem</h1>
-    <p>Ambiente de relatório de gastos e previsão</p>
-  </div>
+<body class="bg-gray-950 text-gray-100 font-sans">
+  <!-- Navbar -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-80 backdrop-blur-lg border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-blue-400">Evanderson</h1>
 
-  <!-- Ícone de Chat -->
-  <button class="notification-icon" id="notificationButton" title="Chat">
-    <i class="bi bi-robot" style="font-size: 1.8rem;"></i>
-  </button>
+      <!-- Menu Desktop -->
+      <nav class="desktop-nav space-x-6">
+        <a href="#sobre" class="hover:text-blue-400">Sobre</a>
+        <a href="#skills" class="hover:text-blue-400">Skills</a>
+        <a href="#formacao" class="hover:text-blue-400">Formação</a>
+        <a href="#projetos" class="hover:text-blue-400">Projetos</a>
+        <a href="#experiencias" class="hover:text-blue-400">Experiências</a>
+        <a href="#empresas" class="hover:text-blue-400">Empresas</a>
+        <a href="#contato" class="hover:text-blue-400">Contato</a>
+      </nav>
 
-  <!-- Chat Box em tema dark -->
-  <div class="chat-box" id="chatBox">
-    <div class="chat-header">
-      <h5><i class="bi bi-robot"></i> Chat de Suporte</h5>
-      <button type="button" id="closeChat" aria-label="Fechar">
-        <i class="bi bi-x-lg"></i>
-      </button>
+      <!-- Botão/Hamburger p/ mobile -->
+      <div class="mobile-nav">
+        <button id="mobile-menu-button" class="text-white focus:outline-none">
+          <i class="fas fa-bars fa-lg"></i>
+        </button>
+      </div>
     </div>
-    <div class="chat-body" id="chatBody">
-      <!-- As mensagens serão adicionadas aqui via script -->
+
+    <!-- Menu mobile (inicialmente oculto) -->
+    <div id="mobile-menu" class="bg-gray-900 bg-opacity-80 backdrop-blur-lg border-t border-gray-800 w-full py-4 px-6 hidden">
+      <nav class="flex flex-col space-y-3">
+        <a href="#sobre" class="hover:text-blue-400">Sobre</a>
+        <a href="#skills" class="hover:text-blue-400">Skills</a>
+        <a href="#formacao" class="hover:text-blue-400">Formação</a>
+        <a href="#projetos" class="hover:text-blue-400">Projetos</a>
+        <a href="#experiencias" class="hover:text-blue-400">Experiências</a>
+        <a href="#empresas" class="hover:text-blue-400">Empresas</a>
+        <a href="#contato" class="hover:text-blue-400">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-20 text-center bg-gradient-to-b from-gray-950 to-gray-900">
+    <div class="max-w-3xl mx-auto">
+      <img
+        src="https://i.imgur.com/ljUhPUH.jpeg"
+        alt="Foto de Perfil"
+        class="w-48 h-48 rounded-full border-4 border-blue-500 mx-auto mb-4"
+      />
+      <h2 id="typewriter" class="text-4xl font-extrabold text-white cursor"></h2>
+      <p class="text-gray-400 mt-3">
+        Desenvolvedor Back-end Java | Spring | Spring Security | Spring Cloud | API REST | Microsserviços
+      </p>
+    </div>
+  </section>
+
+  <!-- Sobre -->
+  <section id="sobre" class="max-w-4xl mx-auto px-6 py-16">
+    <div class="glass p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-bold text-blue-400 mb-4">
+        <i class="fas fa-user mr-2"></i>Sobre Mim
+      </h3>
+      <p class="text-gray-300 leading-relaxed">
+        Sou desenvolvedor de software apaixonado por tecnologia. Tenho experiência em desenvolvimento de projetos reais, utilizando tecnologias como Java, Spring Boot, Spring Security, Spring Data JPA, Docker, MySQL, PostgreSQL e soluções em Cloud. Graduado em Tecnologia da Informação e Engenharia, dedico-me a criar soluções inovadoras que resolvem problemas e agregam valor às organizações.
+      </p>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills" class="max-w-6xl mx-auto px-6 py-16">
+    <div class="glass p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-bold text-blue-400 mb-6">
+        <i class="fas fa-cogs mr-2"></i>Skills
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 text-center">
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>Java</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>Spring Boot</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>MySQL</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>PostgreSQL</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>Docker</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/maven/maven-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>Maven</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>Git</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/intellij/intellij-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>IntelliJ</p>
+        </div>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" class="w-12 h-12 mx-auto"/>
+          <p>Spring Cloud</p>
+        </div>
+        <div>
+          <img src="https://www.javacodegeeks.com/wp-content/uploads/2014/07/spring-security-project.png" class="w-12 h-12 mx-auto" alt="Spring Security"/>
+          <p>Spring Security</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Formação Acadêmica -->
+  <section id="formacao" class="max-w-5xl mx-auto px-6 py-16">
+    <div class="glass p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-bold text-blue-400 mb-6">
+        <i class="fas fa-graduation-cap mr-2"></i>Formação Acadêmica
+      </h3>
+      <ul class="text-gray-300 space-y-6">
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://www.pucminas.br/Style%20Library/CENTRAL/img/brasao-pucminas.png"
+            alt="PUC Minas"
+            class="w-12 h-12 object-contain"
+          />
+          <div>
+            <strong>PUC Minas</strong><br />
+            <span class="text-sm text-gray-400">Pós-graduação em Arquitetura de Software Distribuído</span>
+          </div>
+        </li>
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Fiap-logo-novo.jpg"
+            alt="FIAP"
+            class="w-12 h-12 object-contain bg-white p-1 rounded"
+          />
+          <div>
+            <strong>FIAP</strong><br />
+            <span class="text-sm text-gray-400">Graduação em Engenharia de Software</span>
+          </div>
+        </li>
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl71flc7WkVUAO0a9-BleeAbL5RvWgRenvjnaVN1diMfAkL4gzvFgG-r9YoVX3pECx9xE&usqp=CAU"
+            alt="UniPaulistana"
+            class="w-12 h-12 object-contain"
+          />
+          <div>
+            <strong>Centro Universitário Paulistana - UniPaulistana</strong><br />
+            <span class="text-sm text-gray-400">mar de 2020 - dez de 2024</span><br />
+            Ensino Superior em Tecnologia da Informação. Competências desenvolvidas incluem: Java, Spring Boot, Spring Security, Spring Data JPA, Docker, MySQL, PostgreSQL, Cloud, JavaScript, CSS, HTML5, Defesa Cibernética, Inteligência de Ameaças Cibernéticas, Trabalho em equipe, Resolução de problemas, Gestão de Infraestrutura de TI.
+          </div>
+        </li>
+      </ul>
+
+      <h4 class="text-xl font-semibold text-blue-300 mt-10 mb-4">Outros Cursos</h4>
+      <ul class="space-y-4">
+        <li class="flex items-center space-x-4">
+          <img
+            src="https://media.licdn.com/dms/image/v2/C4D0BAQEG8qandFQNjw/company-logo_200_200/company-logo_200_200/0/1630550349647/impacta_tecnologia_logo?e=2147483647&v=beta&t=lTZIrVJJfuwsdskCCvyYiH3z1lx6yA9wt74tIw2C35c"
+            alt="Impacta"
+            class="w-8 h-8"
+          />
+          <span class="text-gray-300">Impacta Tecnologia — Curso de Business Process Management e Análise de Negócio (set de 2024)</span>
+        </li>
+        <li class="flex items-center space-x-4">
+          <img
+            src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+            alt="FIAP"
+            class="w-8 h-8"
+          />
+          <span class="text-gray-300">FIAP — Curso de Inteligência Artificial e Computacional (set de 2024)</span>
+        </li>
+        <li class="flex items-center space-x-4">
+          <img
+            src="https://crystalpng.com/wp-content/uploads/2025/01/johns-hopkins-university-logo-in-circle.png"
+            alt="Johns Hopkins"
+            class="w-8 h-8"
+          />
+          <span class="text-gray-300">Johns Hopkins University — Business Analytics with Excel: Advanced (jun de 2024)</span>
+        </li>
+        <li class="flex items-center space-x-4">
+          <img
+            src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+            alt="FIAP"
+            class="w-8 h-8"
+          />
+          <span class="text-gray-300">FIAP — Extensão em Business Intelligence (fev-mar de 2024)</span>
+        </li>
+        <li class="flex items-center space-x-4">
+          <img
+            src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+            alt="FIAP"
+            class="w-8 h-8"
+          />
+          <span class="text-gray-300">FIAP — Extensão em Java Fundamentos (jun de 2024)</span>
+        </li>
+      </ul>
+
+      <h4 class="text-xl font-semibold text-blue-300 mt-10 mb-4">Licenças e Certificados</h4>
+      <ul class="space-y-3">
+        <li class="space-y-2">
+          <div class="flex items-center space-x-4">
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAALVBMVEVHcEym91Cm91Cm+FCr/lIEAB8UFCKb5kwqOShQdTJkkzk+WS2T2kqDwkR6s0BGlMH7AAAAA3RSTlMAoqHHlonLAAAA0ElEQVQokY2SWxbDIAhEbeQlEPe/3KKxqbFNT+fH6M0gIClt+UZbSo871ug9y/lvyMwZ4DvcMSTK8AkBOgxVWCGoFHffCxLucIUAigZtdSK5OkFD9fiseFoHlLjpFYxQLzAXG3+3uFiuEJoy+14LES0wg6vQUcoHZOvHIqYuS9jIH6069/ALBKN3titkJDt79gWOPVSRNaHIMMPoTy8Fpjuj3RL5hCqFU0x4KkVwFBmm9jDocxNUTqgWmp1tPLjr1coZnoXMm9/Tdzvwv0d+S0+Olw0lTg6P6gAAAABJRU5ErkJggg=="
+              alt="Ada Tech"
+              class="w-8 h-8"
+            />
+            <span class="text-gray-300">MTA: HTML5 Application Development Fundamentals — dez de 2024 (Ada Tech)</span>
+          </div>
+          <p>
+            Emitido por Ada Tech<br>
+            Código da credencial: 94951422-23d0-8c05-1945-372aa4329dac<br>
+          </p>
+          <a
+            href="https://ada.tech/certificado?code=94951422-23d0-8c05-1945-372aa4329dac"
+            class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow inline-block"
+          >Exibir Credencial</a>
+        </li>
+        <li class="space-y-2">
+          <div class="flex items-center space-x-4">
+            <img
+              src="https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico"
+              alt="AWS"
+              class="w-8 h-8"
+            />
+            <span class="text-gray-300">AWS Academy Graduate - Machine Learning Foundations — nov de 2024 (Amazon)</span>
+          </div>
+          <p>
+            Emitido por Amazon Web Services (AWS)<br>
+          </p>
+          <a
+            href="https://www.credly.com/badges/3b53ec99-aa8f-4743-bbd7-38c9c02c531a/linked_in_profile"
+            class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow inline-block"
+          >Exibir Credencial</a>
+        </li>
+        <li class="space-y-2">
+          <div class="flex items-center space-x-4">
+            <img
+              src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+              alt="FIAP"
+              class="w-8 h-8"
+            />
+            <span class="text-gray-300">Cloud Fundamentals, Admin & Solution Architect — set de 2024 (FIAP)</span>
+          </div>
+          <p>
+            Emitido por FIAP<br>
+            Código da credencial: 050c024805090769fbe6638a4006a48c<br>
+          </p>
+          <a
+            href="https://on.fiap.com.br/pluginfile.php/1/local_nanocourses/certificado_nanocourse/124684/050c024805090769fbe6638a4006a48c/certificado.png"
+            class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow inline-block"
+          >Exibir Credencial</a>
+        </li>
+        <li class="space-y-2">
+          <div class="flex items-center space-x-4">
+            <img
+              src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+              alt="FIAP"
+              class="w-8 h-8"
+            />
+            <span class="text-gray-300">Business Intelligence (BI) — ago de 2024 (FIAP)</span>
+          </div>
+          <p>
+            Emitido por FIAP<br>
+            Código da credencial: 47fab227dc4408af5ed19b12652d4179<br>
+          </p>
+          <a
+            href="https://on.fiap.com.br/pluginfile.php/1/local_nanocourses/certificado_nanocourse/122346/47fab227dc4408af5ed19b12652d4179/certificado.png"
+            class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow inline-block"
+          >Exibir Credencial</a>
+        </li>
+        <li class="space-y-2">
+          <div class="flex items-center space-x-4">
+            <img
+              src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+              alt="FIAP"
+              class="w-8 h-8"
+            />
+            <span class="text-gray-300">Gestão de Infraestrutura de TI — jun de 2024 (FIAP)</span>
+          </div>
+          <p>
+            Emitido por FIAP<br>
+            Código da credencial: 17ace950fa91cf33e8bd74d55cfb3de1<br>
+          </p>
+          <a
+            href="https://on.fiap.com.br/pluginfile.php/1/local_nanocourses/certificado_nanocourse/117266/17ace950fa91cf33e8bd74d55cfb3de1/certificado.png"
+            class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow inline-block"
+          >Exibir Credencial</a>
+        </li>
+        <li class="space-y-2">
+          <div class="flex items-center space-x-4">
+            <img
+              src="https://media.licdn.com/dms/image/v2/C4D0BAQFGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1631312349936?e=2147483647&v=beta&t=2cxZo7IPlpqVmRsvk_tS2TYDHSqh8Q3SlFYcLW9nlVc"
+              alt="FIAP"
+              class="w-8 h-8"
+            />
+            <span class="text-gray-300">Java Fundamentos — jun de 2024 (FIAP)</span>
+          </div>
+          <p>
+            Emitido por FIAP<br>
+            Código da credencial: bc33b171469a2cdad4a78bb1a1d829da<br>
+          </p>
+          <a
+            href="https://on.fiap.com.br/pluginfile.php/1/local_nanocourses/certificado_nanocourse/117716/bc33b171469a2cdad4a78bb1a1d829da/certificado.png"
+            class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow inline-block"
+          >Exibir Credencial</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Projetos -->
+  <section id="projetos" class="max-w-6xl mx-auto px-6 py-16">
+    <h3 class="text-2xl font-bold text-blue-400 mb-6 text-center">
+      <i class="fas fa-laptop-code mr-2"></i>Projetos
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Projeto 1: Evolua suas Finanças -->
+      <div class="glass p-4 rounded-lg glow">
+        <h4 class="text-lg font-semibold">Evolua suas Finanças</h4>
+        <img
+          src="https://i.ibb.co/r7rQBQF/Evolua-suas-finan-as.png"
+          alt="Evolua suas Finanças"
+          class="w-full h-auto mb-2 rounded"
+        />
+        <p class="text-gray-300">
+          Evolua suas Finanças é um software de controle financeiro pessoal, desenvolvido por mim em 6 meses, usando Java Spring Boot, Spring Security, MySQL, JUnit, Docker e Bootstrap. O sistema foi feito deploy e entregue ao cliente Claudio Munhoz, proprietário do site Evolua Suas Finanças, oferecendo uma solução segura, eficiente e moderna para gerenciamento financeiro.
+        </p>
+      </div>
+
+      <!-- Projeto 2: Clockin ERP -->
+      <div class="glass p-4 rounded-lg glow">
+        <h4 class="text-lg font-semibold">Clockin ERP</h4>
+        <img
+          src="https://i.imgur.com/NVGrSJa.png"
+          alt="Clockin ERP"
+          class="w-full h-auto mb-2 rounded"
+        />
+        <p class="text-gray-300">
+          Clockin ERP é um software desenvolvido por mim, em
+          colaboração com a equipe da Nexus Soluções & Tecnologia, focado em gestão de
+          ponto eletrônico e Recursos Humanos. A solução integra funcionalidades para
+          controle de jornada, gestão de colaboradores e geração de relatórios, otimizando
+          processos e garantindo eficiência para empresas de diversos portes.
+        </p>
+      </div>
+
+      <!-- Projeto 3: CNPJ NexOnAI -->
+      <div class="glass p-4 rounded-lg glow">
+        <h4 class="text-lg font-semibold">CNPJ NexOnAI</h4>
+        <img
+          src="https://i.ibb.co/nB6zqYD/Design-sem-nome.png"
+          alt="CNPJ NexOnAI"
+          class="w-full h-auto mb-2 rounded"
+        />
+        <p class="text-gray-300">
+          CNPJ NexOnAI é um software desenvolvido por mim para a Nexus Soluções e Tecnologia, focado na captação eficiente de CNPJs em massa. O sistema oferece filtros avançados, como nome, região e porte da empresa, otimizando a coleta e segmentação de dados para estratégias de negócios, combinando tecnologia de ponta com praticidade.
+        </p>
+      </div>
+
+      <!-- Projeto 4: BelezaVip -->
+      <div class="glass p-4 rounded-lg glow">
+        <h4 class="text-lg font-semibold">BelezaVip</h4>
+        <img
+          src="https://i.imgur.com/tZI261W.png"
+          alt="BelezaVip"
+          class="w-full h-auto mb-2 rounded"
+        />
+        <p class="text-gray-300">
+          BelezaVip é um software desenvolvido em dois meses, em parceria com minha turma da faculdade, para resolver um problema real de um cliente. A solução foi projetada para atender às necessidades do setor de beleza, oferecendo funcionalidades como agendamento de serviços, venda de produtos, gestão de filas e geração de relatórios detalhados. O projeto combina eficiência e praticidade, ajudando o cliente a otimizar processos e melhorar a experiência dos usuários.
+        </p>
+      </div>
+
+      <!-- Projeto 5: Projeto Rebouças -->
+      <div class="glass p-4 rounded-lg glow">
+        <h4 class="text-lg font-semibold">Projeto Rebouças</h4>
+        <img
+          src="https://www.vibraenergia.com.br/sites/default/files/2023-05/slider-home-1_0-c.jpg"
+          alt="Projeto Rebouças"
+          class="w-full h-auto mb-2 rounded"
+        />
+        <p class="text-gray-300">
+          Projeto liderado por mim na BR Petrobras (atual Vibra Energia). Foi um grande sucesso, gerando lucros de mais de 120 milhões de reais. 
+          Mais de 130 postos de combustíveis foram prospectados através de pesquisa, mapeamento e tratamento de dados, garantindo 
+          <strong>assertividade na busca pelo cliente</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experiências -->
+  <section id="experiencias" class="max-w-5xl mx-auto px-6 py-16">
+    <div class="glass p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-bold text-blue-400 mb-6">
+        <i class="fas fa-briefcase mr-2"></i>Experiências
+      </h3>
+      <ul class="text-gray-300 space-y-6">
+        <!-- Mercado Livre -->
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://i.ibb.co/DPVdYtFf/pngwing-com.png"
+            alt="Mercado Livre"
+            class="w-12 h-12 object-contain"
+          />
+          <div>
+            <strong>Mercado Livre</strong><br />
+            <span class="text-sm text-gray-400">Engenheiro de software</span><br />
+            <span class="text-sm text-gray-400">Atual</span>
+          </div>
+        </li>
+        <!-- Nexus Soluções & Tecnologia (Experiência) -->
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://i.imgur.com/shcgISi.png"
+            alt="Nexus Soluções & Tecnologia"
+            class="w-12 h-12 object-contain"
+          />
+          <div>
+            <strong>Nexus Soluções & Tecnologia</strong><br />
+            <span class="text-sm text-gray-400">Desenvolvedor Java</span><br />
+            <span class="text-sm text-gray-400">abr de 2024 - jan de 2025 · 10 meses</span>
+          </div>
+        </li>
+        <!-- Sercom -->
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://media.licdn.com/dms/image/v2/D4D0BAQGGUHRJ26bFDw/company-logo_200_200/company-logo_200_200/0/1727869568821/sercomoficial_logo?e=2147483647&v=beta&t=i-ez1Tsr0_cjUIt-twNsKTdRl9SU5o7ji7vhNOY-EZg"
+            alt="Sercom"
+            class="w-12 h-12 object-contain"
+          />
+          <div>
+            <strong>Sercom</strong><br />
+            <span class="text-sm text-gray-400">Analista de Back Office</span><br />
+            <span class="text-sm text-gray-400">1 ano e 11 meses</span>
+          </div>
+        </li>
+        <!-- Vibra Energia -->
+        <li class="flex items-start space-x-4">
+          <img
+            src="https://play-lh.googleusercontent.com/vqQyl9bFXexpWskLGsJM8kFi1606QvnKbYJPEvWKjH8EVdW6tn5PfcE2fRxq5kciKqA"
+            alt="Vibra Energia"
+            class="w-12 h-12 object-contain"
+          />
+          <div>
+            <strong>Vibra Energia</strong><br />
+            <span class="text-sm text-gray-400">Analista de Pesquisa</span><br />
+            <span class="text-sm text-gray-400">1 ano e 9 meses</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+<!-- Minhas Empresas -->
+<section id="empresas" class="max-w-5xl mx-auto px-4 py-12">
+  <div class="glass p-6 rounded-lg shadow-lg">
+    <h3 class="text-2xl font-bold text-blue-400 mb-8 text-center">
+      <i class="fas fa-building mr-2"></i>Minhas Empresas
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Nexus Soluções & Tecnologia Card -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+        <div class="p-4 flex items-center space-x-4 border-b border-gray-700">
+          <img src="https://i.imgur.com/shcgISi.png" alt="Nexus Soluções & Tecnologia" class="w-14 h-14 object-contain rounded-full">
+          <div>
+            <h4 class="text-lg font-semibold text-white">Nexus Soluções & Tecnologia</h4>
+            <p class="text-xs sm:text-sm text-gray-400">Desenvolvimento de software</p>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs sm:text-sm text-gray-400 mb-3"><strong>CNPJ:</strong> 56.309.584/0001-36</p>
+          <!-- Container responsivo para o mapa -->
+          <div class="relative w-full pb-[56.25%]">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2852.0754548614823!2d-46.68913332578666!3d-23.577378762178682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce57a79b9be4a7%3A0x27a0854885f3ca93!2sNexus%20Solu%C3%A7%C3%B5es%20%26%20Tecnologia!5e1!3m2!1spt-BR!2sbr!4v1744237499617!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Evols Inteligência Financeira Card -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+        <div class="p-4 flex items-center space-x-4 border-b border-gray-700">
+          <div class="w-14 h-14 flex items-center justify-center bg-gray-700 rounded-full">
+            <i class="fas fa-building text-2xl text-blue-400"></i>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-white">Evols Inteligência Financeira</h4>
+            <p class="text-xs sm:text-sm text-gray-400">Soluções financeiras</p>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs sm:text-sm text-gray-400 mb-3"><strong>CNPJ:</strong> 98.765.432/0001-09</p>
+          <!-- Container responsivo para o mapa -->
+          <div class="relative w-full pb-[56.25%]">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3656.849666247836!2d-46.65391228453338!3d-23.564023584682155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59d91c153997%3A0xaabbccddeeff0011!2sRua%20da%20Consola%C3%A7%C3%A3o%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1614792749730!5m2!1spt-BR!2sbr" 
+              class="absolute inset-0 w-full h-full rounded-lg" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Contato -->
+  <section id="contato" class="max-w-4xl mx-auto px-6 py-16">
+    <div class="glass p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl font-bold text-blue-400 mb-6">
+        <i class="fas fa-envelope mr-2"></i>Contato
+      </h3>
+      <p class="text-gray-300 mb-4">
+        Entre em contato através das redes sociais ou envie um e-mail.
+      </p>
+      <div class="flex space-x-4 text-2xl">
+        <a href="https://www.linkedin.com/in/evandersoncsm/" class="text-blue-400 hover:text-blue-600">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-pink-500 hover:text-pink-700">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <!-- Mensagem automática no WhatsApp -->
+        <a 
+          href="https://wa.me/5511994842804?text=Oi%20Evanderson%2C%20vim%20do%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar%21" 
+          target="_blank" 
+          class="text-green-400 hover:text-green-600"
+        >
+          <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="mailto:seuemail@dominio.com" class="text-gray-300 hover:text-white">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer class="text-center py-6 text-gray-500 border-t border-gray-800">
+    <p>&copy; 2025 Evanderson. Todos os direitos reservados.</p>
+  </footer>
+
+  <!-- Chatbot -->
+  <div id="chatbot">
+    <div id="chatbot-header" onclick="toggleChatbot()">
+      <span>Chatbot</span>
+      <i id="chatbot-toggle" class="fas fa-chevron-down"></i>
+    </div>
+    <div id="chatbot-body">
+      <p><strong>Olá!</strong></p>
+      <p>Bem-vindo ao meu portfólio. Posso ajudar com informações sobre meus projetos, formação, skills e muito mais.</p>
+      <p>Como posso ajudar você hoje?</p>
+    </div>
+    <div id="chatbot-input-area">
+      <input type="text" id="chatbot-input" placeholder="Digite aqui..." />
+      <button id="chatbot-send">Enviar</button>
     </div>
   </div>
 
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script para efeito de digitação, chatbot e menu mobile -->
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const notificationButton = document.getElementById("notificationButton");
-      const chatBox = document.getElementById("chatBox");
-      const closeChat = document.getElementById("closeChat");
-      const chatBody = document.getElementById("chatBody");
+    document.addEventListener("DOMContentLoaded", function () {
+      // Efeito de digitação no Hero
+      const text = "Olá, eu sou Evanderson";
+      const typewriterElement = document.getElementById("typewriter");
+      let i = 0;
+      const speed = 100;
 
-      // Data fixa do pagamento (definida para 25/03/2025)
-      const paymentDate = new Date("2025-03-25T00:00:00");
-
-      // Função para retornar o rótulo correto ("hoje" ou "ontem") de forma alternada
-      function getPaymentDayLabel() {
-        const today = new Date();
-        const diffTime = today - paymentDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        return (diffDays % 2 === 0) ? "hoje" : "ontem";
+      function typeWriter() {
+        if (i < text.length) {
+          typewriterElement.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typeWriter, speed);
+        }
       }
+      typeWriter();
 
-      // Fecha o chat ao clicar no botão de fechar
-      closeChat.addEventListener("click", function() {
-        chatBox.style.display = "none";
+      // Controle do menu mobile
+      const mobileMenuButton = document.getElementById("mobile-menu-button");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      mobileMenuButton.addEventListener("click", () => {
+        if (mobileMenu.classList.contains("hidden")) {
+          mobileMenu.classList.remove("hidden");
+        } else {
+          mobileMenu.classList.add("hidden");
+        }
       });
 
-      // Função para adicionar mensagem com efeito de digitação letra por letra
-      function typeMessage(message, callback) {
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("chat-message", "received");
-        chatBody.appendChild(messageElement);
-        let index = 0;
-        const interval = setInterval(() => {
-          messageElement.innerHTML = `<i class="bi bi-robot me-1"></i><strong>Robô:</strong> ` + message.slice(0, index);
-          index++;
-          chatBody.scrollTop = chatBody.scrollHeight;
-          if (index > message.length) {
-            clearInterval(interval);
-            if (callback) callback();
-          }
-        }, 50);
-      }
+      // Chatbot
+      const chatbotBody = document.getElementById("chatbot-body");
+      const chatbotInput = document.getElementById("chatbot-input");
+      const chatbotSend = document.getElementById("chatbot-send");
+      let typingIndicator;
 
-      // Função para exibir a mensagem informando sobre a alteração de nome de usuário e foto
-      function showUserInfoMessage(callback) {
-        const infoMessage = document.createElement("div");
-        infoMessage.classList.add("chat-message", "received");
-        infoMessage.innerHTML = `<i class="bi bi-info-circle me-1"></i><strong>Aviso:</strong> Agora você pode alterar o nome de usuário e a foto.`;
-        chatBody.appendChild(infoMessage);
-        chatBody.scrollTop = chatBody.scrollHeight;
-        setTimeout(() => {
-          if (callback) callback();
-        }, 1500);
-      }
-
-      // Função para exibir um vídeo MP4 da tela do computador no chat
-      function showVideo() {
-        // Cria o elemento para o vídeo
-        const videoContainer = document.createElement("div");
-        videoContainer.classList.add("chat-message", "received");
-        videoContainer.innerHTML = `
-          <video controls style="width:100%; border-radius:16px;">
-            <source src="https://i.imgur.com/2gGLuZz.mp4" type="video/mp4">
-            Seu navegador não suporta o elemento de vídeo.
-          </video>
-        `;
-        chatBody.appendChild(videoContainer);
-        chatBody.scrollTop = chatBody.scrollHeight;
-      }
-
-      // Cria e exibe a saudação de acordo com o horário atual no chat
-      function showGreeting(callback) {
-        const now = new Date();
-        const hour = now.getHours();
-        let greetingText = "";
-        if (hour < 12) {
-          greetingText = "Bom dia!";
-        } else if (hour < 18) {
-          greetingText = "Boa tarde!";
-        } else {
-          greetingText = "Boa noite!";
-        }
-        typeMessage(greetingText, callback);
-      }
-
-      // Monta as mensagens informativas dinâmicas
-      const mensagemAtualizacao = `Última atualização em 09/04 às 19:06.`;
-      const mensagemValor = `Confira as novas atualizações na área de previsões para Abril.`;
-
-      const informMessages = [
-        mensagemAtualizacao,
-        mensagemValor,
-        "Previsão de gastos para Abril: R$ 5.615.717,22",
-        "Previsão de pagameto para próxima semana: R$ 1.432.358,51",
-        "Previsão de pagamento para 10/04: R$ 491.347,72",
-        "Valor pago em 09/04: R$ 381.361,23",
-        "Para mais informações contate o time de TI."
+      const botResponses = [
+        "Interessante! Conte-me mais.",
+        "Claro! Como posso te ajudar?",
+        "Ótimo, estou aqui para tirar suas dúvidas.",
+        "Pode me dizer em que área específica você tem interesse?",
+        "Entendi. Quer saber algo sobre minhas Skills ou Formação?"
       ];
 
-      // Exibe as mensagens informativas com intervalos entre elas
-      function showInformativeMessages(index = 0) {
-        if (index < informMessages.length) {
-          const typingIndicator = document.createElement("div");
-          typingIndicator.classList.add("typing-indicator");
-          typingIndicator.innerText = "Robô está digitando...";
-          chatBody.appendChild(typingIndicator);
-          chatBody.scrollTop = chatBody.scrollHeight;
+      const quickReplies = ["Skills", "Formação", "Projetos", "Contato", "Experiências"];
+
+      function typeText(element, text, index = 0) {
+        if (index < text.length) {
+          element.innerHTML += text.charAt(index);
           setTimeout(() => {
-            chatBody.removeChild(typingIndicator);
-            typeMessage(informMessages[index], function() {
-              setTimeout(() => {
-                showInformativeMessages(index + 1);
-              }, 1000);
-            });
-          }, 1500);
+            typeText(element, text, index + 1);
+          }, 40);
         }
       }
 
-      // Exibe o chat automaticamente e inicia com a saudação, exibe a mensagem de alteração de usuário e foto, o vídeo e depois as mensagens informativas
-      chatBox.style.display = "flex";
-      showGreeting(function() {
-        showUserInfoMessage(function() {
-          showVideo();
-          showInformativeMessages();
+      function showTypingIndicator() {
+        typingIndicator = document.createElement("p");
+        typingIndicator.id = "typing-indicator";
+        typingIndicator.textContent = "Bot está digitando...";
+        chatbotBody.appendChild(typingIndicator);
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+        if (typingIndicator) {
+          chatbotBody.removeChild(typingIndicator);
+          typingIndicator = null;
+        }
+      }
+
+      function appendUserMessage(message) {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>Você:</strong> ${message}`;
+        chatbotBody.appendChild(p);
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      }
+
+      function appendBotMessage(text) {
+        const p = document.createElement("p");
+        p.innerHTML = "<strong>Bot:</strong> ";
+        chatbotBody.appendChild(p);
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+        const span = document.createElement("span");
+        p.appendChild(span);
+        typeText(span, text);
+      }
+
+      function appendChatOptions(options) {
+        const div = document.createElement("div");
+        div.classList.add("chat-options");
+
+        options.forEach((option) => {
+          const btn = document.createElement("button");
+          btn.classList.add("chat-option-btn");
+          btn.textContent = option;
+          btn.addEventListener("click", () => {
+            appendUserMessage(option);
+            handleBotReply(option);
+          });
+          div.appendChild(btn);
         });
+
+        chatbotBody.appendChild(div);
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      }
+
+      function handleUserMessage() {
+        const message = chatbotInput.value.trim();
+        if (message !== "") {
+          appendUserMessage(message);
+          chatbotInput.value = "";
+          handleBotReply(message);
+        }
+      }
+
+      function handleBotReply(userMsg) {
+        let response = botResponses[Math.floor(Math.random() * botResponses.length)];
+
+        if (/skills/i.test(userMsg)) {
+          response = "Minhas skills incluem Java, Spring Boot, Spring Security, Docker, MySQL, etc.";
+        } else if (/formação/i.test(userMsg)) {
+          response = "Sou graduado e pós-graduando em áreas de tecnologia e engenharia de software.";
+        } else if (/projetos/i.test(userMsg)) {
+          response = "Meus projetos incluem Evolua suas Finanças, Clockin ERP, CNPJ NexOnAI, BelezaVip e Projeto Rebouças.";
+        } else if (/contato/i.test(userMsg)) {
+          response = "Para entrar em contato, você pode usar LinkedIn, Instagram, WhatsApp ou me enviar um e-mail.";
+        } else if (/experiências/i.test(userMsg)) {
+          response = "Tenho experiência com desenvolvimento Java Back-end, microsserviços, ERP, arquitetura limpa e muito mais.";
+        }
+
+        showTypingIndicator();
+        setTimeout(() => {
+          hideTypingIndicator();
+          appendBotMessage(response);
+          setTimeout(() => {
+            appendChatOptions(quickReplies);
+          }, 500);
+        }, 1000);
+      }
+
+      chatbotSend.addEventListener("click", handleUserMessage);
+      chatbotInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          handleUserMessage();
+        }
       });
 
-      // Reabre o chat se estiver fechado ao clicar no ícone
-      notificationButton.addEventListener("click", function() {
-        chatBox.style.display = "flex";
-      });
+      setTimeout(() => {
+        appendChatOptions(quickReplies);
+      }, 800);
     });
+
+    function toggleChatbot() {
+      const body = document.getElementById("chatbot-body");
+      const toggleIcon = document.getElementById("chatbot-toggle");
+      const inputArea = document.getElementById("chatbot-input-area");
+
+      if (body.style.display === "none") {
+        body.style.display = "block";
+        inputArea.style.display = "flex";
+        toggleIcon.classList.remove("fa-chevron-up");
+        toggleIcon.classList.add("fa-chevron-down");
+      } else {
+        body.style.display = "none";
+        inputArea.style.display = "none";
+        toggleIcon.classList.remove("fa-chevron-down");
+        toggleIcon.classList.add("fa-chevron-up");
+      }
+    }
   </script>
 </body>
 </html>
