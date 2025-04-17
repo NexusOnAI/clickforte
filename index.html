@@ -4,150 +4,86 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" /> <title>ClickForte | Financeiro (Light)</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>ClickForte | Financeiro (Light V3)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <style>
-    /* Reset e ajustes para iOS e demais dispositivos móveis */
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: -webkit-fill-available;
-      -webkit-text-size-adjust: 100%;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
+    /* Estilos base e específicos (incluindo .nav-link.active, .submenu, scrollbars, etc.) */
+    html, body { margin: 0; padding: 0; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: Inter, sans-serif; }
+    body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+    html { height: -webkit-fill-available; scroll-behavior: smooth; }
+    @media (max-width: 768px) { .h-screen { height: calc(var(--vh, 1vh) * 100); } }
+    iframe { box-shadow: none; background-color: #ffffff; border: none; width: 100%; height: 100%; display: block; }
+    :focus-visible { outline: 2px solid rgb(59 130 246 / 0.5); outline-offset: 2px; }
+    button:focus, a:focus, input:focus { outline: none; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background-color: #a1a1aa; border-radius: 9999px; border: 2px solid #f4f4f5; }
+    ::-webkit-scrollbar-track { background-color: #f4f4f5; border-radius: 9999px; }
+    #profileHeader { padding-top: calc(env(safe-area-inset-top) + 0.75rem); padding-bottom: 0.75rem; position: sticky; top: 0; z-index: 30; background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #e5e7eb; }
+    #transitionScreen { position: fixed; inset: 0; background: #ffffff; z-index: 60; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.3s ease-in-out; } /* Mantido para referência, mas substituído pelo welcomeScreen */
+
+    /* Tela de Boas-Vindas (NOVO) */
+    #welcomeScreen {
+        position: fixed; inset: 0; background: #ffffff; z-index: 70; /* Z-index maior */
+        display: none; /* Começa oculta */
+        align-items: center; justify-content: center; flex-direction: column;
+        opacity: 0; /* Começa invisível para transição */
+        transition: opacity 0.5s ease-in-out; /* Transição suave */
     }
-    body {
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
-    }
-    html {
-      height: -webkit-fill-available;
-    }
-    /* Ajuste para o h-screen no mobile usando a variável --vh */
-    @media (max-width: 768px) {
-      .h-screen {
-        height: calc(var(--vh, 1vh) * 100);
-      }
-    }
-    /* Estilo para o iframe: fundo branco e sem bordas */
-    iframe {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra mais sutil */
-      background-color: #ffffff;
-      border: none;
-      width: 100%;
-      height: 100%;
-    }
-    /* Remover outline padrão ao focar */
-    button:focus, a:focus, input:focus {
-      outline: none;
-      box-shadow: none;
-    }
-    /* Foco visível personalizado com Tailwind (anel azul) */
-    input:focus-visible, button:focus-visible, a:focus-visible {
-      outline: 2px solid transparent;
-      outline-offset: 2px;
-      --tw-ring-color: rgb(59 130 246 / 0.5); /* Cor do anel de foco */
-      box-shadow: 0 0 0 2px var(--tw-ring-color);
+    #welcomeScreen.visible {
+        display: flex; /* Torna visível */
+        opacity: 1; /* Torna opaco */
     }
 
-    /* Estilo para barras de rolagem (Webkit) - Tema Claro */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1; /* Cinza claro */
-      border-radius: 9999px;
-      border: 2px solid #f8fafc; /* Cor de fundo do track */
-    }
-    ::-webkit-scrollbar-track {
-      background-color: #f8fafc; /* Cinza bem claro / quase branco */
-      border-radius: 9999px;
-    }
-    /* Ajuste para header mobile no iPhone com notch */
-    #profileHeader {
-      padding-top: calc(env(safe-area-inset-top) + 1rem);
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      /* Fundo branco semi-transparente com desfoque */
-      background-color: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-bottom: 1px solid #e5e7eb; /* Borda cinza clara */
-    }
-    /* Tela de Transição */
-    #transitionScreen {
-      position: fixed; inset: 0; background: #ffffff; z-index: 60;
-      display: none; align-items: center; justify-content: center; flex-direction: column;
-      transition: opacity 0.3s ease-in-out;
-    }
-    /* Estilo para link ativo na sidebar - Tema Claro */
-    .nav-link.active {
-      background-color: #eff6ff; /* Fundo azul bem claro */
-      color: #2563eb; /* Texto azul escuro */
-      font-weight: 600;
-    }
-    .nav-link.active i {
-      color: #2563eb; /* Ícone azul escuro */
-    }
-    /* Ajuste para submenu */
-    .submenu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease-in-out;
-    }
-    .submenu-visible {
-      max-height: 500px; /* Altura máxima para comportar os itens */
-    }
-
-    /* Animação de Shake para erro de login (opcional) */
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-1px, 0, 0); }
-      20%, 80% { transform: translate3d(2px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
-      40%, 60% { transform: translate3d(3px, 0, 0); }
-    }
+    /* Link ativo e submenu (mantidos) */
+    .nav-link.active { background-color: #e0f2fe; color: #0369a1; font-weight: 500; border-left: 4px solid #0ea5e9; padding-left: calc(0.625rem + 4px); }
+    .nav-link.active i { color: #0ea5e9; }
+    .submenu .nav-link.active { border-left: none; padding-left: 0.5rem; background-color: #f0f9ff; }
+    .submenu { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; }
+    .submenu-visible { max-height: 500px; }
+    @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
     .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    /* Classe para texto menor (exemplo) */
+    .text-xs\+ { font-size: 0.8125rem; /* 13px */ line-height: 1.25rem; /* 20px */ }
 
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen overflow-y-auto text-gray-800 font-sans">
+<body class="bg-gray-50 min-h-screen overflow-y-auto text-gray-700 antialiased">
 
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-cover bg-center" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
-    <div class="absolute inset-0 bg-black opacity-60"></div> <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 sm:p-8 text-gray-800">
-      <div class="text-center mb-6">
-        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo ClickForte" class="mx-auto h-16 w-auto" />
+  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-gray-100">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+      <div class="text-center mb-8">
+        <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-12 w-auto" />
       </div>
-      <h3 class="text-center text-2xl font-semibold text-gray-800 mb-2">Acesso Restrito</h3>
-      <p class="text-center text-gray-500 text-sm mb-6">Faça login para continuar</p>
-      <div id="logoutNotification" class="hidden mb-4 p-3 text-sm text-yellow-800 bg-yellow-100 border border-yellow-200 rounded text-center">Você foi desconectado!</div>
-      <div id="loginError" class="hidden mb-4 p-3 text-sm text-red-800 bg-red-100 border border-red-200 rounded text-center"></div>
-      <form id="formLogin" novalidate>
-        <div class="mb-4">
-          <label for="username" class="block text-gray-700 mb-1 text-sm font-medium">Usuário</label>
-          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" />
+      <h2 class="text-center text-2xl font-semibold text-gray-900 mb-2">Bem-vindo de volta!</h2>
+      <p class="text-center text-gray-500 text-sm mb-6">Faça login para acessar seu painel.</p>
+      <div id="logoutNotification" class="hidden mb-4 p-3 text-sm text-yellow-800 bg-yellow-100 border border-yellow-200 rounded-md text-center">Você foi desconectado!</div>
+      <div id="loginError" class="hidden mb-4 p-3 text-sm text-red-800 bg-red-100 border border-red-200 rounded-md text-center"></div>
+      <form id="formLogin" novalidate class="space-y-5">
+        <div>
+          <label for="username" class="block text-gray-700 mb-1.5 text-sm font-medium">Usuário</label>
+          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 placeholder-gray-400" />
         </div>
-        <div class="mb-4">
-          <label for="password" class="block text-gray-700 mb-1 text-sm font-medium">Senha</label>
+        <div>
+          <label for="password" class="block text-gray-700 mb-1.5 text-sm font-medium">Senha</label>
           <div class="relative">
-            <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10" />
-            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700" aria-label="Mostrar senha">
-              <i class="bi bi-eye-slash"></i>
+            <input type="password" id="password" placeholder="Digite sua senha" required class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10 placeholder-gray-400" />
+            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-600" aria-label="Mostrar senha">
+              <i class="bi bi-eye-slash text-lg"></i>
             </button>
           </div>
         </div>
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between text-sm">
           <div class="flex items-center">
             <input type="checkbox" id="rememberMe" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-            <label for="rememberMe" class="ml-2 block text-sm text-gray-700">Lembrar meus dados</label>
+            <label for="rememberMe" class="ml-2 block text-gray-600">Lembrar meus dados</label>
           </div>
-          <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Esqueceu a senha?</a>
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-700">Esqueceu a senha?</a>
         </div>
-        <button type="submit" id="loginButton" class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-md hover:shadow-lg transform transition hover:from-blue-700 hover:to-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed">
+        <button type="submit" id="loginButton" class="w-full py-3 px-4 rounded-md font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
           <span class="button-text">Entrar</span>
           <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span>
         </button>
@@ -155,164 +91,122 @@
     </div>
   </div>
 
-  <div id="transitionScreen">
-    <img src="https://cdn.shopify.com/s/files/1/0644/0094/9484/files/delivery-truck-loading-exporting-v2_beae1ef9-38d5-4aa6-8af8-27ce59b0e86c.gif" alt="Carregando..." class="w-48 h-auto mb-4" />
-    <p class="text-xl font-semibold text-gray-700">Bem-vindo!</p>
-    <p class="text-gray-500">Acessando seu painel...</p>
+  <div id="welcomeScreen">
+      <div class="text-center">
+          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-16 w-auto mb-6 animate-pulse" /> <h2 class="text-2xl font-semibold text-gray-800 mb-2">Bem-vindo(a)!</h2>
+          <p class="text-gray-500" id="welcomeUserName">Carregando seu painel...</p> </div>
   </div>
 
   <div id="dashboard" class="hidden flex flex-col min-h-screen">
-
-    <header id="profileHeader" class="md:hidden flex justify-between items-center p-4 text-gray-700">
-      <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-gray-600 hover:text-blue-600" aria-label="Abrir menu">
-        <i class="bi bi-list text-2xl"></i>
-      </button>
-      <div class="flex items-center cursor-pointer" onclick="openProfileModal()">
-        <span id="profileNameHeader" class="font-semibold mr-3 hidden sm:inline text-gray-700">Nome do Usuário</span>
-        <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-white ring-blue-500" />
-      </div>
+    <header id="profileHeader" class="md:hidden flex justify-between items-center px-4 shadow-sm">
+       <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-full" aria-label="Abrir menu"> <i class="bi bi-list text-xl"></i> </button>
+       <div class="flex items-center cursor-pointer group" onclick="openProfileModal()">
+           <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-gray-700 group-hover:text-blue-600 transition-colors duration-150">Nome do Usuário</span>
+           <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-white ring-blue-500 group-hover:ring-blue-600 transition-all duration-150" />
+       </div>
     </header>
 
     <div class="flex flex-1 overflow-hidden">
+       <nav class="hidden md:flex flex-col bg-white text-gray-600 w-64 shadow-sm h-screen sticky top-0 border-r border-gray-200">
+           <div class="p-5 flex flex-col items-center border-b border-gray-200 h-[60px] justify-center"> <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-9 w-auto" />
+           </div>
+           <div class="overflow-y-auto flex-grow p-3 space-y-1">
+               <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span> </a>
+               <a href="#" onclick="loadPage('integracao.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Integração</span> </a>
+               <div class="nav-item">
+                   <button onclick="toggleSubmenu('desktopPrevisaoSubmenu', 'desktopPrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 w-full text-left"> <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Previsão</span></span> <i id="desktopPrevisaoIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i> </button>
+                   <div id="desktopPrevisaoSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-gray-200">
+                       <a href="#" onclick="loadPage('previsao_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Abril</a>
+                       <a href="#" onclick="loadPage('previsao_maio.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Maio</a>
+                       <a href="#" onclick="loadPage('previsao_dezembro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Dezembro</a>
+                   </div>
+               </div>
+               <div class="nav-item">
+                   <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 w-full text-left"> <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span> <i id="desktopGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i> </button>
+                   <div id="desktopGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-gray-200">
+                       <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Janeiro</a>
+                       <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Fevereiro</a>
+                       <a href="#" onclick="loadPage('sub_dezembro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Dezembro</a>
+                   </div>
+               </div>
+               <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span> </a>
+           </div>
+           <div class="mt-auto p-3 border-t border-gray-200">
+               <div class="flex items-center gap-3 cursor-pointer group p-2 rounded-md hover:bg-gray-100" onclick="openProfileModal()">
+                   <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-9 h-9 rounded-full object-cover transition-transform duration-200 group-hover:scale-105 ring-1 ring-gray-200 group-hover:ring-blue-400" />
+                   <div>
+                       <span id="sidebarProfileName" class="font-medium text-sm text-gray-800 block group-hover:text-blue-600 transition-colors duration-150">Nome do Usuário</span>
+                       <span class="text-xs text-gray-500">Ver Perfil</span>
+                   </div>
+                   <button onclick="logout(); event.stopPropagation();" class="ml-auto text-gray-400 hover:text-red-600 hover:bg-red-100 p-1.5 rounded-full transition-colors duration-150" aria-label="Sair"> <i class="bi bi-box-arrow-right text-base"></i> </button>
+               </div>
+           </div>
+       </nav>
 
-      <nav class="hidden md:flex flex-col bg-white text-gray-600 w-64 shadow-md h-screen sticky top-0 border-r border-gray-200">
-        <div class="p-5 flex flex-col items-center border-b border-gray-200">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto mb-4 max-w-[130px]" />
-          <h2 class="text-lg font-semibold text-gray-700">Menu Principal</h2>
-        </div>
-        <div class="overflow-y-auto flex-grow p-4 space-y-1">
-          <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
-            <i class="bi bi-house-door-fill w-5 text-center"></i> <span>Home</span>
-          </a>
-          <a href="#" onclick="loadPage('integracao.html', this); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
-            <i class="bi bi-arrows-angle-contract w-5 text-center"></i> <span>Integração</span>
-          </a>
-          <div class="nav-item">
-            <button onclick="toggleSubmenu('desktopPrevisaoSubmenu', 'desktopPrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
-              <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center"></i> Previsão</span>
-              <i id="desktopPrevisaoIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
-            </button>
-            <div id="desktopPrevisaoSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
-              <a href="#" onclick="loadPage('previsao_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Maio</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
-            </div>
-          </div>
-          <div class="nav-item">
-             <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
-                <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center"></i> Gastos</span>
-                <i id="desktopGastosIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
-             </button>
-             <div id="desktopGastosSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
-                <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Janeiro</a>
-                <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Fevereiro</a>
-                <a href="#" onclick="loadPage('sub_dezembro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
-             </div>
-          </div>
-           <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
-             <i class="bi bi-graph-up w-5 text-center"></i> <span>Relatório Geral</span>
-           </a>
-        </div>
-        <div class="mt-auto p-4 border-t border-gray-200">
-          <div class="flex items-center gap-3 cursor-pointer group" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover transition-transform duration-300 group-hover:scale-105 ring-1 ring-gray-300" />
-            <div>
-                <span id="sidebarProfileName" class="font-semibold text-sm text-gray-700 block group-hover:text-blue-600">Nome do Usuário</span>
-                <span class="text-xs text-gray-500">Ver Perfil</span>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main class="flex-1 overflow-y-auto bg-gray-100 p-0 md:p-1"> <iframe id="mainFrame" src="home.html" class="w-full h-full block rounded-lg md:rounded-xl" title="Conteúdo Principal"></iframe>
-      </main>
+       <main class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
+           <iframe id="mainFrame" src="home.html" class="w-full h-full rounded-lg shadow-sm" title="Conteúdo Principal"></iframe>
+       </main>
     </div>
 
-    <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
+    <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-30 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
     <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 bg-white text-gray-600 h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r border-gray-200">
-        <div class="p-5 flex justify-between items-center border-b border-gray-200">
-            <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-8 w-auto" />
-            <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 text-gray-500 hover:text-blue-600" aria-label="Fechar menu">
-                <i class="bi bi-x-lg text-2xl"></i>
-            </button>
-        </div>
-        <div class="overflow-y-auto flex-grow p-4 space-y-1">
-            <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">Menu</h2>
-             <a href="#" onclick="loadPage('home.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
-                <i class="bi bi-house-door-fill w-5 text-center"></i> <span>Home</span>
-            </a>
-            <a href="#" onclick="loadPage('integracao.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
-                <i class="bi bi-arrows-angle-contract w-5 text-center"></i> <span>Integração</span>
-            </a>
-            <div class="nav-item">
-                <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
-                    <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center"></i> Previsão</span>
-                    <i id="mobilePrevisaoIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
-                </button>
-                <div id="mobilePrevisaoSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
-                    <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Abril</a>
-                    <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Maio</a>
-                    <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
+       <div class="p-4 flex justify-between items-center border-b border-gray-200 h-[60px]">
+           <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-7 w-auto" />
+           <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-full" aria-label="Fechar menu"> <i class="bi bi-x-lg text-xl"></i> </button>
+       </div>
+       <div class="overflow-y-auto flex-grow p-3 space-y-1">
+           <a href="#" onclick="loadPage('home.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
+           <a href="#" onclick="loadPage('integracao.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Integração</span></a>
+           <div class="nav-item">
+                <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 w-full text-left"> <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Previsão</span></span> <i id="mobilePrevisaoIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i></button>
+                <div id="mobilePrevisaoSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-gray-200">
+                    <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Abril</a>
+                    <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Maio</a>
+                    <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Dezembro</a>
+                </div>
+           </div>
+           <div class="nav-item">
+                <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 w-full text-left"> <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span> <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i></button>
+                <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-gray-200">
+                    <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Janeiro</a>
+                    <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Fevereiro</a>
+                    <a href="#" onclick="loadPage('sub_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-gray-100 hover:text-gray-900">Dezembro</a>
                 </div>
             </div>
-            <div class="nav-item">
-                 <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
-                     <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center"></i> Gastos</span>
-                     <i id="mobileGastosIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
-                 </button>
-                 <div id="mobileGastosSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
-                     <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Janeiro</a>
-                     <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Fevereiro</a>
-                     <a href="#" onclick="loadPage('sub_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
-                 </div>
-             </div>
-             <a href="#" onclick="loadPage('geral.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
-                <i class="bi bi-graph-up w-5 text-center"></i> <span>Relatório Geral</span>
-            </a>
-        </div>
-        <div class="p-4 mt-auto border-t border-gray-200">
-            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition-colors duration-200">
-                <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
-            </button>
-        </div>
+            <a href="#" onclick="loadPage('geral.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
+       </div>
+       <div class="p-3 mt-auto border-t border-gray-200">
+           <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition-colors duration-150 text-sm font-medium"> <i class="bi bi-box-arrow-left"></i> <span>Sair</span> </button>
+       </div>
     </nav>
   </div>
 
-  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl w-full max-w-md p-6 shadow-xl text-gray-800">
+  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
+    <div class="bg-white rounded-lg w-full max-w-lg p-6 shadow-xl text-gray-800 transform transition-all duration-200 ease-in-out scale-95 opacity-0" id="profileModalContent">
       <form id="profileForm">
-        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-5">
-          <h5 class="text-xl font-semibold text-gray-800">Editar Perfil</h5>
-          <button type="button" onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none p-1">&times;</button>
+        <div class="flex justify-between items-start border-b border-gray-200 pb-3 mb-5">
+          <h5 class="text-lg font-semibold text-gray-900">Editar Perfil</h5>
+          <button type="button" onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-1.5 -mt-1 -mr-1" aria-label="Fechar modal"> <i class="bi bi-x-lg text-xl"></i> </button>
         </div>
-        <div class="text-center mb-5">
-          <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 ring-blue-500 mb-2" />
-          <label for="profilePicInput" class="cursor-pointer text-sm text-blue-600 hover:text-blue-800 font-medium">
-            Alterar foto
-            <input type="file" id="profilePicInput" accept="image/*" class="hidden" />
-          </label>
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
+            <div class="flex-shrink-0 text-center">
+              <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 ring-blue-500 mb-3" />
+              <label for="profilePicInput" class="cursor-pointer text-xs text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded-md bg-blue-50 hover:bg-blue-100 transition-colors duration-150 inline-block"> <i class="bi bi-upload mr-1"></i> Alterar foto <input type="file" id="profilePicInput" accept="image/*" class="hidden" /> </label>
+            </div>
+            <div class="w-full flex-grow">
+               <label for="profileNameInput" class="block text-gray-700 mb-1.5 text-sm font-medium">Nome de Usuário</label>
+               <input type="text" id="profileNameInput" placeholder="Digite seu nome" required class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 placeholder-gray-400" />
+            </div>
         </div>
-        <div class="mb-4">
-          <label for="profileNameInput" class="block text-gray-700 mb-1 text-sm font-medium">Nome do Usuário</label>
-          <input type="text" id="profileNameInput" placeholder="Digite seu nome" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" />
-        </div>
-        <div class="flex justify-end space-x-3 mt-6">
-          <button type="button" onclick="closeProfileModal()" class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 border border-gray-200 transition duration-200">Cancelar</button>
-          <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Salvar Alterações</button>
+        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-white text-gray-700 rounded-md hover:bg-gray-100 border border-gray-300 transition duration-150 text-sm font-medium">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm font-medium">Salvar Alterações</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script>
-    function setVhProperty() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    setVhProperty();
-    window.addEventListener('resize', setVhProperty);
-    window.addEventListener('orientationchange', setVhProperty);
-  </script>
+  <script> function setVhProperty() { let vh = window.innerHeight * 0.01; document.documentElement.style.setProperty('--vh', `${vh}px`); } setVhProperty(); window.addEventListener('resize', setVhProperty); window.addEventListener('orientationchange', setVhProperty); </script>
 
   <script>
     // Seletores Globais
@@ -326,245 +220,228 @@
     const buttonText = loginButton.querySelector('.button-text');
     const spinnerIcon = loginButton.querySelector('.spinner-icon');
     const togglePasswordButton = document.getElementById('togglePassword');
-
-    const transitionScreen = document.getElementById('transitionScreen');
+    const welcomeScreen = document.getElementById('welcomeScreen'); // NOVO
+    const welcomeUserName = document.getElementById('welcomeUserName'); // NOVO
     const dashboard = document.getElementById('dashboard');
     const mainFrame = document.getElementById('mainFrame');
     const logoutNotification = document.getElementById('logoutNotification');
-
     const mobileSidebarWrapper = document.getElementById('mobileSidebarWrapper');
     const mobileSidebar = document.getElementById('mobileSidebar');
-
     const profileModal = document.getElementById('profileModal');
+    const profileModalContent = document.getElementById('profileModalContent');
     const profileForm = document.getElementById('profileForm');
     const profileNameInput = document.getElementById('profileNameInput');
     const profilePicInput = document.getElementById('profilePicInput');
     const modalProfileImg = document.getElementById('modalProfileImg');
-
     const profileImgHeader = document.getElementById('profileImgHeader');
     const profileNameHeader = document.getElementById('profileNameHeader');
     const sidebarProfileImg = document.getElementById('sidebarProfileImg');
     const sidebarProfileName = document.getElementById('sidebarProfileName');
-
     const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
     const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
 
-    // --- Funções Auxiliares ---
-    // (showElement, hideElement, showFlexElement, hideFlexElement, disableButton, enableButton - mantidas como antes)
-     function showElement(el) { if (el) el.classList.remove('hidden'); }
-     function hideElement(el) { if (el) el.classList.add('hidden'); }
-     function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
-     function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
-     function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
-     function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
+    // --- Funções Auxiliares (mantidas) ---
+    function showElement(el) { if (el) el.classList.remove('hidden'); }
+    function hideElement(el) { if (el) el.classList.add('hidden'); }
+    function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
+    function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
+    function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
+    function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
 
     // --- Lógica de Login ---
-    // (formLogin.addEventListener, handleSuccessfulLogin, handleFailedLogin, togglePasswordButton.addEventListener - mantidas como antes)
-     formLogin.addEventListener('submit', function (e) {
-       e.preventDefault();
-       hideElement(loginErrorDiv);
-       disableButton(loginButton, buttonText, spinnerIcon);
-       setTimeout(() => {
-         const validUsername = localStorage.getItem('savedUsername') || 'admin';
-         const username = usernameField.value.trim();
-         const password = passwordField.value;
-         if (username === validUsername && password === 'admin123') {
-           handleSuccessfulLogin(username, password);
-         } else {
-           handleFailedLogin();
-         }
-       }, 1500);
-     });
+    formLogin.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideElement(loginErrorDiv);
+        disableButton(loginButton, buttonText, spinnerIcon);
+        setTimeout(() => {
+            const validUsername = localStorage.getItem('savedUsername') || 'admin';
+            const username = usernameField.value.trim();
+            const password = passwordField.value;
+            // *** Lógica de Autenticação REAL deve vir aqui ***
+            if (username === validUsername && password === 'admin123') {
+                handleSuccessfulLogin(username, password);
+            } else {
+                handleFailedLogin();
+            }
+        }, 1000);
+    });
 
-     function handleSuccessfulLogin(username, password) {
-       if (rememberMe.checked) {
-         localStorage.setItem('savedUsername', username);
-         localStorage.setItem('savedPassword', password);
-       } else {
-         localStorage.removeItem('savedPassword'); // Mantem username salvo se foi editado
-       }
-       localStorage.setItem('isLoggedIn', 'true');
-       hideFlexElement(loginOverlay);
-       showFlexElement(transitionScreen);
-       setTimeout(() => {
-         hideFlexElement(transitionScreen);
-         showFlexElement(dashboard);
-         const homeLink = document.querySelector('.nav-link[onclick*="home.html"]'); // Encontra o link Home
-         loadPage('home.html', homeLink); // Passa o elemento do link Home
-         updateUserInfo();
-         enableButton(loginButton, buttonText, spinnerIcon);
-       }, 1800);
-     }
+    function handleSuccessfulLogin(username, password) {
+        // --- Salvar Credenciais ---
+        // ATENÇÃO: Salvar senhas em localStorage NÃO é seguro! Use apenas para demonstração.
+        if (rememberMe.checked) {
+            localStorage.setItem('savedUsername', username);
+            localStorage.setItem('savedPassword', password); // Senha salva
+            console.log(">>> Remember me checked. Username and Password saved.");
+        } else {
+            // Remove a senha salva se 'lembrar-me' não estiver marcado
+            localStorage.removeItem('savedPassword');
+            // Mantém username se ele foi editado, mas salva o atual se 'lembrar-me' estava desmarcado
+            localStorage.setItem('savedUsername', username);
+            console.log(">>> Remember me NOT checked. Password removed.");
+        }
+        localStorage.setItem('isLoggedIn', 'true');
+        console.log('>>> Login successful, isLoggedIn set:', localStorage.getItem('isLoggedIn'));
 
-     function handleFailedLogin() {
-       loginErrorDiv.textContent = 'Usuário ou senha incorretos. Tente novamente.';
-       showElement(loginErrorDiv);
-       enableButton(loginButton, buttonText, spinnerIcon);
-       loginOverlay.querySelector('.relative.bg-white').classList.add('animate-shake');
-       setTimeout(() => {
-          loginOverlay.querySelector('.relative.bg-white').classList.remove('animate-shake');
-       }, 500);
-     }
+        // Esconder login e mostrar Tela de Boas-Vindas
+        hideFlexElement(loginOverlay);
+        welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`; // Personaliza mensagem
+        welcomeScreen.classList.add('visible'); // Mostra a tela de boas-vindas com fade-in
 
-     togglePasswordButton.addEventListener('click', function() {
-         const icon = this.querySelector('i');
-         if (passwordField.type === 'password') {
-             passwordField.type = 'text';
-             icon.classList.remove('bi-eye-slash'); icon.classList.add('bi-eye');
-             this.setAttribute('aria-label', 'Ocultar senha');
-         } else {
-             passwordField.type = 'password';
-             icon.classList.remove('bi-eye'); icon.classList.add('bi-eye-slash');
-              this.setAttribute('aria-label', 'Mostrar senha');
-         }
-     });
+        // Após um tempo, esconder boas-vindas e mostrar dashboard
+        setTimeout(() => {
+            welcomeScreen.classList.remove('visible'); // Esconde com fade-out
+
+            // Garante que a tela seja escondida após a animação
+             setTimeout(() => {
+                 hideElement(welcomeScreen); // Usa display:none após o fade-out
+             }, 500); // Deve corresponder à duração da transição CSS
+
+            showFlexElement(dashboard); // Mostra o dashboard
+            const homeLink = document.querySelector('.nav-link[onclick*="home.html"]');
+            loadPage('home.html', homeLink); // Carrega a página inicial
+            updateUserInfo(); // Atualiza nome/foto no header/sidebar
+            enableButton(loginButton, buttonText, spinnerIcon); // Reabilita botão de login
+        }, 2000); // Tempo que a tela de boas-vindas fica visível (2 segundos)
+    }
+
+    function handleFailedLogin() { /* (mantida) */
+        loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
+        showElement(loginErrorDiv);
+        enableButton(loginButton, buttonText, spinnerIcon);
+        loginOverlay.querySelector('.bg-white').classList.add('animate-shake');
+        setTimeout(() => { loginOverlay.querySelector('.bg-white').classList.remove('animate-shake'); }, 500);
+    }
+
+    togglePasswordButton.addEventListener('click', function() { /* (mantida) */
+        const icon = this.querySelector('i');
+        if (passwordField.type === 'password') { passwordField.type = 'text'; icon.classList.replace('bi-eye-slash', 'bi-eye'); this.setAttribute('aria-label', 'Ocultar senha'); }
+        else { passwordField.type = 'password'; icon.classList.replace('bi-eye', 'bi-eye-slash'); this.setAttribute('aria-label', 'Mostrar senha'); }
+    });
 
     // --- Lógica de Navegação e UI do Dashboard ---
-
-    function loadPage(pageUrl, clickedLinkElement) {
-        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    function loadPage(pageUrl, clickedLinkElement) { /* (mantida) */
+        document.querySelectorAll('.nav-link').forEach(link => {
+             link.classList.remove('active');
+             // Remove borda esquerda de todos antes de aplicar no ativo
+             link.style.paddingLeft = ''; // Reseta padding
+             link.style.borderLeft = ''; // Reseta borda
+        });
         if (clickedLinkElement) {
             clickedLinkElement.classList.add('active');
-            // Opcional: Marcar pai ativo (se necessário)
-             const parentNavItem = clickedLinkElement.closest('.nav-item');
-             // if (parentNavItem) { /* lógica para marcar pai */ }
+            // Aplica estilo ativo via CSS, incluindo borda/padding ajustado
         }
         mainFrame.src = pageUrl;
     }
 
-    function toggleMobileSidebar() {
+    function toggleMobileSidebar() { /* (mantida) */
         const isOpen = mobileSidebar.classList.contains('translate-x-0');
-        if (isOpen) {
-            mobileSidebar.classList.remove('translate-x-0');
-            mobileSidebar.classList.add('-translate-x-full');
-            hideElement(mobileSidebarWrapper);
-        } else {
-            mobileSidebar.classList.remove('-translate-x-full');
-            mobileSidebar.classList.add('translate-x-0');
-            showElement(mobileSidebarWrapper);
-        }
+        if (isOpen) { mobileSidebar.classList.replace('translate-x-0', '-translate-x-full'); hideElement(mobileSidebarWrapper); }
+        else { mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0'); showElement(mobileSidebarWrapper); }
     }
 
-    // Alterna visibilidade dos submenus (NÃO PRECISA MUDAR A LÓGICA JS, O ERRO ESTAVA NO HTML)
-    function toggleSubmenu(submenuId, iconId) {
-        const submenu = document.getElementById(submenuId);
-        const icon = document.getElementById(iconId);
-
-        // Verifica se os elementos existem (boa prática)
-        if (!submenu || !icon) {
-            console.error("Submenu ou ícone não encontrado:", submenuId, iconId);
-            return;
-        }
-
-        // Descobre o contexto (desktop ou mobile) para fechar outros
+    function toggleSubmenu(submenuId, iconId) { /* (mantida) */
+        const submenu = document.getElementById(submenuId); const icon = document.getElementById(iconId);
+        if (!submenu || !icon) { console.error("Submenu/Icon not found:", submenuId, iconId); return; }
         const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
         const isCurrentlyVisible = submenu.classList.contains('submenu-visible');
-
-        // Fecha TODOS os submenus no mesmo contexto ANTES de abrir/fechar o atual
         document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
             if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
                  otherSubmenu.classList.remove('submenu-visible');
-                 const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon'); // Assume padrão de nomeação
-                 const otherIcon = document.getElementById(otherIconId);
+                 const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon'); const otherIcon = document.getElementById(otherIconId);
                  if (otherIcon) otherIcon.classList.remove('rotate-180');
             }
         });
-
-        // Abre/Fecha o submenu clicado APENAS SE ele não estava visível antes
-        if (!isCurrentlyVisible) {
-            submenu.classList.add('submenu-visible');
-            icon.classList.add('rotate-180');
-        } else {
-             // Se já estava visível, a etapa anterior já o fechou (ao remover a classe de todos)
-             // Apenas garantimos que o ícone volte ao normal
-             icon.classList.remove('rotate-180');
-        }
+        if (!isCurrentlyVisible) { submenu.classList.add('submenu-visible'); icon.classList.add('rotate-180'); }
+        else { icon.classList.remove('rotate-180'); }
     }
 
-    // --- Lógica do Modal de Perfil ---
-    // (openProfileModal, closeProfileModal, profilePicInput.addEventListener, profileForm.addEventListener, updateUserInfo - mantidas como antes)
-     function openProfileModal() {
-         const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
-         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
-         profileNameInput.value = currentUsername;
-         modalProfileImg.src = currentProfilePic;
-         showFlexElement(profileModal);
-     }
-     function closeProfileModal() {
-         hideFlexElement(profileModal);
-         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
-         modalProfileImg.src = currentProfilePic;
-         profilePicInput.value = '';
-     }
-     profilePicInput.addEventListener('change', function () {
-       const file = this.files[0];
-       if (file) {
-         const reader = new FileReader();
-         reader.onload = function (e) { modalProfileImg.src = e.target.result; };
-         reader.readAsDataURL(file);
-       }
-     });
-     profileForm.addEventListener('submit', function (e) {
-       e.preventDefault();
-       const newName = profileNameInput.value.trim();
-       const newImgSrc = modalProfileImg.src;
-       if (newName) {
-         localStorage.setItem('savedUsername', newName);
-         if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) {
-              localStorage.setItem('savedProfilePic', newImgSrc);
-         } else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) {
-              localStorage.removeItem('savedProfilePic');
-         }
-         updateUserInfo();
-         closeProfileModal();
-       } else {
-         alert('O nome de usuário não pode ficar vazio.');
-       }
-     });
-     function updateUserInfo() {
-       const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
-       const profilePic = localStorage.getItem('savedProfilePic');
-       const smallPic = profilePic || DEFAULT_PROFILE_PIC_SMALL;
-       const largePic = profilePic || DEFAULT_PROFILE_PIC_LARGE;
-       profileNameHeader.textContent = username;
-       sidebarProfileName.textContent = username;
-       profileImgHeader.src = smallPic;
-       sidebarProfileImg.src = smallPic;
-       modalProfileImg.src = largePic;
-     }
-
+    // --- Lógica do Modal de Perfil (com animação) ---
+    function openProfileModal() { /* (mantida) */
+        const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão'; const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
+        profileNameInput.value = currentUsername; modalProfileImg.src = currentProfilePic;
+        profileModal.classList.remove('hidden'); profileModal.classList.add('flex');
+        void profileModal.offsetWidth; profileModal.classList.add('opacity-100'); profileModalContent.classList.remove('scale-95', 'opacity-0');
+    }
+    function closeProfileModal() { /* (mantida) */
+        profileModal.classList.remove('opacity-100'); profileModalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+             profileModal.classList.add('hidden'); profileModal.classList.remove('flex');
+             const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE; modalProfileImg.src = currentProfilePic; profilePicInput.value = '';
+        }, 200);
+    }
+    profilePicInput.addEventListener('change', function () { /* (mantida) */
+       const file = this.files[0]; if (file) { const reader = new FileReader(); reader.onload = function (e) { modalProfileImg.src = e.target.result; }; reader.readAsDataURL(file); }
+    });
+    profileForm.addEventListener('submit', function (e) { /* (mantida) */
+        e.preventDefault(); const newName = profileNameInput.value.trim(); const newImgSrc = modalProfileImg.src;
+        if (newName) {
+            localStorage.setItem('savedUsername', newName);
+            if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) { localStorage.setItem('savedProfilePic', newImgSrc); }
+            else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) { localStorage.removeItem('savedProfilePic'); }
+            updateUserInfo(); closeProfileModal();
+        } else { alert('O nome de usuário não pode ficar vazio.'); }
+    });
+    function updateUserInfo() { /* (mantida) */
+        const username = localStorage.getItem('savedUsername') || 'Nome Padrão'; const profilePic = localStorage.getItem('savedProfilePic');
+        const smallPic = profilePic || DEFAULT_PROFILE_PIC_SMALL; const largePic = profilePic || DEFAULT_PROFILE_PIC_LARGE;
+        profileNameHeader.textContent = username; sidebarProfileName.textContent = username;
+        profileImgHeader.src = smallPic; sidebarProfileImg.src = smallPic; modalProfileImg.src = largePic;
+    }
 
     // --- Lógica de Logout ---
-    // (logout - mantida como antes)
-     function logout() {
-         localStorage.removeItem('isLoggedIn');
-         hideFlexElement(dashboard);
-         showFlexElement(loginOverlay);
-         showElement(logoutNotification);
-         setTimeout(() => hideElement(logoutNotification), 4000);
-         if (mobileSidebar.classList.contains('translate-x-0')) { toggleMobileSidebar(); }
-     }
+    function logout() { /* (mantida com console.log) */
+        localStorage.removeItem('isLoggedIn');
+        console.log('>>> Logout executed, isLoggedIn removed:', localStorage.getItem('isLoggedIn'));
+        // Não remove 'savedUsername' ou 'savedPassword' aqui, para manter 'lembrar-me'
+        hideFlexElement(dashboard);
+        showFlexElement(loginOverlay);
+        showElement(logoutNotification);
+        setTimeout(() => hideElement(logoutNotification), 4000);
+        if (mobileSidebar.classList.contains('translate-x-0')) { toggleMobileSidebar(); }
+        // Limpa apenas campos visíveis, mantém dados salvos se houver
+        passwordField.value = ''; // Limpa senha sempre ao deslogar
+        hideElement(loginErrorDiv);
+        // Pré-preenche usuário e senha se salvos
+        const savedUsername = localStorage.getItem('savedUsername');
+        const savedPassword = localStorage.getItem('savedPassword');
+        if (savedUsername) usernameField.value = savedUsername; else usernameField.value = '';
+        if (savedPassword) {
+             passwordField.value = savedPassword; rememberMe.checked = true;
+         } else {
+              rememberMe.checked = false;
+         }
+    }
 
     // --- Inicialização da Página ---
-    // (window.addEventListener('DOMContentLoaded' - mantida como antes, mas atualizada para ativar link Home corretamente)
-     window.addEventListener('DOMContentLoaded', function () {
-         if (localStorage.getItem('isLoggedIn') === 'true') {
-             hideFlexElement(loginOverlay);
-             showFlexElement(dashboard);
-             const homeLink = document.querySelector('.nav-link[onclick*="home.html"]'); // Encontra o link Home
-             loadPage('home.html', homeLink); // Passa o elemento do link Home
-             updateUserInfo();
-         } else {
-             const savedUsername = localStorage.getItem('savedUsername');
-             const savedPassword = localStorage.getItem('savedPassword');
-             if (savedUsername) usernameField.value = savedUsername;
-             if (savedPassword) { rememberMe.checked = true; }
-             showFlexElement(loginOverlay);
-             hideFlexElement(dashboard);
-             hideElement(logoutNotification);
-             hideElement(loginErrorDiv);
-         }
-     });
+    window.addEventListener('DOMContentLoaded', function () { /* (com carregamento de senha) */
+        console.log('>>> DOMContentLoaded fired. Checking isLoggedIn:', localStorage.getItem('isLoggedIn'));
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            console.log('>>> User is logged in. Showing dashboard.');
+            hideFlexElement(loginOverlay);
+            showFlexElement(dashboard);
+            const homeLink = document.querySelector('.nav-link[onclick*="home.html"]');
+            loadPage('home.html', homeLink);
+            updateUserInfo();
+        } else {
+            console.log('>>> User is NOT logged in. Showing login screen.');
+            const savedUsername = localStorage.getItem('savedUsername');
+            const savedPassword = localStorage.getItem('savedPassword'); // Carrega senha salva
+            if (savedUsername) { usernameField.value = savedUsername; }
+            if (savedPassword) {
+                // ATENÇÃO: Preenchendo a senha salva. Não seguro para produção!
+                passwordField.value = savedPassword;
+                rememberMe.checked = true; // Marca 'lembrar-me' se a senha estava salva
+                console.log(">>> Password loaded from localStorage.");
+            } else {
+                rememberMe.checked = false; // Garante que não fique marcado se não houver senha
+            }
+            showFlexElement(loginOverlay);
+            hideFlexElement(dashboard);
+            hideElement(logoutNotification);
+            hideElement(loginErrorDiv);
+        }
+    });
   </script>
 </body>
 </html>
