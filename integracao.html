@@ -2,177 +2,125 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Tela de Integração - Planilhas Online</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integração de Planilhas - ClickForte (Zoom CSS)</title> <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    .card {
-      transition: all 0.2s;
-    }
-    .card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    }
-    /* Modal que cobre toda a tela */
-    #modalOverlay {
-      display: none;
-      position: fixed;
-      z-index: 50;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.8);
-      align-items: center;
-      justify-content: center;
-    }
-    #modalContent {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: #fff;
-      overflow: hidden;
-    }
-    /* Iframe ocupa toda a área do modal */
+    /* Estilos gerais */
+    body { background-color: #f4f5f7; margin: 0; font-family: "Inter", sans-serif; color: #343a40; overflow-x: hidden; min-height: 100vh; }
+    .card { transition: all 0.3s ease-in-out; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12); border-color: #60a5fa; }
+
+    /* Modal */
+    #modalOverlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.75); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease-in-out; }
+    #modalOverlay.visible { display: flex; opacity: 1; }
+    #modalContent { position: relative; width: 100%; height: 100%; background: #fff; overflow: hidden; transform: scale(0.95); opacity: 0; transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
+    #modalOverlay.visible #modalContent { transform: scale(1); opacity: 1; }
+
+    /* Iframe (sem transform, zoom aplicado via JS) */
     #planilhaIframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      zoom: 1;
+      width: 100%; height: 100%; border: none;
+      /* transform-origin e transform removidos */
+      /* transition removida */
     }
-    /* Controles do modal (zoom, fullscreen e fechar) */
-    #modalControls {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.5rem;
-      z-index: 10;
-    }
-    #modalControls button {
-      background: rgba(255,255,255,0.8);
-      border: none;
-      padding: 0.5rem;
-      border-radius: 0.375rem;
-      cursor: pointer;
-    }
+
+    /* Controles do Modal (mantidos) */
+    #modalControls { position: absolute; top: 0.75rem; right: 0.75rem; display: flex; gap: 0.5rem; z-index: 10; background-color: rgba(0, 0, 0, 0.3); padding: 0.5rem; border-radius: 0.5rem; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    #modalControls button { background: transparent; border: none; padding: 0.5rem; border-radius: 9999px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease-in-out; }
+    #modalControls button:hover { background-color: rgba(255, 255, 255, 0.2); }
+    #modalControls button.close-button:hover { background-color: rgba(239, 68, 68, 0.5); }
+    #modalControls button i { font-size: 1.25rem; line-height: 1; }
+    #modalControls button.close-button i { font-size: 1.5rem; }
   </style>
 </head>
-<body class="bg-gray-100 p-8">
-  <h1 class="text-center text-4xl font-bold mb-8">Integração com Excel</h1>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-    <!-- Card 1 -->
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/11D4j_UOwuROnUx7pFr5n0yzNL_CyBKoE/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
-      <div class="flex items-center justify-center h-20 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
-        </svg>
-      </div>
-      <h2 class="text-xl font-semibold text-center">01 - ATC Girus - Janeiro</h2>
-      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+<body class="bg-gray-50 p-6 md:p-10 min-h-screen">
+
+  <h1 class="text-center text-3xl md:text-4xl font-bold text-gray-800 mb-10 md:mb-12">
+      Integração com Planilhas Online
+  </h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/11D4j_UOwuROnUx7pFr5n0yzNL_CyBKoE/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:border-blue-400">
+        <div class="flex flex-col items-center"> <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-5"> <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-600"></i> </div> <h2 class="text-lg font-semibold text-gray-800 text-center mb-1">01 - ATC Girus</h2> <p class="text-sm text-gray-500 mb-3">Janeiro</p> <span class="text-xs text-blue-600 font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs"></i></span> </div>
     </div>
-    <!-- Card 2 -->
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/16q-oUZ8yScDU0UhescGwEBK3x7UmWwua/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
-      <div class="flex items-center justify-center h-20 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
-        </svg>
-      </div>
-      <h2 class="text-xl font-semibold text-center">02 - ATC Girus - Fevereiro</h2>
-      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/16q-oUZ8yScDU0UhescGwEBK3x7UmWwua/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:border-blue-400">
+        <div class="flex flex-col items-center"> <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-5"> <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-600"></i> </div> <h2 class="text-lg font-semibold text-gray-800 text-center mb-1">02 - ATC Girus</h2> <p class="text-sm text-gray-500 mb-3">Fevereiro</p> <span class="text-xs text-blue-600 font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs"></i></span> </div>
     </div>
-    <!-- Card 3 -->
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
-      <div class="flex items-center justify-center h-20 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
-        </svg>
-      </div>
-      <h2 class="text-xl font-semibold text-center">03 - ATC Girus - Março</h2>
-      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:border-blue-400">
+       <div class="flex flex-col items-center"> <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-5"> <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-600"></i> </div> <h2 class="text-lg font-semibold text-gray-800 text-center mb-1">03 - ATC Girus</h2> <p class="text-sm text-gray-500 mb-3">Março</p> <span class="text-xs text-blue-600 font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs"></i></span> </div>
     </div>
-    <!-- Card 4 -->
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1rFuP8fR3X5Y9aQJgHjUupDj4eXy2JS5J/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-lg shadow hover:bg-blue-50">
-      <div class="flex items-center justify-center h-20 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8c0-2.21-1.79-4-4-4S8 5.79 8 8c0 1.5.75 2.75 1.89 3.44L12 18l2.11-6.56C15.25 10.75 16 9.5 16 8z" />
-        </svg>
-      </div>
-      <h2 class="text-xl font-semibold text-center">04 - ATC Girus - Abril</h2>
-      <p class="text-center text-gray-600 mt-2">Clique para abrir a planilha.</p>
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1rFuP8fR3X5Y9aQJgHjUupDj4eXy2JS5J/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')" class="cursor-pointer card bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:border-blue-400">
+       <div class="flex flex-col items-center"> <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-5"> <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-600"></i> </div> <h2 class="text-lg font-semibold text-gray-800 text-center mb-1">04 - ATC Girus</h2> <p class="text-sm text-gray-500 mb-3">Abril</p> <span class="text-xs text-blue-600 font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs"></i></span> </div>
     </div>
   </div>
 
-  <!-- Modal de sobreposição que ocupa toda a tela -->
-  <div id="modalOverlay" class="flex">
+  <div id="modalOverlay">
     <div id="modalContent">
-      <!-- Controles do modal -->
       <div id="modalControls">
-        <button onclick="zoomIn()" title="Aumentar zoom">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-        </button>
-        <button onclick="zoomOut()" title="Diminuir zoom">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-          </svg>
-        </button>
-        <button onclick="toggleFullScreen()" title="Tela cheia">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3H5a2 2 0 00-2 2v3m0 8v3a2 2 0 002 2h3m8-16h3a2 2 0 012 2v3m0 8v3a2 2 0 01-2 2h-3"/>
-          </svg>
-        </button>
-        <button onclick="closeModal()" title="Fechar">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600 hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+        <button onclick="zoomIn()" title="Aumentar zoom"> <i class="bi bi-zoom-in"></i> </button>
+        <button onclick="zoomOut()" title="Diminuir zoom"> <i class="bi bi-zoom-out"></i> </button>
+        <button onclick="toggleFullScreen()" title="Tela cheia"> <i class="bi bi-fullscreen"></i> </button>
+        <button onclick="closeModal()" title="Fechar" class="close-button"> <i class="bi bi-x-lg"></i> </button>
       </div>
-      <iframe id="planilhaIframe" src=""></iframe>
+      <iframe id="planilhaIframe" src="" allowfullscreen></iframe>
     </div>
   </div>
 
   <script>
-    let zoomLevel = 1;
-    
+    let zoomLevel = 1; // Nível de zoom inicial
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalContent = document.getElementById("modalContent");
+    const iframe = document.getElementById("planilhaIframe");
+
+    // ATENÇÃO: A propriedade 'zoom' não é padrão CSS e pode não funcionar
+    // ou ter comportamento inconsistente em todos os navegadores (ex: Firefox).
+    // Ela está sendo usada conforme solicitado para tentar replicar o efeito visual desejado.
+
     function openModal(url) {
-      const modalOverlay = document.getElementById("modalOverlay");
-      const iframe = document.getElementById("planilhaIframe");
       iframe.src = url;
-      zoomLevel = 1;
-      iframe.style.zoom = zoomLevel;
-      modalOverlay.style.display = "flex";
+      zoomLevel = 1; // Reseta o zoom ao abrir
+      iframe.style.zoom = zoomLevel; // Aplica o zoom inicial
+      modalOverlay.classList.add('visible');
     }
-    
+
     function closeModal() {
-      const modalOverlay = document.getElementById("modalOverlay");
-      const iframe = document.getElementById("planilhaIframe");
-      iframe.src = "";
-      modalOverlay.style.display = "none";
+      modalOverlay.classList.remove('visible');
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      setTimeout(() => { iframe.src = ""; }, 300);
     }
-    
+
     function zoomIn() {
-      zoomLevel += 0.1;
-      document.getElementById("planilhaIframe").style.zoom = zoomLevel;
+      zoomLevel = Math.min(zoomLevel + 0.1, 3); // Aumenta o zoom, limitando a 3
+      iframe.style.zoom = zoomLevel;
+      console.log("Aplicando zoom (não padrão):", zoomLevel); // Para debug
     }
-    
+
     function zoomOut() {
-      if (zoomLevel > 0.2) {
-        zoomLevel -= 0.1;
-        document.getElementById("planilhaIframe").style.zoom = zoomLevel;
-      }
+      zoomLevel = Math.max(zoomLevel - 0.1, 0.5); // Diminui o zoom, limitando a 0.5
+      iframe.style.zoom = zoomLevel;
+      console.log("Aplicando zoom (não padrão):", zoomLevel); // Para debug
     }
-    
+
     function toggleFullScreen() {
-      const modalContent = document.getElementById("modalContent");
       if (!document.fullscreenElement) {
         modalContent.requestFullscreen().catch(err => {
-          alert(`Erro ao ativar tela cheia: ${err.message}`);
+          console.error(`Erro ao ativar tela cheia: ${err.message} (${err.name})`);
+          alert(`Não foi possível ativar a tela cheia. ${err.message}`);
         });
       } else {
-        document.exitFullscreen();
+        if (document.exitFullscreen) { document.exitFullscreen(); }
       }
     }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modalOverlay.classList.contains('visible')) {
+            closeModal();
+        }
+    });
   </script>
 </body>
 </html>
