@@ -113,8 +113,8 @@
                series: [{ name: 'Gasto Total', data: seriesData }],
                xaxis: { ...baseChartOptions.xaxis, categories: categories },
                colors: [color],
-               title: { text: 'Evolução Mensal de Gastos', align: 'center', style: { fontSize: '18px', fontWeight: '600', color: '#343a40' } }, // Título ajustado
-               subtitle: { text: 'Valores Totais por Mês (Exemplo)', align: 'center', style: { fontSize: '13px', color: '#6c757d' } } // Subtítulo ajustado
+               title: { text: 'Evolução Mensal de Gastos', align: 'center', style: { fontSize: '18px', fontWeight: '600', color: '#343a40' } },
+               subtitle: { text: 'Valores Totais por Mês (Exemplo)', align: 'center', style: { fontSize: '13px', color: '#6c757d' } }
            };
           const chartElement = document.querySelector("#" + elementId);
           if (chartElement) { chartElement.innerHTML = ''; const chart = new ApexCharts(chartElement, options); chart.render().catch(error => console.error("Erro ao renderizar gráfico:", error)); }
@@ -124,54 +124,75 @@
       // --- Atualização dos Cards ---
       function atualizarCards() {
 
-          // --- MODIFIQUE AQUI A DATA DOS CARDS ---
-          // Para usar a data ATUAL, mantenha: new Date()
-          // Para usar uma data ESPECÍFICA, use: new Date(ANO, MÊS-1, DIA)
-          // Exemplo para 15 de Março de 2024: new Date(2024, 2, 15) (Mês 2 = Março, pois começa em 0)
-          const dataBase = new Date(); // <<< AQUI: Defina a data desejada
+          // --- MODIFIQUE AQUI AS DATAS DE CADA CARD ---
+          // Use new Date() para data atual ou new Date(ANO, MÊS-1, DIA) para data específica.
 
-          // Formata a data para o padrão dd/mm/aaaa
-          const formattedDate = dataBase.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          // Data para o Card 1 (Pagamento Realizado)
+          const dataCard1 = new Date(2025, 3, 16); // <<< AQUI: Defina a data para o Card 1
+          // Exemplo: const dataCard1 = new Date(2025, 3, 17); // 17/04/2025
+
+          // Data para o Card 2 (Pagamento Realizado)
+          const dataCard2 = new Date(2025, 3, 17); // <<< AQUI: Defina a data para o Card 2
+          // Exemplo: const dataCard2 = new Date(2025, 3, 16); // 16/04/2025
+
+          // Data para o Card 3 (Previsão de Pagamento)
+          const dataCard3 = new Date(2025, 3, 22); // <<< AQUI: Defina a data para o Card 3 (Ex: Próxima terça = 22/04/2025)
+          // Exemplo: const dataCard3 = new Date(); // Data atual
+
 
           // Pega os elementos HTML dos cards
-          const cardData1 = document.getElementById('cardDataHoje1');
-          const cardData2 = document.getElementById('cardDataHoje2');
-          const cardData3 = document.getElementById('cardDataHoje3'); // Span dentro do small
+          const cardData1Elem = document.getElementById('cardDataHoje1');
+          const cardData2Elem = document.getElementById('cardDataHoje2');
+          const cardData3Elem = document.getElementById('cardDataHoje3'); // Span dentro do small
           const cardValorPagamentos = document.getElementById('cardValorPagamentos');
           const cardValorRecebido = document.getElementById('cardValorRecebido');
           const cardValorSaldo = document.getElementById('cardValorSaldo');
 
-          // Atualiza as datas nos cards
-          if (cardData1) cardData1.textContent = formattedDate;
-          if (cardData2) cardData2.textContent = formattedDate;
-          if (cardData3) cardData3.textContent = formattedDate; // Atualiza o span com a data
+          // Formata e atualiza a data do Card 1
+          if (cardData1Elem) {
+              const formattedDate1 = dataCard1.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              cardData1Elem.textContent = formattedDate1;
+          }
+
+          // Formata e atualiza a data do Card 2
+          if (cardData2Elem) {
+              const formattedDate2 = dataCard2.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              cardData2Elem.textContent = formattedDate2;
+          }
+
+          // Formata e atualiza a data do Card 3
+          if (cardData3Elem) {
+              const formattedDate3 = dataCard3.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              cardData3Elem.textContent = formattedDate3; // Atualiza o span
+          }
 
           // --- MODIFIQUE AQUI OS VALORES DOS CARDS ---
           // Substitua os valores numéricos pela sua lógica real
 
-          let valorPagamentosHoje = 1580.75; // <<< AQUI: Coloque seu valor real
+          let valorPagamentosHoje = 251444.75; // <<< AQUI: Coloque seu valor real (associado à dataCard1)
           if (cardValorPagamentos) {
               cardValorPagamentos.textContent = currencyFormatter(valorPagamentosHoje);
           }
 
-          let valorRecebidoHoje = 270256.09; // <<< AQUI: Coloque seu valor real
+          let valorRecebidoHoje = 270256.09; // <<< AQUI: Coloque seu valor real (associado à dataCard2)
           if (cardValorRecebido) {
               cardValorRecebido.textContent = currencyFormatter(valorRecebidoHoje);
           }
 
-          let saldoAtual = 1693776.95; // <<< AQUI: Coloque seu valor real
-          if (cardValorSaldo) {
-              cardValorSaldo.textContent = currencyFormatter(saldoAtual);
+          // Ajustei o nome da variável para clareza, já que o card é de previsão
+          let valorPrevisaoPagamento = 1693776.95; // <<< AQUI: Coloque seu valor real (associado à dataCard3)
+          if (cardValorSaldo) { // O ID HTML continua 'cardValorSaldo'
+              cardValorSaldo.textContent = currencyFormatter(valorPrevisaoPagamento);
           }
           // --- FIM DA ÁREA DE MODIFICAÇÃO ---
 
-          console.log(`Cards atualizados para a data ${formattedDate} com os valores definidos no código.`);
+          console.log("Cards atualizados com valores e datas individuais definidos no código.");
       }
 
       // --- Inicialização ---
       document.addEventListener('DOMContentLoaded', () => {
            criarApexAreaChartMensal('mainAreaChart', totalGastosMensais, meses, corPrincipalGrafico);
-           atualizarCards(); // Chama a função para definir os valores e a data inicial dos cards
+           atualizarCards(); // Chama a função para definir os valores e datas iniciais dos cards
       });
   </script>
 
