@@ -3,122 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bem-vindo a ClickForte Armazenagem</title>
-  <!-- Bootstrap CSS -->
+  <title>Relatórios Mensais - ClickForte Armazenagem</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
-  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      background: url("https://www.sagrupo.com/wp-content/uploads/2021/01/shutterstock_1714734415-scaled.jpg") no-repeat center center fixed;
-      background-size: cover;
+      /* background-color: #f4f5f7; Comentado ou Removido */
+      background-color: #ffffff; /* <<< ALTERADO PARA BRANCO */
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
-      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #343a40;
+      overflow-x: hidden;
+      min-height: 100vh;
     }
-    /* Overlay para suavizar o fundo */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.65);
-      z-index: 1;
-    }
-    /* Conteúdo centralizado */
-    .content {
+    /* Seção dos Gráficos */
+    .charts-section {
       position: relative;
       z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      padding: 20px;
+      padding: 6rem 15px 3rem 15px;
+      width: 100%;
     }
-    .content h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 20px;
-      animation: fadeInDown 1s ease-out;
+    .chart-container {
+        background-color: #ffffff; /* Fundo branco mantido (sombra fará a separação) */
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef; /* Adicionando uma borda sutil */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Sombra levemente ajustada */
+        height: 380px;
+        display: flex; flex-direction: column;
     }
-    .content p {
-      font-size: 1.5rem;
-      animation: fadeInUp 1s ease-out;
+    .chart-container h4 {
+        font-weight: 600; color: #495057; margin-bottom: 20px;
+        text-align: center;
     }
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .chart-container div[id^="chart"] {
+        flex-grow: 1; display: flex; align-items: center; justify-content: center;
+        color: #6c757d; font-style: italic; min-height: 280px;
     }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    /* Ajustes responsivos */
-    @media (max-width: 768px) {
-      .content h1 {
-        font-size: 2.5rem;
-      }
-      .content p {
-        font-size: 1.2rem;
-      }
-    }
-    @media (max-width: 576px) {
-      .content h1 {
-        font-size: 2rem;
-      }
-      .content p {
-        font-size: 1rem;
-      }
-    }
-    @media (max-width: 414px) {
-      .content h1 {
-        font-size: 1.8rem;
-      }
-      .content p {
-        font-size: 0.9rem;
-      }
-    }
+    /* Responsividade (mantida) */
+    @media (max-width: 1200px) { .chart-container { height: 360px; } }
+    @media (max-width: 992px) { .chart-container { height: 350px; } }
+    @media (max-width: 768px) { .charts-section { padding: 5rem 10px 2rem 10px; } .chart-container { height: 330px; padding: 20px; } }
+    @media (max-width: 576px) { .chart-container { height: 310px; } .chart-container h4 { font-size: 1.1rem; margin-bottom: 15px; } }
+    /* Alerta (mantido) */
+    .alert { z-index: 1050 !important; border: none; font-weight: 500; }
+    .alert-primary { background-color: #cfe2ff; border-color: #b6d4fe; color: #084298; }
+
   </style>
 </head>
 <body>
-  <!-- Mensagem de alerta fixa -->
-  <div class="alert alert-warning alert-dismissible fade show fixed-top text-center m-0" role="alert" style="z-index: 1200;">
-    Novidade!!! Nossos desenvolvedores criaram uma Inteligência Artificial para que você tire todas as suas dúvidas.
-    Acesse o Chat abaixo e comece a fazer suas perguntas.
+  <div class="alert alert-primary alert-dismissible fade show fixed-top text-center m-0 shadow-sm" role="alert">
+    <i class="bi bi-graph-up me-2"></i> Visualize seus relatórios de gastos mensais abaixo.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 
-  <div class="overlay"></div>
-  <div class="content container">
-    <h1>Bem-vindo a ClickForte Armazenagem</h1>
-    <p>Ambiente de relatório de gastos e previsão</p>
+  <div class="charts-section container-fluid">
+      <h2 class="text-center mb-5 fw-bold text-dark">Relatório de Gastos Mensais</h2>
+      <div class="row g-4 justify-content-center">
+          <div class="col-lg-6 col-md-8 col-sm-10">
+              <div class="chart-container">
+                  <h4 class="text-center">Janeiro</h4>
+                  <div id="chartJan">Carregando...</div>
+              </div>
+          </div>
+          <div class="col-lg-6 col-md-8 col-sm-10">
+              <div class="chart-container">
+                  <h4 class="text-center">Fevereiro</h4>
+                  <div id="chartFeb">Carregando...</div>
+              </div>
+          </div>
+      </div>
   </div>
 
-  <!-- Container para o chat (Botpress será injetado abaixo) -->
-  <div id="chatContainer" class="container my-4">
-    <!-- O chat do Botpress aparecerá nesta área -->
-  </div>
-
-  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Botpress Webchat Script -->
-  <script src="https://cdn.botpress.cloud/webchat/v2.3/inject.js"></script>
-  <script src="https://files.bpcontent.cloud/2025/04/11/14/20250411143158-L7UHR9R4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <script>
+      // Dados para Jan e Feb (mantidos)
+      const categoriasGastos = ['Aluguel', 'Transporte', 'Despesa Fixa', 'Salários', 'Fornecedores', 'Impostos'];
+      const dadosJan = [1200, 350, 800, 5000, 2500, 900];
+      const dadosFeb = [1200, 380, 750, 5100, 2300, 920];
+
+      // Formatter de moeda BRL (mantido)
+      const currencyFormatter = (value) => { if (value == null || value === undefined) return ''; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
+
+      // Opções base comuns para os gráficos AREA (mantidas)
+      const baseChartOptions = {
+          chart: { type: 'area', height: '100%', fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 350 }}},
+          dataLabels: { enabled: false },
+          stroke: { curve: 'smooth', width: 3 },
+          markers: { size: 5, strokeWidth: 2, strokeColors: '#fff', hover: { size: 7 }},
+          fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.1, stops: [0, 90, 100] }},
+          grid: { borderColor: '#e7e7e7', row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.2 }, padding: { top: 0, right: 10, bottom: 0, left: 10 }},
+          yaxis: { title: { text: 'Valor (R$)', style: { color: '#6c757d', fontSize: '11px', fontWeight: 500 } }, labels: { formatter: currencyFormatter, style: { fontSize: '11px' }}},
+          tooltip: { y: { formatter: currencyFormatter }, theme: 'light', x: { show: true }},
+          responsive: [ { breakpoint: 768, options: { markers: { size: 4 }, stroke: { width: 2 }, yaxis: { labels: { style: { fontSize: '10px' }}}, xaxis: { labels: { style: { fontSize: '10px' }}}}}, { breakpoint: 576, options: { markers: { size: 3 }, yaxis: { title: { text: undefined } }}}]
+      };
+
+      // Função para criar e renderizar um gráfico ApexChart (Area) (mantida)
+      function criarApexAreaChart(elementId, seriesData, categories, color) {
+          const options = { ...baseChartOptions, series: [{ name: 'Gastos', data: seriesData }], xaxis: { categories: categories, tooltip: { enabled: false }, labels: { style: { fontSize: '11px' }}}, colors: [color] };
+          const chartElement = document.querySelector("#" + elementId);
+          if (chartElement) { chartElement.innerHTML = ''; const chart = new ApexCharts(chartElement, options); chart.render(); }
+          else { console.error("Elemento do gráfico não encontrado: #" + elementId); }
+      }
+
+      // Criar os gráficos (Apenas Jan e Feb) (mantido)
+      document.addEventListener('DOMContentLoaded', () => {
+           const corJan = '#0d6efd'; const corFeb = '#198754';
+           criarApexAreaChart('chartJan', dadosJan, categoriasGastos, corJan);
+           criarApexAreaChart('chartFeb', dadosFeb, categoriasGastos, corFeb);
+      });
+
+  </script>
+
 </body>
 </html>
