@@ -12,113 +12,137 @@
 
   <style>
     body {
-      /* background-color: #f4f5f7; Comentado ou Removido */
-      background-color: #ffffff; /* <<< ALTERADO PARA BRANCO */
+      background-color: #ffffff; /* Fundo branco */
       margin: 0;
       font-family: "Inter", sans-serif;
       color: #343a40;
       overflow-x: hidden;
       min-height: 100vh;
     }
-    /* Seção dos Gráficos */
-    .charts-section {
+    /* Seção Principal */
+    .main-section {
       position: relative;
       z-index: 2;
-      padding: 6rem 15px 3rem 15px;
+      /* Reduzido padding-top significativamente */
+      padding: 3rem 15px 3rem 15px;
       width: 100%;
     }
-    .chart-container {
-        background-color: #ffffff; /* Fundo branco mantido (sombra fará a separação) */
-        padding: 25px;
+    /* Cards de Valor (mantido) */
+    .value-card {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
         border-radius: 12px;
-        border: 1px solid #e9ecef; /* Adicionando uma borda sutil */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Sombra levemente ajustada */
-        height: 380px;
-        display: flex; flex-direction: column;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease-in-out;
+        height: 100%;
     }
-    .chart-container h4 {
-        font-weight: 600; color: #495057; margin-bottom: 20px;
-        text-align: center;
+    .value-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
+    .value-card .card-body { padding: 1.5rem; }
+    .value-card .icon-circle { width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; }
+     .value-card .icon-circle i { font-size: 1.5rem; }
+
+    /* Contêiner do Gráfico (mantido) */
+    .chart-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        height: 420px;
+        display: flex; flex-direction: column;
     }
     .chart-container div[id^="chart"] {
         flex-grow: 1; display: flex; align-items: center; justify-content: center;
-        color: #6c757d; font-style: italic; min-height: 280px;
+        color: #6c757d; font-style: italic; min-height: 300px;
     }
-    /* Responsividade (mantida) */
-    @media (max-width: 1200px) { .chart-container { height: 360px; } }
-    @media (max-width: 992px) { .chart-container { height: 350px; } }
-    @media (max-width: 768px) { .charts-section { padding: 5rem 10px 2rem 10px; } .chart-container { height: 330px; padding: 20px; } }
-    @media (max-width: 576px) { .chart-container { height: 310px; } .chart-container h4 { font-size: 1.1rem; margin-bottom: 15px; } }
-    /* Alerta (mantido) */
-    .alert { z-index: 1050 !important; border: none; font-weight: 500; }
-    .alert-primary { background-color: #cfe2ff; border-color: #b6d4fe; color: #084298; }
+    /* Responsividade */
+    @media (max-width: 1200px) { .chart-container { height: 400px; } }
+    @media (max-width: 992px) { .chart-container { height: 380px; } }
+    @media (max-width: 768px) {
+        /* Padding top ajustado para mobile também */
+        .main-section { padding: 2.5rem 10px 2rem 10px; }
+        .chart-container { height: 350px; padding: 20px; }
+    }
+    @media (max-width: 576px) {
+        .main-section { padding-top: 2rem;} /* Mais ajuste mobile */
+        .chart-container { height: 320px; }
+        .value-card .card-body { padding: 1.25rem; }
+        .value-card .icon-circle { width: 45px; height: 45px; }
+        .value-card .icon-circle i { font-size: 1.3rem; }
+    }
+    /* Alerta (Regra mantida, mas elemento HTML removido) */
+    /* .alert { z-index: 1050 !important; border: none; font-weight: 500; } */
+    /* .alert-primary { background-color: #cfe2ff; border-color: #b6d4fe; color: #084298; } */
 
   </style>
 </head>
 <body>
-  <div class="alert alert-primary alert-dismissible fade show fixed-top text-center m-0 shadow-sm" role="alert">
-    <i class="bi bi-graph-up me-2"></i> Visualize seus relatórios de gastos mensais abaixo.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-
-  <div class="charts-section container-fluid">
-      <h2 class="text-center mb-5 fw-bold text-dark">Relatório de Gastos Mensais</h2>
-      <div class="row g-4 justify-content-center">
-          <div class="col-lg-6 col-md-8 col-sm-10">
+  <div class="main-section container-fluid">
+      <div class="row g-4 mb-5">
+          <div class="col-lg-4 col-md-6 col-sm-12">
+              <div class="value-card card text-center h-100"> <div class="card-body d-flex flex-column justify-content-center"> <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto"> <i class="bi bi-calendar-check"></i> </div> <h6 class="card-subtitle mt-2 mb-2 text-muted">Pagamentos Hoje</h6> <p class="card-text fs-4 fw-bold text-dark mb-1" id="cardValorPagamentos">R$ 0,00</p> <small class="text-muted" id="cardDataHoje1">--/--/----</small> </div> </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+               <div class="value-card card text-center h-100"> <div class="card-body d-flex flex-column justify-content-center"> <div class="icon-circle bg-success bg-opacity-10 text-success mx-auto"> <i class="bi bi-cash-coin"></i> </div> <h6 class="card-subtitle mt-2 mb-2 text-muted">Recebido Hoje</h6> <p class="card-text fs-4 fw-bold text-dark mb-1" id="cardValorRecebido">R$ 0,00</p> <small class="text-muted" id="cardDataHoje2">--/--/----</small> </div> </div>
+           </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+               <div class="value-card card text-center h-100"> <div class="card-body d-flex flex-column justify-content-center"> <div class="icon-circle bg-info bg-opacity-10 text-info mx-auto"> <i class="bi bi-wallet2"></i> </div> <h6 class="card-subtitle mt-2 mb-2 text-muted">Saldo Atual</h6> <p class="card-text fs-4 fw-bold text-dark mb-1" id="cardValorSaldo">R$ 0,00</p> <small class="text-muted">em <span id="cardDataHoje3">--/--/----</span></small> </div> </div>
+           </div>
+      </div> <div class="row g-4">
+          <div class="col-12">
               <div class="chart-container">
-                  <h4 class="text-center">Janeiro</h4>
-                  <div id="chartJan">Carregando...</div>
+                   <div id="mainAreaChart">Carregando Gráfico...</div>
               </div>
           </div>
-          <div class="col-lg-6 col-md-8 col-sm-10">
-              <div class="chart-container">
-                  <h4 class="text-center">Fevereiro</h4>
-                  <div id="chartFeb">Carregando...</div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+      </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
   <script>
-      // Dados para Jan e Feb (mantidos)
-      const categoriasGastos = ['Aluguel', 'Transporte', 'Despesa Fixa', 'Salários', 'Fornecedores', 'Impostos'];
-      const dadosJan = [1200, 350, 800, 5000, 2500, 900];
-      const dadosFeb = [1200, 380, 750, 5100, 2300, 920];
+      // --- Dados e Configuração do Gráfico ---
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril']; // Eixo X
+      const totalGastosMensais = [5686819.08, 6105182.26, 6995663.47, 0]; // Eixo Y
+      const corPrincipalGrafico = '#0d6efd'; // Azul
 
-      // Formatter de moeda BRL (mantido)
-      const currencyFormatter = (value) => { if (value == null || value === undefined) return ''; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
+      // Formatter de moeda BRL
+      const currencyFormatter = (value) => { if (value == null || value === undefined) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
 
-      // Opções base comuns para os gráficos AREA (mantidas)
-      const baseChartOptions = {
-          chart: { type: 'area', height: '100%', fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 350 }}},
-          dataLabels: { enabled: false },
-          stroke: { curve: 'smooth', width: 3 },
-          markers: { size: 5, strokeWidth: 2, strokeColors: '#fff', hover: { size: 7 }},
-          fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.1, stops: [0, 90, 100] }},
-          grid: { borderColor: '#e7e7e7', row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.2 }, padding: { top: 0, right: 10, bottom: 0, left: 10 }},
-          yaxis: { title: { text: 'Valor (R$)', style: { color: '#6c757d', fontSize: '11px', fontWeight: 500 } }, labels: { formatter: currencyFormatter, style: { fontSize: '11px' }}},
-          tooltip: { y: { formatter: currencyFormatter }, theme: 'light', x: { show: true }},
-          responsive: [ { breakpoint: 768, options: { markers: { size: 4 }, stroke: { width: 2 }, yaxis: { labels: { style: { fontSize: '10px' }}}, xaxis: { labels: { style: { fontSize: '10px' }}}}}, { breakpoint: 576, options: { markers: { size: 3 }, yaxis: { title: { text: undefined } }}}]
-      };
+      // Opções base comuns para o gráfico AREA
+      const baseChartOptions = { chart: { type: 'area', height: '100%', fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 350 }}}, dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 }, markers: { size: 5, strokeWidth: 2, strokeColors: '#fff', hover: { size: 7 }}, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100] }}, grid: { borderColor: '#e9ecef', row: { colors: ['#f8f9fa', 'transparent'], opacity: 0.5 }, padding: { top: 5, right: 20, bottom: 0, left: 20 }}, yaxis: { title: { text: 'Gasto Total (R$)', style: { color: '#6c757d', fontSize: '11px', fontWeight: 500 } }, labels: { formatter: currencyFormatter, style: { fontSize: '11px' }}}, xaxis: { tooltip: { enabled: false }, labels: { style: { fontSize: '11px', colors: '#6c757d' }, rotate: -20, rotateAlways: false, hideOverlappingLabels: true, trim: true } }, tooltip: { y: { formatter: currencyFormatter }, theme: 'light', x: { show: true, format: 'MMMM' } }, responsive: [ { breakpoint: 768, options: { markers: { size: 4 }, stroke: { width: 2 }, yaxis: { labels: { style: { fontSize: '10px' }}}, xaxis: { labels: { style: { fontSize: '10px' }}}}}, { breakpoint: 576, options: { markers: { size: 3 }, yaxis: { title: { text: undefined } }}}] };
 
-      // Função para criar e renderizar um gráfico ApexChart (Area) (mantida)
-      function criarApexAreaChart(elementId, seriesData, categories, color) {
-          const options = { ...baseChartOptions, series: [{ name: 'Gastos', data: seriesData }], xaxis: { categories: categories, tooltip: { enabled: false }, labels: { style: { fontSize: '11px' }}}, colors: [color] };
+      // Função para criar e renderizar o gráfico ApexChart (Area)
+      function criarApexAreaChartMensal(elementId, seriesData, categories, color) {
+          const options = {
+              ...baseChartOptions,
+              series: [{ name: 'Gasto Total', data: seriesData }],
+              xaxis: { ...baseChartOptions.xaxis, categories: categories },
+              colors: [color],
+              title: { text: 'Evolução Mensal de Gastos', align: 'center', style: { fontSize: '18px', fontWeight: '600', color: '#343a40' } }, // Título ajustado
+              subtitle: { text: 'Valores Totais por Mês (Exemplo)', align: 'center', style: { fontSize: '13px', color: '#6c757d' } } // Subtítulo ajustado
+          };
           const chartElement = document.querySelector("#" + elementId);
-          if (chartElement) { chartElement.innerHTML = ''; const chart = new ApexCharts(chartElement, options); chart.render(); }
+          if (chartElement) { chartElement.innerHTML = ''; const chart = new ApexCharts(chartElement, options); chart.render().catch(error => console.error("Erro ao renderizar gráfico:", error)); }
           else { console.error("Elemento do gráfico não encontrado: #" + elementId); }
       }
 
-      // Criar os gráficos (Apenas Jan e Feb) (mantido)
-      document.addEventListener('DOMContentLoaded', () => {
-           const corJan = '#0d6efd'; const corFeb = '#198754';
-           criarApexAreaChart('chartJan', dadosJan, categoriasGastos, corJan);
-           criarApexAreaChart('chartFeb', dadosFeb, categoriasGastos, corFeb);
-      });
+      // --- Atualização dos Cards ---
+      function atualizarCards() {
+          const today = new Date(); const formattedDate = today.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const cardData1 = document.getElementById('cardDataHoje1'); const cardData2 = document.getElementById('cardDataHoje2'); const cardData3 = document.getElementById('cardDataHoje3');
+          const cardValorPagamentos = document.getElementById('cardValorPagamentos'); const cardValorRecebido = document.getElementById('cardValorRecebido'); const cardValorSaldo = document.getElementById('cardValorSaldo');
+          if (cardData1) cardData1.textContent = formattedDate; if (cardData2) cardData2.textContent = formattedDate; if (cardData3) cardData3.textContent = formattedDate;
+          // Valores de Exemplo - SUBSTITUA PELA LÓGICA REAL
+          if (cardValorPagamentos) cardValorPagamentos.textContent = currencyFormatter(1580.75); if (cardValorRecebido) cardValorRecebido.textContent = currencyFormatter(3250.00); if (cardValorSaldo) cardValorSaldo.textContent = currencyFormatter(15480.22);
+          console.log("Cards atualizados.");
+      }
 
+      // --- Inicialização ---
+      document.addEventListener('DOMContentLoaded', () => {
+           criarApexAreaChartMensal('mainAreaChart', totalGastosMensais, meses, corPrincipalGrafico);
+           atualizarCards();
+      });
   </script>
 
 </body>
