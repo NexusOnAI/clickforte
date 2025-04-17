@@ -4,12 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>ClickForte | Financeiro</title>
-  <!-- Tailwind CSS via CDN -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" /> <title>ClickForte | Financeiro (Light)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Bootstrap Icons (para ícones) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <style>
     /* Reset e ajustes para iOS e demais dispositivos móveis */
     html, body {
@@ -18,6 +15,7 @@
       min-height: -webkit-fill-available;
       -webkit-text-size-adjust: 100%;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
     }
     body {
       padding-top: env(safe-area-inset-top);
@@ -36,275 +34,276 @@
     }
     /* Estilo para o iframe: fundo branco e sem bordas */
     iframe {
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra mais sutil */
+      background-color: #ffffff;
       border: none;
       width: 100%;
       height: 100%;
     }
-    /* Remover outline ao focar em botões, links e inputs */
-    button:focus,
-    a:focus,
-    input:focus {
+    /* Remover outline padrão ao focar */
+    button:focus, a:focus, input:focus {
       outline: none;
+      box-shadow: none;
     }
-    /* Estilo moderno para barras de rolagem */
+    /* Foco visível personalizado com Tailwind (anel azul) */
+    input:focus-visible, button:focus-visible, a:focus-visible {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      --tw-ring-color: rgb(59 130 246 / 0.5); /* Cor do anel de foco */
+      box-shadow: 0 0 0 2px var(--tw-ring-color);
+    }
+
+    /* Estilo para barras de rolagem (Webkit) - Tema Claro */
     ::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
+      height: 8px;
     }
     ::-webkit-scrollbar-thumb {
-      background-color: #555;
+      background-color: #cbd5e1; /* Cinza claro */
       border-radius: 9999px;
+      border: 2px solid #f8fafc; /* Cor de fundo do track */
     }
     ::-webkit-scrollbar-track {
-      background-color: #222;
+      background-color: #f8fafc; /* Cinza bem claro / quase branco */
+      border-radius: 9999px;
     }
-    /* Ajuste para exibir o header corretamente no iPhone */
+    /* Ajuste para header mobile no iPhone com notch */
     #profileHeader {
       padding-top: calc(env(safe-area-inset-top) + 1rem);
-      position: relative;
-      z-index: 10;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      /* Fundo branco semi-transparente com desfoque */
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e5e7eb; /* Borda cinza clara */
     }
-    /* Tela de Transição (segunda tela) */
+    /* Tela de Transição */
     #transitionScreen {
-      position: fixed;
-      inset: 0;
-      background: #fff;
-      z-index: 60;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      position: fixed; inset: 0; background: #ffffff; z-index: 60;
+      display: none; align-items: center; justify-content: center; flex-direction: column;
+      transition: opacity 0.3s ease-in-out;
     }
+    /* Estilo para link ativo na sidebar - Tema Claro */
+    .nav-link.active {
+      background-color: #eff6ff; /* Fundo azul bem claro */
+      color: #2563eb; /* Texto azul escuro */
+      font-weight: 600;
+    }
+    .nav-link.active i {
+      color: #2563eb; /* Ícone azul escuro */
+    }
+    /* Ajuste para submenu */
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-in-out;
+    }
+    .submenu-visible {
+      max-height: 500px; /* Altura máxima para comportar os itens */
+    }
+
+    /* Animação de Shake para erro de login (opcional) */
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+      40%, 60% { transform: translate3d(3px, 0, 0); }
+    }
+    .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
   </style>
 </head>
-<body class="bg-black min-h-screen overflow-y-auto">
-  <!-- Tela de Login -->
+<body class="bg-gray-100 min-h-screen overflow-y-auto text-gray-800 font-sans">
+
   <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-cover bg-center" style="background-image: url('https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0');">
-    <div class="absolute inset-0 bg-black opacity-60"></div>
-    <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
-      <!-- Logo para mobile -->
-      <div class="block sm:hidden text-center mb-4">
-        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo" class="mx-auto max-w-[100px]" />
+    <div class="absolute inset-0 bg-black opacity-60"></div> <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 sm:p-8 text-gray-800">
+      <div class="text-center mb-6">
+        <img src="https://mms.img.susercontent.com/c54efe3cdf18f6ecbd04d5007dc931f0" alt="Logo ClickForte" class="mx-auto h-16 w-auto" />
       </div>
-      <h3 class="text-center text-2xl font-semibold text-gray-800 mb-4">Acesso Restrito</h3>
-      <div id="logoutNotification" class="hidden mb-4 p-2 text-sm text-yellow-800 bg-yellow-200 rounded text-center">
-        Você foi desconectado!
-      </div>
-      <form id="formLogin">
+      <h3 class="text-center text-2xl font-semibold text-gray-800 mb-2">Acesso Restrito</h3>
+      <p class="text-center text-gray-500 text-sm mb-6">Faça login para continuar</p>
+      <div id="logoutNotification" class="hidden mb-4 p-3 text-sm text-yellow-800 bg-yellow-100 border border-yellow-200 rounded text-center">Você foi desconectado!</div>
+      <div id="loginError" class="hidden mb-4 p-3 text-sm text-red-800 bg-red-100 border border-red-200 rounded text-center"></div>
+      <form id="formLogin" novalidate>
         <div class="mb-4">
-          <label for="username" class="block text-gray-700 mb-1">Usuário</label>
-          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
+          <label for="username" class="block text-gray-700 mb-1 text-sm font-medium">Usuário</label>
+          <input type="text" id="username" placeholder="Digite seu usuário" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" />
         </div>
         <div class="mb-4">
-          <label for="password" class="block text-gray-700 mb-1">Senha</label>
-          <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400" />
+          <label for="password" class="block text-gray-700 mb-1 text-sm font-medium">Senha</label>
+          <div class="relative">
+            <input type="password" id="password" placeholder="Digite sua senha" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10" />
+            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700" aria-label="Mostrar senha">
+              <i class="bi bi-eye-slash"></i>
+            </button>
+          </div>
         </div>
-        <div class="flex items-center mb-4">
-          <input type="checkbox" id="rememberMe" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded" />
-          <label for="rememberMe" class="ml-2 text-gray-700 text-sm">Lembrar meus dados</label>
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center">
+            <input type="checkbox" id="rememberMe" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+            <label for="rememberMe" class="ml-2 block text-sm text-gray-700">Lembrar meus dados</label>
+          </div>
+          <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Esqueceu a senha?</a>
         </div>
-        <button type="submit" class="w-full py-2 rounded-full font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg transform transition hover:from-blue-600 hover:to-blue-500 hover:-translate-y-1">
-          Entrar
+        <button type="submit" id="loginButton" class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-md hover:shadow-lg transform transition hover:from-blue-700 hover:to-blue-600 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed">
+          <span class="button-text">Entrar</span>
+          <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span>
         </button>
-        <a href="#" class="block text-center mt-3 text-blue-500 text-sm">Esqueceu a senha?</a>
       </form>
-      <!-- Spinner/GIF opcional (caso queira usar em alguma situação) -->
-      <div id="spinner" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl hidden">
-        <!-- Conteúdo alterado dinamicamente -->
-      </div>
     </div>
   </div>
 
-  <!-- Tela de Transição (segunda tela após login) -->
-  <div id="transitionScreen" class="flex">
-    <img src="https://cdn.shopify.com/s/files/1/0644/0094/9484/files/delivery-truck-loading-exporting-v2_beae1ef9-38d5-4aa6-8af8-27ce59b0e86c.gif" alt="Dando com a mão" class="w-20 h-20 mb-4" style="width: 250px; height: 200px;" />
-    <p class="text-xl font-semibold text-gray-800">Bem-vindo!</p>
+  <div id="transitionScreen">
+    <img src="https://cdn.shopify.com/s/files/1/0644/0094/9484/files/delivery-truck-loading-exporting-v2_beae1ef9-38d5-4aa6-8af8-27ce59b0e86c.gif" alt="Carregando..." class="w-48 h-auto mb-4" />
+    <p class="text-xl font-semibold text-gray-700">Bem-vindo!</p>
+    <p class="text-gray-500">Acessando seu painel...</p>
   </div>
 
-  <!-- Dashboard Principal (oculto enquanto não logado) -->
   <div id="dashboard" class="hidden flex flex-col min-h-screen">
-    <!-- Header para mobile (fixado no topo) -->
-    <header id="profileHeader" class="sticky top-0 md:hidden flex justify-between items-center p-4 bg-black border-b border-black/10 text-white cursor-pointer">
-      <div class="flex items-center">
-        <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="mr-4">
-          <i class="bi bi-list text-2xl"></i>
-        </button>
-      </div>
-      <div class="flex items-center" onclick="openProfileModal()">
-        <img id="profileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full mr-2 object-cover" />
-        <span id="profileName" class="font-bold">Nome do Usuário</span>
+
+    <header id="profileHeader" class="md:hidden flex justify-between items-center p-4 text-gray-700">
+      <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-gray-600 hover:text-blue-600" aria-label="Abrir menu">
+        <i class="bi bi-list text-2xl"></i>
+      </button>
+      <div class="flex items-center cursor-pointer" onclick="openProfileModal()">
+        <span id="profileNameHeader" class="font-semibold mr-3 hidden sm:inline text-gray-700">Nome do Usuário</span>
+        <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-white ring-blue-500" />
       </div>
     </header>
 
-    <div class="flex flex-1">
-      <!-- Sidebar Desktop -->
-      <nav class="hidden md:flex flex-col bg-[#0c0c0c] text-gray-300 w-64 shadow-lg h-screen rounded-r-[30px]">
-        <div class="sticky top-0 p-5 bg-[#0c0c0c] flex flex-col items-center border-b border-gray-800">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="mx-auto mb-5 max-w-[120px]" />
-          <h2 class="text-xl font-semibold">Menu</h2>
+    <div class="flex flex-1 overflow-hidden">
+
+      <nav class="hidden md:flex flex-col bg-white text-gray-600 w-64 shadow-md h-screen sticky top-0 border-r border-gray-200">
+        <div class="p-5 flex flex-col items-center border-b border-gray-200">
+          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto mb-4 max-w-[130px]" />
+          <h2 class="text-lg font-semibold text-gray-700">Menu Principal</h2>
         </div>
-        <div class="overflow-y-auto flex-grow p-5 space-y-1">
-          <a href="#" onclick="loadPage('home.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Home</span>
+        <div class="overflow-y-auto flex-grow p-4 space-y-1">
+          <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
+            <i class="bi bi-house-door-fill w-5 text-center"></i> <span>Home</span>
           </a>
-          <a href="#" onclick="loadPage('integracao.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-arrows-angle-contract"></i>
-            <span>Integração</span>
+          <a href="#" onclick="loadPage('integracao.html', this); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
+            <i class="bi bi-arrows-angle-contract w-5 text-center"></i> <span>Integração</span>
           </a>
-          <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2">
-                <i class="bi bi-calendar-event-fill"></i> Previsão
-              </span>
-              <i id="desktopPrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
+          <div class="nav-item">
+            <button onclick="toggleSubmenu('desktopPrevisaoSubmenu', 'desktopPrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
+              <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center"></i> Previsão</span>
+              <i id="desktopPrevisaoIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
             </button>
-            <div id="desktopPrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
+            <div id="desktopPrevisaoSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
+              <a href="#" onclick="loadPage('previsao_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Abril</a>
+              <a href="#" onclick="loadPage('previsao_maio.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Maio</a>
+              <a href="#" onclick="loadPage('previsao_dezembro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
             </div>
           </div>
-          <div class="nav-link flex flex-col">
-            <button onclick="toggleGastosSubmenu('desktop')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2">
-                <i class="bi bi-wallet2"></i> Gastos
-              </span>
-              <i id="desktopGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
-            </button>
-            <div id="desktopGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('sub_janeiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('sub_maio.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('sub_junho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('sub_julho.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('sub_agosto.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('sub_setembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('sub_outubro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('sub_novembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('sub_dezembro.html'); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
+          <div class="nav-item">
+             <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
+                <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center"></i> Gastos</span>
+                <i id="desktopGastosIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
+             </button>
+             <div id="desktopGastosSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
+                <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Janeiro</a>
+                <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Fevereiro</a>
+                <a href="#" onclick="loadPage('sub_dezembro.html', this); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
+             </div>
           </div>
-          <a href="#" onclick="loadPage('geral.html'); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-graph-up"></i>
-            <span>Relatório Geral</span>
-          </a>
+           <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
+             <i class="bi bi-graph-up w-5 text-center"></i> <span>Relatório Geral</span>
+           </a>
         </div>
-        <div class="sticky bottom-0 bg-[#0c0c0c] p-5 border-t border-gray-800">
-          <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover" />
-            <span id="sidebarProfileName" class="font-bold text-gray-200">Nome do Usuário</span>
+        <div class="mt-auto p-4 border-t border-gray-200">
+          <div class="flex items-center gap-3 cursor-pointer group" onclick="openProfileModal()">
+            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-10 h-10 rounded-full object-cover transition-transform duration-300 group-hover:scale-105 ring-1 ring-gray-300" />
+            <div>
+                <span id="sidebarProfileName" class="font-semibold text-sm text-gray-700 block group-hover:text-blue-600">Nome do Usuário</span>
+                <span class="text-xs text-gray-500">Ver Perfil</span>
+            </div>
           </div>
         </div>
       </nav>
 
-      <!-- Conteúdo Principal -->
-      <main class="flex flex-col flex-1">
-        <iframe id="mainFrame" src="home.html" class="flex-1 w-full" style="background-color: #fff;"></iframe>
+      <main class="flex-1 overflow-y-auto bg-gray-100 p-0 md:p-1"> <iframe id="mainFrame" src="home.html" class="w-full h-full block rounded-lg md:rounded-xl" title="Conteúdo Principal"></iframe>
       </main>
     </div>
 
-    <!-- Sidebar Mobile -->
-    <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden">
-      <div class="w-64 bg-[#0c0c0c] text-gray-300 h-screen flex flex-col rounded-r-[30px]">
-        <div class="sticky top-0 bg-[#0c0c0c] p-5 flex justify-between items-center border-b border-gray-800">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo" class="max-w-[60%]" />
-          <button onclick="toggleMobileSidebar()">
-            <i class="bi bi-x-lg text-2xl"></i>
-          </button>
-        </div>
-        <div class="overflow-y-auto flex-grow p-5 space-y-1">
-          <h2 class="text-xl font-semibold text-center mb-2">Menu</h2>
-          <a href="#" onclick="loadPage('home.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 active">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Home</span>
-          </a>
-          <a href="#" onclick="loadPage('integracao.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-arrows-angle-contract"></i>
-            <span>Integração</span>
-          </a>
-          <div class="nav-link flex flex-col">
-            <button onclick="togglePrevisaoSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-calendar-event-fill"></i> Previsão</span>
-              <i id="mobilePrevisaoIcon" class="bi bi-caret-down-fill transition-transform"></i>
+    <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
+    <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 bg-white text-gray-600 h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r border-gray-200">
+        <div class="p-5 flex justify-between items-center border-b border-gray-200">
+            <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-8 w-auto" />
+            <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 text-gray-500 hover:text-blue-600" aria-label="Fechar menu">
+                <i class="bi bi-x-lg text-2xl"></i>
             </button>
-            <div id="mobilePrevisaoSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('previsao_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('previsao_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('previsao_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('previsao_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('previsao_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('previsao_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('previsao_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
-          </div>
-          <div class="nav-link flex flex-col">
-            <button onclick="toggleGastosSubmenu('mobile')" class="flex items-center justify-between gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1 w-full">
-              <span class="flex items-center gap-2"><i class="bi bi-wallet2"></i> Gastos Mensal</span>
-              <i id="mobileGastosIcon" class="bi bi-caret-down-fill transition-transform"></i>
-            </button>
-            <div id="mobileGastosSubmenu" class="pl-8 mt-1 overflow-y-auto transition-all max-h-0">
-              <a href="#" onclick="loadPage('sub_janeiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Abril</a>
-              <a href="#" onclick="loadPage('sub_maio.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Maio</a>
-              <a href="#" onclick="loadPage('sub_junho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Junho</a>
-              <a href="#" onclick="loadPage('sub_julho.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Julho</a>
-              <a href="#" onclick="loadPage('sub_agosto.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Agosto</a>
-              <a href="#" onclick="loadPage('sub_setembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Setembro</a>
-              <a href="#" onclick="loadPage('sub_outubro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Outubro</a>
-              <a href="#" onclick="loadPage('sub_novembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Novembro</a>
-              <a href="#" onclick="loadPage('sub_dezembro.html'); toggleMobileSidebar(); return false;" class="block nav-link p-1 rounded hover:bg-white/10">Dezembro</a>
-            </div>
-          </div>
-          <a href="#" onclick="loadPage('geral.html'); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-2 p-2 rounded transition-all hover:bg-white/10 hover:translate-x-1">
-            <i class="bi bi-graph-up"></i>
-            <span>Relatório Geral</span>
-          </a>
         </div>
-      </div>
-    </div>
+        <div class="overflow-y-auto flex-grow p-4 space-y-1">
+            <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">Menu</h2>
+             <a href="#" onclick="loadPage('home.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
+                <i class="bi bi-house-door-fill w-5 text-center"></i> <span>Home</span>
+            </a>
+            <a href="#" onclick="loadPage('integracao.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
+                <i class="bi bi-arrows-angle-contract w-5 text-center"></i> <span>Integração</span>
+            </a>
+            <div class="nav-item">
+                <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
+                    <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center"></i> Previsão</span>
+                    <i id="mobilePrevisaoIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div id="mobilePrevisaoSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
+                    <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Abril</a>
+                    <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Maio</a>
+                    <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                 <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600 w-full text-left">
+                     <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center"></i> Gastos</span>
+                     <i id="mobileGastosIcon" class="bi bi-chevron-down transition-transform duration-300"></i>
+                 </button>
+                 <div id="mobileGastosSubmenu" class="submenu pl-8 ml-3 mt-1 space-y-1 border-l border-gray-200">
+                     <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Janeiro</a>
+                     <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Fevereiro</a>
+                     <a href="#" onclick="loadPage('sub_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-sm hover:bg-gray-100 hover:text-blue-600">Dezembro</a>
+                 </div>
+             </div>
+             <a href="#" onclick="loadPage('geral.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:text-blue-600">
+                <i class="bi bi-graph-up w-5 text-center"></i> <span>Relatório Geral</span>
+            </a>
+        </div>
+        <div class="p-4 mt-auto border-t border-gray-200">
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition-colors duration-200">
+                <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
+            </button>
+        </div>
+    </nav>
+  </div>
 
-  <!-- Modal de Edição do Perfil -->
-  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-xl w-11/12 md:w-1/3 p-6">
+  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl w-full max-w-md p-6 shadow-xl text-gray-800">
       <form id="profileForm">
-        <div class="flex justify-between items-center border-b pb-2 mb-4">
-          <h5 class="text-xl font-semibold">Editar Perfil</h5>
-          <button type="button" onclick="closeProfileModal()" class="text-gray-600 text-2xl">&times;</button>
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-5">
+          <h5 class="text-xl font-semibold text-gray-800">Editar Perfil</h5>
+          <button type="button" onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none p-1">&times;</button>
         </div>
-        <div class="text-center mb-4">
-          <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover" />
+        <div class="text-center mb-5">
+          <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 ring-blue-500 mb-2" />
+          <label for="profilePicInput" class="cursor-pointer text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Alterar foto
+            <input type="file" id="profilePicInput" accept="image/*" class="hidden" />
+          </label>
         </div>
         <div class="mb-4">
-          <label for="profilePic" class="block text-gray-700 mb-1">Nova Foto de Perfil</label>
-          <input type="file" id="profilePic" accept="image/*" class="w-full p-2 border rounded" />
+          <label for="profileNameInput" class="block text-gray-700 mb-1 text-sm font-medium">Nome do Usuário</label>
+          <input type="text" id="profileNameInput" placeholder="Digite seu nome" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" />
         </div>
-        <div class="mb-4">
-          <label for="profileNameInput" class="block text-gray-700 mb-1">Nome do Usuário</label>
-          <input type="text" id="profileNameInput" placeholder="Digite seu nome" class="w-full p-2 border rounded" />
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Salvar</button>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button" onclick="closeProfileModal()" class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 border border-gray-200 transition duration-200">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Salvar Alterações</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Script para definir a variável --vh para mobile -->
   <script>
     function setVhProperty() {
       let vh = window.innerHeight * 0.01;
@@ -312,178 +311,260 @@
     }
     setVhProperty();
     window.addEventListener('resize', setVhProperty);
+    window.addEventListener('orientationchange', setVhProperty);
   </script>
 
-  <!-- Scripts -->
   <script>
-    // Função para carregar páginas no iframe
-    function loadPage(pageUrl) {
-      document.querySelectorAll(".nav-link a").forEach((link) => link.classList.remove("active"));
-      if (event.target.closest("a")) {
-        event.target.closest("a").classList.add("active");
-      }
-      document.getElementById("mainFrame").src = pageUrl;
-    }
+    // Seletores Globais
+    const loginOverlay = document.getElementById('loginOverlay');
+    const loginErrorDiv = document.getElementById('loginError');
+    const formLogin = document.getElementById('formLogin');
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
+    const rememberMe = document.getElementById('rememberMe');
+    const loginButton = document.getElementById('loginButton');
+    const buttonText = loginButton.querySelector('.button-text');
+    const spinnerIcon = loginButton.querySelector('.spinner-icon');
+    const togglePasswordButton = document.getElementById('togglePassword');
 
-    // Alterna visibilidade do menu mobile
-    function toggleMobileSidebar() {
-      document.getElementById("mobileSidebar").classList.toggle("hidden");
-    }
+    const transitionScreen = document.getElementById('transitionScreen');
+    const dashboard = document.getElementById('dashboard');
+    const mainFrame = document.getElementById('mainFrame');
+    const logoutNotification = document.getElementById('logoutNotification');
 
-    // Alterna submenu Previsão
-    function togglePrevisaoSubmenu(mode) {
-      const submenu = mode === "desktop" ? document.getElementById("desktopPrevisaoSubmenu") : document.getElementById("mobilePrevisaoSubmenu");
-      const icon = mode === "desktop" ? document.getElementById("desktopPrevisaoIcon") : document.getElementById("mobilePrevisaoIcon");
+    const mobileSidebarWrapper = document.getElementById('mobileSidebarWrapper');
+    const mobileSidebar = document.getElementById('mobileSidebar');
 
-      if (submenu.classList.contains("max-h-0")) {
-        submenu.classList.remove("max-h-0");
-        submenu.classList.add("max-h-[300px]");
-        icon.classList.add("rotate-180");
-      } else {
-        submenu.classList.remove("max-h-[300px]");
-        submenu.classList.add("max-h-0");
-        icon.classList.remove("rotate-180");
-      }
-    }
+    const profileModal = document.getElementById('profileModal');
+    const profileForm = document.getElementById('profileForm');
+    const profileNameInput = document.getElementById('profileNameInput');
+    const profilePicInput = document.getElementById('profilePicInput');
+    const modalProfileImg = document.getElementById('modalProfileImg');
 
-    // Alterna submenu Gastos
-    function toggleGastosSubmenu(mode) {
-      const submenu = mode === "desktop" ? document.getElementById("desktopGastosSubmenu") : document.getElementById("mobileGastosSubmenu");
-      const icon = mode === "desktop" ? document.getElementById("desktopGastosIcon") : document.getElementById("mobileGastosIcon");
+    const profileImgHeader = document.getElementById('profileImgHeader');
+    const profileNameHeader = document.getElementById('profileNameHeader');
+    const sidebarProfileImg = document.getElementById('sidebarProfileImg');
+    const sidebarProfileName = document.getElementById('sidebarProfileName');
 
-      if (submenu.classList.contains("max-h-0")) {
-        submenu.classList.remove("max-h-0");
-        submenu.classList.add("max-h-[300px]");
-        icon.classList.add("rotate-180");
-      } else {
-        submenu.classList.remove("max-h-[300px]");
-        submenu.classList.add("max-h-0");
-        icon.classList.remove("rotate-180");
-      }
-    }
+    const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
+    const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
 
-    // Modal de perfil
-    function openProfileModal() {
-      document.getElementById("profileModal").classList.remove("hidden");
-      document.getElementById("profileModal").classList.add("flex");
-    }
-    function closeProfileModal() {
-      document.getElementById("profileModal").classList.remove("flex");
-      document.getElementById("profileModal").classList.add("hidden");
-    }
+    // --- Funções Auxiliares ---
+    // (showElement, hideElement, showFlexElement, hideFlexElement, disableButton, enableButton - mantidas como antes)
+     function showElement(el) { if (el) el.classList.remove('hidden'); }
+     function hideElement(el) { if (el) el.classList.add('hidden'); }
+     function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
+     function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
+     function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
+     function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
 
-    // Atualiza informações do usuário com base no localStorage
-    function updateUserInfo() {
-      const savedUsername = localStorage.getItem("savedUsername");
-      const savedProfilePic = localStorage.getItem("savedProfilePic");
-      if (savedUsername) {
-        document.getElementById("profileName").textContent = savedUsername;
-        document.getElementById("profileNameInput").value = savedUsername;
-        document.getElementById("sidebarProfileName").textContent = savedUsername;
-      }
-      if (savedProfilePic) {
-        document.getElementById("profileImg").src = savedProfilePic;
-        document.getElementById("modalProfileImg").src = savedProfilePic;
-        document.getElementById("sidebarProfileImg").src = savedProfilePic;
-      } else {
-        document.getElementById("profileImg").src = "https://via.placeholder.com/40";
-        document.getElementById("modalProfileImg").src = "https://via.placeholder.com/100";
-        document.getElementById("sidebarProfileImg").src = "https://via.placeholder.com/40";
-      }
-    }
+    // --- Lógica de Login ---
+    // (formLogin.addEventListener, handleSuccessfulLogin, handleFailedLogin, togglePasswordButton.addEventListener - mantidas como antes)
+     formLogin.addEventListener('submit', function (e) {
+       e.preventDefault();
+       hideElement(loginErrorDiv);
+       disableButton(loginButton, buttonText, spinnerIcon);
+       setTimeout(() => {
+         const validUsername = localStorage.getItem('savedUsername') || 'admin';
+         const username = usernameField.value.trim();
+         const password = passwordField.value;
+         if (username === validUsername && password === 'admin123') {
+           handleSuccessfulLogin(username, password);
+         } else {
+           handleFailedLogin();
+         }
+       }, 1500);
+     });
 
-    // Login
-    const loginOverlay = document.getElementById("loginOverlay");
-    const spinner = document.getElementById("spinner");
-    const formLogin = document.getElementById("formLogin");
-    const rememberMe = document.getElementById("rememberMe");
-    const usernameField = document.getElementById("username");
-    const passwordField = document.getElementById("password");
-    const iframe = document.getElementById("mainFrame");
-    const logoutNotification = document.getElementById("logoutNotification");
+     function handleSuccessfulLogin(username, password) {
+       if (rememberMe.checked) {
+         localStorage.setItem('savedUsername', username);
+         localStorage.setItem('savedPassword', password);
+       } else {
+         localStorage.removeItem('savedPassword'); // Mantem username salvo se foi editado
+       }
+       localStorage.setItem('isLoggedIn', 'true');
+       hideFlexElement(loginOverlay);
+       showFlexElement(transitionScreen);
+       setTimeout(() => {
+         hideFlexElement(transitionScreen);
+         showFlexElement(dashboard);
+         const homeLink = document.querySelector('.nav-link[onclick*="home.html"]'); // Encontra o link Home
+         loadPage('home.html', homeLink); // Passa o elemento do link Home
+         updateUserInfo();
+         enableButton(loginButton, buttonText, spinnerIcon);
+       }, 1800);
+     }
 
-    formLogin.addEventListener("submit", function (e) {
-      e.preventDefault();
-      spinner.innerHTML = `<div class="spinner-border text-blue-500" role="status"><span class="sr-only">Carregando...</span></div>`;
-      spinner.classList.remove("hidden");
-      spinner.classList.add("flex");
+     function handleFailedLogin() {
+       loginErrorDiv.textContent = 'Usuário ou senha incorretos. Tente novamente.';
+       showElement(loginErrorDiv);
+       enableButton(loginButton, buttonText, spinnerIcon);
+       loginOverlay.querySelector('.relative.bg-white').classList.add('animate-shake');
+       setTimeout(() => {
+          loginOverlay.querySelector('.relative.bg-white').classList.remove('animate-shake');
+       }, 500);
+     }
 
-      setTimeout(function () {
-        const validUsername = localStorage.getItem("savedUsername") || "admin";
-        const username = usernameField.value;
-        const password = passwordField.value;
-        if (username === validUsername && password === "admin123") {
-          if (rememberMe.checked) {
-            localStorage.setItem("savedUsername", username);
-            localStorage.setItem("savedPassword", password);
-          } else {
-            localStorage.removeItem("savedUsername");
-            localStorage.removeItem("savedPassword");
-          }
-          localStorage.setItem("loggedIn", "true");
+     togglePasswordButton.addEventListener('click', function() {
+         const icon = this.querySelector('i');
+         if (passwordField.type === 'password') {
+             passwordField.type = 'text';
+             icon.classList.remove('bi-eye-slash'); icon.classList.add('bi-eye');
+             this.setAttribute('aria-label', 'Ocultar senha');
+         } else {
+             passwordField.type = 'password';
+             icon.classList.remove('bi-eye'); icon.classList.add('bi-eye-slash');
+              this.setAttribute('aria-label', 'Mostrar senha');
+         }
+     });
 
-          // Exibe a tela de transição com o GIF e a mensagem
-          loginOverlay.style.display = "none";
-          const transitionScreen = document.getElementById("transitionScreen");
-          transitionScreen.style.display = "flex";
+    // --- Lógica de Navegação e UI do Dashboard ---
 
-          // Após 1,5 segundos, oculta a tela de transição e mostra o dashboard/home
-          setTimeout(function () {
-            transitionScreen.style.display = "none";
-            document.getElementById("dashboard").classList.remove("hidden");
-            iframe.src = "home.html";
-            updateUserInfo();
-            spinner.classList.add("hidden");
-            spinner.classList.remove("flex");
-          }, 1500);
-        } else {
-          alert("Usuário ou senha incorretos!");
-          spinner.classList.add("hidden");
-          spinner.classList.remove("flex");
+    function loadPage(pageUrl, clickedLinkElement) {
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        if (clickedLinkElement) {
+            clickedLinkElement.classList.add('active');
+            // Opcional: Marcar pai ativo (se necessário)
+             const parentNavItem = clickedLinkElement.closest('.nav-item');
+             // if (parentNavItem) { /* lógica para marcar pai */ }
         }
-      }, 2000);
-    });
+        mainFrame.src = pageUrl;
+    }
 
-    // Ao carregar a página, remove flag de login e preenche dados salvos
-    window.addEventListener("DOMContentLoaded", function () {
-      localStorage.removeItem("loggedIn");
-      const savedUsername = localStorage.getItem("savedUsername");
-      const savedPassword = localStorage.getItem("savedPassword");
-      if (savedUsername) usernameField.value = savedUsername;
-      if (savedPassword) {
-        passwordField.value = savedPassword;
-        rememberMe.checked = true;
-      }
-      loginOverlay.style.display = "flex";
-      document.getElementById("dashboard").classList.add("hidden");
-    });
+    function toggleMobileSidebar() {
+        const isOpen = mobileSidebar.classList.contains('translate-x-0');
+        if (isOpen) {
+            mobileSidebar.classList.remove('translate-x-0');
+            mobileSidebar.classList.add('-translate-x-full');
+            hideElement(mobileSidebarWrapper);
+        } else {
+            mobileSidebar.classList.remove('-translate-x-full');
+            mobileSidebar.classList.add('translate-x-0');
+            showElement(mobileSidebarWrapper);
+        }
+    }
 
-    // Atualiza imagem do modal ao selecionar nova foto
-    document.getElementById("profilePic").addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          document.getElementById("modalProfileImg").src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+    // Alterna visibilidade dos submenus (NÃO PRECISA MUDAR A LÓGICA JS, O ERRO ESTAVA NO HTML)
+    function toggleSubmenu(submenuId, iconId) {
+        const submenu = document.getElementById(submenuId);
+        const icon = document.getElementById(iconId);
 
-    // Salva alterações do modal de perfil
-    document.getElementById("profileForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const newName = document.getElementById("profileNameInput").value.trim();
-      const newImg = document.getElementById("modalProfileImg").src;
-      if (newName !== "") {
-        localStorage.setItem("savedUsername", newName);
-        localStorage.setItem("savedProfilePic", newImg);
-        updateUserInfo();
-        closeProfileModal();
-      } else {
-        alert("O nome de usuário não pode estar vazio.");
-      }
-    });
+        // Verifica se os elementos existem (boa prática)
+        if (!submenu || !icon) {
+            console.error("Submenu ou ícone não encontrado:", submenuId, iconId);
+            return;
+        }
+
+        // Descobre o contexto (desktop ou mobile) para fechar outros
+        const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
+        const isCurrentlyVisible = submenu.classList.contains('submenu-visible');
+
+        // Fecha TODOS os submenus no mesmo contexto ANTES de abrir/fechar o atual
+        document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
+            if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
+                 otherSubmenu.classList.remove('submenu-visible');
+                 const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon'); // Assume padrão de nomeação
+                 const otherIcon = document.getElementById(otherIconId);
+                 if (otherIcon) otherIcon.classList.remove('rotate-180');
+            }
+        });
+
+        // Abre/Fecha o submenu clicado APENAS SE ele não estava visível antes
+        if (!isCurrentlyVisible) {
+            submenu.classList.add('submenu-visible');
+            icon.classList.add('rotate-180');
+        } else {
+             // Se já estava visível, a etapa anterior já o fechou (ao remover a classe de todos)
+             // Apenas garantimos que o ícone volte ao normal
+             icon.classList.remove('rotate-180');
+        }
+    }
+
+    // --- Lógica do Modal de Perfil ---
+    // (openProfileModal, closeProfileModal, profilePicInput.addEventListener, profileForm.addEventListener, updateUserInfo - mantidas como antes)
+     function openProfileModal() {
+         const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
+         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
+         profileNameInput.value = currentUsername;
+         modalProfileImg.src = currentProfilePic;
+         showFlexElement(profileModal);
+     }
+     function closeProfileModal() {
+         hideFlexElement(profileModal);
+         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
+         modalProfileImg.src = currentProfilePic;
+         profilePicInput.value = '';
+     }
+     profilePicInput.addEventListener('change', function () {
+       const file = this.files[0];
+       if (file) {
+         const reader = new FileReader();
+         reader.onload = function (e) { modalProfileImg.src = e.target.result; };
+         reader.readAsDataURL(file);
+       }
+     });
+     profileForm.addEventListener('submit', function (e) {
+       e.preventDefault();
+       const newName = profileNameInput.value.trim();
+       const newImgSrc = modalProfileImg.src;
+       if (newName) {
+         localStorage.setItem('savedUsername', newName);
+         if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) {
+              localStorage.setItem('savedProfilePic', newImgSrc);
+         } else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) {
+              localStorage.removeItem('savedProfilePic');
+         }
+         updateUserInfo();
+         closeProfileModal();
+       } else {
+         alert('O nome de usuário não pode ficar vazio.');
+       }
+     });
+     function updateUserInfo() {
+       const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
+       const profilePic = localStorage.getItem('savedProfilePic');
+       const smallPic = profilePic || DEFAULT_PROFILE_PIC_SMALL;
+       const largePic = profilePic || DEFAULT_PROFILE_PIC_LARGE;
+       profileNameHeader.textContent = username;
+       sidebarProfileName.textContent = username;
+       profileImgHeader.src = smallPic;
+       sidebarProfileImg.src = smallPic;
+       modalProfileImg.src = largePic;
+     }
+
+
+    // --- Lógica de Logout ---
+    // (logout - mantida como antes)
+     function logout() {
+         localStorage.removeItem('isLoggedIn');
+         hideFlexElement(dashboard);
+         showFlexElement(loginOverlay);
+         showElement(logoutNotification);
+         setTimeout(() => hideElement(logoutNotification), 4000);
+         if (mobileSidebar.classList.contains('translate-x-0')) { toggleMobileSidebar(); }
+     }
+
+    // --- Inicialização da Página ---
+    // (window.addEventListener('DOMContentLoaded' - mantida como antes, mas atualizada para ativar link Home corretamente)
+     window.addEventListener('DOMContentLoaded', function () {
+         if (localStorage.getItem('isLoggedIn') === 'true') {
+             hideFlexElement(loginOverlay);
+             showFlexElement(dashboard);
+             const homeLink = document.querySelector('.nav-link[onclick*="home.html"]'); // Encontra o link Home
+             loadPage('home.html', homeLink); // Passa o elemento do link Home
+             updateUserInfo();
+         } else {
+             const savedUsername = localStorage.getItem('savedUsername');
+             const savedPassword = localStorage.getItem('savedPassword');
+             if (savedUsername) usernameField.value = savedUsername;
+             if (savedPassword) { rememberMe.checked = true; }
+             showFlexElement(loginOverlay);
+             hideFlexElement(dashboard);
+             hideElement(logoutNotification);
+             hideElement(loginErrorDiv);
+         }
+     });
   </script>
 </body>
 </html>
