@@ -3,440 +3,307 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Relatório Geral Moderno</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- ApexCharts JS -->
+  <title>Relatório de Gastos Otimizado</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    /* Responsividade dos gráficos */
-    #chart, #chart2, #chart3, #chart4 {
-      max-width: 100%;
+    body {
+      background-color: #f8f9fa; /* Um cinza claro suave */
+      font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+      color: #343a40; /* Cor de texto ligeiramente mais suave */
+    }
+
+    .chart-card {
+      margin-bottom: 2rem; /* Espaçamento entre os cards */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+      border: none; /* Remover borda padrão do card */
+      border-radius: 0.5rem; /* Bordas mais arredondadas */
+    }
+
+    .card-header {
+      background-color: #e9ecef; /* Cor de fundo para o cabeçalho do card */
+      border-bottom: 1px solid #dee2e6;
+      font-weight: 600; /* Deixar o título do card mais destacado */
+    }
+
+    /* Ajuste para garantir que os gráficos usem o espaço disponível */
+    .apexcharts-canvas {
       margin: 0 auto;
     }
-    body {
-      background-color: #fff;
-      color: #212529;
+
+    h1 {
+      color: #0d6efd; /* Azul do Bootstrap para o título principal */
+      margin-bottom: 2.5rem; /* Mais espaço abaixo do título principal */
+      font-weight: 600;
+    }
+
+    /* Estilos específicos para os dataLabels (rótulos de dados nos gráficos) */
+    .apexcharts-datalabel {
+        font-weight: 500 !important;
+    }
+
+    /* Ajustes responsivos adicionais se necessário */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      .card-header {
+          font-size: 0.95rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container my-5">
-    <!-- Gráfico Geral Mensal com coluna Total -->
-    <h2 class="text-center mb-4">Relatório Geral de Gastos (Mensal)</h2>
-    <div id="chart"></div>
+    <h1 class="text-center">Dashboard de Análise de Gastos</h1>
 
-    <hr class="my-5">
+    <div class="card chart-card">
+      <div class="card-header text-center">
+        Relatório Geral de Gastos (Mensal)
+      </div>
+      <div class="card-body">
+        <div id="chartMensal"></div>
+      </div>
+    </div>
 
-    <!-- Gráfico de Gastos de Janeiro por Semana -->
-    <h2 class="text-center mb-4">Gastos de Janeiro por Semana</h2>
-    <div id="chart2"></div>
+    <div class="row">
+      <div class="col-lg-4 col-md-6">
+        <div class="card chart-card">
+          <div class="card-header text-center">
+            Gastos de Janeiro por Semana
+          </div>
+          <div class="card-body">
+            <div id="chartSemanalJaneiro"></div>
+          </div>
+        </div>
+      </div>
 
-    <hr class="my-5">
+      <div class="col-lg-4 col-md-6">
+        <div class="card chart-card">
+          <div class="card-header text-center">
+            Gastos de Fevereiro por Semana
+          </div>
+          <div class="card-body">
+            <div id="chartSemanalFevereiro"></div>
+          </div>
+        </div>
+      </div>
 
-    <!-- Gráfico de Gastos de Fevereiro por Semana -->
-    <h2 class="text-center mb-4">Gastos de Fevereiro por Semana</h2>
-    <div id="chart3"></div>
-
-    <hr class="my-5">
-
-    <!-- Gráfico de Gastos de Março por Semana -->
-    <h2 class="text-center mb-4">Gastos de Março por Semana</h2>
-    <div id="chart4"></div>
+      <div class="col-lg-4 col-md-12"> <div class="card chart-card">
+          <div class="card-header text-center">
+            Gastos de Março por Semana
+          </div>
+          <div class="card-body">
+            <div id="chartSemanalMarco"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    /*******************************************************************
-     *            GRÁFICO GERAL MENSAL COM COLUNA TOTAL
-     *******************************************************************/
-    var valorJaneiro = 5686819.08,
-        valorFevereiro = 6105182.26,
-        valorMarco = 6995663.47,
-        valorTotal = valorJaneiro + valorFevereiro + valorMarco;
+    // ===================================================================
+    // FUNÇÃO AUXILIAR PARA CRIAR OPÇÕES DO GRÁFICO
+    // ===================================================================
+    /**
+     * Cria um objeto de configuração padrão para os gráficos de barra ApexCharts.
+     * @param {Array<number>} seriesData - Array com os dados da série do gráfico.
+     * @param {Array<string>} categories - Array com as categorias do eixo X.
+     * @param {string} seriesName - Nome da série de dados (para tooltip e legenda).
+     * @param {number} chartHeight - Altura do gráfico.
+     * @returns {object} Objeto de configuração para ApexCharts.
+     */
+    function createBarChartOptions(seriesData, categories, seriesName = 'Valor', chartHeight = 350) {
+      // Função para formatar valores como moeda brasileira (R$)
+      const formatCurrency = (val) => {
+        if (val === null || val === undefined) return "R$ 0,00";
+        return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      };
 
-    var optionsMensal = {
-      chart: {
-        type: 'bar',
-        height: 350,
-        background: 'transparent',
-        toolbar: { show: false }
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 8,
-          horizontal: false,
-          columnWidth: '50%',
-          dataLabels: { position: 'top' }
-        }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return {
+        chart: {
+          type: 'bar',
+          height: chartHeight,
+          background: 'transparent', // Fundo transparente para se adaptar ao card
+          toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, // Habilitar apenas download
+          fontFamily: 'Poppins, sans-serif', // Aplicar a mesma fonte do body
         },
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: ["#000"]
-        }
-      },
-      series: [{
-        name: 'Valor Geral',
-        data: [valorJaneiro, valorFevereiro, valorMarco, valorTotal]
-      }],
-      xaxis: {
-        categories: ['Janeiro', 'Fevereiro', 'Março', 'Total'],
-        labels: {
-          style: {
-            fontSize: '14px',
-            colors: ["#000"]
+        plotOptions: {
+          bar: {
+            borderRadius: 6, // Bordas ligeiramente menos arredondadas
+            horizontal: false,
+            columnWidth: '55%', // Largura da coluna
+            dataLabels: { position: 'top' } // Posição dos rótulos
           }
         },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: {
-        labels: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        dataLabels: {
+          enabled: true,
+          formatter: formatCurrency, // Usa a função de formatação
+          offsetY: -25, // Ajuste fino da posição vertical
+          style: {
+            fontSize: '11px', // Tamanho da fonte dos rótulos
+            colors: ["#343a40"] // Cor dos rótulos
+          }
+        },
+        series: [{
+          name: seriesName,
+          data: seriesData
+        }],
+        xaxis: {
+          categories: categories,
+          labels: {
+            style: {
+              fontSize: '12px', // Tamanho da fonte do eixo X
+              colors: ["#495057"] // Cor dos rótulos do eixo X
+            }
           },
-          style: {
-            fontSize: '12px',
-            colors: ["#000"]
-          }
-        }
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'light',
-          type: "vertical",
-          shadeIntensity: 0.3,
-          opacityFrom: 0.85,
-          opacityTo: 0.85,
-          stops: [0, 90, 100]
-        }
-      },
-      tooltip: {
-        theme: 'light',
-        y: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          }
-        }
-      },
-      theme: { mode: 'light' },
-      responsive: [
-        {
-          breakpoint: 768,
-          options: {
-            chart: { height: 300 },
-            plotOptions: { bar: { columnWidth: '70%' } },
-            dataLabels: { style: { fontSize: '10px' } },
-            xaxis: { labels: { style: { fontSize: '12px' } } },
-            yaxis: { labels: { style: { fontSize: '10px' } } }
+          axisBorder: { show: false },
+          axisTicks: { show: false }
+        },
+        yaxis: {
+          labels: {
+            formatter: formatCurrency, // Usa a função de formatação
+            style: {
+              fontSize: '11px', // Tamanho da fonte do eixo Y
+              colors: ["#495057"] // Cor dos rótulos do eixo Y
+            }
           }
         },
-        {
-          breakpoint: 576,
-          options: {
-            chart: { height: 250 },
-            plotOptions: { bar: { columnWidth: '80%' } },
-            dataLabels: { style: { fontSize: '8px' } },
-            xaxis: { labels: { style: { fontSize: '10px' } } },
-            yaxis: { labels: { style: { fontSize: '8px' } } }
+        fill: {
+          // Cores podem ser personalizadas aqui. Usando um gradiente sutil.
+          // Pode-se usar um array de cores em `colors` dentro das opções do chart
+          // ou definir cores por série/valor.
+           type: 'gradient',
+           gradient: {
+             shade: 'light',
+             type: "vertical",
+             shadeIntensity: 0.25,
+             gradientToColors: undefined, // Deixa o ApexCharts escolher
+             inverseColors: true,
+             opacityFrom: 0.85,
+             opacityTo: 0.85,
+             stops: [50, 0, 100] // Ajuste do gradiente
+           },
+          // colors: ['#0d6efd'] // Exemplo de cor sólida (azul Bootstrap)
+        },
+        tooltip: {
+          theme: 'light', // Pode ser 'dark' se preferir
+          y: {
+            formatter: formatCurrency // Usa a função de formatação
           }
-        }
-      ]
-    };
+        },
+        grid: {
+          borderColor: '#e9ecef', // Cor suave para as linhas de grade
+          strokeDashArray: 4, // Linhas de grade tracejadas
+          yaxis: {
+            lines: {
+              show: true // Mostrar linhas de grade horizontais
+            }
+          },
+           xaxis: {
+            lines: {
+              show: false // Ocultar linhas de grade verticais
+            }
+          },
+        },
+        theme: { mode: 'light' }, // Garante consistência com o tema
+        responsive: [ // Mantém a responsividade
+          {
+            breakpoint: 992, // Telas médias (tablets)
+            options: {
+              chart: { height: chartHeight * 0.9 },
+              plotOptions: { bar: { columnWidth: '65%' } },
+              dataLabels: { style: { fontSize: '10px' } },
+              xaxis: { labels: { style: { fontSize: '11px' } } },
+              yaxis: { labels: { style: { fontSize: '10px' } } }
+            }
+          },
+          {
+            breakpoint: 768, // Telas pequenas (tablets verticais/celulares grandes)
+             options: {
+              chart: { height: chartHeight * 0.8 },
+              plotOptions: { bar: { columnWidth: '70%' } },
+              dataLabels: { offsetY: -15, style: { fontSize: '9px' } }, // Ajustar posição e tamanho
+              xaxis: { labels: { style: { fontSize: '10px' } } },
+              yaxis: { labels: { style: { fontSize: '9px' } } }
+            }
+          },
+          {
+            breakpoint: 576, // Telas extra pequenas (celulares)
+            options: {
+              chart: { height: chartHeight * 0.75 },
+              plotOptions: { bar: { columnWidth: '80%' } },
+              dataLabels: { enabled: false }, // Ocultar rótulos em telas muito pequenas
+              xaxis: { labels: { style: { fontSize: '9px' } } },
+              yaxis: { labels: { show: false } } // Ocultar eixo Y se ficar muito apertado
+            }
+          }
+        ]
+      };
+    }
 
-    var chartMensal = new ApexCharts(document.querySelector("#chart"), optionsMensal);
+    // ===================================================================
+    // DADOS DOS GRÁFICOS
+    // ===================================================================
+    // --- Gráfico Geral Mensal ---
+    const valorJaneiro = 5686819.08;
+    const valorFevereiro = 6105182.26;
+    const valorMarco = 6995663.47;
+    const valorTotal = valorJaneiro + valorFevereiro + valorMarco;
+    const dadosMensal = [valorJaneiro, valorFevereiro, valorMarco, valorTotal];
+    const categoriasMensal = ['Janeiro', 'Fevereiro', 'Março', 'Total Geral'];
+
+    // --- Gráfico Semanal Janeiro ---
+    // Semana 1 (dias 1 a 7):   R$ 1.059.106,09
+    // Semana 2 (dias 8 a 14):  R$ 1.390.876,49
+    // Semana 3 (dias 15 a 21): R$ 1.356.479,34  <- Corrigido pequeno typo no valor original
+    // Semana 4 (dias 22 a 31): R$ 1.880.357,16
+    const dadosSemanasJaneiro = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
+    const categoriasSemanas = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4']; // Nomes mais curtos
+
+    // --- Gráfico Semanal Fevereiro ---
+    // Semana 1: R$ 1.347.844,70
+    // Semana 2: R$ 1.351.449,96
+    // Semana 3: R$ 1.707.533,26
+    // Semana 4: R$ 1.698.354,34
+    const dadosSemanasFev = [1347844.70, 1351449.96, 1707533.26, 1698354.34];
+
+    // --- Gráfico Semanal Março ---
+    // Semana 1: R$ 1.516.175,78
+    // Semana 2: R$ 1.634.234,11
+    // Semana 3: R$ 1.343.905,08
+    // Semana 4: R$ 2.501.348,50
+    const dadosSemanasMarco = [1516175.78, 1634234.11, 1343905.08, 2501348.50];
+
+    // ===================================================================
+    // RENDERIZAÇÃO DOS GRÁFICOS
+    // ===================================================================
+
+    // --- Renderiza Gráfico Mensal ---
+    const optionsMensal = createBarChartOptions(dadosMensal, categoriasMensal, 'Gasto Mensal', 400); // Altura maior para o principal
+    const chartMensal = new ApexCharts(document.querySelector("#chartMensal"), optionsMensal);
     chartMensal.render();
 
-    /*******************************************************************
-     *          GRÁFICO DE GASTOS DE JANEIRO POR SEMANA (ÁREA)
-     *******************************************************************/
-    var valoresSemanasJaneiro = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
-
-    var optionsSemanalJaneiro = {
-      chart: {
-        type: 'area',
-        height: 350,
-        background: 'transparent',
-        toolbar: { show: false }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        },
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: ["#000"]
-        }
-      },
-      series: [{
-        name: 'Total da Semana',
-        data: valoresSemanasJaneiro
-      }],
-      xaxis: {
-        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-        labels: {
-          style: {
-            fontSize: '14px',
-            colors: ["#000"]
-          }
-        },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: {
-        labels: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          },
-          style: {
-            fontSize: '12px',
-            colors: ["#000"]
-          }
-        }
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'light',
-          type: "vertical",
-          shadeIntensity: 0.3,
-          opacityFrom: 0.85,
-          opacityTo: 0.85,
-          stops: [0, 90, 100]
-        }
-      },
-      tooltip: {
-        theme: 'light',
-        y: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          }
-        }
-      },
-      theme: { mode: 'light' },
-      responsive: [
-        {
-          breakpoint: 768,
-          options: {
-            chart: { height: 300 },
-            dataLabels: { style: { fontSize: '10px' } },
-            xaxis: { labels: { style: { fontSize: '12px' } } },
-            yaxis: { labels: { style: { fontSize: '10px' } } }
-          }
-        },
-        {
-          breakpoint: 576,
-          options: {
-            chart: { height: 250 },
-            dataLabels: { style: { fontSize: '8px' } },
-            xaxis: { labels: { style: { fontSize: '10px' } } },
-            yaxis: { labels: { style: { fontSize: '8px' } } }
-          }
-        }
-      ]
-    };
-
-    var chartSemanalJaneiro = new ApexCharts(document.querySelector("#chart2"), optionsSemanalJaneiro);
+    // --- Renderiza Gráfico Semanal Janeiro ---
+    const optionsSemanalJaneiro = createBarChartOptions(dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal');
+    const chartSemanalJaneiro = new ApexCharts(document.querySelector("#chartSemanalJaneiro"), optionsSemanalJaneiro);
     chartSemanalJaneiro.render();
 
-    /*******************************************************************
-     *          GRÁFICO DE GASTOS DE FEVEREIRO POR SEMANA (ÁREA)
-     *******************************************************************/
-    var valoresSemanasFev = [1347844.70, 1351449.96, 1707533.26, 1698354.34];
-
-    var optionsSemanalFev = {
-      chart: {
-        type: 'area',
-        height: 350,
-        background: 'transparent',
-        toolbar: { show: false }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        },
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: ["#000"]
-        }
-      },
-      series: [{
-        name: 'Total da Semana',
-        data: valoresSemanasFev
-      }],
-      xaxis: {
-        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-        labels: {
-          style: {
-            fontSize: '14px',
-            colors: ["#000"]
-          }
-        },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: {
-        labels: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          },
-          style: {
-            fontSize: '12px',
-            colors: ["#000"]
-          }
-        }
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'light',
-          type: "vertical",
-          shadeIntensity: 0.3,
-          opacityFrom: 0.85,
-          opacityTo: 0.85,
-          stops: [0, 90, 100]
-        }
-      },
-      tooltip: {
-        theme: 'light',
-        y: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          }
-        }
-      },
-      theme: { mode: 'light' },
-      responsive: [
-        {
-          breakpoint: 768,
-          options: {
-            chart: { height: 300 },
-            dataLabels: { style: { fontSize: '10px' } },
-            xaxis: { labels: { style: { fontSize: '12px' } } },
-            yaxis: { labels: { style: { fontSize: '10px' } } }
-          }
-        },
-        {
-          breakpoint: 576,
-          options: {
-            chart: { height: 250 },
-            dataLabels: { style: { fontSize: '8px' } },
-            xaxis: { labels: { style: { fontSize: '10px' } } },
-            yaxis: { labels: { style: { fontSize: '8px' } } }
-          }
-        }
-      ]
-    };
-
-    var chartSemanalFev = new ApexCharts(document.querySelector("#chart3"), optionsSemanalFev);
+    // --- Renderiza Gráfico Semanal Fevereiro ---
+    const optionsSemanalFev = createBarChartOptions(dadosSemanasFev, categoriasSemanas, 'Gasto Semanal');
+    const chartSemanalFev = new ApexCharts(document.querySelector("#chartSemanalFevereiro"), optionsSemanalFev);
     chartSemanalFev.render();
 
-    /*******************************************************************
-     *          GRÁFICO DE GASTOS DE MARÇO POR SEMANA (ÁREA)
-     *******************************************************************/
-    var valoresSemanasMarco = [1516175.78, 1634234.11, 1343905.08, 2501348.50];
-
-    var optionsSemanalMarco = {
-      chart: {
-        type: 'area',
-        height: 350,
-        background: 'transparent',
-        toolbar: { show: false }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        },
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          colors: ["#000"]
-        }
-      },
-      series: [{
-        name: 'Total da Semana',
-        data: valoresSemanasMarco
-      }],
-      xaxis: {
-        categories: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-        labels: {
-          style: {
-            fontSize: '14px',
-            colors: ["#000"]
-          }
-        },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: {
-        labels: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          },
-          style: {
-            fontSize: '12px',
-            colors: ["#000"]
-          }
-        }
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'light',
-          type: "vertical",
-          shadeIntensity: 0.3,
-          opacityFrom: 0.85,
-          opacityTo: 0.85,
-          stops: [0, 90, 100]
-        }
-      },
-      tooltip: {
-        theme: 'light',
-        y: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          }
-        }
-      },
-      theme: { mode: 'light' },
-      responsive: [
-        {
-          breakpoint: 768,
-          options: {
-            chart: { height: 300 },
-            dataLabels: { style: { fontSize: '10px' } },
-            xaxis: { labels: { style: { fontSize: '12px' } } },
-            yaxis: { labels: { style: { fontSize: '10px' } } }
-          }
-        },
-        {
-          breakpoint: 576,
-          options: {
-            chart: { height: 250 },
-            dataLabels: { style: { fontSize: '8px' } },
-            xaxis: { labels: { style: { fontSize: '10px' } } },
-            yaxis: { labels: { style: { fontSize: '8px' } } }
-          }
-        }
-      ]
-    };
-
-    var chartSemanalMarco = new ApexCharts(document.querySelector("#chart4"), optionsSemanalMarco);
+    // --- Renderiza Gráfico Semanal Março ---
+    const optionsSemanalMarco = createBarChartOptions(dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal');
+    const chartSemanalMarco = new ApexCharts(document.querySelector("#chartSemanalMarco"), optionsSemanalMarco);
     chartSemanalMarco.render();
+
   </script>
 
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
