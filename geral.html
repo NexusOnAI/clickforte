@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark"> <head>
+<html lang="pt-br" data-bs-theme="dark">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard Avançado de Gastos (Dark Mode)</title>
@@ -48,6 +49,7 @@
       box-shadow: var(--theme-shadow);
       margin-bottom: 1.5rem;
       overflow: hidden;
+      height: 100%; /* Faz os cards terem a mesma altura na linha */
     }
 
     .card-header {
@@ -60,7 +62,7 @@
     }
 
     .card-body {
-       padding: 1.25rem;
+        padding: 1.25rem;
     }
 
     .kpi-card .card-body {
@@ -69,6 +71,7 @@
         align-items: center;
         justify-content: center;
         text-align: center;
+        height: 100%; /* Garante que o conteúdo ocupe a altura */
     }
 
     .kpi-title {
@@ -79,9 +82,10 @@
     }
 
     .kpi-value {
-        font-size: 2rem;
+        font-size: 1.75rem; /* Reduzido para caber melhor */
         font-weight: 700;
         color: var(--theme-primary-color);
+        word-wrap: break-word; /* Quebra a linha se necessário */
     }
 
     /* Ajustes finos nos gráficos ApexCharts (herdando cores do tema dark) */
@@ -100,12 +104,17 @@
         font-family: var(--bs-body-font-family) !important;
     }
      .apexcharts-legend-text {
-         color: var(--theme-muted-text) !important;
-         font-family: var(--bs-body-font-family) !important;
+        color: var(--theme-muted-text) !important;
+        font-family: var(--bs-body-font-family) !important;
      }
 
     /* Responsividade */
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) { /* Ajusta o tamanho da fonte do KPI em telas médias */
+        .kpi-value {
+            font-size: 1.5rem;
+        }
+    }
+    @media (max-width: 767.98px) {
       .dashboard-header {
           align-items: flex-start;
           margin-bottom: 1.5rem;
@@ -114,7 +123,10 @@
           margin-bottom: 0.5rem;
       }
       .kpi-value {
-          font-size: 1.75rem;
+          font-size: 1.4rem; /* Ainda menor em telas pequenas */
+      }
+      .kpi-card {
+        height: auto; /* Remove altura fixa em telas menores */
       }
     }
   </style>
@@ -123,20 +135,46 @@
   <div class="container my-4 my-md-5">
     <div class="dashboard-header">
       <h1 class="dashboard-title">Dashboard Geral de Gastos</h1>
-      </div>
+    </div>
 
-    <div class="row">
-        <div class="col-12 col-md-4 col-lg-3">
-             <div class="kpi-card">
-                <div class="card-body">
-                    <div class="kpi-title">Gasto Total (Trimestre)</div>
-                    <div class="kpi-value" id="kpi-total-geral">R$ 0,00</div>
-                </div>
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+           <div class="kpi-card">
+              <div class="card-body">
+                  <div class="kpi-title">Gasto Total (Trimestre)</div>
+                  <div class="kpi-value" id="kpi-total-geral">R$ 0,00</div>
+              </div>
             </div>
         </div>
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+           <div class="kpi-card">
+              <div class="card-body">
+                  <div class="kpi-title">Gasto Total (Janeiro)</div>
+                  <div class="kpi-value" id="kpi-janeiro">R$ 0,00</div>
+              </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+           <div class="kpi-card">
+              <div class="card-body">
+                  <div class="kpi-title">Gasto Total (Fevereiro)</div>
+                  <div class="kpi-value" id="kpi-fevereiro">R$ 0,00</div>
+              </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+           <div class="kpi-card">
+              <div class="card-body">
+                  <div class="kpi-title">Gasto Total (Março)</div>
+                  <div class="kpi-value" id="kpi-marco">R$ 0,00</div>
+              </div>
+            </div>
+        </div>
+    </div>
 
-         <div class="col-12 col-md-8 col-lg-9">
-             <div class="chart-card">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="chart-card">
                 <div class="card-header text-center">
                     Evolução Mensal dos Gastos
                 </div>
@@ -144,12 +182,11 @@
                     <div id="chartMensal"></div>
                 </div>
             </div>
-         </div>
+        </div>
     </div>
 
-
     <div class="row">
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
         <div class="chart-card">
           <div class="card-header text-center">
             Gastos Semanais - Janeiro
@@ -160,7 +197,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
         <div class="chart-card">
           <div class="card-header text-center">
             Gastos Semanais - Fevereiro
@@ -171,8 +208,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4 col-md-12">
-        <div class="chart-card">
+      <div class="col-lg-4 col-md-12"> <div class="chart-card">
           <div class="card-header text-center">
             Gastos Semanais - Março
           </div>
@@ -186,6 +222,14 @@
 
   <script>
     // ===================================================================
+    // FUNÇÃO AUXILIAR PARA FORMATAR MOEDA
+    // ===================================================================
+    const formatCurrency = (val) => {
+      if (val === null || val === undefined) return "R$ 0,00";
+      return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
+    // ===================================================================
     // FUNÇÃO AUXILIAR PARA CRIAR OPÇÕES DO GRÁFICO DE ÁREA (DARK MODE)
     // ===================================================================
     /**
@@ -198,11 +242,6 @@
      * @returns {object} Objeto de configuração para ApexCharts.
      */
     function createAreaChartOptions(chartId, seriesData, categories, seriesName = 'Valor', chartHeight = 300) {
-      const formatCurrency = (val) => {
-        if (val === null || val === undefined) return "R$ 0,00";
-        return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      };
-
       // Cores definidas diretamente para Dark Mode (baseadas nas variáveis CSS)
       const primaryColor = '#4dabf7';
       const gridColor = '#404040';
@@ -281,7 +320,7 @@
           xaxis: { lines: { show: false } }
         },
         theme: {
-            mode: 'dark' // Tema geral do gráfico fixo como dark
+           mode: 'dark' // Tema geral do gráfico fixo como dark
         },
          markers: {
             size: 4,
@@ -294,11 +333,11 @@
         },
         responsive: [
           {
-            breakpoint: 992,
+            breakpoint: 992, // lg
             options: { chart: { height: chartHeight * 0.9 } }
           },
           {
-            breakpoint: 768,
+            breakpoint: 768, // md
             options: {
                 chart: { height: chartHeight * 0.85 },
                 stroke: { width: 2 },
@@ -306,11 +345,11 @@
              }
           },
            {
-            breakpoint: 576,
+            breakpoint: 576, // sm
             options: {
                 chart: { height: chartHeight * 0.8 },
-                 markers: { size: 0, hover: { size: 0 } },
-                 yaxis: { labels: { show: false } }
+                 markers: { size: 0, hover: { size: 0 } }, // Oculta marcadores em telas muito pequenas
+                 yaxis: { labels: { show: false } } // Opcional: oculta labels do eixo Y
             }
           }
         ]
@@ -333,8 +372,11 @@
     const dadosSemanasMarco = [1516175.78, 1634234.11, 1343905.08, 2501348.50];
     const categoriasSemanas = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
 
-    // --- Define o KPI Total Geral ---
-    document.getElementById('kpi-total-geral').textContent = "R$ " + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // --- Define os KPIs ---
+    document.getElementById('kpi-total-geral').textContent = formatCurrency(valorTotal);
+    document.getElementById('kpi-janeiro').textContent = formatCurrency(valorJaneiro);
+    document.getElementById('kpi-fevereiro').textContent = formatCurrency(valorFevereiro);
+    document.getElementById('kpi-marco').textContent = formatCurrency(valorMarco);
 
     // --- Renderiza Gráfico Mensal ---
     const optionsMensal = createAreaChartOptions('chartMensal', dadosMensal, categoriasMensal, 'Gasto Mensal', 350);
@@ -342,17 +384,17 @@
     chartMensal.render();
 
     // --- Renderiza Gráfico Semanal Janeiro ---
-    const optionsSemanalJaneiro = createAreaChartOptions('chartSemanalJaneiro', dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal', 300);
+    const optionsSemanalJaneiro = createAreaChartOptions('chartSemanalJaneiro', dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal', 280); // Altura ligeiramente reduzida
     const chartSemanalJaneiro = new ApexCharts(document.querySelector("#chartSemanalJaneiro"), optionsSemanalJaneiro);
     chartSemanalJaneiro.render();
 
     // --- Renderiza Gráfico Semanal Fevereiro ---
-    const optionsSemanalFev = createAreaChartOptions('chartSemanalFevereiro', dadosSemanasFev, categoriasSemanas, 'Gasto Semanal', 300);
+    const optionsSemanalFev = createAreaChartOptions('chartSemanalFevereiro', dadosSemanasFev, categoriasSemanas, 'Gasto Semanal', 280); // Altura ligeiramente reduzida
     const chartSemanalFev = new ApexCharts(document.querySelector("#chartSemanalFevereiro"), optionsSemanalFev);
     chartSemanalFev.render();
 
     // --- Renderiza Gráfico Semanal Março ---
-    const optionsSemanalMarco = createAreaChartOptions('chartSemanalMarco', dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal', 300);
+    const optionsSemanalMarco = createAreaChartOptions('chartSemanalMarco', dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal', 280); // Altura ligeiramente reduzida
     const chartSemanalMarco = new ApexCharts(document.querySelector("#chartSemanalMarco"), optionsSemanalMarco);
     chartSemanalMarco.render();
 
