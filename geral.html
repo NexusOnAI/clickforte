@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Avançado de Gastos (Dark Mode - Tela Cheia)</title>
+  <title>Dashboard Avançado de Gastos (Otimizado Mobile)</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,19 +29,43 @@
       background-color: var(--theme-bg);
       color: var(--theme-text);
       font-family: var(--bs-body-font-family);
+      min-width: 320px; /* Evita quebra em telas extremamente pequenas */
     }
 
+    /* Ajuste no padding do container-fluid para telas menores */
+    .container-fluid {
+        padding-left: 0.75rem; /* Menor padding inicial */
+        padding-right: 0.75rem;
+    }
+    @media (min-width: 576px) {
+        .container-fluid {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+    @media (min-width: 768px) {
+        .container-fluid {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+    }
+    @media (min-width: 992px) {
+        .container-fluid {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    }
+
+
     .dashboard-header {
-        /* Removido justify-content: space-between; */
-        margin-bottom: 2.5rem; /* Aumentado um pouco */
-        /* Adiciona padding horizontal se necessário no container-fluid */
-        padding-left: 1rem;
-        padding-right: 1rem;
+        margin-bottom: 2rem; /* Ajuste leve */
+        /* Padding já tratado pelo container-fluid */
     }
 
     .dashboard-title {
       color: var(--theme-primary-color);
       font-weight: 700;
+      font-size: 1.75rem; /* Um pouco menor */
       margin: 0;
     }
 
@@ -50,22 +74,22 @@
       border: 1px solid var(--theme-card-border);
       border-radius: 0.75rem;
       box-shadow: var(--theme-shadow);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.5rem; /* Espaçamento padrão */
       overflow: hidden;
-      height: 100%; /* Faz os cards terem a mesma altura na linha */
+      height: 100%;
     }
 
     .card-header {
       background-color: var(--theme-card-header-bg);
       border-bottom: 1px solid var(--theme-card-border);
       font-weight: 600;
-      font-size: 0.95rem;
-      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem; /* Um pouco menor */
+      padding: 0.65rem 1rem; /* Ajuste padding */
       color: var(--theme-text);
     }
 
     .card-body {
-        padding: 1.25rem;
+        padding: 1rem; /* Reduzido padding interno */
     }
 
     .kpi-card .card-body {
@@ -74,24 +98,25 @@
         align-items: center;
         justify-content: center;
         text-align: center;
-        height: 100%; /* Garante que o conteúdo ocupe a altura */
+        height: 100%;
+        min-height: 100px; /* Altura mínima para KPIs */
     }
 
     .kpi-title {
-        font-size: 0.9rem;
+        font-size: 0.85rem; /* Um pouco menor */
         font-weight: 500;
         color: var(--theme-muted-text);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem; /* Menor margem */
     }
 
     .kpi-value {
-        font-size: 1.75rem; /* Reduzido para caber melhor */
+        font-size: 1.6rem; /* Ajustado */
         font-weight: 700;
         color: var(--theme-primary-color);
-        word-wrap: break-word; /* Quebra a linha se necessário */
+        word-wrap: break-word;
     }
 
-    /* Ajustes finos nos gráficos ApexCharts (herdando cores do tema dark) */
+    /* Ajustes finos nos gráficos ApexCharts */
     .apexcharts-tooltip {
       background: var(--theme-card-bg) !important;
       color: var(--theme-text) !important;
@@ -105,52 +130,59 @@
     .apexcharts-xaxis-label, .apexcharts-yaxis-label {
         fill: var(--theme-muted-text) !important;
         font-family: var(--bs-body-font-family) !important;
+        font-size: 11px !important; /* Garante tamanho consistente */
     }
      .apexcharts-legend-text {
         color: var(--theme-muted-text) !important;
         font-family: var(--bs-body-font-family) !important;
+        font-size: 12px !important;
      }
 
-    /* Responsividade */
-    @media (max-width: 991.98px) { /* Ajusta o tamanho da fonte do KPI em telas médias */
+    /* Responsividade Específica Mobile */
+    @media (max-width: 767.98px) { /* md e abaixo */
+        .dashboard-title {
+          font-size: 1.5rem; /* Menor título */
+          margin-bottom: 0.5rem;
+        }
+        .dashboard-header {
+            margin-bottom: 1.5rem;
+        }
+        .kpi-card {
+           height: auto; /* Altura automática no mobile */
+        }
         .kpi-value {
-            font-size: 1.5rem;
+           font-size: 1.5rem; /* Levemente menor no mobile */
         }
     }
-    @media (max-width: 767.98px) {
-      .dashboard-header {
-          align-items: flex-start;
-          margin-bottom: 1.5rem;
-          padding-left: 0.5rem; /* Menor padding no header em telas pequenas */
-          padding-right: 0.5rem;
-      }
-       .dashboard-title {
-          margin-bottom: 0.5rem;
-       }
-      .kpi-value {
-          font-size: 1.4rem; /* Ainda menor em telas pequenas */
-      }
-      .kpi-card {
-        height: auto; /* Remove altura fixa em telas menores */
-      }
+     @media (max-width: 575.98px) { /* sm e xs */
+        .card-body {
+            padding: 0.75rem; /* Menos padding ainda */
+        }
+        .kpi-value {
+           font-size: 1.4rem; /* Menor ainda no xs */
+        }
+         .apexcharts-xaxis-label {
+             font-size: 10px !important; /* Menor fonte eixo X */
+         }
     }
   </style>
 </head>
 <body>
-  <div class="container-fluid py-4 py-md-5 px-3 px-md-4">
+  <div class="container-fluid py-3 py-md-4">
     <div class="dashboard-header">
       <h1 class="dashboard-title">Dashboard Geral de Gastos</h1>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-xl-3 col-lg-6 col-md-6 mb-4"> <div class="kpi-card">
+    <div class="row">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-12 mb-4">
+           <div class="kpi-card">
               <div class="card-body">
                   <div class="kpi-title">Gasto Total (Trimestre)</div>
                   <div class="kpi-value" id="kpi-total-geral">R$ 0,00</div>
               </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-12 mb-4">
            <div class="kpi-card">
               <div class="card-body">
                   <div class="kpi-title">Gasto Total (Janeiro)</div>
@@ -158,14 +190,15 @@
               </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 mb-4 mb-md-0 mb-lg-4"> <div class="kpi-card">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-12 mb-4">
+           <div class="kpi-card">
               <div class="card-body">
                   <div class="kpi-title">Gasto Total (Fevereiro)</div>
                   <div class="kpi-value" id="kpi-fevereiro">R$ 0,00</div>
               </div>
             </div>
         </div>
-        <div class="col-xl-3 col-lg-6 col-md-6">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-12 mb-4">
            <div class="kpi-card">
               <div class="card-body">
                   <div class="kpi-title">Gasto Total (Março)</div>
@@ -175,10 +208,8 @@
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="chart-card">
-                <div class="card-header text-center">
+    <div class="row"> <div class="col-12">
+            <div class="chart-card"> <div class="card-header text-center">
                     Evolução Mensal dos Gastos
                 </div>
                 <div class="card-body">
@@ -189,7 +220,7 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+      <div class="col-lg-4 col-md-6 col-12 mb-4">
         <div class="chart-card">
           <div class="card-header text-center">
             Gastos Semanais - Janeiro
@@ -200,7 +231,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+      <div class="col-lg-4 col-md-6 col-12 mb-4">
         <div class="chart-card">
           <div class="card-header text-center">
             Gastos Semanais - Fevereiro
@@ -211,7 +242,7 @@
         </div>
       </div>
 
-      <div class="col-lg-4 col-md-12"> <div class="chart-card">
+      <div class="col-lg-4 col-md-12 col-12 mb-4"> <div class="chart-card">
           <div class="card-header text-center">
             Gastos Semanais - Março
           </div>
@@ -239,7 +270,7 @@
      * @param {Array<number>} seriesData - Array com os dados da série do gráfico.
      * @param {Array<string>} categories - Array com as categorias do eixo X.
      * @param {string} seriesName - Nome da série de dados (para tooltip e legenda).
-     * @param {number} chartHeight - Altura do gráfico.
+     * @param {number} chartHeight - Altura base do gráfico.
      * @returns {object} Objeto de configuração para ApexCharts.
      */
     function createAreaChartOptions(chartId, seriesData, categories, seriesName = 'Valor', chartHeight = 300) {
@@ -260,9 +291,9 @@
           animations: {
              enabled: true,
              easing: 'easeinout',
-             speed: 800,
-             animateGradually: { enabled: true, delay: 150 },
-             dynamicAnimation: { enabled: true, speed: 350 }
+             speed: 600, // Um pouco mais rápido
+             animateGradually: { enabled: false }, // Desabilitar para performance mobile
+             dynamicAnimation: { enabled: true, speed: 300 }
           }
         },
         dataLabels: {
@@ -270,7 +301,7 @@
         },
         stroke: {
           curve: 'smooth',
-          width: 2.5
+          width: 2 // Linha mais fina
         },
         fill: {
           type: 'gradient',
@@ -280,9 +311,9 @@
             opacityTo: 0.1,
             stops: [0, 95, 100]
           },
-           colors: [primaryColor] // Cor base do gradiente
+           colors: [primaryColor]
         },
-        colors: [primaryColor], // Cor principal da série
+        colors: [primaryColor],
         series: [{
           name: seriesName,
           data: seriesData
@@ -290,51 +321,56 @@
         xaxis: {
           categories: categories,
           labels: {
-            style: {
-              fontSize: '12px',
-              // Cor definida via CSS (.apexcharts-xaxis-label)
-            }
+             style: {
+                // Tamanho ajustado via CSS
+             }
           },
           axisBorder: { show: false },
-          axisTicks: { show: false }
+          axisTicks: { show: false },
+          tooltip: { enabled: false } // Desabilitar tooltip do eixo X
         },
         yaxis: {
           labels: {
             formatter: formatCurrency,
             style: {
-              fontSize: '11px'
-              // Cor definida via CSS (.apexcharts-yaxis-label)
+                // Tamanho ajustado via CSS
             }
           }
         },
         tooltip: {
-          theme: 'dark', // Tema do tooltip fixo como dark
+          theme: 'dark',
           y: {
             formatter: formatCurrency
           }
         },
         grid: {
           show: true,
-          borderColor: gridColor, // Cor da grade para dark mode
-          strokeDashArray: 4,
+          borderColor: gridColor,
+          strokeDashArray: 3, // Linhas tracejadas mais curtas
+          padding: { // Adiciona padding interno ao grid
+            top: 5,
+            right: 10,
+            bottom: 0,
+            left: 10
+          },
           yaxis: { lines: { show: true } },
           xaxis: { lines: { show: false } }
         },
         theme: {
-           mode: 'dark' // Tema geral do gráfico fixo como dark
+           mode: 'dark'
         },
-         markers: {
-            size: 4,
+         markers: { // Marcadores menores
+            size: 3,
             colors: [primaryColor],
-            strokeColors: cardBgColor, // Usa a cor de fundo do card
-            strokeWidth: 2,
+            strokeColors: cardBgColor,
+            strokeWidth: 1,
             hover: {
-                size: 6
+                size: 5
             }
         },
         responsive: [
           {
-            breakpoint: 1200, // xl - Ajusta altura para telas grandes
+            breakpoint: 1200, // xl
             options: { chart: { height: chartHeight * 0.95 } }
           },
           {
@@ -345,16 +381,26 @@
             breakpoint: 768, // md
             options: {
                 chart: { height: chartHeight * 0.85 },
-                stroke: { width: 2 },
+                stroke: { width: 2 }, // Largura normal da linha
                 markers: { size: 3, hover: { size: 5 } }
              }
           },
-           {
-            breakpoint: 576, // sm
+          {
+            breakpoint: 576, // sm/xs - Otimizações mobile mais agressivas
             options: {
-                chart: { height: chartHeight * 0.8 },
-                 markers: { size: 0, hover: { size: 0 } }, // Oculta marcadores em telas muito pequenas
-                 yaxis: { labels: { show: false } } // Opcional: oculta labels do eixo Y
+                chart: { height: chartHeight * 0.75 }, // Ainda mais baixo
+                markers: { size: 0, hover: { size: 0 } }, // Oculta marcadores
+                yaxis: { labels: { show: false } }, // Oculta labels do eixo Y
+                xaxis: { labels: { // Mostra menos labels no eixo X
+                    show: true, // Mantém visível, mas com ajuste abaixo
+                    // O CSS já ajusta a font-size
+                    // Pode-se adicionar um `hideOverlappingLabels: true` se necessário
+                    // Ou `trim: true`
+                  }
+                },
+                grid: { // Menos padding no grid mobile
+                   padding: { left: 0, right: 5 }
+                }
             }
           }
         ]
@@ -370,12 +416,12 @@
     const valorTotal = valorJaneiro + valorFevereiro + valorMarco;
 
     const dadosMensal = [valorJaneiro, valorFevereiro, valorMarco];
-    const categoriasMensal = ['Janeiro', 'Fevereiro', 'Março'];
+    const categoriasMensal = ['Jan', 'Fev', 'Mar']; // Abreviações para mobile
 
     const dadosSemanasJaneiro = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
     const dadosSemanasFev = [1347844.70, 1351449.96, 1707533.26, 1698354.34];
     const dadosSemanasMarco = [1516175.78, 1634234.11, 1343905.08, 2501348.50];
-    const categoriasSemanas = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
+    const categoriasSemanas = ['S1', 'S2', 'S3', 'S4']; // Abreviações para mobile
 
     // --- Define os KPIs ---
     document.getElementById('kpi-total-geral').textContent = formatCurrency(valorTotal);
@@ -384,23 +430,24 @@
     document.getElementById('kpi-marco').textContent = formatCurrency(valorMarco);
 
     // --- Renderiza Gráfico Mensal ---
-    // Aumenta um pouco a altura base do gráfico mensal
-    const optionsMensal = createAreaChartOptions('chartMensal', dadosMensal, categoriasMensal, 'Gasto Mensal', 380);
+    // Usar categorias abreviadas e altura base ligeiramente menor
+    const optionsMensal = createAreaChartOptions('chartMensal', dadosMensal, categoriasMensal, 'Gasto Mensal', 340);
     const chartMensal = new ApexCharts(document.querySelector("#chartMensal"), optionsMensal);
     chartMensal.render();
 
     // --- Renderiza Gráfico Semanal Janeiro ---
-    const optionsSemanalJaneiro = createAreaChartOptions('chartSemanalJaneiro', dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal', 300); // Volta para 300 ou ajusta conforme necessário
+    // Usar categorias abreviadas e altura base menor
+    const optionsSemanalJaneiro = createAreaChartOptions('chartSemanalJaneiro', dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal', 260);
     const chartSemanalJaneiro = new ApexCharts(document.querySelector("#chartSemanalJaneiro"), optionsSemanalJaneiro);
     chartSemanalJaneiro.render();
 
     // --- Renderiza Gráfico Semanal Fevereiro ---
-    const optionsSemanalFev = createAreaChartOptions('chartSemanalFevereiro', dadosSemanasFev, categoriasSemanas, 'Gasto Semanal', 300);
+    const optionsSemanalFev = createAreaChartOptions('chartSemanalFevereiro', dadosSemanasFev, categoriasSemanas, 'Gasto Semanal', 260);
     const chartSemanalFev = new ApexCharts(document.querySelector("#chartSemanalFevereiro"), optionsSemanalFev);
     chartSemanalFev.render();
 
     // --- Renderiza Gráfico Semanal Março ---
-    const optionsSemanalMarco = createAreaChartOptions('chartSemanalMarco', dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal', 300);
+    const optionsSemanalMarco = createAreaChartOptions('chartSemanalMarco', dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal', 260);
     const chartSemanalMarco = new ApexCharts(document.querySelector("#chartSemanalMarco"), optionsSemanalMarco);
     chartSemanalMarco.render();
 
