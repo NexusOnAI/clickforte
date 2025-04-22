@@ -1,79 +1,195 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<html lang="pt-br" data-bs-theme="light"> <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Relatório de Gastos Otimizado</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Dashboard Avançado de Gastos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    body {
-      background-color: #f8f9fa; /* Um cinza claro suave */
-      font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
-      color: #343a40; /* Cor de texto ligeiramente mais suave */
+    /* Definição de variáveis de cor para os temas */
+    :root {
+      --bs-body-font-family: 'Inter', sans-serif;
+      --theme-bg: #f8f9fa;
+      --theme-text: #212529;
+      --theme-card-bg: #ffffff;
+      --theme-card-border: #dee2e6;
+      --theme-card-header-bg: #f1f3f5;
+      --theme-muted-text: #6c757d;
+      --theme-primary-color: #0d6efd;
+      --theme-primary-gradient-start: rgba(13, 110, 253, 0.35);
+      --theme-primary-gradient-end: rgba(13, 110, 253, 0.01);
+      --theme-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
     }
 
-    .chart-card {
-      margin-bottom: 2rem; /* Espaçamento entre os cards */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil */
-      border: none; /* Remover borda padrão do card */
-      border-radius: 0.5rem; /* Bordas mais arredondadas */
+    [data-bs-theme="dark"] {
+      --theme-bg: #1a1d21; /* Cor de fundo escura */
+      --theme-text: #e9ecef; /* Texto claro */
+      --theme-card-bg: #212529; /* Fundo do card escuro */
+      --theme-card-border: #495057; /* Borda sutil */
+      --theme-card-header-bg: #343a40; /* Cabeçalho do card escuro */
+      --theme-muted-text: #adb5bd; /* Texto 'muted' claro */
+      --theme-primary-color: #4dabf7; /* Um azul mais vibrante para dark mode */
+      --theme-primary-gradient-start: rgba(77, 171, 247, 0.35);
+      --theme-primary-gradient-end: rgba(77, 171, 247, 0.01);
+      --theme-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    body {
+      background-color: var(--theme-bg);
+      color: var(--theme-text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: var(--bs-body-font-family);
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .dashboard-title {
+      color: var(--theme-primary-color);
+      font-weight: 700;
+      margin: 0; /* Remove margem padrão do h1 */
+    }
+
+    .chart-card, .kpi-card {
+      background-color: var(--theme-card-bg);
+      border: 1px solid var(--theme-card-border);
+      border-radius: 0.75rem; /* Bordas mais suaves */
+      box-shadow: var(--theme-shadow);
+      margin-bottom: 1.5rem; /* Espaçamento entre cards */
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      overflow: hidden; /* Garante que elementos internos não ultrapassem bordas arredondadas */
     }
 
     .card-header {
-      background-color: #e9ecef; /* Cor de fundo para o cabeçalho do card */
-      border-bottom: 1px solid #dee2e6;
-      font-weight: 600; /* Deixar o título do card mais destacado */
-    }
-
-    /* Ajuste para garantir que os gráficos usem o espaço disponível */
-    .apexcharts-canvas {
-      margin: 0 auto;
-    }
-
-    h1 {
-      color: #0d6efd; /* Azul do Bootstrap para o título principal */
-      margin-bottom: 2.5rem; /* Mais espaço abaixo do título principal */
+      background-color: var(--theme-card-header-bg);
+      border-bottom: 1px solid var(--theme-card-border);
       font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.25rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      color: var(--theme-text); /* Garante cor do texto no header */
     }
 
-    /* Estilos específicos para os dataLabels (rótulos de dados nos gráficos) */
-    .apexcharts-datalabel {
-        font-weight: 500 !important;
+    .card-body {
+       padding: 1.25rem;
     }
 
-    /* Ajustes responsivos adicionais se necessário */
+    .kpi-card .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .kpi-title {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--theme-muted-text);
+        margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--theme-primary-color);
+    }
+
+    /* Estilos para o botão de tema */
+    .theme-toggle-btn {
+        font-size: 1.2rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: var(--theme-text);
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: background-color 0.2s ease;
+    }
+    .theme-toggle-btn:hover {
+        background-color: rgba(128, 128, 128, 0.1);
+    }
+
+    /* Ajustes finos nos gráficos ApexCharts */
+    .apexcharts-tooltip {
+      background: var(--theme-card-bg) !important;
+      color: var(--theme-text) !important;
+      border: 1px solid var(--theme-card-border) !important;
+    }
+    .apexcharts-tooltip .apexcharts-tooltip-title {
+      background: var(--theme-card-header-bg) !important;
+      border-bottom: 1px solid var(--theme-card-border) !important;
+      color: var(--theme-text) !important;
+    }
+    .apexcharts-xaxis-label, .apexcharts-yaxis-label {
+        fill: var(--theme-muted-text) !important; /* Cor dos rótulos dos eixos */
+        font-family: var(--bs-body-font-family) !important;
+    }
+     .apexcharts-legend-text {
+         color: var(--theme-muted-text) !important;
+         font-family: var(--bs-body-font-family) !important;
+     }
+
+    /* Responsividade */
     @media (max-width: 768px) {
-      h1 {
-        font-size: 1.8rem;
+      .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-bottom: 1.5rem;
       }
-      .card-header {
-          font-size: 0.95rem;
+       .dashboard-title {
+          margin-bottom: 0.5rem;
+      }
+      .kpi-value {
+          font-size: 1.75rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container my-5">
-    <h1 class="text-center">Dashboard de Análise de Gastos</h1>
-
-    <div class="card chart-card">
-      <div class="card-header text-center">
-        Relatório Geral de Gastos (Mensal)
-      </div>
-      <div class="card-body">
-        <div id="chartMensal"></div>
-      </div>
+  <div class="container my-4 my-md-5">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Dashboard Avançado de Gastos</h1>
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Alternar tema">
+        <i class="bi bi-moon-stars-fill"></i> </button>
     </div>
 
     <div class="row">
+        <div class="col-12 col-md-4 col-lg-3">
+             <div class="kpi-card">
+                <div class="card-body">
+                    <div class="kpi-title">Gasto Total (Trimestre)</div>
+                    <div class="kpi-value" id="kpi-total-geral">R$ 0,00</div>
+                </div>
+            </div>
+        </div>
+
+         <div class="col-12 col-md-8 col-lg-9">
+             <div class="chart-card">
+                <div class="card-header text-center">
+                    Evolução Mensal dos Gastos
+                </div>
+                <div class="card-body">
+                    <div id="chartMensal"></div>
+                </div>
+            </div>
+         </div>
+    </div>
+
+
+    <div class="row">
       <div class="col-lg-4 col-md-6">
-        <div class="card chart-card">
+        <div class="chart-card">
           <div class="card-header text-center">
-            Gastos de Janeiro por Semana
+            Gastos Semanais - Janeiro
           </div>
           <div class="card-body">
             <div id="chartSemanalJaneiro"></div>
@@ -82,9 +198,9 @@
       </div>
 
       <div class="col-lg-4 col-md-6">
-        <div class="card chart-card">
+        <div class="chart-card">
           <div class="card-header text-center">
-            Gastos de Fevereiro por Semana
+            Gastos Semanais - Fevereiro
           </div>
           <div class="card-body">
             <div id="chartSemanalFevereiro"></div>
@@ -92,9 +208,9 @@
         </div>
       </div>
 
-      <div class="col-lg-4 col-md-12"> <div class="card chart-card">
+      <div class="col-lg-4 col-md-12"> <div class="chart-card">
           <div class="card-header text-center">
-            Gastos de Março por Semana
+            Gastos Semanais - Março
           </div>
           <div class="card-body">
             <div id="chartSemanalMarco"></div>
@@ -106,48 +222,65 @@
 
   <script>
     // ===================================================================
-    // FUNÇÃO AUXILIAR PARA CRIAR OPÇÕES DO GRÁFICO
+    // FUNÇÃO AUXILIAR PARA CRIAR OPÇÕES DO GRÁFICO DE ÁREA
     // ===================================================================
     /**
-     * Cria um objeto de configuração padrão para os gráficos de barra ApexCharts.
+     * Cria um objeto de configuração padrão para os gráficos de área ApexCharts.
+     * @param {string} chartId - O ID do elemento HTML onde o gráfico será renderizado.
      * @param {Array<number>} seriesData - Array com os dados da série do gráfico.
      * @param {Array<string>} categories - Array com as categorias do eixo X.
      * @param {string} seriesName - Nome da série de dados (para tooltip e legenda).
+     * @param {string} themeMode - 'light' ou 'dark'.
      * @param {number} chartHeight - Altura do gráfico.
      * @returns {object} Objeto de configuração para ApexCharts.
      */
-    function createBarChartOptions(seriesData, categories, seriesName = 'Valor', chartHeight = 350) {
-      // Função para formatar valores como moeda brasileira (R$)
+    function createAreaChartOptions(chartId, seriesData, categories, seriesName = 'Valor', themeMode = 'light', chartHeight = 300) {
       const formatCurrency = (val) => {
         if (val === null || val === undefined) return "R$ 0,00";
         return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       };
 
+      // Cores baseadas no tema - Usando variáveis CSS
+      const currentStrokeColor = themeMode === 'light' ? 'var(--theme-primary-color)' : 'var(--theme-primary-color)'; // Pode ajustar para o dark se quiser
+      const currentFillGradientStart = themeMode === 'light' ? 'var(--theme-primary-gradient-start)' : 'var(--theme-primary-gradient-start)';
+      const currentFillGradientEnd = themeMode === 'light' ? 'var(--theme-primary-gradient-end)' : 'var(--theme-primary-gradient-end)';
+
       return {
         chart: {
-          type: 'bar',
+          id: chartId, // ID para referência, útil para atualizações
+          type: 'area',
           height: chartHeight,
-          background: 'transparent', // Fundo transparente para se adaptar ao card
-          toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, // Habilitar apenas download
-          fontFamily: 'Poppins, sans-serif', // Aplicar a mesma fonte do body
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 6, // Bordas ligeiramente menos arredondadas
-            horizontal: false,
-            columnWidth: '55%', // Largura da coluna
-            dataLabels: { position: 'top' } // Posição dos rótulos
+          background: 'transparent',
+          toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
+          fontFamily: 'Inter, sans-serif',
+          zoom: { enabled: false }, // Desabilitar zoom padrão
+          animations: {
+             enabled: true,
+             easing: 'easeinout',
+             speed: 800,
+             animateGradually: { enabled: true, delay: 150 },
+             dynamicAnimation: { enabled: true, speed: 350 }
           }
         },
         dataLabels: {
-          enabled: true,
-          formatter: formatCurrency, // Usa a função de formatação
-          offsetY: -25, // Ajuste fino da posição vertical
-          style: {
-            fontSize: '11px', // Tamanho da fonte dos rótulos
-            colors: ["#343a40"] // Cor dos rótulos
-          }
+          enabled: false // Geralmente desabilitado em area charts para não poluir
         },
+        stroke: {
+          curve: 'smooth', // Linha suavizada
+          width: 2.5 // Espessura da linha
+          // colors: [currentStrokeColor] // Define a cor da linha (opcional, pode ser via 'colors' principal)
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.6, // Opacidade inicial do gradiente
+            opacityTo: 0.1,   // Opacidade final
+            stops: [0, 95, 100] // Controle da transição do gradiente
+          },
+           colors: [currentStrokeColor] // Define a cor base do gradiente
+        },
+        colors: [currentStrokeColor], // Cor principal usada para linha, gradiente, legenda
         series: [{
           name: seriesName,
           data: seriesData
@@ -156,8 +289,7 @@
           categories: categories,
           labels: {
             style: {
-              fontSize: '12px', // Tamanho da fonte do eixo X
-              colors: ["#495057"] // Cor dos rótulos do eixo X
+              fontSize: '12px'
             }
           },
           axisBorder: { show: false },
@@ -165,80 +297,59 @@
         },
         yaxis: {
           labels: {
-            formatter: formatCurrency, // Usa a função de formatação
+            formatter: formatCurrency,
             style: {
-              fontSize: '11px', // Tamanho da fonte do eixo Y
-              colors: ["#495057"] // Cor dos rótulos do eixo Y
+              fontSize: '11px'
             }
           }
         },
-        fill: {
-          // Cores podem ser personalizadas aqui. Usando um gradiente sutil.
-          // Pode-se usar um array de cores em `colors` dentro das opções do chart
-          // ou definir cores por série/valor.
-           type: 'gradient',
-           gradient: {
-             shade: 'light',
-             type: "vertical",
-             shadeIntensity: 0.25,
-             gradientToColors: undefined, // Deixa o ApexCharts escolher
-             inverseColors: true,
-             opacityFrom: 0.85,
-             opacityTo: 0.85,
-             stops: [50, 0, 100] // Ajuste do gradiente
-           },
-          // colors: ['#0d6efd'] // Exemplo de cor sólida (azul Bootstrap)
-        },
         tooltip: {
-          theme: 'light', // Pode ser 'dark' se preferir
+          theme: themeMode, // Adapta o tooltip ao tema
           y: {
-            formatter: formatCurrency // Usa a função de formatação
+            formatter: formatCurrency
+          },
+           x: {
+            format: 'dd MMM' // Se fossem datas
           }
         },
         grid: {
-          borderColor: '#e9ecef', // Cor suave para as linhas de grade
-          strokeDashArray: 4, // Linhas de grade tracejadas
-          yaxis: {
-            lines: {
-              show: true // Mostrar linhas de grade horizontais
-            }
-          },
-           xaxis: {
-            lines: {
-              show: false // Ocultar linhas de grade verticais
-            }
-          },
+          show: true,
+          borderColor: themeMode === 'light' ? '#e0e0e0' : '#404040', // Cor sutil da grade
+          strokeDashArray: 4, // Linhas tracejadas
+          yaxis: { lines: { show: true } },
+          xaxis: { lines: { show: false } }
         },
-        theme: { mode: 'light' }, // Garante consistência com o tema
-        responsive: [ // Mantém a responsividade
-          {
-            breakpoint: 992, // Telas médias (tablets)
-            options: {
-              chart: { height: chartHeight * 0.9 },
-              plotOptions: { bar: { columnWidth: '65%' } },
-              dataLabels: { style: { fontSize: '10px' } },
-              xaxis: { labels: { style: { fontSize: '11px' } } },
-              yaxis: { labels: { style: { fontSize: '10px' } } }
+        theme: {
+            mode: themeMode
+        },
+         markers: { // Pontos na linha
+            size: 4,
+            colors: [currentStrokeColor],
+            strokeColors: themeMode === 'light' ? '#fff' : 'var(--theme-card-bg)', // Cor da borda do marcador
+            strokeWidth: 2,
+            hover: {
+                size: 6
             }
+        },
+        responsive: [
+          {
+            breakpoint: 992,
+            options: { chart: { height: chartHeight * 0.9 } }
           },
           {
-            breakpoint: 768, // Telas pequenas (tablets verticais/celulares grandes)
-             options: {
-              chart: { height: chartHeight * 0.8 },
-              plotOptions: { bar: { columnWidth: '70%' } },
-              dataLabels: { offsetY: -15, style: { fontSize: '9px' } }, // Ajustar posição e tamanho
-              xaxis: { labels: { style: { fontSize: '10px' } } },
-              yaxis: { labels: { style: { fontSize: '9px' } } }
-            }
-          },
-          {
-            breakpoint: 576, // Telas extra pequenas (celulares)
+            breakpoint: 768,
             options: {
-              chart: { height: chartHeight * 0.75 },
-              plotOptions: { bar: { columnWidth: '80%' } },
-              dataLabels: { enabled: false }, // Ocultar rótulos em telas muito pequenas
-              xaxis: { labels: { style: { fontSize: '9px' } } },
-              yaxis: { labels: { show: false } } // Ocultar eixo Y se ficar muito apertado
+                chart: { height: chartHeight * 0.85 },
+                stroke: { width: 2 },
+                markers: { size: 3, hover: { size: 5 } }
+             }
+          },
+           {
+            breakpoint: 576,
+            options: {
+                chart: { height: chartHeight * 0.8 },
+                 markers: { size: 0, hover: { size: 0 } }, // Ocultar marcadores em telas pequenas
+                 yaxis: { labels: { show: false } } // Ocultar eixo Y
             }
           }
         ]
@@ -246,64 +357,121 @@
     }
 
     // ===================================================================
-    // DADOS DOS GRÁFICOS
+    // DADOS E CONFIGURAÇÕES INICIAIS
     // ===================================================================
-    // --- Gráfico Geral Mensal ---
     const valorJaneiro = 5686819.08;
     const valorFevereiro = 6105182.26;
     const valorMarco = 6995663.47;
     const valorTotal = valorJaneiro + valorFevereiro + valorMarco;
-    const dadosMensal = [valorJaneiro, valorFevereiro, valorMarco, valorTotal];
-    const categoriasMensal = ['Janeiro', 'Fevereiro', 'Março', 'Total Geral'];
 
-    // --- Gráfico Semanal Janeiro ---
-    // Semana 1 (dias 1 a 7):   R$ 1.059.106,09
-    // Semana 2 (dias 8 a 14):  R$ 1.390.876,49
-    // Semana 3 (dias 15 a 21): R$ 1.356.479,34  <- Corrigido pequeno typo no valor original
-    // Semana 4 (dias 22 a 31): R$ 1.880.357,16
+    // Dados para os gráficos (removendo 'Total' do mensal)
+    const dadosMensal = [valorJaneiro, valorFevereiro, valorMarco];
+    const categoriasMensal = ['Janeiro', 'Fevereiro', 'Março'];
+
     const dadosSemanasJaneiro = [1059106.09, 1390876.49, 1356479.34, 1880357.16];
-    const categoriasSemanas = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4']; // Nomes mais curtos
-
-    // --- Gráfico Semanal Fevereiro ---
-    // Semana 1: R$ 1.347.844,70
-    // Semana 2: R$ 1.351.449,96
-    // Semana 3: R$ 1.707.533,26
-    // Semana 4: R$ 1.698.354,34
     const dadosSemanasFev = [1347844.70, 1351449.96, 1707533.26, 1698354.34];
-
-    // --- Gráfico Semanal Março ---
-    // Semana 1: R$ 1.516.175,78
-    // Semana 2: R$ 1.634.234,11
-    // Semana 3: R$ 1.343.905,08
-    // Semana 4: R$ 2.501.348,50
     const dadosSemanasMarco = [1516175.78, 1634234.11, 1343905.08, 2501348.50];
+    const categoriasSemanas = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
+
+    // Estado inicial do tema
+    let currentTheme = document.documentElement.getAttribute('data-bs-theme');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = themeToggleBtn.querySelector('i');
+
+    // Armazenar instâncias dos gráficos para atualização
+    let charts = {};
 
     // ===================================================================
-    // RENDERIZAÇÃO DOS GRÁFICOS
+    // FUNÇÃO PARA RENDERIZAR TODOS OS GRÁFICOS
+    // ===================================================================
+    function renderAllCharts(theme) {
+        // --- Renderiza/Atualiza Gráfico Mensal ---
+        const optionsMensal = createAreaChartOptions('chartMensal', dadosMensal, categoriasMensal, 'Gasto Mensal', theme, 350);
+        if (charts.mensal) {
+            charts.mensal.updateOptions(optionsMensal);
+        } else {
+            charts.mensal = new ApexCharts(document.querySelector("#chartMensal"), optionsMensal);
+            charts.mensal.render();
+        }
+
+        // --- Renderiza/Atualiza Gráfico Semanal Janeiro ---
+        const optionsSemanalJaneiro = createAreaChartOptions('chartSemanalJaneiro', dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal', theme, 300);
+         if (charts.janeiro) {
+            charts.janeiro.updateOptions(optionsSemanalJaneiro);
+        } else {
+            charts.janeiro = new ApexCharts(document.querySelector("#chartSemanalJaneiro"), optionsSemanalJaneiro);
+            charts.janeiro.render();
+        }
+
+        // --- Renderiza/Atualiza Gráfico Semanal Fevereiro ---
+        const optionsSemanalFev = createAreaChartOptions('chartSemanalFevereiro', dadosSemanasFev, categoriasSemanas, 'Gasto Semanal', theme, 300);
+         if (charts.fevereiro) {
+            charts.fevereiro.updateOptions(optionsSemanalFev);
+        } else {
+            charts.fevereiro = new ApexCharts(document.querySelector("#chartSemanalFevereiro"), optionsSemanalFev);
+            charts.fevereiro.render();
+        }
+
+        // --- Renderiza/Atualiza Gráfico Semanal Março ---
+        const optionsSemanalMarco = createAreaChartOptions('chartSemanalMarco', dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal', theme, 300);
+         if (charts.marco) {
+            charts.marco.updateOptions(optionsSemanalMarco);
+        } else {
+            charts.marco = new ApexCharts(document.querySelector("#chartSemanalMarco"), optionsSemanalMarco);
+            charts.marco.render();
+        }
+    }
+
+     // ===================================================================
+    // FUNÇÃO PARA ATUALIZAR O TEMA E O ÍCONE
+    // ===================================================================
+    function updateThemeUI(theme) {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        if (theme === 'dark') {
+            themeIcon.classList.remove('bi-moon-stars-fill');
+            themeIcon.classList.add('bi-sun-fill');
+        } else {
+            themeIcon.classList.remove('bi-sun-fill');
+            themeIcon.classList.add('bi-moon-stars-fill');
+        }
+        currentTheme = theme; // Atualiza a variável de estado
+        renderAllCharts(currentTheme); // Re-renderiza os gráficos com o novo tema
+    }
+
+
+    // ===================================================================
+    // INICIALIZAÇÃO E EVENT LISTENERS
     // ===================================================================
 
-    // --- Renderiza Gráfico Mensal ---
-    const optionsMensal = createBarChartOptions(dadosMensal, categoriasMensal, 'Gasto Mensal', 400); // Altura maior para o principal
-    const chartMensal = new ApexCharts(document.querySelector("#chartMensal"), optionsMensal);
-    chartMensal.render();
+    // --- Define o KPI Total Geral ---
+    document.getElementById('kpi-total-geral').textContent = "R$ " + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    // --- Renderiza Gráfico Semanal Janeiro ---
-    const optionsSemanalJaneiro = createBarChartOptions(dadosSemanasJaneiro, categoriasSemanas, 'Gasto Semanal');
-    const chartSemanalJaneiro = new ApexCharts(document.querySelector("#chartSemanalJaneiro"), optionsSemanalJaneiro);
-    chartSemanalJaneiro.render();
+    // --- Renderiza os gráficos inicialmente ---
+    renderAllCharts(currentTheme);
 
-    // --- Renderiza Gráfico Semanal Fevereiro ---
-    const optionsSemanalFev = createBarChartOptions(dadosSemanasFev, categoriasSemanas, 'Gasto Semanal');
-    const chartSemanalFev = new ApexCharts(document.querySelector("#chartSemanalFevereiro"), optionsSemanalFev);
-    chartSemanalFev.render();
+    // --- Event Listener para o botão de tema ---
+    themeToggleBtn.addEventListener('click', () => {
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        updateThemeUI(newTheme);
+    });
 
-    // --- Renderiza Gráfico Semanal Março ---
-    const optionsSemanalMarco = createBarChartOptions(dadosSemanasMarco, categoriasSemanas, 'Gasto Semanal');
-    const chartSemanalMarco = new ApexCharts(document.querySelector("#chartSemanalMarco"), optionsSemanalMarco);
-    chartSemanalMarco.render();
+    // --- Opcional: Detectar preferência de tema do sistema ---
+    // window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    //     const newTheme = event.matches ? 'dark' : 'light';
+    //     if (newTheme !== currentTheme) { // Só atualiza se for diferente do estado atual manual
+    //        updateThemeUI(newTheme);
+    //     }
+    // });
+
+    // --- Define o tema inicial com base na preferência do sistema (se não houver override manual) ---
+    // const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // if (prefersDark) {
+    //      updateThemeUI('dark');
+    // }
+
 
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
