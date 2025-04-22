@@ -3,130 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Previsão de Gastos - Abril</title>
-  <!-- Tailwind CSS via CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <!-- ApexCharts via CDN -->
+  <title>Previsão de Gastos - Abril (Dark v3)</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Garante que o gráfico se ajuste à largura disponível */
     #chart {
       max-width: 100%;
       margin: 0 auto;
     }
+    /* Opcional: Melhorar contraste do foco */
+    *:focus-visible {
+       outline: 2px solid #4dabf7;
+       outline-offset: 2px;
+       border-radius: 2px;
+    }
+    /* Custom font */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+        font-family: 'Inter', sans-serif;
+    }
   </style>
 </head>
-<body class="bg-white text-gray-800">
-  <div class="max-w-4xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg">
-    <!-- Cabeçalho -->
-    <h2 class="text-center text-2xl font-bold mb-6">Previsão de Gastos para Abril</h2>
+<body class="bg-[#1a1d21] text-[#adb5bd] p-4 sm:p-6 md:p-8">
 
-    <!-- Gráfico Geral -->
-    <div id="chart" class="mb-8"></div>
+  <div class="max-w-5xl mx-auto p-6 sm:p-8 bg-[#212529] shadow-xl rounded-lg border border-[#495057]">
 
-    <!-- Tabela de Detalhes -->
-    <h3 class="text-center text-xl font-semibold mb-4">Detalhes das Semanas</h3>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 table-auto">
-        <thead class="bg-gray-200">
+    <h2 class="text-center text-2xl font-bold mb-8 text-[#e9ecef]">Previsão de Gastos para Abril</h2>
+
+    <div id="chart" class="mb-10"></div>
+
+    <h3 class="text-center text-xl font-semibold mb-5 text-[#e9ecef]">Detalhes das Semanas</h3>
+    <div class="overflow-x-auto rounded-lg border border-[#495057]">
+      <table class="min-w-full divide-y divide-[#495057] table-auto">
+        <thead class="bg-[#343a40]">
           <tr>
-            <th class="px-6 py-3 text-left text-gray-700 text-sm font-medium">Semana</th>
-            <th class="px-6 py-3 text-left text-gray-700 text-sm font-medium">Período</th>
-            <th class="px-6 py-3 text-right text-gray-700 text-sm font-medium">Valor</th>
-            <th class="px-6 py-3 text-center text-gray-700 text-sm font-medium">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Semana</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Período</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Valor</th>
+            <th class="px-4 py-3 text-center text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Status</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr class="bg-white">
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">1ª Semana</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">01/04 a 04/04</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 909.665,51</td>
-            <td class="px-6 py-4 whitespace-nowrap text-center">
-              <span class="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">Pago</span>
+        <tbody class="divide-y divide-[#495057]">
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">1ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">01/04 a 04/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 909.665,51</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-green-300 bg-green-500/20 rounded-full">Pago</span>
             </td>
           </tr>
-          <tr class="bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">2ª Semana</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">05/04 a 11/04</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 1.978.156,16</td>
-            <td class="px-6 py-4 whitespace-nowrap text-center">
-              <span class="inline-block px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-300 rounded-full">Em andamento</span>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">2ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">05/04 a 11/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.978.156,16</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+               <span class="inline-block px-3 py-1 text-xs font-semibold text-yellow-300 bg-yellow-500/20 rounded-full">Em andamento</span>
             </td>
           </tr>
-          <tr class="bg-white">
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">3ª Semana</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">12/04 a 18/04</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 1.432.358,51</td>
-            <td class="px-6 py-4 whitespace-nowrap text-center">
-              <span class="inline-block px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">Aberto</span>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">3ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">12/04 a 18/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.432.358,51</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+               <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
             </td>
           </tr>
-          <tr class="bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">4ª Semana</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">19/04 a 25/04</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 1.316.467,26</td>
-            <td class="px-6 py-4 whitespace-nowrap text-center">
-              <span class="inline-block px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">Aberto</span>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">4ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">19/04 a 25/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.316.467,26</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
             </td>
           </tr>
-          <tr class="bg-white">
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">5ª Semana</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">26/04 a 30/04</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600 text-right">R$ 410.857,05</td>
-            <td class="px-6 py-4 whitespace-nowrap text-center">
-              <span class="inline-block px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">Aberto</span>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">5ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">26/04 a 30/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 410.857,05</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Total Geral -->
-    <div class="text-center mt-6 text-lg font-medium">
+    <div class="text-center mt-8 pt-4 border-t border-[#495057] text-lg font-medium text-[#e9ecef]">
       Total Geral: R$ 5.615.717,22
     </div>
   </div>
 
   <script>
-    // Dados para as semanas de Abril
+    // Cores do tema dark para o gráfico
+    const primaryColor = '#4dabf7'; // Azul de destaque
+    const textColor = '#e9ecef';      // Texto principal claro
+    const mutedColor = '#adb5bd';     // Texto secundário/eixos
+    const gridColor = '#495057';      // Cor das linhas de grade/bordas
+
+    // Dados para as semanas de Abril (mantidos)
     var dadosSemanal = [909665.51, 1978156.16, 1432358.51, 1316467.26, 410857.05];
 
-    var options = {
+    // Configuração do gráfico (mantida da versão anterior, já configurada para dark)
+     var options = {
       chart: {
         type: 'bar',
-        height: 350,
+        height: 380,
         background: 'transparent',
-        toolbar: { show: false }
+        toolbar: { show: false },
+        fontFamily: 'Inter, sans-serif',
       },
       plotOptions: {
         bar: {
-          borderRadius: 8,
+          borderRadius: 6,
           horizontal: false,
-          columnWidth: '50%',
+          columnWidth: '55%',
           dataLabels: { position: 'top' }
         }
       },
       dataLabels: {
         enabled: true,
         formatter: function(val) {
-          return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+           return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         },
-        offsetY: -20,
+        offsetY: -25,
         style: {
-          fontSize: '12px',
-          colors: ["#000"]
+          fontSize: '11px',
+          colors: [textColor] // Cor do texto claro
         }
       },
       series: [{
         name: 'Gastos',
         data: dadosSemanal
       }],
+      colors: [primaryColor], // Cor principal das barras
       xaxis: {
-        categories: ['1ª Semana', '2ª Semana', '3ª Semana', '4ª Semana', '5ª Semana'],
+        categories: ['1ª Sem', '2ª Sem', '3ª Sem', '4ª Sem', '5ª Sem'],
         labels: {
           style: {
-            fontSize: '14px',
-            colors: ["#000"]
+            fontSize: '12px',
+            colors: [mutedColor] // Cor do texto secundário
           }
         },
         axisBorder: { show: false },
@@ -135,54 +151,55 @@
       yaxis: {
         labels: {
           formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (val >= 1000000) { return "R$ " + (val / 1000000).toFixed(1) + 'M'; }
+            else if (val >= 1000){ return "R$ " + (val / 1000).toFixed(0) + 'k'; }
+            return "R$ " + val.toFixed(0);
           },
           style: {
-            fontSize: '12px',
-            colors: ["#000"]
+            fontSize: '11px',
+            colors: [mutedColor] // Cor do texto secundário
           }
         }
       },
       fill: {
         type: 'gradient',
         gradient: {
-          shade: 'light',
+          shade: 'dark',
           type: "vertical",
-          shadeIntensity: 0.3,
-          opacityFrom: 0.85,
-          opacityTo: 0.85,
-          stops: [0, 90, 100]
-        }
+          shadeIntensity: 0.4,
+          gradientToColors: [primaryColor],
+          inverseColors: false,
+          opacityFrom: 0.9,
+          opacityTo: 0.6,
+          stops: [0, 100]
+        },
+         colors: [primaryColor]
       },
       tooltip: {
-        theme: 'light',
+        theme: 'dark',
         y: {
           formatter: function(val) {
             return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           }
         }
       },
-      theme: { mode: 'light' },
+      grid: {
+          show: true,
+          borderColor: gridColor,
+          strokeDashArray: 3,
+          yaxis: { lines: { show: true } },
+          xaxis: { lines: { show: false } },
+          padding: { left: 20, right: 10 }
+      },
+      theme: { mode: 'dark' },
       responsive: [
         {
           breakpoint: 768,
-          options: {
-            chart: { height: 300 },
-            plotOptions: { bar: { columnWidth: '70%' } },
-            dataLabels: { style: { fontSize: '10px' } },
-            xaxis: { labels: { style: { fontSize: '12px' } } },
-            yaxis: { labels: { style: { fontSize: '10px' } } }
-          }
+          options: { chart: { height: 320 }, plotOptions: { bar: { borderRadius: 5, columnWidth: '60%' } }, dataLabels: { style: { fontSize: '10px' }, offsetY: -20 }, xaxis: { labels: { style: { fontSize: '11px' } } }, yaxis: { labels: { style: { fontSize: '10px' } } } }
         },
         {
           breakpoint: 576,
-          options: {
-            chart: { height: 250 },
-            plotOptions: { bar: { columnWidth: '80%' } },
-            dataLabels: { style: { fontSize: '8px' } },
-            xaxis: { labels: { style: { fontSize: '10px' } } },
-            yaxis: { labels: { style: { fontSize: '8px' } } }
-          }
+          options: { chart: { height: 280 }, plotOptions: { bar: { borderRadius: 4, columnWidth: '70%' } }, dataLabels: { enabled: false }, xaxis: { labels: { style: { fontSize: '10px' } } }, yaxis: { labels: { style: { fontSize: '9px' } } } }
         }
       ]
     };
