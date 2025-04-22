@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Previsão de Gastos - Abril (Dark - Área - Full Width)</title>
+  <title>Previsão de Gastos - Abril (Dark - Área - Full - Mobile Opt.)</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -11,6 +11,7 @@
     #chart {
       max-width: 100%;
       margin: 0 auto;
+      min-height: 280px; /* Altura mínima para evitar colapso */
     }
     /* Opcional: Melhorar contraste do foco */
     *:focus-visible {
@@ -29,11 +30,11 @@
 
   <div class="p-6 sm:p-8 bg-[#212529] shadow-xl rounded-lg border border-[#495057]">
 
-    <h2 class="text-center text-2xl font-bold mb-8 text-[#e9ecef]">Previsão de Gastos para Abril</h2>
+    <h2 class="text-center text-xl sm:text-2xl font-bold mb-8 text-[#e9ecef]">Previsão de Gastos para Abril</h2>
 
     <div id="chart" class="mb-10"></div>
 
-    <h3 class="text-center text-xl font-semibold mb-5 text-[#e9ecef]">Detalhes das Semanas</h3>
+    <h3 class="text-center text-lg sm:text-xl font-semibold mb-5 text-[#e9ecef]">Detalhes das Semanas</h3>
     <div class="overflow-x-auto rounded-lg border border-[#495057]">
       <table class="min-w-full divide-y divide-[#495057] table-auto">
         <thead class="bg-[#343a40]">
@@ -96,69 +97,55 @@
 
   <script>
     // Cores do tema dark para o gráfico
-    const primaryColor = '#4dabf7'; // Azul de destaque
-    const textColor = '#e9ecef';      // Texto principal claro
-    const mutedColor = '#adb5bd';     // Texto secundário/eixos
-    const gridColor = '#495057';      // Cor das linhas de grade/bordas
-    const bodyBgColor = '#1a1d21';    // Cor de fundo do body (para borda do marcador)
+    const primaryColor = '#4dabf7';
+    const textColor = '#e9ecef';
+    const mutedColor = '#adb5bd';
+    const gridColor = '#495057';
+    const bodyBgColor = '#1a1d21';
 
-    // Dados para as semanas de Abril (mantidos)
+    // Dados (mantidos)
     var dadosSemanal = [909665.51, 1978156.16, 1432358.51, 1316467.26, 410857.05];
 
-    // *** OPÇÕES DO GRÁFICO ATUALIZADAS PARA AREA CHART ***
+    // Opções do Gráfico Area Chart (Dark Theme)
     var options = {
       chart: {
-        type: 'area', // <-- MUDOU PARA AREA
+        type: 'area',
         height: 380,
         background: 'transparent',
         toolbar: { show: false },
         fontFamily: 'Inter, sans-serif',
       },
-      // plotOptions removido (era para bar chart)
       dataLabels: {
-        enabled: false // <-- DESABILITADO PARA AREA CHART
+        enabled: false
       },
       series: [{
         name: 'Gastos',
         data: dadosSemanal
       }],
-      colors: [primaryColor], // Cor principal da linha/fill
-      stroke: { // <-- Adicionado para area chart
-        curve: 'smooth', // Linha suavizada
-        width: 3         // Espessura da linha
+      colors: [primaryColor],
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-      fill: { // <-- Ajustado para area chart
+      fill: {
         type: 'gradient',
         gradient: {
-          shade: 'dark',
-          type: "vertical",
-          shadeIntensity: 0.5, // Intensidade da sombra do gradiente
-          inverseColors: false,
-          opacityFrom: 0.7,  // Opacidade inicial do gradiente
-          opacityTo: 0.1,    // Opacidade final (quase transparente)
-          stops: [0, 95, 100] // Pontos de parada do gradiente
+          shade: 'dark', type: "vertical", shadeIntensity: 0.5,
+          inverseColors: false, opacityFrom: 0.7, opacityTo: 0.1,
+          stops: [0, 95, 100]
         },
-         colors: [primaryColor] // Cor base do gradiente
+         colors: [primaryColor]
       },
-      markers: { // <-- Adicionado para area chart
-          size: 5,                 // Tamanho dos marcadores
-          colors: [primaryColor],    // Cor do marcador
-          strokeColors: bodyBgColor, // Cor da borda (fundo do body)
-          strokeWidth: 2,          // Largura da borda
-          hover: {
-            size: 7                // Tamanho no hover
-          }
+      markers: {
+          size: 5, colors: [primaryColor], strokeColors: bodyBgColor,
+          strokeWidth: 2, hover: { size: 7 }
       },
       xaxis: {
         categories: ['1ª Sem', '2ª Sem', '3ª Sem', '4ª Sem', '5ª Sem'],
         labels: {
-          style: {
-            fontSize: '12px',
-            colors: [mutedColor] // Cor do texto secundário
-          }
+          style: { fontSize: '12px', colors: [mutedColor] }
         },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
+        axisBorder: { show: false }, axisTicks: { show: false }
       },
       yaxis: {
         labels: {
@@ -167,14 +154,11 @@
             else if (val >= 1000){ return "R$ " + (val / 1000).toFixed(0) + 'k'; }
             return "R$ " + val.toFixed(0);
           },
-          style: {
-            fontSize: '11px',
-            colors: [mutedColor] // Cor do texto secundário
-          }
+          style: { fontSize: '11px', colors: [mutedColor] }
         }
       },
       tooltip: {
-        theme: 'dark', // Tooltip no tema dark
+        theme: 'dark',
         y: {
           formatter: function(val) {
             return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -182,36 +166,44 @@
         }
       },
       grid: {
-          show: true,
-          borderColor: gridColor, // Cor da borda da grade
-          strokeDashArray: 3,     // Linhas tracejadas
-          yaxis: {
-              lines: { show: true } // Mostrar linhas horizontais
-          },
-          xaxis: {
-              lines: { show: false } // Ocultar linhas verticais
-          },
-          padding: { left: 20, right: 10 } // Padding interno
+          show: true, borderColor: gridColor, strokeDashArray: 3,
+          yaxis: { lines: { show: true } },
+          xaxis: { lines: { show: false } },
+          padding: { left: 20, right: 10 }
       },
-      theme: { mode: 'dark' }, // Configuração geral do tema
-      responsive: [ // Mantendo responsividade, ajustando tamanhos
+      theme: { mode: 'dark' },
+      // *** OPÇÕES RESPONSIVAS AJUSTADAS PARA MOBILE ***
+      responsive: [
         {
-          breakpoint: 768,
+          breakpoint: 768, // Telas médias (tablets)
           options: {
             chart: { height: 320 },
-            markers: { size: 4, hover: { size: 6 } }, // Marcadores menores
-            stroke: { width: 2 },                     // Linha mais fina
+            markers: { size: 4, hover: { size: 6 } },
+            stroke: { width: 2 },
             xaxis: { labels: { style: { fontSize: '11px' } } },
             yaxis: { labels: { style: { fontSize: '10px' } } }
           }
         },
         {
-          breakpoint: 576,
+          breakpoint: 576, // Telas pequenas (mobile)
           options: {
-            chart: { height: 280 },
-            markers: { size: 3, hover: { size: 5 } }, // Marcadores ainda menores
-            xaxis: { labels: { style: { fontSize: '10px' } } },
-            yaxis: { labels: { style: { fontSize: '9px' } } }
+            chart: { height: 280 }, // Altura reduzida
+            markers: { size: 3, hover: { size: 5 } }, // Marcadores menores
+            stroke: { width: 2 },
+            xaxis: {
+                labels: {
+                    style: { fontSize: '10px' }, // Fontes X menores
+                    hideOverlappingLabels: true, // Oculta se sobrepor
+                    rotate: 0 // Garante sem rotação
+                }
+            },
+            yaxis: {
+                labels: {
+                    show: true, // Garante que Y está visível
+                    style: { fontSize: '9px' } // Fontes Y menores
+                }
+            },
+            // Tooltip mantido para checar valores
           }
         }
       ]
