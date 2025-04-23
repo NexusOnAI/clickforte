@@ -43,11 +43,11 @@
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     }
     .value-card .card-body {
-        padding: 1.5rem;
-        display: flex; /* Habilita flexbox no card-body */
-        flex-direction: column; /* Organiza conteúdo verticalmente */
-        justify-content: center; /* Centraliza verticalmente */
-        flex-grow: 1; /* Faz o body ocupar o espaço restante no card */
+       padding: 1.5rem;
+       display: flex; /* Habilita flexbox no card-body */
+       flex-direction: column; /* Organiza conteúdo verticalmente */
+       justify-content: center; /* Centraliza verticalmente */
+       flex-grow: 1; /* Faz o body ocupar o espaço restante no card */
     }
 
     /* Ajustando cores dos icon circles para melhor visibilidade no dark */
@@ -94,8 +94,9 @@
     /* Responsividade */
     @media (max-width: 1200px) { .chart-container { height: 400px; } }
     @media (max-width: 992px) {
-        .chart-container { height: 380px; }
-        .value-card { margin-bottom: 1.5rem; } /* Adiciona espaço entre cards empilhados em MD */
+       .chart-container { height: 380px; }
+       /* Adiciona espaço entre cards empilhados em MD e SM */
+       .value-card { margin-bottom: 1.5rem; }
     }
     @media (max-width: 768px) {
       .main-section { padding: 2.5rem 10px 2rem 10px; }
@@ -107,6 +108,12 @@
       .value-card .card-body { padding: 1.25rem; }
       .value-card .icon-circle { width: 45px; height: 45px; }
       .value-card .icon-circle i { font-size: 1.3rem; }
+      /* Garante que não haja margin-bottom extra no último card quando empilhado */
+      .row > .col-sm-12:last-child .value-card {
+        margin-bottom: 0;
+      }
+      /* Se a margem de 1.5rem for muito grande em SM, pode ajustar aqui */
+       .value-card { margin-bottom: 1rem; }
     }
   </style>
 </head>
@@ -219,10 +226,19 @@
       const cardValorAbril = document.getElementById('cardValorAbril');
       const cardMesReferenciaAbril = document.getElementById('cardMesReferenciaAbril'); // ID do small text do card de Abril
 
-      // Datas (hardcoded como no original)
-      const dataCard1 = new Date(2025, 3, 17); // Mês 3 é Abril (0-indexed)
-      const dataCard2 = new Date(2025, 3, 22);
-      const dataCard3 = new Date(2025, 3, 23); // Próxima terça-feira após 18/04/2025
+      // Datas (hardcoded como no original) - Exemplo com datas futuras
+      const dataBase = new Date(); // Usar a data atual como base pode ser mais dinâmico
+      const dataCard1 = new Date(dataBase); // Exemplo: hoje
+      const dataCard2 = new Date(dataBase); // Exemplo: hoje
+      dataCard2.setDate(dataBase.getDate() + 1); // Exemplo: amanhã
+
+      // Encontrar a próxima terça-feira
+      let dataCard3 = new Date(dataBase);
+      let diaSemana = dataCard3.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+      let diasAteTerca = (2 - diaSemana + 7) % 7; // Calcula dias até a próxima terça
+      if (diasAteTerca === 0) diasAteTerca = 7; // Se hoje é terça, pega a próxima
+      dataCard3.setDate(dataCard3.getDate() + diasAteTerca);
+
 
       // Valores (hardcoded como no original para os 3 primeiros cards)
       let valorPagamentosHoje = 270256.09;
@@ -232,10 +248,13 @@
       // Pega o valor de Abril do array de gastos mensais (índice 3)
       const valorAbril = totalGastosMensais[3]; // 5570166.05
 
+      // Formatador de data pt-BR
+      const dateFormatter = (date) => date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
       // Atualiza os textos dos cards
-      if (cardData1Elem) { cardData1Elem.textContent = dataCard1.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
-      if (cardData2Elem) { cardData2Elem.textContent = dataCard2.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
-      if (cardData3Elem) { cardData3Elem.textContent = dataCard3.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+      if (cardData1Elem) { cardData1Elem.textContent = dateFormatter(dataCard1); }
+      if (cardData2Elem) { cardData2Elem.textContent = dateFormatter(dataCard2); }
+      if (cardData3Elem) { cardData3Elem.textContent = dateFormatter(dataCard3); }
 
       if (cardValorPagamentos) { cardValorPagamentos.textContent = currencyFormatter(valorPagamentosHoje); }
       if (cardValorRecebido) { cardValorRecebido.textContent = currencyFormatter(valorRecebidoHoje); }
@@ -245,13 +264,13 @@
       if (cardValorAbril) { cardValorAbril.textContent = currencyFormatter(valorAbril); }
       if (cardMesReferenciaAbril) { cardMesReferenciaAbril.textContent = "Mês de Abril"; } // Define o texto do rodapé do card
 
-      console.log("Cards atualizados. Card de Abril incluído.");
+      console.log("Cards atualizados dinamicamente. Card de Abril incluído.");
     }
 
     // --- Execução Inicial ---
     document.addEventListener('DOMContentLoaded', () => {
       criarApexAreaChartMensal('mainAreaChart', totalGastosMensais, meses, corPrincipalGrafico);
-      atualizarCards();
+      atualizarCards(); // Chama a função que atualiza os cards
     });
   </script>
 
