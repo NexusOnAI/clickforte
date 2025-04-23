@@ -1,217 +1,668 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Previsão de Gastos - Abril (Dark - Área - Full - Mobile Opt.)</title>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Previsão Próximos Dias e Meses</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    /* Garante que o gráfico se ajuste à largura disponível */
-    #chart {
-      max-width: 100%;
-      margin: 0 auto;
-      min-height: 280px; /* Altura mínima para evitar colapso */
+    /* Estilo para o overlay */
+    .overlay {
+      background: rgba(0, 0, 0, 0.5);
     }
-    /* Opcional: Melhorar contraste do foco */
-    *:focus-visible {
-       outline: 2px solid #4dabf7;
-       outline-offset: 2px;
-       border-radius: 2px;
+    /* Estilo básico para a tabela */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px; /* Espaço acima da tabela */
     }
-    /* Custom font */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body {
-        font-family: 'Inter', sans-serif;
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2; /* Fundo cinza claro para cabeçalho */
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9; /* Listras zebradas */
     }
   </style>
 </head>
-<body class="bg-[#1a1d21] text-[#adb5bd] p-4 sm:p-6 md:p-8">
+<body class="bg-white text-gray-900">
+  <div class="container mx-auto p-4">
+    <h2 class="text-2xl font-bold text-center mb-6">Previsão de Gastos Pagos - Abril (01/04 a 22/04)</h2>
 
-  <div class="p-6 sm:p-8 bg-[#212529] shadow-xl rounded-lg border border-[#495057]">
+    <div id="chart" class="mx-auto mb-6" style="max-width: 100%;"></div>
 
-    <h2 class="text-center text-xl sm:text-2xl font-bold mb-8 text-[#e9ecef]">Previsão de Gastos para Abril</h2>
+    <h4 id="totalGeral" class="text-center text-lg font-medium mb-10"></h4>
 
-    <div id="chart" class="mb-10"></div>
-
-    <h3 class="text-center text-lg sm:text-xl font-semibold mb-5 text-[#e9ecef]">Detalhes das Semanas</h3>
-    <div class="overflow-x-auto rounded-lg border border-[#495057]">
-      <table class="min-w-full divide-y divide-[#495057] table-auto">
-        <thead class="bg-[#343a40]">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Semana</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Período</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Valor</th>
-            <th class="px-4 py-3 text-center text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Status</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-[#495057]">
-          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">1ª Semana</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">01/04 a 04/04</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 909.665,51</td>
-            <td class="px-4 py-3 whitespace-nowrap text-center">
-              <span class="inline-block px-3 py-1 text-xs font-semibold text-green-300 bg-green-500/20 rounded-full">Pago</span>
-            </td>
-          </tr>
-          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">2ª Semana</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">05/04 a 11/04</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.978.156,16</td>
-            <td class="px-4 py-3 whitespace-nowrap text-center">
-              <span class="inline-block px-3 py-1 text-xs font-semibold text-yellow-300 bg-yellow-500/20 rounded-full">Em andamento</span>
-            </td>
-          </tr>
-          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">3ª Semana</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">12/04 a 18/04</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.432.358,51</td>
-            <td class="px-4 py-3 whitespace-nowrap text-center">
-              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
-            </td>
-          </tr>
-          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">4ª Semana</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">19/04 a 25/04</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.316.467,26</td>
-            <td class="px-4 py-3 whitespace-nowrap text-center">
-              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
-            </td>
-          </tr>
-          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">5ª Semana</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">26/04 a 30/04</td>
-            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 410.857,05</td>
-            <td class="px-4 py-3 whitespace-nowrap text-center">
-              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <h3 class="text-xl font-semibold mb-4">Detalhes dos Gastos Pagos (Abril 01-22)</h3>
+    <div class="overflow-x-auto"> <table class="min-w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="p-2 border border-gray-300">Descrição</th>
+                    <th class="p-2 border border-gray-300">Categoria</th>
+                    <th class="p-2 border border-gray-300">Data Pagamento</th>
+                    <th class="p-2 border border-gray-300">Valor Pago</th>
+                    <th class="p-2 border border-gray-300">Status</th>
+                </tr>
+            </thead>
+            <tbody id="dataTableBody">
+                </tbody>
+        </table>
     </div>
+    <h3 class="text-xl font-semibold mb-4 mt-10">Previsão Mensal (Geral)</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div onclick="showOverlay('Janeiro')" class="cursor-pointer bg-white shadow rounded p-4 text-center hover:shadow-lg transition">
+        <h4 class="text-lg font-semibold">Janeiro</h4>
+        <p class="mt-2 text-sm text-gray-600">Clique para ver os detalhes</p>
+      </div>
+      <div onclick="showOverlay('Fevereiro')" class="cursor-pointer bg-white shadow rounded p-4 text-center hover:shadow-lg transition">
+        <h4 class="text-lg font-semibold">Fevereiro</h4>
+        <p class="mt-2 text-sm text-gray-600">Clique para ver os detalhes</p>
+      </div>
+      <div onclick="showOverlay('Março')" class="cursor-pointer bg-white shadow rounded p-4 text-center hover:shadow-lg transition">
+        <h4 class="text-lg font-semibold">Março</h4>
+        <p class="mt-2 text-sm text-gray-600">Clique para ver os detalhes</p>
+      </div>
+      <div onclick="showOverlay('Abril')" class="cursor-pointer bg-white shadow rounded p-4 text-center hover:shadow-lg transition">
+        <h4 class="text-lg font-semibold">Abril</h4>
+        <p class="mt-2 text-sm text-gray-600">Clique para ver os detalhes</p>
+      </div>
+    </div>
+  </div>
 
-    <div class="text-center mt-8 pt-4 border-t border-[#495057] text-lg font-medium text-[#e9ecef]">
-      Total Geral: R$ 5.615.717,22
+  <div id="overlay" class="fixed inset-0 hidden items-center justify-center z-50 overlay">
+    <div class="bg-white rounded shadow-lg relative w-11/12 md:w-3/4 lg:w-1/2 h-3/4">
+      <button onclick="closeOverlay()" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <iframe id="overlayIframe" src="" class="w-full h-full rounded" frameborder="0"></iframe>
     </div>
   </div>
 
   <script>
-    // Cores do tema dark para o gráfico
-    const primaryColor = '#4dabf7';
-    const textColor = '#e9ecef';
-    const mutedColor = '#adb5bd';
-    const gridColor = '#495057';
-    const bodyBgColor = '#1a1d21';
+    /**********************
+     * Gráfico ApexCharts e Dados
+     **********************/
+    // Dados atualizados para Abril (01/04/2025 a 22/04/2025) - Adicionando status
+    const dadosProximosDias = [
+        // 01/04/2025
+        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 50.900,00", status: "Pago" },
+        { descricao: "CONDOMÍNIO + IPTU - MADEIRA EXPRESS", categoria: "IMPOSTO", dataPagamento: "4/1/2025", valorPago: "R$ 26.092,33", status: "Pago" },
+        { descricao: "NEW VETOR SERVICOS TERCEIRIZADOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/1/2025", valorPago: "R$ 5.050,71", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA251673", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 1.540,27", status: "Pago" },
+        { descricao: "AGA SERVICOS TERCEIRIZADOS LTDA1251", categoria: "DESPESA FIXA", dataPagamento: "4/1/2025", valorPago: "R$ 267,72", status: "Pago" },
+        { descricao: "NEW VETOR SERVICOS TERCEIRIZADOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/1/2025", valorPago: "R$ 18.856,84", status: "Pago" },
+        { descricao: "BIGFER MATRIZ2327106", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 1.400,69", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5184", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 186,47", status: "Pago" },
+        { descricao: "DZAINEROF", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 5.059,25", status: "Pago" },
+        { descricao: "DZAINERPF", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 4.900,00", status: "Pago" },
+        { descricao: "GUILHERME - SEGURANÇA", categoria: "SALARIO", dataPagamento: "4/1/2025", valorPago: "R$ 2.000,00", status: "Pago" },
+        { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA", categoria: "SALARIO", dataPagamento: "4/1/2025", valorPago: "R$ 2.000,00", status: "Pago" },
+        { descricao: "CTI INTERNET", categoria: "DESPESA FIXA", dataPagamento: "4/1/2025", valorPago: "R$ 583,26", status: "Pago" },
+        { descricao: "EDGARD BARCO", categoria: "RETIRADA", dataPagamento: "4/1/2025", valorPago: "R$ 1.000,00", status: "Pago" },
+        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 16.500,00", status: "Pago" },
+        { descricao: "DESING PLAST", categoria: "FORNECEDOR", dataPagamento: "4/1/2025", valorPago: "R$ 5.846,40", status: "Pago" },
+        { descricao: "VAGA NAUTICA", categoria: "RETIRADA", dataPagamento: "4/1/2025", valorPago: "R$ 819,59", status: "Pago" },
+        { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA", categoria: "SALARIO", dataPagamento: "4/1/2025", valorPago: "R$ 2.000,00", status: "Pago" },
+        { descricao: "JOSANE TORTUGAS - ALUGUEL CASA DO GUARUJÁ", categoria: "RETIRADA", dataPagamento: "4/1/2025", valorPago: "R$ 16.000,00", status: "Pago" },
+        { descricao: "APARTAMENTO BRUNO", categoria: "RETIRADA", dataPagamento: "4/1/2025", valorPago: "R$ 13.500,00", status: "Pago" },
+        { descricao: "APARTAMENTO MARCO ANTÔNIO", categoria: "RETIRADA", dataPagamento: "4/1/2025", valorPago: "R$ 13.500,00", status: "Pago" },
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA FIXA", dataPagamento: "4/1/2025", valorPago: "R$ 341,90", status: "Pago" },
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA FIXA", dataPagamento: "4/1/2025", valorPago: "R$ 119,90", status: "Pago" },
+        // 02/04/2025
+        { descricao: "TB EXPRESS - MICHAEL F DAMACENO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 390,00", status: "Pago" },
+        { descricao: "ALEXANDRE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "EMERSON DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTHONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANIO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 284,00", status: "Pago" },
+        { descricao: "JOSÉ RAMALHO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RONALDO SORACE", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RICARDO DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "MADEIRA EXPRESS ADIANTAMENTO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 5.900,00", status: "Pago" },
+        { descricao: "FITAS ESPLENDIDAS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 3.760,00", status: "Pago" },
+        { descricao: "E-CARMO", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 17.800,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 200,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 49,90", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 420,00", status: "Pago" },
+        { descricao: "CAROÇO PF=226901", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 41.719,94", status: "Pago" },
+        { descricao: "ARAUCO 325541", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "MULTIVISÃO 226901", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 4.788,22", status: "Pago" },
+        { descricao: "DZAINEROF", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 10.099,30", status: "Pago" },
+        { descricao: "DZAINERPF", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 9.781,40", status: "Pago" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/2/2025", valorPago: "R$ 3.800,00", status: "Pago" },
+        { descricao: "APARTAMENTO FELIPE", categoria: "RETIRADA", dataPagamento: "4/2/2025", valorPago: "R$ 27.000,00", status: "Pago" },
+        { descricao: "ACM FIBRAS 6886", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 51.292,63", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5284", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 1.459,35", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5193", categoria: "FORNECEDOR", dataPagamento: "4/2/2025", valorPago: "R$ 8.100,00", status: "Pago" },
+        { descricao: "JOSÉ RAMALHO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "EMERSON DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "MAYCON DOUGLAS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTHONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANIO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "LUCIANO MUNHOZ", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RONALDO SORACE", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "FERNANDO RODRIGUES", categoria: "DESPESA FIXA", dataPagamento: "4/2/2025", valorPago: "R$ 80,00", status: "Pago" },
+        // 03/04/2025
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/3/2025", valorPago: "R$ 348,00", status: "Pago" },
+        { descricao: "Ricardo dos Santos Reis", categoria: "DESPESA FIXA", dataPagamento: "4/3/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "DESPESA FIXA", dataPagamento: "4/3/2025", valorPago: "R$ 420,00", status: "Pago" },
+        { descricao: "ARAUCO 325604", categoria: "FORNECEDOR", dataPagamento: "4/3/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "TB EXPRESS", categoria: "DESPESA FIXA", dataPagamento: "4/3/2025", valorPago: "R$ 390,00", status: "Pago" },
+        { descricao: "SQUALIDUS USINAGEM", categoria: "FORNECEDOR", dataPagamento: "4/3/2025", valorPago: "R$ 750,00", status: "Pago" },
+        // 04/04/2025
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 348,00", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 210,00", status: "Pago" },
+        { descricao: "ALEXANDRE DE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "EMERSON DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTHONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOSÉ RAMALHO", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RONALDO SORACE", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RICARDO DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "FERNANDO RODRIGUES", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOÃO VICTOR PAZ", categoria: "DESPESA FIXA", dataPagamento: "4/4/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "INDUSLOG - FOLHA SALÁRIAL", categoria: "SALARIO", dataPagamento: "4/4/2025", valorPago: "R$ 50.257,33", status: "Pago" },
+        { descricao: "INDUSMOV", categoria: "SALARIO", dataPagamento: "4/4/2025", valorPago: "R$ 60.500,00", status: "Pago" },
+        { descricao: "ARAUCO - ACLUB325242", categoria: "FORNECEDOR", dataPagamento: "4/4/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5193", categoria: "FORNECEDOR", dataPagamento: "4/4/2025", valorPago: "R$ 1.035,00", status: "Pago" },
+        { descricao: "ENEL", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/4/2025", valorPago: "R$ 138,44", status: "Pago" },
+        { descricao: "ENEL", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/4/2025", valorPago: "R$ 427,57", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA251573", categoria: "FORNECEDOR", dataPagamento: "4/4/2025", valorPago: "R$ 9.099,09", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA226946", categoria: "FORNECEDOR", dataPagamento: "4/4/2025", valorPago: "R$ 16.143,14", status: "Pago" },
+        { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "4/4/2025", valorPago: "R$ 92.713,53", status: "Pago" },
+        { descricao: "VN EPS", categoria: "FORNECEDOR", dataPagamento: "4/4/2025", valorPago: "R$ 20.064,00", status: "Pago" },
+        // 07/04/2025
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227016", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 14.935,11", status: "Pago" },
+        { descricao: "SOLUM CONTABILIDADE", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 1.368,88", status: "Pago" },
+        { descricao: "JG ASSESSORIA E CONSULTORIA CONTABIL LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 14.240,00", status: "Pago" },
+        { descricao: "GIRUS MÓVEIS", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 17.000,00", status: "Pago" },
+        { descricao: "SUL FORMATO INDUSTRIA E COMERCIO DE ACESSORIOS PLASTICOS LTDA6665", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 6.403,42", status: "Pago" },
+        { descricao: "MULTIVISÃO226947", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 4.031,91", status: "Pago" },
+        { descricao: "MULTIVISÃO227017", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 3.230,00", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227089", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 14.935,11", status: "Pago" },
+        { descricao: "JOMARCA867488", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 3.541,01", status: "Pago" },
+        { descricao: "ARAUCO325739", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "BIGFER MATRIZ2328928", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 1.204,00", status: "Pago" },
+        { descricao: "AUGUSTO COMPRESSORES", categoria: "INVESTIMENTO", dataPagamento: "4/7/2025", valorPago: "R$ 22.200,00", status: "Pago" },
+        { descricao: "CIANURETO", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 1.035,00", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5220", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 2.629,31", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5219", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 844,97", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5218", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 650,90", status: "Pago" },
+        { descricao: "SMARTRACK", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 9.733,00", status: "Pago" },
+        { descricao: "ALUGUEL GALPÃO CLICK ARMAZÉM", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 98.094,57", status: "Pago" },
+        { descricao: "MOTORISTA DO CAMINHÃO - JOSÉ MACIEL", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 500,00", status: "Pago" },
+        { descricao: "LIXEIRO GIRUS - WELLINGTON RODRIGUES", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 700,00", status: "Pago" },
+        { descricao: "LIXEIRO CLICK - DIONEI RIBEIRO", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 200,00", status: "Pago" },
+        { descricao: "LUIZ CARLOS DE OLIVEIRA", categoria: "SALÁRIO", dataPagamento: "4/7/2025", valorPago: "R$ 8.000,00", status: "Pago" },
+        { descricao: "FUTURO LOG", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 6.000,00", status: "Pago" },
+        { descricao: "LUCIANA BALAGUER", categoria: "RETIRADA", dataPagamento: "4/7/2025", valorPago: "R$ 5.000,00", status: "Pago" },
+        { descricao: "SUL FORMATO PF=6665", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 19.593,58", status: "Pago" },
+        { descricao: "FELIPE CORREIA", categoria: "SALÁRIO", dataPagamento: "4/7/2025", valorPago: "R$ 20.000,00", status: "Pago" },
+        { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 22.140,03", status: "Pago" },
+        { descricao: "RECEITA FEDERAL", categoria: "IMPOSTO", dataPagamento: "4/7/2025", valorPago: "R$ 1.849,62", status: "Pago" },
+        { descricao: "RECEITA FEDERAL", categoria: "IMPOSTO", dataPagamento: "4/7/2025", valorPago: "R$ 1.702,27", status: "Pago" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 18.925,00", status: "Pago" },
+        { descricao: "SULGRIL", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 13.677,00", status: "Pago" },
+        { descricao: "SULGRIL", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 9.300,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5218", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 5.094,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5219", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 6.612,84", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5220", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 20.577,20", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 682,49", status: "Pago" },
+        { descricao: "EUCATEX RAFA 307303", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 27.943,03", status: "Pago" },
+        { descricao: "EUCATEX RAFA 307304", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 27.943,03", status: "Pago" },
+        { descricao: "CAROÇO PF=226947", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 35.165,07", status: "Pago" },
+        { descricao: "CAROÇO PF=227017", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 28.148,28", status: "Pago" },
+        { descricao: "EUCATEX RAFA 307302", categoria: "FORNECEDOR", dataPagamento: "4/7/2025", valorPago: "R$ 27.943,03", status: "Pago" },
+        { descricao: "Daniel tavares de araujo", categoria: "DESPESA FIXA", dataPagamento: "4/7/2025", valorPago: "R$ 100,00", status: "Pago" },
+        // 08/04/2025
+        { descricao: "CLARO S.A.", categoria: "DESPESA FIXA", dataPagamento: "4/8/2025", valorPago: "R$ 60,63", status: "Pago" },
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/8/2025", valorPago: "R$ 752,17", status: "Pago" },
+        { descricao: "ARAUCO 297899", categoria: "FORNECEDOR", dataPagamento: "4/8/2025", valorPago: "R$ 79.186,62", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA251673", categoria: "FORNECEDOR", dataPagamento: "4/8/2025", valorPago: "R$ 1.329,37", status: "Pago" },
+        { descricao: "Arauco do Brasil - Jaguariaiva325406", categoria: "FORNECEDOR", dataPagamento: "4/8/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "VALENÇA IND.", categoria: "FORNECEDOR", dataPagamento: "4/8/2025", valorPago: "R$ 8.400,00", status: "Pago" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/8/2025", valorPago: "R$ 3.800,00", status: "Pago" },
+        { descricao: "VITOR VACARI", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/8/2025", valorPago: "R$ 3.000,00", status: "Pago" },
+        // 09/04/2025
+        { descricao: "FELIPE BALAGUER", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/9/2025", valorPago: "R$ 14.260,00", status: "Pago" },
+        { descricao: "VICTOR DE SOUSA CUNHA", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTHONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANIO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOSÉ RAMALHO", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RICARDO DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "FERNANDO RODRIGUES", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOÃO VICTOR", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "DANIEL TAVARES", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "REEMBOLSO JOSANE", categoria: "RETIRADA", dataPagamento: "4/9/2025", valorPago: "R$ 2.092,83", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 420,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 270,00", status: "Pago" },
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 332,00", status: "Pago" },
+        { descricao: "DIGEL ELÉTRICA", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 109,00", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5202", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 2.296,87", status: "Pago" },
+        { descricao: "VPLAST26928", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 4.435,62", status: "Pago" },
+        { descricao: "PRD_IMD NAVEGANTES320175", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 30.708,83", status: "Pago" },
+        { descricao: "ARTEMAQ ADIANTAMENTO", categoria: "INVESTIMENTO", dataPagamento: "4/9/2025", valorPago: "R$ 40.000,00", status: "Pago" },
+        { descricao: "ARAUCO 325841", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "ARAUCO 360879", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 67.943,01", status: "Pago" },
+        { descricao: "MADEIRA EXPRESS ADIANTAMENTO", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 120.000,00", status: "Pago" },
+        { descricao: "PARASSOL8386", categoria: "FORNECEDOR", dataPagamento: "4/9/2025", valorPago: "R$ 4.233,60", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/9/2025", valorPago: "R$ 395,69", status: "Pago" },
+        // 10/04/2025
+        { descricao: "OMIEXPERIENCE LTDA.", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 6.490,73", status: "Pago" },
+        { descricao: "SABESP", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/10/2025", valorPago: "R$ 1.032,13", status: "Pago" },
+        { descricao: "OLIST TINY TECNOLOGIA LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 44,90", status: "Pago" },
+        { descricao: "OR DESIGN388413", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 11.040,32", status: "Pago" },
+        { descricao: "OR DESIGN398383", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 34.501,00", status: "Pago" },
+        { descricao: "RENNER SAYERLACK886509", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 1.655,39", status: "Pago" },
+        { descricao: "EXCELSIOR DE SEGUROS", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 4.522,17", status: "Pago" },
+        { descricao: "ACM FIBRAS6892", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 65.571,35", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5202", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 17.975,52", status: "Pago" },
+        { descricao: "CHARLOT", categoria: "RETIRADA", dataPagamento: "4/10/2025", valorPago: "R$ 10.000,00", status: "Pago" },
+        { descricao: "ENOQUE", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 10.150,00", status: "Pago" },
+        { descricao: "TB EXPRESS", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 4.160,00", status: "Pago" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/10/2025", valorPago: "R$ 3.800,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5227", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 2.292,30", status: "Pago" },
+        { descricao: "ADESTRAMENTO FK", categoria: "RETIRADA", dataPagamento: "4/10/2025", valorPago: "R$ 1.694,70", status: "Pago" },
+        { descricao: "Paleteiras nascimento", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 600,00", status: "Pago" },
+        { descricao: "LABRET & LABRET", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 468,00", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 420,00", status: "Pago" },
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 310,00", status: "Pago" },
+        { descricao: "ERP - LETS", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 120,89", status: "Pago" },
+        { descricao: "ERP - VOIGHT", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 149,90", status: "Pago" },
+        { descricao: "VICTOR DE SOUSA CUNHA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTHONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANIO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JONATHAN BUGLIA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOSÉ RAMALHO", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RICARDO DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOÃO VICTOR PAZ", categoria: "DESPESA FIXA", dataPagamento: "4/10/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "QM-FR650948", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 31.520,00", status: "Pago" },
+        { descricao: "NEO STAMP9981", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 8.142,00", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5224", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 2.280,62", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5227", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 292,90", status: "Pago" },
+        { descricao: "ALFRE", categoria: "RETIRADA", dataPagamento: "4/10/2025", valorPago: "R$ 50.000,00", status: "Pago" },
+        { descricao: "MULTIVISÃO227106", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 3.010,49", status: "Pago" },
+        { descricao: "MULTIVISÃO227107", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 4.591,88", status: "Pago" },
+        { descricao: "MULTIVISÃO227088", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 3.498,12", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5224", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 17.848,35", status: "Pago" },
+        { descricao: "TRANS NEW", categoria: "TRANSPORTADORA", dataPagamento: "4/10/2025", valorPago: "R$ 6.500,00", status: "Pago" },
+        { descricao: "PARASSOL8388", categoria: "FORNECEDOR", dataPagamento: "4/10/2025", valorPago: "R$ 4.233,60", status: "Pago" },
+        // 11/04/2025
+        { descricao: "CAROÇO PF=227088", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 30.485,97", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5208", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 9.542,61", status: "Pago" },
+        { descricao: "SABESP", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/11/2025", valorPago: "R$ 334,62", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA251573", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 9.099,09", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227105", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 51.316,80", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5208", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 1.219,33", status: "Pago" },
+        { descricao: "ABC SPEEDY WAY TURISMO E TRANSPORTE LTDA43741", categoria: "TRANSPORTADORA", dataPagamento: "4/11/2025", valorPago: "R$ 4.750,12", status: "Pago" },
+        { descricao: "FRANE AUTOMACAO", categoria: "DESPESA FIXA", dataPagamento: "4/11/2025", valorPago: "R$ 192,72", status: "Pago" },
+        { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "4/11/2025", valorPago: "R$ 94.526,69", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227145", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 46.689,47", status: "Pago" },
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA FIXA", dataPagamento: "4/11/2025", valorPago: "R$ 1.142,22", status: "Pago" },
+        { descricao: "REEMBOLSO EDNALE", categoria: "DESPESA FIXA", dataPagamento: "4/11/2025", valorPago: "R$ 31,63", status: "Pago" },
+        { descricao: "MULTIVISÃO227144", categoria: "FORNECEDOR", dataPagamento: "4/11/2025", valorPago: "R$ 1.673,27", status: "Pago" },
+        // 14/04/2025
+        { descricao: "MUNICIPIO DE SAO BERNARDO DO CAMPOquer", categoria: "IMPOSTO", dataPagamento: "4/14/2025", valorPago: "R$ 15.569,97", status: "Pago" },
+        { descricao: "MUNICIPIO DE SAO BERNARDO DO CAMPO", categoria: "IMPOSTO", dataPagamento: "4/14/2025", valorPago: "R$ 1.195,73", status: "Pago" },
+        { descricao: "ENEL DISTRIBUICAO SAO PAULO", categoria: "DESPESA VARIÁVEL", dataPagamento: "4/14/2025", valorPago: "R$ 1.493,29", status: "Pago" },
+        { descricao: "ARAUCO - ACLUB297813", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 79.186,62", status: "Pago" },
+        { descricao: "BIGFER MATRIZ2346446", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 2.663,69", status: "Pago" },
+        { descricao: "REPACK EMBALAGENS13820", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 4.920,00", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5237", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 1.351,25", status: "Pago" },
+        { descricao: "VPLAST ACESSORIOS26972", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 3.387,12", status: "Pago" },
+        { descricao: "BARUERI7486247", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 628,25", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 210,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/14/2025", valorPago: "R$ 79,90", status: "Pago" },
+        { descricao: "GABRIEL CORREIA", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 5.000,00", status: "Pago" },
+        { descricao: "CARLA ZANQUETI", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 9.000,00", status: "Pago" },
+        { descricao: "IGNACIO", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 6.500,00", status: "Pago" },
+        { descricao: "NEWFIX", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 10.699,50", status: "Pago" },
+        { descricao: "ALCAR SERVICOS ADMINISTRATIVOS", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 21.000,00", status: "Pago" },
+        { descricao: "EVANDERSON SILVA", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 5.000,00", status: "Pago" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/14/2025", valorPago: "R$ 3.800,00", status: "Pago" },
+        { descricao: "NEWFIX", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 270,00", status: "Pago" },
+        { descricao: "REGIANE CRISTINA DE ARAUJO", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 4.080,90", status: "Pago" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 11.635,50", status: "Pago" },
+        { descricao: "LÉO MADEIRAS", categoria: "INVESTIMENTO", dataPagamento: "4/14/2025", valorPago: "R$ 25.183,81", status: "Pago" },
+        { descricao: "FERGRAFPLASTIC263", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 9.460,50", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227251", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 46.806,54", status: "Pago" },
+        { descricao: "QM-FR651209", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 31.520,00", status: "Pago" },
+        { descricao: "QM-FR651213", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 31.520,00", status: "Pago" },
+        { descricao: "LUCAS MOMEZZO16", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 49.000,00", status: "Pago" },
+        { descricao: "GO SELL8", categoria: "RETIRADA", dataPagamento: "4/14/2025", valorPago: "R$ 96.500,00", status: "Pago" },
+        { descricao: "DZAINEROF", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 23.128,00", status: "Pago" },
+        { descricao: "DZAINERPF", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 22.400,00", status: "Pago" },
+        { descricao: "ALUGUEL PALETEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/14/2025", valorPago: "R$ 2.800,00", status: "Pago" },
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA FIXA", dataPagamento: "4/14/2025", valorPago: "R$ 789,50", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5217", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 956,82", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5241", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 1.445,00", status: "Pago" },
+        { descricao: "PREFEITURA DE SBC", categoria: "IMPOSTO", dataPagamento: "4/14/2025", valorPago: "R$ 12.260,78", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA251673", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 1.329,36", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5240", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 1.445,00", status: "Pago" },
+        { descricao: "CAVIMAR IND.3875", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 7.837,50", status: "Pago" },
+        { descricao: "CAVIMAR IND.3876", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 7.837,50", status: "Pago" },
+        { descricao: "ENOQUE", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 10.150,00", status: "Pago" },
+        { descricao: "LIDEAR MÁQUINAS", categoria: "INVESTIMENTO", dataPagamento: "4/14/2025", valorPago: "R$ 29.000,00", status: "Pago" },
+        { descricao: "CAROÇO PF=227106, 227107", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 64.998,34", status: "Pago" },
+        { descricao: "RESTAMP", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 44.700,00", status: "Pago" },
+        { descricao: "CAROÇO PF=227144", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 55.119,51", status: "Pago" },
+        { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 18.009,87", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5237", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 10.575,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5217", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 7.488,18", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5240", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 11.308,68", status: "Pago" },
+        { descricao: "FITAR BRASIL - REI DO BRÁS", categoria: "FORNECEDOR", dataPagamento: "4/14/2025", valorPago: "R$ 25.536,00", status: "Pago" },
+        { descricao: "GUILHERME - SEGURANÇA", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 2.000,00", status: "Pago" },
+        { descricao: "FERNANDO DE ALMEIDA - SEGURANÇA", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 2.000,00", status: "Pago" },
+        { descricao: "ROGÉRIO SAMPÁIO - SEGURANÇA", categoria: "SALÁRIO", dataPagamento: "4/14/2025", valorPago: "R$ 2.000,00", status: "Pago" },
+        // 15/04/2025
+        { descricao: "PATRAO IMOVEIS E ASSESSORIA LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/15/2025", valorPago: "R$ 5.162,30", status: "Pago" },
+        { descricao: "SUL FORMATO INDUSTRIA E COMERCIO DE ACESSORIOS PLASTICOS LTDA6669", categoria: "FORNECEDOR", dataPagamento: "4/15/2025", valorPago: "R$ 6.194,81", status: "Pago" },
+        { descricao: "SULFORMATO PF=6669", categoria: "FORNECEDOR", dataPagamento: "4/15/2025", valorPago: "R$ 19.805,19", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5241", categoria: "FORNECEDOR", dataPagamento: "4/15/2025", valorPago: "R$ 11.308,68", status: "Pago" },
+        { descricao: "IPTU SOROCABA", categoria: "RETIRADA", dataPagamento: "4/15/2025", valorPago: "R$ 1.949,26", status: "Pago" },
+        { descricao: "BALAGUER REPRESENTAÇÕES", categoria: "RETIRADA", dataPagamento: "4/15/2025", valorPago: "R$ 50.000,00", status: "Pago" },
+        { descricao: "TB EXPRESS - MICHAEL DAMASCENO", categoria: "DESPESA FIXA", dataPagamento: "4/15/2025", valorPago: "R$ 520,00", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/15/2025", valorPago: "R$ 210,00", status: "Pago" },
+        { descricao: "VPLAST ACESSORIOS27003", categoria: "FORNECEDOR", dataPagamento: "4/15/2025", valorPago: "R$ 26.845,00", status: "Pago" },
+        { descricao: "MP INTELIGÊNCIA", categoria: "RETIRADA", dataPagamento: "4/15/2025", valorPago: "R$ 50.000,00", status: "Pago" },
+        { descricao: "Amemac Maquinas e Equipamentos Ltda803", categoria: "INVESTIMENTO", dataPagamento: "4/15/2025", valorPago: "R$ 22.500,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/15/2025", valorPago: "R$ 70,00", status: "Pago" },
+        { descricao: "ACM FIBRAS6893", categoria: "FORNECEDOR", dataPagamento: "4/15/2025", valorPago: "R$ 46.000,00", status: "Pago" },
+        // 16/04/2025
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 375,12", status: "Pago" },
+        { descricao: "REEMBOLSO CARLA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 62,90", status: "Pago" },
+        { descricao: "VICTOR DE SOUSA CUNHA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "EMERSON DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "MAYCON DOUGLAS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTHONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANIO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JONATHAN BUGLIA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "LUCIANO MUNHOZ", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOÃO VICTOR SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOSÉ RAMALHO", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RONALDO SORACE", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "P.H.T COMERCIO E SERVICOS DE MAQUINAS PARA CAFE LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 413,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RICARDO DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "FERNANDO RODRIGUES", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOÃO VICTOR PAZ", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "WELINTON OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "LUCAS OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5221", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 275,99", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5245", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 2.130,20", status: "Pago" },
+        { descricao: "VERTICALPACK EMBALAGENS5248", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 1.418,81", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 178,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 58,45", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 210,00", status: "Pago" },
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 546,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5221", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 2.159,91", status: "Pago" },
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/16/2025", valorPago: "R$ 3.800,00", status: "Pago" },
+        { descricao: "ALEXANDRE OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ALEXANDRE LUIZ QUEIRÓZ", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "EMERSON DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "MAYCON DOUGLAS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ANTONY SALVIANO", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "CARLOS VINICIUS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JOZILANIO LIMA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "JONATHAN BUGLIA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RONALDO SORACE", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RAFAEL PEREIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "RICARDO DOS SANTOS", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "WELINTON OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "LUCAS OLIVEIRA", categoria: "DESPESA FIXA", dataPagamento: "4/16/2025", valorPago: "R$ 80,00", status: "Pago" },
+        { descricao: "ACM FIBRAS6893", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 22.794,31", status: "Pago" },
+        { descricao: "JOMARCA KITS SAO PAULO IND COM LTDA56192", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 29.241,00", status: "Pago" },
+        { descricao: "OR DESIGN389073", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 18.399,92", status: "Pago" },
+        { descricao: "ARAUCO326277", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5248", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 11.103,75", status: "Pago" },
+        { descricao: "DZAINEROF", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 21.953,54", status: "Pago" },
+        { descricao: "DZAINERPF", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 21.262,50", status: "Pago" },
+        { descricao: "DZAINEROF", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 6.866,13", status: "Pago" },
+        { descricao: "DZAINERPF", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 6.650,00", status: "Pago" },
+        { descricao: "MULTIVISÃO227252", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 1.677,37", status: "Pago" },
+        { descricao: "MULTIVISÃO227283", categoria: "FORNECEDOR", dataPagamento: "4/16/2025", valorPago: "R$ 4.779,19", status: "Pago" },
+        // 17/04/2025
+        { descricao: "Nove Arty Comercio Varejista de moveis", categoria: "INVESTIMENTO", dataPagamento: "4/17/2025", valorPago: "R$ 22.500,00", status: "Pago" },
+        { descricao: "EPA TRANSPORTES", categoria: "DESPESA FIXA", dataPagamento: "4/17/2025", valorPago: "R$ 1.000,00", status: "Pago" },
+        { descricao: "INDUSLOG - FOLHA SALÁRIAL", categoria: "SALARIO", dataPagamento: "4/17/2025", valorPago: "R$ 71.238,06", status: "Pago" },
+        { descricao: "RECEITA FEDERAL", categoria: "IMPOSTO", dataPagamento: "4/17/2025", valorPago: "R$ 35.149,63", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA252568", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 372,11", status: "Pago" },
+        { descricao: "ALLPARTS54307", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 52.249,25", status: "Pago" },
+        { descricao: "METALURGICA ALBRAS LTDA252576", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 26.848,97", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227336", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 33.590,23", status: "Pago" },
+        { descricao: "REI DAS ARTS", categoria: "DESPESA FIXA", dataPagamento: "4/17/2025", valorPago: "R$ 200,74", status: "Pago" },
+        { descricao: "Anderson Batista", categoria: "DESPESA FIXA", dataPagamento: "4/17/2025", valorPago: "R$ 200,70", status: "Pago" },
+        { descricao: "JESSICA DA SILVA", categoria: "DESPESA FIXA", dataPagamento: "4/17/2025", valorPago: "R$ 348,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5245", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 15.400,00", status: "Pago" },
+        { descricao: "MULTIVISÃO227304", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 166,55", status: "Pago" },
+        { descricao: "MERCADO LIVRE", categoria: "DESPESA FIXA", dataPagamento: "4/17/2025", valorPago: "R$ 90,15", status: "Pago" },
+        { descricao: "TRANS NEW", categoria: "DESPESA FIXA", dataPagamento: "4/17/2025", valorPago: "R$ 6.894,42", status: "Pago" },
+        { descricao: "MULTIVISÃO227337", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 2.736,13", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5245", categoria: "FORNECEDOR", dataPagamento: "4/17/2025", valorPago: "R$ 1.271,15", status: "Pago" },
+        // 22/04/2025
+        { descricao: "ZAGA TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/22/2025", valorPago: "R$ 3.800,00", status: "Pago" },
+        { descricao: "REEMBOLSO TIAGO", categoria: "DESPESA FIXA", dataPagamento: "4/22/2025", valorPago: "R$ 1.800,00", status: "Pago" },
+        { descricao: "LIXEIRO GIRUS - PAULO PINTO", categoria: "DESPESA FIXA", dataPagamento: "4/22/2025", valorPago: "R$ 700,00", status: "Pago" },
+        { descricao: "MULTIVISÃO227372", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 484,56", status: "Pago" },
+        { descricao: "BIWISE LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/22/2025", valorPago: "R$ 949,00", status: "Pago" },
+        { descricao: "OR DESIGN389718", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 15.640,00", status: "Pago" },
+        { descricao: "PRD_IMD NAVEGANTES317307", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 29.000,00", status: "Pago" },
+        { descricao: "REPACK EMBALAGENS13820", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 4.920,00", status: "Pago" },
+        { descricao: "OR DESIGN400830", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 78.660,00", status: "Pago" },
+        { descricao: "NEWFIX346520", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 2.927,21", status: "Pago" },
+        { descricao: "PINHEIRO COMERCIO DE PAPEIS E EMBALAGENS LTDA24987", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 540,00", status: "Pago" },
+        { descricao: "ALLPARTS54347", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 1.453,89", status: "Pago" },
+        { descricao: "ALLPARTS54349", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 48.191,75", status: "Pago" },
+        { descricao: "CBA - BORRACHAS119021", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 316,00", status: "Pago" },
+        { descricao: "VPLAST27044", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 2.140,99", status: "Pago" },
+        { descricao: "BIGFER MATRIZ2347889", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 1.119,20", status: "Pago" },
+        { descricao: "NEO STAMP9991", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 13.570,00", status: "Pago" },
+        { descricao: "FERGRAFPLASTIC267", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 11.130,00", status: "Pago" },
+        { descricao: "VERTICAL PACK5258", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 3.216,78", status: "Pago" },
+        { descricao: "VERTICAL PACK5261", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 2.151,97", status: "Pago" },
+        { descricao: "VERTICAL PACK5264", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 1.736,63", status: "Pago" },
+        { descricao: "CAPACK1988", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 1.103,31", status: "Pago" },
+        { descricao: "VERTICAL PACK5250", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 1.774,34", status: "Pago" },
+        { descricao: "INICIATIVA FABRICA DE APLICATIVOS LTDA", categoria: "DESPESA FIXA", dataPagamento: "4/22/2025", valorPago: "R$ 260,00", status: "Pago" },
+        { descricao: "Taxa de licenciamento ambiental da Madeira Express", categoria: "IMPOSTO", dataPagamento: "4/22/2025", valorPago: "R$ 619,85", status: "Pago" },
+        { descricao: "Taxa de teração societária da Clickforte Armazenagem", categoria: "IMPOSTO", dataPagamento: "4/22/2025", valorPago: "R$ 263,58", status: "Pago" },
+        { descricao: "ARAUCO - ACLUB325901", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 92.903,78", status: "Pago" },
+        { descricao: "ARAUCO - ACLUB360939", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 67.943,01", status: "Pago" },
+        { descricao: "ARAUCO326491", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 49.548,68", status: "Pago" },
+        { descricao: "ARAUCO298401", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 79.186,62", status: "Pago" },
+        { descricao: "ARAUCO326560", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 49.548,68", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227371", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 70.606,48", status: "Pago" },
+        { descricao: "MULTIVISAO INDUSTRIA E COMERCIO LTDA227478", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 44.809,97", status: "Pago" },
+        { descricao: "COMISSIONAMENTO EFES", categoria: "IMPOSTO", dataPagamento: "4/22/2025", valorPago: "R$ 94.069,56", status: "Pago" },
+        { descricao: "MULTIVISÃO227389", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 6.134,61", status: "Pago" },
+        { descricao: "DZAINEROF", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 23.128,00", status: "Pago" },
+        { descricao: "DZAINERPF", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 22.400,00", status: "Pago" },
+        { descricao: "ALVARO", categoria: "SALÁRIO", dataPagamento: "4/22/2025", valorPago: "R$ 10.000,00", status: "Pago" },
+        { descricao: "REGINA", categoria: "SALÁRIO", dataPagamento: "4/22/2025", valorPago: "R$ 5.000,00", status: "Pago" },
+        { descricao: "ZUPO TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/22/2025", valorPago: "R$ 14.700,00", status: "Pago" },
+        { descricao: "ZUPO TRANS", categoria: "TRANSPORTADORA", dataPagamento: "4/22/2025", valorPago: "R$ 11.550,00", status: "Pago" },
+        { descricao: "EUCATEX RAFA307990", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 27.943,03", status: "Pago" },
+        { descricao: "EUCATEX RAFA307991", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 27.943,03", status: "Pago" },
+        { descricao: "EUCATEX RAFA307992", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 27.943,03", status: "Pago" },
+        { descricao: "EUCATEX RAFA307993", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 24.532,41", status: "Pago" },
+        { descricao: "EUCATEX RAFA307994", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 24.532,41", status: "Pago" },
+        { descricao: "CAPACK PF=1988", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 8.634,60", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5258", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 25.174,80", status: "Pago" },
+        { descricao: "ALUGUEL GIRUS 855 - MARCO ANTÔNIO", categoria: "DESPESA FIXA", dataPagamento: "4/22/2025", valorPago: "R$ 7.500,00", status: "Pago" },
+        { descricao: "ALUGUEL GIRUS 865 - MARCO ANTÔNIO", categoria: "DESPESA FIXA", dataPagamento: "4/22/2025", valorPago: "R$ 20.000,00", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 420,00", status: "Pago" },
+        { descricao: "MUNDIAL GÁS", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 210,00", status: "Pago" },
+        { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 2.850,00", status: "Pago" },
+        { descricao: "LOTUS", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 19.853,40", status: "Pago" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 18.190,00", status: "Pago" },
+        { descricao: "MB DECOR", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 5.210,00", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5250", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 13.976,10", status: "Pago" },
+        { descricao: "VERTICAL PACK PF=5261", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 16.841,52", status: "Pago" },
+        { descricao: "CAROÇO PF=227252, 227283, 227304", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 57.720,79", status: "Pago" },
+        { descricao: "MARCO ANTÔNIO", categoria: "RETIRADA", dataPagamento: "4/22/2025", valorPago: "R$ 35.000,00", status: "Pago" },
+        { descricao: "CAROÇO PF=227337", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 23.839,96", status: "Pago" },
+        { descricao: "ACM FIBRAS6895", categoria: "FORNECEDOR", dataPagamento: "4/22/2025", valorPago: "R$ 48.395,16", status: "Pago" }
+    ];
 
-    // Dados (mantidos)
-    var dadosSemanal = [909665.51, 1978156.16, 1432358.51, 1316467.26, 410857.05];
+    // Função para converter valor "R$ X.XXX,XX" em número
+    function parseValorBR(valorBR) {
+        if (typeof valorBR !== 'string') { console.error("Valor inválido:", valorBR); return 0; }
+        return parseFloat(valorBR.replace("R$", "").replace(/\./g, "").replace(",", ".").trim());
+    }
 
-    // Opções do Gráfico Area Chart (Dark Theme)
+    // Função para converter data "D/M/AAAA" ou "DD/MM/AAAA" em formato ISO "AAAA-MM-DD"
+    function toISODate(strBR) {
+        if (typeof strBR !== 'string') { console.error("Data inválida:", strBR); return '1970-01-01'; }
+        const parts = strBR.split("/");
+        if (parts.length !== 3) { console.error("Formato de data inválido:", strBR); return '1970-01-01'; }
+        const [dia, mes, ano] = parts;
+        const diaFormatado = dia.padStart(2, '0');
+        const mesFormatado = mes.padStart(2, '0');
+        return `${ano}-${mesFormatado}-${diaFormatado}`;
+    }
+
+    // Agrupar valores por data para o gráfico
+    const somaPorData = {};
+    dadosProximosDias.forEach(item => {
+        if (item && item.dataPagamento && item.valorPago) { // Verifica se tem data e valor
+            const dataISO = toISODate(item.dataPagamento);
+            const valorNum = parseValorBR(item.valorPago);
+            if (dataISO && !isNaN(valorNum)) {
+                if (!somaPorData[dataISO]) {
+                    somaPorData[dataISO] = 0;
+                }
+                somaPorData[dataISO] += valorNum;
+            } else { console.warn("Item com data/valor inválido para gráfico:", item); }
+        } else { console.warn("Item inválido ou dados ausentes para gráfico:", item); }
+    });
+
+    // Converter em formato para ApexCharts
+    const seriesData = Object.keys(somaPorData)
+      .sort()
+      .map(dataISO => ({
+        x: new Date(dataISO + 'T00:00:00').getTime(),
+        y: somaPorData[dataISO]
+      }));
+
+    // Calcular o total geral
+    const totalGeral = Object.values(somaPorData).reduce((acc, val) => acc + val, 0);
+
+    // Configuração do Gráfico (igual ao anterior)
     var options = {
-      chart: {
-        type: 'area',
-        height: 380,
-        background: 'transparent',
-        toolbar: { show: false },
-        fontFamily: 'Inter, sans-serif',
-      },
-      dataLabels: {
-        enabled: false
-      },
-      series: [{
-        name: 'Gastos',
-        data: dadosSemanal
-      }],
-      colors: [primaryColor],
-      stroke: {
-        curve: 'smooth',
-        width: 3
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'dark', type: "vertical", shadeIntensity: 0.5,
-          inverseColors: false, opacityFrom: 0.7, opacityTo: 0.1,
-          stops: [0, 95, 100]
+        chart: { type: 'bar', height: 350, background: 'transparent', toolbar: { show: false } },
+        plotOptions: { bar: { borderRadius: 8, horizontal: false, columnWidth: '50%', dataLabels: { position: 'top' } } },
+        dataLabels: {
+            enabled: true,
+            formatter: (val) => "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            offsetY: -20, style: { fontSize: '12px', colors: ["#000"] }
         },
-         colors: [primaryColor]
-      },
-      markers: {
-          size: 5, colors: [primaryColor], strokeColors: bodyBgColor,
-          strokeWidth: 2, hover: { size: 7 }
-      },
-      xaxis: {
-        categories: ['1ª Sem', '2ª Sem', '3ª Sem', '4ª Sem', '5ª Sem'],
-        labels: {
-          style: { fontSize: '12px', colors: [mutedColor] }
-        },
-        axisBorder: { show: false }, axisTicks: { show: false }
-      },
-      yaxis: {
-        labels: {
-          formatter: function(val) {
-            if (val >= 1000000) { return "R$ " + (val / 1000000).toFixed(1) + 'M'; }
-            else if (val >= 1000){ return "R$ " + (val / 1000).toFixed(0) + 'k'; }
-            return "R$ " + val.toFixed(0);
-          },
-          style: { fontSize: '11px', colors: [mutedColor] }
-        }
-      },
-      tooltip: {
-        theme: 'dark',
-        y: {
-          formatter: function(val) {
-            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          }
-        }
-      },
-      grid: {
-          show: true, borderColor: gridColor, strokeDashArray: 3,
-          yaxis: { lines: { show: true } },
-          xaxis: { lines: { show: false } },
-          padding: { left: 20, right: 10 }
-      },
-      theme: { mode: 'dark' },
-      // *** OPÇÕES RESPONSIVAS AJUSTADAS PARA MOBILE ***
-      responsive: [
-        {
-          breakpoint: 768, // Telas médias (tablets)
-          options: {
-            chart: { height: 320 },
-            markers: { size: 4, hover: { size: 6 } },
-            stroke: { width: 2 },
-            xaxis: { labels: { style: { fontSize: '11px' } } },
-            yaxis: { labels: { style: { fontSize: '10px' } } }
-          }
-        },
-        {
-          breakpoint: 576, // Telas pequenas (mobile)
-          options: {
-            chart: { height: 280 }, // Altura reduzida
-            markers: { size: 3, hover: { size: 5 } }, // Marcadores menores
-            stroke: { width: 2 },
-            xaxis: {
-                labels: {
-                    style: { fontSize: '10px' }, // Fontes X menores
-                    hideOverlappingLabels: true, // Oculta se sobrepor
-                    rotate: 0 // Garante sem rotação
-                }
-            },
-            yaxis: {
-                labels: {
-                    show: true, // Garante que Y está visível
-                    style: { fontSize: '9px' } // Fontes Y menores
-                }
-            },
-            // Tooltip mantido para checar valores
-          }
-        }
-      ]
+        series: [{ name: 'Valor Total Pago', data: seriesData }],
+        xaxis: { type: 'datetime', labels: { format: 'dd/MM', style: { fontSize: '14px', colors: ["#000"] } }, axisBorder: { show: false }, axisTicks: { show: false } },
+        yaxis: { labels: { formatter: (val) => "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), style: { fontSize: '12px', colors: ["#000"] } }, title: { text: 'Valor Pago' } },
+        fill: { type: 'gradient', gradient: { shade: 'light', type: "vertical", shadeIntensity: 0.3, opacityFrom: 0.85, opacityTo: 0.85, stops: [0, 90, 100] } },
+        tooltip: { theme: 'light', x: { format: 'dd/MM/yyyy' }, y: { formatter: (val) => "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) } },
+        responsive: [
+            { breakpoint: 768, options: { chart: { height: 300 }, plotOptions: { bar: { columnWidth: '70%' } }, dataLabels: { style: { fontSize: '10px' } }, xaxis: { labels: { style: { fontSize: '12px' } } }, yaxis: { labels: { style: { fontSize: '10px' } } } } },
+            { breakpoint: 576, options: { chart: { height: 250 }, plotOptions: { bar: { columnWidth: '80%' } }, dataLabels: { enabled: false }, xaxis: { labels: { style: { fontSize: '10px' } } }, yaxis: { labels: { style: { fontSize: '8px' } } } } }
+        ]
     };
 
     // Renderiza o gráfico
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
+
+    // Exibir o total geral formatado
+    document.getElementById('totalGeral').textContent =
+      "Total Geral Pago (Abril 01-22): R$ " + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    /**********************
+     * Populando a Tabela
+     **********************/
+    const tableBody = document.getElementById('dataTableBody');
+    // Limpa qualquer conteúdo anterior (caso o script rode mais de uma vez)
+    tableBody.innerHTML = '';
+
+    dadosProximosDias.forEach(item => {
+        const row = tableBody.insertRow(); // Cria uma nova linha na tabela
+
+        const cellDescricao = row.insertCell();
+        cellDescricao.textContent = item.descricao || '-'; // Usa '-' se a descrição estiver vazia
+        cellDescricao.className = 'p-2 border border-gray-300';
+
+        const cellCategoria = row.insertCell();
+        cellCategoria.textContent = item.categoria || '-';
+        cellCategoria.className = 'p-2 border border-gray-300';
+
+        const cellData = row.insertCell();
+        cellData.textContent = item.dataPagamento || '-';
+        cellData.className = 'p-2 border border-gray-300';
+
+        const cellValor = row.insertCell();
+        cellValor.textContent = item.valorPago || 'R$ 0,00';
+        cellValor.className = 'p-2 border border-gray-300 text-right'; // Alinha valor à direita
+
+        const cellStatus = row.insertCell();
+        cellStatus.textContent = item.status || '-';
+        cellStatus.className = 'p-2 border border-gray-300';
+        // Opcional: Adicionar cor com base no status
+        if (item.status === 'Pago') {
+            cellStatus.classList.add('text-green-600', 'font-semibold'); // Verde para Pago
+        }
+    });
+
+    /**********************
+     * Funcionalidade do Overlay
+     **********************/
+    const urlMes = {
+        "Janeiro": "previsao_janeiro.html",
+        "Fevereiro": "previsao_fevereiro.html",
+        "Março": "previsao_marco.html",
+        "Abril": "previsao_abril.html"
+    };
+
+    function showOverlay(mes) {
+        const overlay = document.getElementById('overlay');
+        const iframe = document.getElementById('overlayIframe');
+        iframe.src = urlMes[mes] || "about:blank";
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+    }
+
+    function closeOverlay() {
+        const overlay = document.getElementById('overlay');
+        const iframe = document.getElementById('overlayIframe');
+        iframe.src = "";
+        overlay.classList.remove('flex');
+        overlay.classList.add('hidden');
+    }
   </script>
 </body>
 </html>
