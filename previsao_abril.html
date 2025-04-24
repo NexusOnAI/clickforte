@@ -222,7 +222,7 @@
         else        { update(); }
 
         monthTotal();
-        $last.textContent=`Atualizado: ${new Date().toLocaleTimeString('pt-BR')}`;
+        $last.textContent=`Atualização em tempo real: ${new Date().toLocaleTimeString('pt-BR')}`;
       }catch(e){
         console.error(e);
         $error.textContent=`Erro: ${e.message}`;
