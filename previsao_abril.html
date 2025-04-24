@@ -1,410 +1,278 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard • Google Sheets (ApexCharts Realtime)</title>
-
-  <!-- Fonts & Tailwind -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
-        extend: {
-          colors: {
-            surface: '#1e1e24',
-            primary: {
-              50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',
-              400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',
-              800:'#3730a3',900:'#312e81'
-            }
-          },
-          backdropBlur:{ xs:'2px' },
-          boxShadow:{ glow:'0 0 8px rgba(99,102,241,.4)' }
-        }
-      }
-    };
-  </script>
-
-  <!-- ApexCharts -->
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatórios Mensais - ClickForte Armazenagem (Dark)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .animate-spin{animation:spin 1s linear infinite}
-    ::-webkit-scrollbar{width:8px;height:8px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:#4b5563;border-radius:4px}
-    ::-webkit-scrollbar-thumb:hover{background:#9ca3af}
-    html,body{height:100%}
-    body{display:flex;flex-direction:column}
-    #table-wrapper,#charts-wrapper{flex-grow:1;overflow-y:auto}
-    #sheetTable{width:100%}
-    #table-wrapper thead{position:sticky;top:0;z-index:10}
-    .tab-btn.active-tab{background:#4f46e5;color:#fff !important;box-shadow:0 0 5px rgba(99,102,241,.6)}
-    /* filtros */
-    th select{background:#1e1e24;border:1px solid #4f46e5;border-radius:4px;font-size:11px;padding:2px 4px;outline:none;width:100%}
+    /* Aplicando cores dark manualmente */
+    body {
+      background-color: #1a1d21; /* Fundo dark */
+      color: #e9ecef; /* Texto claro */
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    /* Seção Principal */
+    .main-section {
+      position: relative;
+      z-index: 2;
+      padding: 3rem 15px 3rem 15px;
+      width: 100%;
+    }
+    /* Cards de Valor */
+    .value-card {
+      background-color: #212529; /* Fundo do card dark */
+      border: 1px solid #495057; /* Borda dark */
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra */
+      transition: all 0.3s ease-in-out;
+      height: 100%;
+      display: flex; /* Garante que o card ocupe a altura definida */
+      flex-direction: column; /* Organiza o conteúdo internamente */
+    }
+    .value-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    .value-card .card-body {
+       padding: 1.5rem;
+       display: flex; /* Habilita flexbox no card-body */
+       flex-direction: column; /* Organiza conteúdo verticalmente */
+       justify-content: center; /* Centraliza verticalmente */
+       flex-grow: 1; /* Faz o body ocupar o espaço restante no card */
+    }
+
+    /* Ajustando cores dos icon circles para melhor visibilidade no dark */
+     .value-card .icon-circle {
+       width: 50px; height: 50px;
+       border-radius: 50%;
+       display: inline-flex; align-items: center; justify-content: center;
+       margin-bottom: 0.75rem;
+     }
+     .value-card .icon-circle.bg-primary { background-color: rgba(77, 171, 247, 0.15) !important; color: #4dabf7 !important; }
+     .value-card .icon-circle.bg-success { background-color: rgba(40, 167, 69, 0.2) !important; color: #20c997 !important; }
+     .value-card .icon-circle.bg-info { background-color: rgba(13, 202, 240, 0.15) !important; color: #0dcaf0 !important; }
+     .value-card .icon-circle.bg-warning { background-color: rgba(255, 193, 7, 0.15) !important; color: #ffc107 !important; } /* NOVO: Cor para Warning */
+
+     .value-card .icon-circle i { font-size: 1.5rem; }
+
+     /* Sobrescrevendo text-muted para dark theme */
+     .text-muted {
+       color: #adb5bd !important; /* Cor muted clara */
+     }
+
+     /* Assegurando cor clara para o valor principal do card */
+     .value-card .card-text {
+        color: #e9ecef; /* Cor de texto principal clara */
+     }
+
+
+    /* Contêiner do Gráfico */
+    .chart-container {
+      background-color: #212529; /* Fundo do card dark */
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #495057; /* Borda dark */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Sombra */
+      height: 420px;
+      display: flex; flex-direction: column;
+    }
+    /* Placeholder de carregamento do gráfico */
+    .chart-container div[id^="chart"] {
+      flex-grow: 1; display: flex; align-items: center; justify-content: center;
+      color: #adb5bd; /* Cor muted clara */
+      font-style: italic; min-height: 300px;
+    }
+    /* Responsividade */
+    @media (max-width: 1200px) { .chart-container { height: 400px; } }
+    @media (max-width: 992px) {
+       .chart-container { height: 380px; }
+       /* Adiciona espaço entre cards empilhados em MD e SM */
+       .value-card { margin-bottom: 1.5rem; }
+    }
+    @media (max-width: 768px) {
+      .main-section { padding: 2.5rem 10px 2rem 10px; }
+      .chart-container { height: 350px; padding: 20px; }
+    }
+    @media (max-width: 576px) {
+      .main-section { padding-top: 2rem;}
+      .chart-container { height: 320px; }
+      .value-card .card-body { padding: 1.25rem; }
+      .value-card .icon-circle { width: 45px; height: 45px; }
+      .value-card .icon-circle i { font-size: 1.3rem; }
+      /* Garante que não haja margin-bottom extra no último card quando empilhado */
+      .row > .col-sm-12:last-child .value-card {
+        margin-bottom: 0;
+      }
+      /* Se a margem de 1.5rem for muito grande em SM, pode ajustar aqui */
+       .value-card { margin-bottom: 1rem; }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 text-gray-100 selection:bg-primary-500/60 min-h-screen flex flex-col antialiased">
+<body>
+  <div class="main-section container-fluid">
+     <div class="row g-4 mb-5">
+       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
+           <div class="card-body">
+             <div class="icon-circle bg-primary text-primary mx-auto"> <i class="bi bi-calendar-check"></i> </div>
+             <h6 class="card-subtitle mt-2 mb-2 text-muted">Pagamento Realizado</h6>
+             <p class="card-text fs-4 fw-bold mb-1" id="cardValorPagamentos">R$ 0,00</p>
+             <small class="text-muted" id="cardDataHoje1">--/--/----</small>
+           </div>
+         </div>
+       </div>
+       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
+           <div class="card-body">
+             <div class="icon-circle bg-success text-success mx-auto"> <i class="bi bi-cash-coin"></i> </div>
+             <h6 class="card-subtitle mt-2 mb-2 text-muted">Pagamento Realizado</h6>
+             <p class="card-text fs-4 fw-bold mb-1" id="cardValorRecebido">R$ 0,00</p>
+             <small class="text-muted" id="cardDataHoje2">--/--/----</small>
+           </div>
+         </div>
+       </div>
+       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
+           <div class="card-body">
+             <div class="icon-circle bg-info text-info mx-auto"> <i class="bi bi-wallet2"></i> </div>
+             <h6 class="card-subtitle mt-2 mb-2 text-muted">Previsão Pagamento Terça</h6>
+             <p class="card-text fs-4 fw-bold mb-1" id="cardValorSaldo">R$ 0,00</p>
+             <small class="text-muted">em <span id="cardDataHoje3">--/--/----</span></small>
+           </div>
+         </div>
+       </div>
+       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
+           <div class="card-body">
+             <div class="icon-circle bg-warning text-warning mx-auto"> <i class="bi bi-clipboard-data"></i> </div> <h6 class="card-subtitle mt-2 mb-2 text-muted">Gasto Total (Abril)</h6> <p class="card-text fs-4 fw-bold mb-1" id="cardValorAbril">R$ 0,00</p> <small class="text-muted" id="cardMesReferenciaAbril">Mês de Abril</small> </div>
+         </div>
+       </div>
 
-  <!-- Cabeçalho -->
-  <header class="w-full backdrop-blur-sm bg-surface/60 border-b border-primary-700/40 sticky top-0 z-40">
-    <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
-      <h1 class="text-lg sm:text-2xl font-extrabold text-primary-400 tracking-tight select-none">Dashboard • Google Sheets API-Excel</h1>
-      <div class="flex items-center gap-4 ml-auto">
-        <span id="month-total" class="hidden sm:block text-primary-300 font-semibold text-sm"></span>
-        <span id="last-update" class="text-gray-400 text-xs sm:text-sm"></span>
-        <button id="manual-refresh" class="flex items-center gap-2 px-4 py-2 rounded-md border border-primary-600 bg-primary-600/20 hover:bg-primary-600/30 transition text-primary-300 text-sm font-medium shadow-glow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0014-7h1M19 5a9 9 0 00-14 7H4"/></svg>
-          Atualizar
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Loader -->
-  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md transition-opacity">
-    <div class="h-12 w-12 border-[6px] border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-    <p class="text-primary-300 text-lg font-medium">Carregando dados...</p>
+     </div>
+     <div class="row g-4">
+       <div class="col-12">
+         <div class="chart-container">
+           <div id="mainAreaChart">Carregando Gráfico...</div>
+         </div>
+       </div>
+     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-  <!-- Conteúdo -->
-  <main class="w-full max-w-screen-2xl mx-auto px-4 sm:px-8 py-6 flex flex-col gap-6">
-
-    <!-- Abas -->
-    <div class="flex justify-center space-x-4">
-      <button id="tab-table"  class="tab-btn relative px-5 py-2 rounded-lg font-medium overflow-hidden text-gray-300 before:absolute before:inset-0 before:bg-primary-600 before:scale-x-0 before:origin-left before:transition-transform hover:before:scale-x-100 before:rounded-lg"><span class="relative z-10">Tabela</span></button>
-      <button id="tab-charts" class="tab-btn relative px-5 py-2 rounded-lg font-medium overflow-hidden text-gray-300 before:absolute before:inset-0 before:bg-primary-600 before:scale-x-0 before:origin-left before:transition-transform hover:before:scale-x-100 before:rounded-lg"><span class="relative z-10">Gráficos</span></button>
-    </div>
-
-    <div id="error-message" class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg shadow"></div>
-
-    <!-- Tabela -->
-    <section id="table-wrapper" class="hidden w-full overflow-x-auto backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20">
-      <table id="sheetTable" class="min-w-full text-[13px] divide-y divide-gray-700/50"></table>
-    </section>
-
-    <!-- Gráfico -->
-    <section id="charts-wrapper" class="hidden w-full flex-col space-y-8">
-      <div class="chart-card backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20 p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary-300 tracking-wide">Valor Total por <code>data_vencimento</code></h2>
-        <div id="chart-overview"></div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ------------------------------------------------ JS ------------------------------------------------- -->
   <script>
-    /* CONFIG */
-    const sheetId  = '1gJLltq6O86QIPSj4Id-lIsxG45o7bq2QBW4WGhoXWoo';
-    const gid      = '0';
-    const baseURL  = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL_MS = 2000;
-    const CURRENCY_FORMAT = { style:'currency', currency:'BRL', maximumFractionDigits:2 };
-    const CHART_COLOR     = "#818cf8";
+    // --- Dados e Configuração Globais ---
+    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril'];
+    const totalGastosMensais = [5686819.08, 6105182.26, 6995663.47, 5570166.05]; // Valor de Abril está aqui
 
-    /* Estado global */
-    let headersCache=[], rowsCache=[];
-    let chartOverview=null;
-    let initialLoadComplete=false, refreshIntervalId=null, isFetching=false;
-    const activeFilters = {}; // coluna => valor selecionado
+    const corPrincipalGrafico = '#4dabf7';
+    const corTextoPrincipal = '#e9ecef';
+    const corTextoSecundario = '#adb5bd';
+    const corBordaGrid = '#495057';
+    const corFundoCard = '#212529';
 
-    /* DOM */
-    const $loader       = document.getElementById('loader');
-    const $errorMessage = document.getElementById('error-message');
-    const $tableTab     = document.getElementById('tab-table');
-    const $chartTab     = document.getElementById('tab-charts');
-    const $tableWrap    = document.getElementById('table-wrapper');
-    const $chartWrap    = document.getElementById('charts-wrapper');
-    const $sheetTable   = document.getElementById('sheetTable');
-    const $lastUpdate   = document.getElementById('last-update');
-    const $manualRefresh= document.getElementById('manual-refresh');
-    const $monthTotal   = document.getElementById('month-total');
+    // --- Funções Auxiliares ---
+    const currencyFormatter = (value) => { if (value == null || value === undefined) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
 
-    /* Tabs */
-    $tableTab.onclick = () => activateTab('table');
-    $chartTab.onclick = () => activateTab('charts');
-    function activateTab(tab){
-      [$tableTab,$chartTab].forEach(b=>b.classList.remove('text-white','text-gray-300','active-tab'));
-      if(tab==='table'){
-        $tableWrap.classList.remove('hidden');
-        $chartWrap.classList.add('hidden');
-        $tableTab.classList.add('text-white','active-tab');
-        $chartTab.classList.add('text-gray-300');
-      }else{
-        $chartWrap.classList.remove('hidden');
-        $tableWrap.classList.add('hidden');
-        $chartTab.classList.add('text-white','active-tab');
-        $tableTab.classList.add('text-gray-300');
-        setTimeout(()=>{ chartOverview?.updateOptions({},false,false); },50);
-      }
-    }
-    $manualRefresh.onclick = refreshData;
-
-    /* Auxiliares */
-    async function fetchSheetData(){
-      const resp = await fetch(`${baseURL}&_=${Date.now()}`);
-      if(!resp.ok) throw new Error(`Erro na requisição HTTP: ${resp.status}`);
-      const txt = await resp.text();
-      return JSON.parse(txt.substring(47,txt.length-2));
-    }
-    const pad2 = n=>n.toString().padStart(2,'0');
-    const formatDateBR = d=>`${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
-    function tryParseDate(value){
-      if(value instanceof Date) return value;
-      if(typeof value!=='string' || !value.trim()) return null;
-      let m=value.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})\)$/);
-      if(m) return new Date(+m[1],+m[2],+m[3]);
-      m=value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if(m) return new Date(+m[1],+m[2]-1,+m[3]);
-      m=value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-      if(m){ let y=+m[3]; if(y<100) y+=2000; return new Date(y,+m[2]-1,+m[1]); }
-      return null;
-    }
-
-    /* Refresh principal */
-    async function refreshData(){
-      if(isFetching) return;
-      isFetching=true;
-      if(!initialLoadComplete) $loader.classList.remove('hidden');
-      $errorMessage.classList.add('hidden');
-      try{
-        const json = await fetchSheetData();
-        if(!json?.table) throw new Error('Estrutura de dados inválida recebida da API.');
-        const headers = json.table.cols.map(c=>c.label || `Col${c.id}`);
-        const rows    = json.table.rows.map(r=>r.c.map(cell=>cell?.v ?? null));
-        const changed = JSON.stringify(rows) !== JSON.stringify(rowsCache);
-        headersCache=headers; rowsCache=rows;
-
-        if(!initialLoadComplete){
-          renderTable(headers,rows);
-          buildOverviewChart(headers,rows);
-          initialLoadComplete=true;
-          $loader.classList.add('hidden');
-          activateTab('table');
-        }else if(changed){
-          renderTable(headers,rows);
-          updateOverviewChart(headers,rows);
-        }
-        updateMonthlyTotal(headers,rows);
-        $lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-BR')}`;
-
-      }catch(err){
-        console.error("Erro ao buscar ou processar dados:", err);
-        $errorMessage.textContent = `Erro ao carregar dados: ${err.message}`;
-        $errorMessage.classList.remove('hidden');
-        $loader.classList.add('hidden');
-        stopAutoRefresh();
-        $lastUpdate.textContent = `Falha na atualização: ${new Date().toLocaleTimeString('pt-BR')}`;
-      }finally{
-        isFetching=false;
-      }
-    }
-    function startAutoRefresh(){ stopAutoRefresh(); if(REFRESH_INTERVAL_MS>0) refreshIntervalId=setInterval(refreshData,REFRESH_INTERVAL_MS);}    
-    function stopAutoRefresh(){ if(refreshIntervalId) clearInterval(refreshIntervalId); refreshIntervalId=null;}
-
-    /* ---------- Tabela ---------- */
-    function renderTable(headers,rows){
-      $sheetTable.innerHTML='';
-      $sheetTable.appendChild(genHead(headers,rows));
-      $sheetTable.appendChild(genBody(rows,headers));
-      applyFilters(); // garante consistência após reconstrução
-    }
-
-    function genHead(headers,rows){
-      const thead=document.createElement('thead');
-      thead.className='bg-gray-800/90 backdrop-blur-xs';
-      const tr=document.createElement('tr');
-      tr.className='divide-x divide-primary-700/40';
-
-      headers.forEach((h,i)=>{
-        const th=document.createElement('th');
-        th.scope='col';
-        th.dataset.col=i;
-        th.className='px-6 py-3 text-left text-xs font-semibold text-primary-300 uppercase tracking-wider';
-
-        // Label
-        const label=document.createElement('span');
-        label.textContent=h;
-        th.appendChild(label);
-
-        // Select com filtros
-        const select=document.createElement('select');
-        select.dataset.col=i;
-        select.className='mt-1';
-        select.innerHTML='<option value="">Todos</option>';
-        // Preenche opções únicas formatadas
-        const uniques=new Set();
-        rows.forEach(r=>{
-          let cell=r[i];
-          const formatted=formatCellValue(cell,h);
-          uniques.add(formatted);
-        });
-        [...uniques].sort().forEach(v=>{
-          if(v==='–' || v==='') return;
-          const opt=document.createElement('option');
-          opt.value=v;
-          opt.textContent=v;
-          select.appendChild(opt);
-        });
-        select.onchange=e=>{
-          const col=+e.target.dataset.col;
-          const val=e.target.value;
-          if(val) activeFilters[col]=val; else delete activeFilters[col];
-          applyFilters();
-        };
-        th.appendChild(select);
-        tr.appendChild(th);
-      });
-      thead.appendChild(tr);
-      return thead;
-    }
-
-    function formatCellValue(cell,header){
-      const headerLabel=header.trim().toLowerCase();
-      if(headerLabel==='nf') return cell ?? '–';
-      const d=tryParseDate(cell);
-      if(d) return formatDateBR(d);
-      if(typeof cell==='number') return cell.toLocaleString('pt-BR',CURRENCY_FORMAT);
-      if(typeof cell==='string' && cell.match(/^[\d\.\,]+$/)){
-        const num=parseFloat(cell.replace(/\./g,'').replace(',','.'));
-        if(!isNaN(num)) return num.toLocaleString('pt-BR',CURRENCY_FORMAT);
-      }
-      return cell ?? '–';
-    }
-
-    function genBody(rows, headers){
-      const tbody=document.createElement('tbody');
-      tbody.className='divide-y divide-gray-700/60';
-      rows.forEach((row,rowIndex)=>{
-        const tr=document.createElement('tr');
-        tr.className=`${rowIndex%2===0?'bg-surface/50':'bg-surface/70'} hover:bg-primary-600/10 transition`;
-        row.forEach((cell,colIndex)=>{
-          const td=document.createElement('td');
-          td.className='px-6 py-3 whitespace-nowrap';
-          td.textContent=formatCellValue(cell,headers[colIndex]);
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-      });
-      return tbody;
-    }
-
-    function applyFilters(){
-      const tbody=$sheetTable.querySelector('tbody');
-      if(!tbody) return;
-      Array.from(tbody.rows).forEach(tr=>{
-        let visible=true;
-        for(const [idx,val] of Object.entries(activeFilters)){
-          const cellText=tr.cells[idx].textContent.trim();
-          if(val && cellText!==val){ visible=false; break; }
-        }
-        tr.style.display=visible?'':'none';
-      });
-    }
-
-    /* ---------- GRÁFICO ---------- */
-    function getTotalsByVenc(headers,rows){
-      let dateIdx = headers.findIndex(h=>/venc/i.test(h));
-      if(dateIdx===-1) dateIdx = headers.findIndex(h=>/date/i.test(h));
-      if(dateIdx===-1) dateIdx = 0;
-
-      const numericIdx = headers.map((h,i)=>({h,i})).filter(c=>
-        c.i!==dateIdx && c.h.trim().toLowerCase()!=='nf'
-      ).map(c=>c.i);
-
-      const map = new Map();
-      rows.forEach(r=>{
-        const d = tryParseDate(r[dateIdx]);
-        if(!d) return;
-        const key = d.toISOString().split('T')[0];
-        let sum  = map.get(key) || 0;
-        numericIdx.forEach(i=>{
-          let v=r[i];
-          if(v==null) return;
-          if(typeof v==='number'){ sum+=v; }
-          else if(typeof v==='string'){
-            const n=parseFloat(v.replace(/\./g,'').replace(',','.'));
-            if(!isNaN(n)) sum+=n;
-          }
-        });
-        map.set(key,sum);
-      });
-
-      const ordered=[...map.entries()].sort((a,b)=>new Date(a[0])-new Date(b[0]));
-      return {
-        labels : ordered.map(([k])=>formatDateBR(new Date(k))),
-        totals : ordered.map(([_,v])=>v)
-      };
-    }
-
-    const tooltipFmt=v=>typeof v==='number'?v.toLocaleString('pt-BR',CURRENCY_FORMAT):'N/A';
-    const commonOpts={
-      chart:{toolbar:{show:true,tools:{download:true}},zoom:{enabled:false},foreColor:'#cbd5e1'},
-      tooltip:{theme:'dark',y:{formatter:tooltipFmt}},
-      dataLabels:{enabled:false},
-      grid:{borderColor:'#475569',strokeDashArray:4},
-      legend:{show:false}
+    const baseChartOptions = {
+        chart: { type: 'area', height: '100%', fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 350 }}},
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 3 },
+        markers: { size: 5, strokeWidth: 2, strokeColors: corFundoCard, hover: { size: 7 }},
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100] }},
+        grid: { borderColor: corBordaGrid, padding: { top: 5, right: 20, bottom: 0, left: 20 }},
+        yaxis: { title: { text: 'Gasto Total (R$)', style: { color: corTextoSecundario, fontSize: '11px', fontWeight: 500 } }, labels: { formatter: currencyFormatter, style: { fontSize: '11px', colors: [corTextoSecundario] } }},
+        xaxis: { tooltip: { enabled: false }, labels: { style: { fontSize: '11px', colors: corTextoSecundario }, rotate: -20, rotateAlways: false, hideOverlappingLabels: true, trim: true }},
+        tooltip: { y: { formatter: currencyFormatter }, theme: 'dark', x: { show: true, format: 'MMMM' } }, // Format 'MMMM' might not work directly with category names, but ok for tooltip title
+        responsive: [ { breakpoint: 768, options: { markers: { size: 4 }, stroke: { width: 2 }, yaxis: { labels: { style: { fontSize: '10px' }}}, xaxis: { labels: { style: { fontSize: '10px' }}}}}, { breakpoint: 576, options: { markers: { size: 3 }, yaxis: { title: { text: undefined } }}}]
     };
 
-    function buildOverviewChart(headers,rows){
-      const {labels,totals}=getTotalsByVenc(headers,rows);
-      chartOverview?.destroy();
-      chartOverview=new ApexCharts(document.getElementById('chart-overview'),{
-        ...commonOpts,
-        chart:{...commonOpts.chart,type:'area',height:300},
-        series:[{name:'Total do Dia',data:totals}],
-        colors:[CHART_COLOR],
-        xaxis:{categories:labels,tooltip:{enabled:false}},
-        yaxis:{labels:{formatter:v=>typeof v==='number'?v.toLocaleString('pt-BR',{notation:'compact',maximumFractionDigits:1}):''}},
-        stroke:{curve:'smooth',width:2},
-        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.5,opacityTo:0.1,stops:[0,90,100]}},
-        markers:{size:0,hover:{size:5}}
-      });
-      chartOverview.render();
-    }
-    function updateOverviewChart(headers,rows){
-      const {labels,totals}=getTotalsByVenc(headers,rows);
-      chartOverview?.updateOptions({
-        xaxis:{categories:labels},
-        series:[{data:totals}]
-      });
-    }
-
-    /* Total do mês (usando data de vencimento) */
-    function updateMonthlyTotal(headers,rows){
-      let valueColIdx=headers.findIndex(h=>/valor/i.test(h));
-      if(valueColIdx===-1){
-        for(let i=1;i<headers.length;i++){
-          if(rows.some(r=>typeof r[i]==='number')){valueColIdx=i;break;}
-        }
+    // --- Funções Principais ---
+    function criarApexAreaChartMensal(elementId, seriesData, categories, color) {
+      const options = {
+        ...baseChartOptions,
+        series: [{ name: 'Gasto Total', data: seriesData }],
+        xaxis: { ...baseChartOptions.xaxis, categories: categories }, // Usar as categorias fornecidas
+        colors: [color],
+        fill: { type: 'gradient', gradient: { ...baseChartOptions.fill.gradient, colors: [color] }},
+        markers: { ...baseChartOptions.markers, colors: [color] },
+        title: { text: 'Evolução Mensal de Gastos', align: 'center', style: { fontSize: '18px', fontWeight: '600', color: corTextoPrincipal } },
+        subtitle: { text: 'Valores Totais por Mês', align: 'center', style: { fontSize: '13px', color: corTextoSecundario } }
+      };
+      const chartElement = document.querySelector("#" + elementId);
+      if (chartElement) {
+        chartElement.innerHTML = ''; // Limpa placeholder
+        const chart = new ApexCharts(chartElement, options);
+        chart.render().catch(error => console.error("Erro ao renderizar gráfico:", error));
+      } else {
+        console.error("Elemento do gráfico não encontrado: #" + elementId);
       }
-      let dateColIdx=headers.findIndex(h=>/venc/i.test(h));
-      if(dateColIdx===-1) dateColIdx=headers.findIndex(h=>/date/i.test(h));
-      if(dateColIdx===-1) dateColIdx=0;
-      if(valueColIdx===-1){ $monthTotal.textContent=''; return; }
-
-      const now=new Date(), m=now.getMonth(), y=now.getFullYear();
-      const sum=rows.reduce((acc,r)=>{
-        let v=r[valueColIdx]; if(v==null) return acc;
-        let n=typeof v==='number'?v:parseFloat(String(v).replace(/\./g,'').replace(',','.'));
-        if(isNaN(n)) return acc;
-        const d=tryParseDate(r[dateColIdx]);
-        if(d && d.getMonth()===m && d.getFullYear()===y) acc+=n;
-        return acc;
-      },0);
-      $monthTotal.textContent=`Mês: ${sum.toLocaleString('pt-BR',CURRENCY_FORMAT)}`;
-      $monthTotal.closest('span').classList.remove('hidden');
     }
 
-    /* Init */
-    refreshData();
-    startAutoRefresh();
+    function atualizarCards() {
+      // Seleciona os elementos dos cards
+      const cardData1Elem = document.getElementById('cardDataHoje1');
+      const cardData2Elem = document.getElementById('cardDataHoje2');
+      const cardData3Elem = document.getElementById('cardDataHoje3');
+      const cardValorPagamentos = document.getElementById('cardValorPagamentos');
+      const cardValorRecebido = document.getElementById('cardValorRecebido');
+      const cardValorSaldo = document.getElementById('cardValorSaldo');
+      // Seleciona os elementos do NOVO card de Abril
+      const cardValorAbril = document.getElementById('cardValorAbril');
+      const cardMesReferenciaAbril = document.getElementById('cardMesReferenciaAbril'); // ID do small text do card de Abril
+
+      // Datas (hardcoded como no original) - Exemplo com datas futuras
+      const dataBase = new Date(); // Usar a data atual como base pode ser mais dinâmico
+      const dataCard1 = new Date(dataBase); // Exemplo: hoje
+      const dataCard2 = new Date(dataBase); // Exemplo: hoje
+      dataCard2.setDate(dataBase.getDate() + 1); // Exemplo: amanhã
+
+      // Encontrar a próxima terça-feira
+      let dataCard3 = new Date(dataBase);
+      let diaSemana = dataCard3.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+      let diasAteTerca = (2 - diaSemana + 7) % 7; // Calcula dias até a próxima terça
+      if (diasAteTerca === 0) diasAteTerca = 7; // Se hoje é terça, pega a próxima
+      dataCard3.setDate(dataCard3.getDate() + diasAteTerca);
+
+
+      // Valores (hardcoded como no original para os 3 primeiros cards)
+      let valorPagamentosHoje = 270256.09;
+      let valorRecebidoHoje = 1306708.69;
+      let valorPrevisaoPagamento = 659151.29;
+
+      // Pega o valor de Abril do array de gastos mensais (índice 3)
+      const valorAbril = totalGastosMensais[3]; // 5570166.05
+
+      // Formatador de data pt-BR
+      const dateFormatter = (date) => date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+      // Atualiza os textos dos cards
+      if (cardData1Elem) { cardData1Elem.textContent = dateFormatter(dataCard1); }
+      if (cardData2Elem) { cardData2Elem.textContent = dateFormatter(dataCard2); }
+      if (cardData3Elem) { cardData3Elem.textContent = dateFormatter(dataCard3); }
+
+      if (cardValorPagamentos) { cardValorPagamentos.textContent = currencyFormatter(valorPagamentosHoje); }
+      if (cardValorRecebido) { cardValorRecebido.textContent = currencyFormatter(valorRecebidoHoje); }
+      if (cardValorSaldo) { cardValorSaldo.textContent = currencyFormatter(valorPrevisaoPagamento); }
+
+      // Atualiza o NOVO card de Abril
+      if (cardValorAbril) { cardValorAbril.textContent = currencyFormatter(valorAbril); }
+      if (cardMesReferenciaAbril) { cardMesReferenciaAbril.textContent = "Mês de Abril"; } // Define o texto do rodapé do card
+
+      console.log("Cards atualizados dinamicamente. Card de Abril incluído.");
+    }
+
+    // --- Execução Inicial ---
+    document.addEventListener('DOMContentLoaded', () => {
+      criarApexAreaChartMensal('mainAreaChart', totalGastosMensais, meses, corPrincipalGrafico);
+      atualizarCards(); // Chama a função que atualiza os cards
+    });
   </script>
+
 </body>
 </html>
