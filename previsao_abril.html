@@ -133,7 +133,7 @@
     const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
     const gid     = '0';
     const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH   = 2000;
+    const REFRESH   = 1000;        // ← agora atualiza a cada 1 s
     const CURRENCY  = { style:'currency', currency:'BRL', maximumFractionDigits:2 };
     const COLORS    = ['#4dabf7', '#4ade80', '#fb7185', '#facc15'];
 
@@ -280,12 +280,12 @@
     }
 
     /* formatação de células --------------------------------------
-       (Ajuste: coluna 'valor' SIEMPRE em Reais)                  */
+       (Ajuste: coluna 'valor' SEMPRE em Reais)                  */
     function format(c,h){
       const hLow = h.toLowerCase();
       if(hLow==='nf') return c ?? '–';
 
-      // >>> NOVO: força formato monetário na coluna "valor"
+      // força formato monetário na coluna "valor"
       if(/valor/.test(hLow)){
         let n = typeof c==='number'
                 ? c
@@ -294,7 +294,6 @@
                                    .replace(',','.'));         // vírgula decimal → ponto
         return isNaN(n) ? (c ?? '–') : money(n);
       }
-      // -----------------------------------------------------------
 
       const d=tryDate(c); if(d) return fBR(d);
       if(typeof c==='number') return money(c);
