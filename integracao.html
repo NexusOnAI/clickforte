@@ -1,193 +1,489 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Integração de Planilhas - ClickForte (Dark)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard • Google Sheets (Área Distribuída)</title>
+
+  <!-- Tailwind + Inter -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+        extend: {
+          colors:  {
+            surface:'#212529',
+            primary:{ 500:'#4dabf7' },
+            slate:  { 300:'#cbd5e1', 600:'#475569' }
+          },
+          boxShadow:   { glow:'0 0 8px rgba(77,171,247,.35)' },
+          backdropBlur:{ xs:'2px' }
+        }
+      }
+    };
+  </script>
+
+  <!-- ApexCharts -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0"></script>
 
   <style>
-    /* Estilos gerais */
-    /* Removido background-color e color daqui, serão definidos via classe Tailwind no body */
-    body {
-        margin: 0;
-        font-family: "Inter", sans-serif;
-        overflow-x: hidden;
-        min-height: 100vh;
-    }
-    .card {
-        transition: all 0.3s ease-in-out;
-        /* Sombra padrão do Tailwind pode ser suficiente, ou ajuste aqui se necessário */
-    }
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); /* Sombra um pouco mais visível no dark */
-        /* border-color será definido via classe hover: no HTML */
-    }
-
-    /* Modal */
-    #modalOverlay {
-        display: none; position: fixed; z-index: 1000;
-        left: 0; top: 0; width: 100vw; height: 100vh;
-        background-color: rgba(0, 0, 0, 0.75); /* Overlay escuro mantido */
-        align-items: center; justify-content: center;
-        opacity: 0; transition: opacity 0.3s ease-in-out;
-    }
-    #modalOverlay.visible { display: flex; opacity: 1; }
-
-    #modalContent {
-        position: relative; width: 100%; height: 100%;
-        background: #1a1d21; /* <-- NOVO: Fundo escuro principal para o conteúdo do modal */
-        overflow: hidden;
-        transform: scale(0.95); opacity: 0;
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    }
-    #modalOverlay.visible #modalContent { transform: scale(1); opacity: 1; }
-
-    /* Iframe com fundo placeholder dark */
-    #planilhaIframe {
-      width: 100%; height: 100%; border: none;
-      background-color: #1a1d21; /* <-- NOVO: Fundo escuro placeholder */
-    }
-
-    /* Controles do Modal (mantidos, visualmente OK no dark) */
-    #modalControls {
-        position: absolute; top: 0.75rem; right: 0.75rem;
-        display: flex; gap: 0.5rem; z-index: 10;
-        background-color: rgba(0, 0, 0, 0.4); /* Leve ajuste na opacidade */
-        padding: 0.5rem; border-radius: 0.5rem;
-        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-    }
-    #modalControls button {
-        background: transparent; border: none; padding: 0.5rem;
-        border-radius: 9999px; cursor: pointer;
-        color: #e0e0e0; /* Cor do ícone ligeiramente menos brilhante */
-        display: flex; align-items: center; justify-content: center;
-        transition: background-color 0.2s ease-in-out;
-    }
-    #modalControls button:hover { background-color: rgba(255, 255, 255, 0.15); }
-    #modalControls button.close-button:hover { background-color: rgba(239, 68, 68, 0.5); } /* Vermelho mantido */
-    #modalControls button i { font-size: 1.25rem; line-height: 1; }
-    #modalControls button.close-button i { font-size: 1.5rem; }
+    @keyframes spin { to { transform:rotate(360deg) } }
+    .animate-spin      { animation:spin 1s linear infinite }
+    body               { background:#1a1d21 }
+    #table-wrapper,
+    #charts-wrapper    { flex-grow:1; overflow-y:auto }
+    #sheetTable        { width:100% }
+    ::-webkit-scrollbar       { width:8px; height:8px }
+    ::-webkit-scrollbar-thumb { background:#4b5563; border-radius:4px }
+    th select          { background:#212529; border:1px solid #4dabf7; border-radius:4px;
+                         font-size:11px; padding:2px 4px; width:100% }
+    .tab-btn.active-tab{ background:#4dabf7; color:#fff!important;
+                         box-shadow:0 0 5px rgba(77,171,247,.55) }
   </style>
 </head>
-<body class="bg-[#1a1d21] p-6 md:p-10 min-h-screen">
+<body class="text-slate-300 min-h-screen flex flex-col antialiased">
 
-  <h1 class="text-center text-3xl md:text-4xl font-bold text-[#e9ecef] mb-10 md:mb-12">
-      Integração com Planilhas Online
-  </h1>
+  <!-- Cabeçalho -->
+  <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
+      <h1 class="text-lg sm:text-2xl font-extrabold text-primary-500">Dashboard • Google Sheets</h1>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
-
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/11D4j_UOwuROnUx7pFr5n0yzNL_CyBKoE/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
-         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
-        <div class="flex flex-col items-center">
-            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5"> <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i> </div>
-            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">01 - ATC Girus</h2> <p class="text-sm text-[#adb5bd] mb-3">Janeiro</p> <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span> </div>
-    </div>
-
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/16q-oUZ8yScDU0UhescGwEBK3x7UmWwua/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
-         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
-        <div class="flex flex-col items-center">
-            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5">
-                <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i>
-            </div>
-            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">02 - ATC Girus</h2>
-            <p class="text-sm text-[#adb5bd] mb-3">Fevereiro</p>
-            <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span>
-        </div>
-    </div>
-
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
-         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
-       <div class="flex flex-col items-center">
-            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5">
-                <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i>
-            </div>
-            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">03 - ATC Girus</h2>
-            <p class="text-sm text-[#adb5bd] mb-3">Março</p>
-            <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span>
-        </div>
-    </div>
-
-    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1rFuP8fR3X5Y9aQJgHjUupDj4eXy2JS5J/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
-         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
-       <div class="flex flex-col items-center">
-            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5">
-                <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i>
-            </div>
-            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">04 - ATC Girus</h2>
-            <p class="text-sm text-[#adb5bd] mb-3">Abril</p>
-            <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span>
-        </div>
-    </div>
-  </div>
-
-  <div id="modalOverlay">
-    <div id="modalContent">
-      <div id="modalControls">
-        <button onclick="zoomIn()" title="Aumentar zoom"> <i class="bi bi-zoom-in"></i> </button>
-        <button onclick="zoomOut()" title="Diminuir zoom"> <i class="bi bi-zoom-out"></i> </button>
-        <button onclick="toggleFullScreen()" title="Tela cheia"> <i class="bi bi-fullscreen"></i> </button>
-        <button onclick="closeModal()" title="Fechar" class="close-button"> <i class="bi bi-x-lg"></i> </button>
+      <div class="flex items-center gap-4 ml-auto">
+        <span id="month-total" class="hidden sm:block text-primary-500 font-semibold text-sm"></span>
+        <span id="last-update" class="text-slate-400 text-xs sm:text-sm"></span>
+        <button id="manual-refresh"
+                class="px-4 py-2 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
+                       text-primary-300 text-sm font-medium shadow-glow">
+          Atualizar
+        </button>
       </div>
-      <iframe id="planilhaIframe" src="" allowfullscreen></iframe> </div>
+    </div>
+  </header>
+
+  <!-- Loader -->
+  <div id="loader"
+       class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md">
+    <div class="h-12 w-12 border-[6px] border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+    <p class="text-primary-300 text-lg font-medium">Carregando…</p>
   </div>
 
+  <!-- Conteúdo -->
+  <main class="w-full max-w-screen-2xl mx-auto px-4 sm:px-8 py-6 flex flex-col gap-6">
+    <!-- Tabs -->
+    <div class="flex justify-center space-x-4">
+      <button id="tab-table"  class="tab-btn px-5 py-2 rounded-lg font-medium text-slate-300">Tabela</button>
+      <button id="tab-charts" class="tab-btn px-5 py-2 rounded-lg font-medium text-slate-300">Gráficos</button>
+    </div>
+
+    <!-- Barra de filtros ativos -->
+    <div id="filters-bar" class="flex flex-wrap items-center justify-center gap-3">
+      <span id="filters-active" class="text-primary-500 text-sm">Nenhum filtro ativo</span>
+      <button id="clear-filters"
+              class="px-3 py-1 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
+                     text-primary-300 text-xs font-medium shadow-glow">
+        Limpar Filtros
+      </button>
+    </div>
+
+    <!-- Erros -->
+    <div id="error-message"
+         class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg"></div>
+
+    <!-- Tabela -->
+    <section id="table-wrapper"
+             class="hidden w-full overflow-x-auto backdrop-blur-xs bg-surface/70 rounded-2xl
+                    shadow-lg ring-1 ring-primary-500/20">
+      <table id="sheetTable" class="min-w-full text-[13px] divide-y divide-slate-600/60"></table>
+    </section>
+
+    <!-- Gráficos -->
+    <section id="charts-wrapper"
+             class="hidden w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6
+                  md:col-span-2 xl:col-span-3 2xl:col-span-4">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por data_vencimento</h2>
+        <div id="chart-overview"></div>
+      </div>
+
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por data_pagamento</h2>
+        <div id="chart-payment"></div>
+      </div>
+
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por Mês (venc.)</h2>
+        <div id="chart-monthly"></div>
+      </div>
+
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Previsão Próximo Dia</h2>
+        <div id="chart-forecast"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ---------------- JS ---------------- -->
   <script>
-    // O JavaScript permanece o mesmo, pois não depende do tema visual
-    let zoomLevel = 1;
-    const modalOverlay = document.getElementById("modalOverlay");
-    const modalContent = document.getElementById("modalContent");
-    const iframe = document.getElementById("planilhaIframe");
+    /* CONFIG ---------------------------------------------------- */
+    const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
+    const gid     = '0';
+    const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+    const REFRESH   = 1000;        // ← agora atualiza a cada 1 s
+    const CURRENCY  = { style:'currency', currency:'BRL', maximumFractionDigits:2 };
+    const COLORS    = ['#4dabf7', '#4ade80', '#fb7185', '#facc15'];
 
-    // ATENÇÃO: A propriedade 'zoom' não é padrão CSS... (comentário mantido)
+    /* Estado */
+    let headersFull = [], rows = [];
+    let headersDisp = [];
+    let chartOverview, chartPayment, chartMonthly, chartForecast;
+    let loaded = false, fetching = false;
+    const filters = {};     // colIndex → valor selecionado
 
-    function openModal(url) {
-      iframe.src = url;
-      zoomLevel = 1;
-      iframe.style.zoom = zoomLevel;
-      modalOverlay.classList.add('visible');
-    }
+    /* DOM refs */
+    const $loader   = document.getElementById('loader');
+    const $error    = document.getElementById('error-message');
+    const $tableTab = document.getElementById('tab-table');
+    const $chartTab = document.getElementById('tab-charts');
+    const $tableWrap= document.getElementById('table-wrapper');
+    const $chartWrap= document.getElementById('charts-wrapper');
+    const $sheetTable = document.getElementById('sheetTable');
+    const $last     = document.getElementById('last-update');
+    const $month    = document.getElementById('month-total');
+    const $filtersActive = document.getElementById('filters-active');
+    const $clearBtn = document.getElementById('clear-filters');
 
-    function closeModal() {
-      modalOverlay.classList.remove('visible');
-      if (document.fullscreenElement) { document.exitFullscreen(); }
-      setTimeout(() => { iframe.src = ""; }, 300);
-    }
+    /* Eventos */
+    document.getElementById('manual-refresh').onclick = loadData;
+    $tableTab.onclick  = () => switchTab('table');
+    $chartTab.onclick  = () => switchTab('charts');
+    $clearBtn.onclick  = clearFilters;
 
-    function zoomIn() {
-      zoomLevel = Math.min(zoomLevel + 0.1, 3);
-      iframe.style.zoom = zoomLevel;
-      console.log("Aplicando zoom (não padrão):", zoomLevel);
-    }
-
-    function zoomOut() {
-      zoomLevel = Math.max(zoomLevel - 0.1, 0.5);
-      iframe.style.zoom = zoomLevel;
-      console.log("Aplicando zoom (não padrão):", zoomLevel);
-    }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        modalContent.requestFullscreen().catch(err => {
-          console.error(`Erro ao ativar tela cheia: ${err.message} (${err.name})`);
-          alert(`Não foi possível ativar a tela cheia. ${err.message}`);
-        });
-      } else {
-        if (document.exitFullscreen) { document.exitFullscreen(); }
+    function switchTab(t){
+      [$tableTab,$chartTab].forEach(b=>b.classList.remove('active-tab'));
+      if(t==='table'){
+        $tableWrap.classList.remove('hidden');
+        $chartWrap.classList.add('hidden');
+        $tableTab.classList.add('active-tab');
+      }else{
+        $chartWrap.classList.remove('hidden');
+        $tableWrap.classList.add('hidden');
+        $chartTab.classList.add('active-tab');
+        setTimeout(()=>[chartOverview,chartPayment,chartMonthly,chartForecast]
+                      .forEach(c=>c?.updateOptions({},false,false)),50);
       }
     }
 
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && modalOverlay.classList.contains('visible')) {
-            closeModal();
-        }
-    });
+    /* Utils ----------------------------------------------------- */
+    async function fetchSheet(){
+      const r = await fetch(`${baseURL}&_=${Date.now()}`);
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      const txt=await r.text();
+      return JSON.parse(txt.substring(47,txt.length-2));
+    }
+    const pad = n=>n.toString().padStart(2,'0');
+    const fBR = d=>`${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+    const fMon=d=>`${d.toLocaleDateString('pt-BR',{month:'short'})}/${d.getFullYear()}`;
+
+    function tryDate(v){
+      if(v instanceof Date) return v;
+      if(v==null) return null;
+      if(typeof v==='number') return new Date(Math.round((v-25569)*86400*1000));
+      if(typeof v!=='string') return null;
+      let m=v.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/);
+      if(m) return new Date(+m[1],+m[2],+m[3]);
+      m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+      m=v.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+      if(m){ let y=+m[3]; if(y<100) y+=2000; return new Date(y,+m[2]-1,+m[1]); }
+      return null;
+    }
+    const money  = v => v.toLocaleString('pt-BR',CURRENCY);
+    const comp   = v => v.toLocaleString('pt-BR',{notation:'compact',maximumFractionDigits:1});
+    const tooltip= v => typeof v==='number'? money(v):'N/A';
+
+    /* -------- Planilha -------- */
+    async function loadData(){
+      if(fetching) return;
+      fetching=true; $error.classList.add('hidden');
+      if(!loaded) $loader.classList.remove('hidden');
+      try{
+        const js=await fetchSheet();
+        headersFull = js.table.cols.map(c=>c.label||`Col${c.id}`);
+        const obsIdx=headersFull.findIndex(h=>h.toLowerCase()==='observação');
+        headersDisp = obsIdx===-1 ? headersFull : headersFull.slice(0,obsIdx+1);
+        rows = js.table.rows.map(r=>r.c.map(c=>c?.v??null));
+
+        if(!loaded){ build(); loaded=true; switchTab('table'); }
+        else        { update(); }
+
+        monthTotal();
+        $last.textContent=`Atualização em tempo real: ${new Date().toLocaleTimeString('pt-BR')}`;
+      }catch(e){
+        console.error(e);
+        $error.textContent=`Erro: ${e.message}`;
+        $error.classList.remove('hidden');
+      }finally{
+        fetching=false; $loader.classList.add('hidden');
+      }
+    }
+    setInterval(loadData,REFRESH);
+
+    /* ----------- Tabela ---------- */
+    function buildTable(){
+      $sheetTable.innerHTML='';
+      $sheetTable.appendChild(head());
+      $sheetTable.appendChild(body());
+      updateFilterDisplay();
+    }
+    function head(){
+      const thead=document.createElement('thead'); thead.className='bg-surface/90';
+      const tr=document.createElement('tr'); tr.className='divide-x divide-primary-500/30';
+      headersDisp.forEach((h,i)=>{
+        const th=document.createElement('th');
+        th.className='px-6 py-3 text-left text-xs font-semibold text-primary-500 uppercase';
+        th.appendChild(document.createTextNode(h));
+        const sel=document.createElement('select'); sel.dataset.col=i; sel.className='mt-1';
+        sel.innerHTML='<option value="">Todos</option>';
+        [...new Set(rows.map(r=>format(r[i],h)))].sort().forEach(v=>{
+          if(v==='–'||v==='') return;
+          const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o);
+        });
+        sel.onchange=e=>{
+          const c=+e.target.dataset.col, val=e.target.value;
+          val? filters[c]=val : delete filters[c];
+          applyFilters();
+        };
+        th.appendChild(sel);
+        tr.appendChild(th);
+      });
+      thead.appendChild(tr);
+      return thead;
+    }
+    function body(){
+      const tb=document.createElement('tbody'); tb.className='divide-y divide-slate-600/60';
+      rows.forEach((row,idx)=>{
+        const tr=document.createElement('tr');
+        tr.className=`${idx%2?'bg-surface/70':'bg-surface/60'} hover:bg-primary-500/5`;
+        headersDisp.forEach((h,i)=>{
+          const td=document.createElement('td'); td.className='px-6 py-3';
+          td.textContent=format(row[i],h);
+          tr.appendChild(td);
+        });
+        tb.appendChild(tr);
+      });
+      return tb;
+    }
+
+    /* formatação de células --------------------------------------
+       (Ajuste: coluna 'valor' SEMPRE em Reais)                  */
+    function format(c,h){
+      const hLow = h.toLowerCase();
+      if(hLow==='nf') return c ?? '–';
+
+      // força formato monetário na coluna "valor"
+      if(/valor/.test(hLow)){
+        let n = typeof c==='number'
+                ? c
+                : parseFloat(String(c).replace(/[^\d,-]/g,'')  // remove tudo exceto dígitos , -
+                                   .replace(/\./g,'')          // remove pontos de milhar
+                                   .replace(',','.'));         // vírgula decimal → ponto
+        return isNaN(n) ? (c ?? '–') : money(n);
+      }
+
+      const d=tryDate(c); if(d) return fBR(d);
+      if(typeof c==='number') return money(c);
+      if(typeof c==='string' && c.match(/^[\d\.,]+$/)){
+        const n=parseFloat(c.replace(/\./g,'').replace(',','.'));
+        if(!isNaN(n)) return money(n);
+      }
+      return c ?? '–';
+    }
+
+    /* ------- Filtros -------- */
+    function applyFilters(){
+      const tb=$sheetTable.querySelector('tbody');
+      Array.from(tb.rows).forEach(tr=>{
+        let show=true;
+        for(const [i,v] of Object.entries(filters))
+          if(v && tr.cells[i].textContent.trim()!==v){ show=false; break; }
+        tr.style.display = show? '':'none';
+      });
+      updateFilterDisplay();
+    }
+    function updateFilterDisplay(){
+      const keys=Object.keys(filters);
+      if(keys.length===0){ $filtersActive.textContent='Nenhum filtro ativo'; return; }
+      const parts = keys.map(i=>`${headersDisp[i]}: ${filters[i]}`);
+      $filtersActive.textContent='Filtros: '+parts.join(' | ');
+    }
+    function clearFilters(){
+      Object.keys(filters).forEach(k=>delete filters[k]);
+      $tableWrap.querySelectorAll('thead select').forEach(sel=>sel.value='');
+      applyFilters();
+    }
+
+    /* --- Agrupadores (byDate/byMonth/forecast) --- */
+    function byDate(regex){
+      const dIdx=headersFull.findIndex(h=>regex.test(h));
+      if(dIdx===-1) return{lab:[],tot:[]};
+      const nIdx=headersFull.map((h,i)=>i).filter(i=>i!==dIdx && headersFull[i].toLowerCase()!=='nf');
+      const m=new Map();
+      rows.forEach(r=>{
+        const d=tryDate(r[dIdx]); if(!d) return;
+        const key=d.setHours(0,0,0,0);
+        let sum=m.get(key)||0;
+        nIdx.forEach(i=>{
+          let v=r[i]; if(v==null) return;
+          v=typeof v==='number'?v:parseFloat(String(v).replace(/\./g,'').replace(',','.'));
+          if(!isNaN(v)) sum+=v;
+        });
+        m.set(key,sum);
+      });
+      const ord=[...m.entries()].sort((a,b)=>a[0]-b[0]);
+      return{
+        lab:ord.map(([k])=>fBR(new Date(+k))),
+        tot:ord.map(([_,v])=>v)
+      };
+    }
+    function byMonth(regex){
+      const dIdx=headersFull.findIndex(h=>regex.test(h));
+      const nIdx=headersFull.map((h,i)=>i).filter(i=>i!==dIdx && headersFull[i].toLowerCase()!=='nf');
+      const m=new Map();
+      rows.forEach(r=>{
+        const d=tryDate(r[dIdx]); if(!d) return;
+        const key=`${d.getFullYear()}-${d.getMonth()}`;
+        let s=m.get(key)||0;
+        nIdx.forEach(i=>{
+          let v=r[i]; if(v==null) return;
+          v=typeof v==='number'?v:parseFloat(String(v).replace(/\./g,'').replace(',','.'));
+          if(!isNaN(v)) s+=v;
+        });
+        m.set(key,s);
+      });
+      const ord=[...m.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+      return{
+        lab:ord.map(([k])=>{ const [y,m]=k.split('-'); return fMon(new Date(+y,+m,1)); }),
+        tot:ord.map(([_,v])=>v)
+      };
+    }
+    function forecastData(){
+      const {lab,tot}=byDate(/venc/i);
+      if(!lab.length) return{lab:[],r:[],p:[]};
+      const last=lab[lab.length-1].split('/');
+      const d=new Date(+last[2],+last[1]-1,+last[0]);
+      const next=new Date(d); next.setDate(d.getDate()+1);
+      const base=tot.slice(-3);
+      const pred=base.reduce((a,b)=>a+b,0)/base.length||0;
+      return{
+        lab:lab.concat(fBR(next)),
+        r:tot.concat(null),
+        p:new Array(tot.length).fill(null).concat(pred)
+      };
+    }
+
+    /* --- Apex base --- */
+    const baseOpts={
+      chart:{foreColor:'#cbd5e1',toolbar:{show:true,tools:{download:true}},zoom:{enabled:false}},
+      tooltip:{theme:'dark',y:{formatter:tooltip}},
+      dataLabels:{enabled:false},
+      grid:{borderColor:'#475569',strokeDashArray:4},
+      legend:{show:false}
+    };
+
+    /* --- Gráficos --- */
+    function buildCharts(){ overview(); payment(); monthly(); forecastChart(); }
+    function updateCharts(){ overview(true); payment(true); monthly(true); forecastChart(true); }
+
+    function overview(up=false){
+      const {lab,tot}=byDate(/venc/i);
+      if(up){ chartOverview?.updateOptions({xaxis:{categories:lab},series:[{data:tot}]}); return; }
+      chartOverview?.destroy();
+      chartOverview=new ApexCharts(document.querySelector('#chart-overview'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'area',height:280},
+        series:[{name:'Total',data:tot}],
+        colors:[COLORS[0]],
+        xaxis:{categories:lab},
+        yaxis:{labels:{formatter:comp}},
+        stroke:{curve:'smooth',width:2},
+        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:.5,opacityTo:.1,stops:[0,90,100]}}
+      });
+      chartOverview.render();
+    }
+    function payment(up=false){
+      const {lab,tot}=byDate(/pag/i);
+      if(up){ chartPayment?.updateOptions({xaxis:{categories:lab},series:[{data:tot}]}); return; }
+      chartPayment?.destroy();
+      chartPayment=new ApexCharts(document.querySelector('#chart-payment'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'area',height:280},
+        series:[{name:'Total',data:tot}],
+        colors:[COLORS[1]],
+        xaxis:{categories:lab},
+        yaxis:{labels:{formatter:comp}},
+        stroke:{curve:'smooth',width:2},
+        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:.5,opacityTo:.1,stops:[0,90,100]}}
+      });
+      chartPayment.render();
+    }
+    function monthly(up=false){
+      const {lab,tot}=byMonth(/venc/i);
+      if(up){ chartMonthly?.updateOptions({labels:lab,series:tot}); return; }
+      chartMonthly?.destroy();
+      chartMonthly=new ApexCharts(document.querySelector('#chart-monthly'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'donut',height:280},
+        series:tot, labels:lab, colors:COLORS,
+        legend:{show:true,position:'bottom',fontSize:'12px'}
+      });
+      chartMonthly.render();
+    }
+    function forecastChart(up=false){
+      const {lab,r,p}=forecastData();
+      if(up){ chartForecast?.updateOptions({xaxis:{categories:lab},
+                                            series:[{name:'Real',data:r},{name:'Previsto',data:p}]});
+              return;}
+      chartForecast?.destroy();
+      chartForecast=new ApexCharts(document.querySelector('#chart-forecast'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'line',height:280},
+        series:[{name:'Real',data:r},{name:'Previsto',data:p}],
+        stroke:{width:2,dashArray:[0,8]},
+        colors:[COLORS[0],COLORS[2]],
+        markers:{size:4},
+        legend:{show:true,position:'top',fontSize:'12px'}
+      });
+      chartForecast.render();
+    }
+
+    /* --- Total do mês --- */
+    function monthTotal(){
+      const vIdx=headersFull.findIndex(h=>/valor/i.test(h));
+      const dIdx=headersFull.findIndex(h=>/venc/i.test(h));
+      if(vIdx===-1||dIdx===-1) return;
+      const now=new Date(), m=now.getMonth(), y=now.getFullYear();
+      const sum=rows.reduce((acc,r)=>{
+        let n=r[vIdx];
+        n=typeof n==='number'? n: parseFloat(String(n).replace(/\./g,'').replace(',','.'));
+        if(isNaN(n)) return acc;
+        const d=tryDate(r[dIdx]);
+        if(d && d.getMonth()===m && d.getFullYear()===y) acc+=n;
+        return acc;
+      },0);
+      $month.textContent=`Mês: ${money(sum)}`;
+      $month.classList.remove('hidden');
+    }
+
+    /* Build / Update */
+    function build(){ buildTable(); buildCharts(); }
+    function update(){ buildTable(); updateCharts(); applyFilters(); }
+
+    loadData();
   </script>
 </body>
 </html>
