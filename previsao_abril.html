@@ -80,20 +80,25 @@
 
     <!-- Gráficos -->
     <section id="charts-wrapper" class="hidden w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+      <!-- Gráfico 1 ocupa largura total -->
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6 
+                  md:col-span-2 xl:col-span-3 2xl:col-span-4">
         <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por data_vencimento</h2>
         <div id="chart-overview"></div>
       </div>
+
       <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
         <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por data_pagamento</h2>
         <div id="chart-payment"></div>
       </div>
+
       <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
         <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por Mês (venc.)</h2>
         <div id="chart-monthly"></div>
       </div>
+
       <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
-        <h2 class="text-lg font-semibold mb-4 text-primary-500">Previsão Próximo Dia</h2>
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Previsão Próximos 5 Dias</h2>
         <div id="chart-forecast"></div>
       </div>
     </section>
@@ -220,7 +225,7 @@
       });
     }
 
-    /* Dados p/ gráficos ---------------------------------------- */
+    /* --- Dados p/ gráficos ----------------------------------- */
     function byDate(regex){
       const dIdx=headersFull.findIndex(h=>regex.test(h)); if(dIdx===-1)return{lab:[],tot:[]};
       const nIdx=headersFull.map((h,i)=>i).filter(i=>i!==dIdx && headersFull[i].toLowerCase()!=='nf');
@@ -249,12 +254,28 @@
       const ord=[...m.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
       return {lab:ord.map(([k])=>{const[y,m]=k.split('-');return fMon(new Date(+y,+m,1));}),tot:ord.map(([_,v])=>v)};
     }
+
+    /* Previsão: somente próximos 5 dias ------------------------ */
     function forecastData(){
-      const {lab,tot}=byDate(/venc/i); if(!lab.length)return{lab:[],r:[],p:[]};
-      const last=lab[lab.length-1].split('/'); const d=new Date(+last[2],+last[1]-1,+last[0]);
-      const next=new Date(d); next.setDate(d.getDate()+1); const nextLab=fBR(next);
-      const base=tot.slice(-3); const pred=base.reduce((a,b)=>a+b,0)/base.length||0;
-      return {lab:lab.concat(nextLab), r:tot.concat(null), p:new Array(tot.length).fill(null).concat(pred)};
+      const {lab,tot}=byDate(/venc/i);
+      if(!lab.length)return{lab:[],p:[]};
+
+      // Última data real
+      const [d,m,y]=lab[lab.length-1].split('/').map(Number);
+      const start=new Date(y,m-1,d);
+
+      // Média simples dos 3 últimos totais reais
+      const base=tot.slice(-3);
+      const avg=base.reduce((a,b)=>a+b,0)/base.length||0;
+
+      const nextLab=[], preds=[];
+      for(let i=1;i<=5;i++){
+        const nx=new Date(start);
+        nx.setDate(start.getDate()+i);
+        nextLab.push(fBR(nx));
+        preds.push(avg);
+      }
+      return {lab:nextLab,p:preds};
     }
 
     /* Apex base */
@@ -306,18 +327,20 @@
         series:tot,labels:lab,colors:COLORS,legend:{show:true,position:'bottom',fontSize:'12px'}
       }); chartMonthly.render();
     }
+
+    /* Previsão (5 dias) ---------------------------------------- */
     function forecastChart(up=false){
-      const {lab,r,p}=forecastData();
-      if(up){ chartForecast.updateOptions({xaxis:{categories:lab},series:[{data:r},{data:p}]}); return;}
+      const {lab,p}=forecastData();
+      if(up){ chartForecast.updateOptions({xaxis:{categories:lab},series:[{name:'Previsto',data:p}]}); return;}
       chartForecast?.destroy();
       chartForecast=new ApexCharts(document.querySelector('#chart-forecast'),{
         ...baseOpts,
         chart:{...baseOpts.chart,type:'line',height:280},
-        series:[{name:'Real',data:r},{name:'Previsto',data:p}],
-        stroke:{width:2,dashArray:[0,8]},
-        colors:[COLORS[0],COLORS[2]],
+        series:[{name:'Previsto',data:p}],
+        stroke:{width:2},
+        colors:[COLORS[2]],
         markers:{size:4},
-        legend:{show:true,position:'top',fontSize:'12px'}
+        legend:{show:false}
       }); chartForecast.render();
     }
 
