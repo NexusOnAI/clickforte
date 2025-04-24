@@ -44,6 +44,8 @@
     #table-wrapper,#charts-wrapper{flex-grow:1;overflow-y:auto}
     #sheetTable{width:100%}
     #table-wrapper thead{position:sticky;top:0;z-index:10}
+    /* --- abas activas --- */
+    .tab-btn.active-tab{background:#4f46e5;color:#fff !important;box-shadow:0 0 5px rgba(99,102,241,.6)}
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 text-gray-100 selection:bg-primary-500/60 min-h-screen flex flex-col antialiased">
@@ -54,6 +56,8 @@
       <h1 class="text-lg sm:text-2xl font-extrabold text-primary-400 tracking-tight select-none">Dashboard • Google Sheets API-Excel</h1>
       <div class="flex items-center gap-4 ml-auto">
         <span id="month-total" class="hidden sm:block text-primary-300 font-semibold text-sm"></span>
+        <!-- Informativo de atualização no topo -->
+        <span id="last-update" class="text-gray-400 text-xs sm:text-sm"></span>
         <button id="manual-refresh" class="flex items-center gap-2 px-4 py-2 rounded-md border border-primary-600 bg-primary-600/20 hover:bg-primary-600/30 transition text-primary-300 text-sm font-medium shadow-glow">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0014-7h1M19 5a9 9 0 00-14 7H4"/></svg>
           Atualizar
@@ -91,8 +95,6 @@
         <div id="chart-overview"></div>
       </div>
     </section>
-
-    <p id="last-update" class="mt-auto text-center text-xs text-gray-400"></p>
   </main>
 
   <!-- ------------------------------------------------ JS ------------------------------------------------- -->
@@ -126,16 +128,16 @@
     $tableTab.onclick = () => activateTab('table');
     $chartTab.onclick = () => activateTab('charts');
     function activateTab(tab){
-      [$tableTab,$chartTab].forEach(b=>b.classList.remove('text-white','text-gray-300'));
+      [$tableTab,$chartTab].forEach(b=>b.classList.remove('text-white','text-gray-300','active-tab'));
       if(tab==='table'){
         $tableWrap.classList.remove('hidden');
         $chartWrap.classList.add('hidden');
-        $tableTab.classList.add('text-white');
+        $tableTab.classList.add('text-white','active-tab');
         $chartTab.classList.add('text-gray-300');
       }else{
         $chartWrap.classList.remove('hidden');
         $tableWrap.classList.add('hidden');
-        $chartTab.classList.add('text-white');
+        $chartTab.classList.add('text-white','active-tab');
         $tableTab.classList.add('text-gray-300');
         setTimeout(()=>{ chartOverview?.updateOptions({},false,false); },50);
       }
@@ -201,7 +203,7 @@
         isFetching=false;
       }
     }
-    function startAutoRefresh(){ stopAutoRefresh(); if(REFRESH_INTERVAL_MS>0) refreshIntervalId=setInterval(refreshData,REFRESH_INTERVAL_MS);}
+    function startAutoRefresh(){ stopAutoRefresh(); if(REFRESH_INTERVAL_MS>0) refreshIntervalId=setInterval(refreshData,REFRESH_INTERVAL_MS);}    
     function stopAutoRefresh(){ if(refreshIntervalId) clearInterval(refreshIntervalId); refreshIntervalId=null;}
 
     /* ---------- Tabela ---------- */
