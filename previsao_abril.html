@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard • Google Sheets (ApexCharts Realtime)</title>
 
-  <!-- Fonts e Tailwind -->
+  <!-- Fonts & Tailwind -->
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -36,15 +36,11 @@
   <style>
     @keyframes spin{to{transform:rotate(360deg)}}
     .animate-spin{animation:spin 1s linear infinite}
-
     ::-webkit-scrollbar{width:8px;height:8px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:#4b5563;border-radius:4px}
     ::-webkit-scrollbar-thumb:hover{background:#9ca3af}
-
-    html,body{height:100%}
-    body{display:flex;flex-direction:column}
-
+    html,body{height:100%} body{display:flex;flex-direction:column}
     #table-wrapper,#charts-wrapper{flex-grow:1;overflow-y:auto}
     #sheetTable{width:100%}
     #table-wrapper thead{position:sticky;top:0;z-index:10}
@@ -52,7 +48,7 @@
 </head>
 <body class="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 text-gray-100 selection:bg-primary-500/60 min-h-screen flex flex-col antialiased">
 
-  <!-- Cabeçalho ------------------------------------------------------- -->
+  <!-- Cabeçalho -->
   <header class="w-full backdrop-blur-sm bg-surface/60 border-b border-primary-700/40 sticky top-0 z-40">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
       <h1 class="text-lg sm:text-2xl font-extrabold text-primary-400 tracking-tight select-none">Dashboard • Google Sheets API-Excel</h1>
@@ -66,13 +62,13 @@
     </div>
   </header>
 
-  <!-- Loader ---------------------------------------------------------- -->
+  <!-- Loader -->
   <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md transition-opacity">
     <div class="h-12 w-12 border-[6px] border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
     <p class="text-primary-300 text-lg font-medium">Carregando dados...</p>
   </div>
 
-  <!-- Conteúdo principal ---------------------------------------------- -->
+  <!-- Conteúdo -->
   <main class="w-full max-w-screen-2xl mx-auto px-4 sm:px-8 py-6 flex flex-col gap-6">
 
     <!-- Abas -->
@@ -91,7 +87,7 @@
     <!-- Gráfico -->
     <section id="charts-wrapper" class="hidden w-full flex-col space-y-8">
       <div class="chart-card backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20 p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary-300 tracking-wide">Visão Geral • Valor Total por Dia</h2>
+        <h2 class="text-xl font-semibold mb-4 text-primary-300 tracking-wide">Valor Total por <code>data_vencimento</code></h2>
         <div id="chart-overview"></div>
       </div>
     </section>
@@ -101,20 +97,20 @@
 
   <!-- ------------------------------------------------ JS ------------------------------------------------- -->
   <script>
-    /* CONFIG --------------------------------------------------------- */
+    /* CONFIG */
     const sheetId  = '1gJLltq6O86QIPSj4Id-lIsxG45o7bq2QBW4WGhoXWoo';
     const gid      = '0';
     const baseURL  = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
     const REFRESH_INTERVAL_MS = 2000;
     const CURRENCY_FORMAT = { style:'currency', currency:'BRL', maximumFractionDigits:2 };
-    const CHART_COLOR     = "#818cf8";   // cor única para o total
+    const CHART_COLOR     = "#818cf8";
 
-    /* Estado global -------------------------------------------------- */
+    /* Estado global */
     let headersCache=[], rowsCache=[];
     let chartOverview=null;
     let initialLoadComplete=false, refreshIntervalId=null, isFetching=false;
 
-    /* DOM ------------------------------------------------------------ */
+    /* DOM */
     const $loader       = document.getElementById('loader');
     const $errorMessage = document.getElementById('error-message');
     const $tableTab     = document.getElementById('tab-table');
@@ -126,7 +122,7 @@
     const $manualRefresh= document.getElementById('manual-refresh');
     const $monthTotal   = document.getElementById('month-total');
 
-    /* Tabs ----------------------------------------------------------- */
+    /* Tabs */
     $tableTab.onclick = () => activateTab('table');
     $chartTab.onclick = () => activateTab('charts');
     function activateTab(tab){
@@ -146,7 +142,7 @@
     }
     $manualRefresh.onclick = refreshData;
 
-    /* Auxiliares ----------------------------------------------------- */
+    /* Auxiliares */
     async function fetchSheetData(){
       const resp = await fetch(`${baseURL}&_=${Date.now()}`);
       if(!resp.ok) throw new Error(`Erro na requisição HTTP: ${resp.status}`);
@@ -167,7 +163,7 @@
       return null;
     }
 
-    /* Refresh principal --------------------------------------------- */
+    /* Refresh principal */
     async function refreshData(){
       if(isFetching) return;
       isFetching=true;
@@ -208,9 +204,8 @@
     function startAutoRefresh(){ stopAutoRefresh(); if(REFRESH_INTERVAL_MS>0) refreshIntervalId=setInterval(refreshData,REFRESH_INTERVAL_MS);}
     function stopAutoRefresh(){ if(refreshIntervalId) clearInterval(refreshIntervalId); refreshIntervalId=null;}
 
-    /* Tabela ---------------------------------------------------------- */
+    /* ---------- Tabela ---------- */
     function renderTable(h,r){ $sheetTable.innerHTML=''; $sheetTable.appendChild(genHead(h)); $sheetTable.appendChild(genBody(r,h)); }
-
     function genHead(headers){
       const thead=document.createElement('thead'); thead.className='bg-gray-800/90 backdrop-blur-xs';
       const tr=document.createElement('tr'); tr.className='divide-x divide-primary-700/40';
@@ -218,13 +213,12 @@
         const th=document.createElement('th');
         th.scope='col';
         th.className='px-6 py-3 text-left text-xs font-semibold text-primary-300 uppercase tracking-wider';
-        th.textContent = /date/i.test(h.trim()) ? '' : h;
+        th.textContent=h;
         tr.appendChild(th);
       });
       thead.appendChild(tr);
       return thead;
     }
-
     function genBody(rows, headers){
       const tbody=document.createElement('tbody');
       tbody.className='divide-y divide-gray-700/60';
@@ -259,23 +253,43 @@
       return tbody;
     }
 
-    /* Chart helpers --------------------------------------------------- */
-    function computeDailyTotals(headers,rows){
-      // identifica colunas numéricas válidas (exceto 'NF')
-      const numericColIdx = headers.map((h,i)=>({h,idx:i}))
-        .filter(c => c.h.trim().toLowerCase()!=='nf' && c.idx>0);
-      return rows.map(row=>{
-        return numericColIdx.reduce((sum,c)=>{
-          let v=row[c.idx];
-          if(typeof v==='number') return sum+v;
-          if(typeof v==='string' && v.trim()){
+    /* ---------- GRÁFICO ---------- */
+    function getTotalsByVenc(headers,rows){
+      /* identifica col. de data_vencimento ---------------------------- */
+      let dateIdx = headers.findIndex(h=>/venc/i.test(h));      // ← aqui
+      if(dateIdx===-1) dateIdx = headers.findIndex(h=>/date/i.test(h));
+      if(dateIdx===-1) dateIdx = 0;
+
+      /* colunas numéricas (exceto NF) -------------------------------- */
+      const numericIdx = headers.map((h,i)=>({h,i})).filter(c=>
+        c.i!==dateIdx && c.h.trim().toLowerCase()!=='nf'
+      ).map(c=>c.i);
+
+      const map = new Map();
+      rows.forEach(r=>{
+        const d = tryParseDate(r[dateIdx]);
+        if(!d) return;
+        const key = d.toISOString().split('T')[0];
+        let sum  = map.get(key) || 0;
+        numericIdx.forEach(i=>{
+          let v=r[i];
+          if(v==null) return;
+          if(typeof v==='number'){ sum+=v; }
+          else if(typeof v==='string'){
             const n=parseFloat(v.replace(/\./g,'').replace(',','.'));
-            return isNaN(n)?sum:sum+n;
+            if(!isNaN(n)) sum+=n;
           }
-          return sum;
-        },0);
+        });
+        map.set(key,sum);
       });
+
+      const ordered=[...map.entries()].sort((a,b)=>new Date(a[0])-new Date(b[0]));
+      return {
+        labels : ordered.map(([k])=>formatDateBR(new Date(k))),
+        totals : ordered.map(([_,v])=>v)
+      };
     }
+
     const tooltipFmt=v=>typeof v==='number'?v.toLocaleString('pt-BR',CURRENCY_FORMAT):'N/A';
     const commonOpts={
       chart:{toolbar:{show:true,tools:{download:true}},zoom:{enabled:false},foreColor:'#cbd5e1'},
@@ -285,13 +299,8 @@
       legend:{show:false}
     };
 
-    /* Gráfico Visão Geral -------------------------------------------- */
     function buildOverviewChart(headers,rows){
-      const labels=rows.map(r=>{
-        const d=tryParseDate(r[0]);
-        return d?formatDateBR(d):(r[0]??'');
-      });
-      const totals=computeDailyTotals(headers,rows);
+      const {labels,totals}=getTotalsByVenc(headers,rows);
       chartOverview?.destroy();
       chartOverview=new ApexCharts(document.getElementById('chart-overview'),{
         ...commonOpts,
@@ -307,18 +316,14 @@
       chartOverview.render();
     }
     function updateOverviewChart(headers,rows){
-      const labels=rows.map(r=>{
-        const d=tryParseDate(r[0]);
-        return d?formatDateBR(d):(r[0]??'');
-      });
-      const totals=computeDailyTotals(headers,rows);
+      const {labels,totals}=getTotalsByVenc(headers,rows);
       chartOverview?.updateOptions({
         xaxis:{categories:labels},
-        series:[{name:'Total do Dia',data:totals}]
+        series:[{data:totals}]
       });
     }
 
-    /* Total do mês ---------------------------------------------------- */
+    /* Total do mês (usando data de vencimento) */
     function updateMonthlyTotal(headers,rows){
       let valueColIdx=headers.findIndex(h=>/valor/i.test(h));
       if(valueColIdx===-1){
@@ -326,7 +331,8 @@
           if(rows.some(r=>typeof r[i]==='number')){valueColIdx=i;break;}
         }
       }
-      let dateColIdx=headers.findIndex(h=>/date/i.test(h));
+      let dateColIdx=headers.findIndex(h=>/venc/i.test(h));
+      if(dateColIdx===-1) dateColIdx=headers.findIndex(h=>/date/i.test(h));
       if(dateColIdx===-1) dateColIdx=0;
       if(valueColIdx===-1){ $monthTotal.textContent=''; return; }
 
@@ -343,7 +349,7 @@
       $monthTotal.closest('span').classList.remove('hidden');
     }
 
-    /* Init ------------------------------------------------------------ */
+    /* Init */
     refreshData();
     startAutoRefresh();
   </script>
