@@ -1,278 +1,217 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relatórios Mensais - ClickForte Armazenagem (Dark)</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Previsão de Gastos - Abril (Dark - Área - Full - Mobile Opt.)</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Aplicando cores dark manualmente */
+    /* Garante que o gráfico se ajuste à largura disponível */
+    #chart {
+      max-width: 100%;
+      margin: 0 auto;
+      min-height: 280px; /* Altura mínima para evitar colapso */
+    }
+    /* Opcional: Melhorar contraste do foco */
+    *:focus-visible {
+       outline: 2px solid #4dabf7;
+       outline-offset: 2px;
+       border-radius: 2px;
+    }
+    /* Custom font */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body {
-      background-color: #1a1d21; /* Fundo dark */
-      color: #e9ecef; /* Texto claro */
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-    /* Seção Principal */
-    .main-section {
-      position: relative;
-      z-index: 2;
-      padding: 3rem 15px 3rem 15px;
-      width: 100%;
-    }
-    /* Cards de Valor */
-    .value-card {
-      background-color: #212529; /* Fundo do card dark */
-      border: 1px solid #495057; /* Borda dark */
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra */
-      transition: all 0.3s ease-in-out;
-      height: 100%;
-      display: flex; /* Garante que o card ocupe a altura definida */
-      flex-direction: column; /* Organiza o conteúdo internamente */
-    }
-    .value-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-    .value-card .card-body {
-       padding: 1.5rem;
-       display: flex; /* Habilita flexbox no card-body */
-       flex-direction: column; /* Organiza conteúdo verticalmente */
-       justify-content: center; /* Centraliza verticalmente */
-       flex-grow: 1; /* Faz o body ocupar o espaço restante no card */
-    }
-
-    /* Ajustando cores dos icon circles para melhor visibilidade no dark */
-     .value-card .icon-circle {
-       width: 50px; height: 50px;
-       border-radius: 50%;
-       display: inline-flex; align-items: center; justify-content: center;
-       margin-bottom: 0.75rem;
-     }
-     .value-card .icon-circle.bg-primary { background-color: rgba(77, 171, 247, 0.15) !important; color: #4dabf7 !important; }
-     .value-card .icon-circle.bg-success { background-color: rgba(40, 167, 69, 0.2) !important; color: #20c997 !important; }
-     .value-card .icon-circle.bg-info { background-color: rgba(13, 202, 240, 0.15) !important; color: #0dcaf0 !important; }
-     .value-card .icon-circle.bg-warning { background-color: rgba(255, 193, 7, 0.15) !important; color: #ffc107 !important; } /* NOVO: Cor para Warning */
-
-     .value-card .icon-circle i { font-size: 1.5rem; }
-
-     /* Sobrescrevendo text-muted para dark theme */
-     .text-muted {
-       color: #adb5bd !important; /* Cor muted clara */
-     }
-
-     /* Assegurando cor clara para o valor principal do card */
-     .value-card .card-text {
-        color: #e9ecef; /* Cor de texto principal clara */
-     }
-
-
-    /* Contêiner do Gráfico */
-    .chart-container {
-      background-color: #212529; /* Fundo do card dark */
-      padding: 30px;
-      border-radius: 12px;
-      border: 1px solid #495057; /* Borda dark */
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Sombra */
-      height: 420px;
-      display: flex; flex-direction: column;
-    }
-    /* Placeholder de carregamento do gráfico */
-    .chart-container div[id^="chart"] {
-      flex-grow: 1; display: flex; align-items: center; justify-content: center;
-      color: #adb5bd; /* Cor muted clara */
-      font-style: italic; min-height: 300px;
-    }
-    /* Responsividade */
-    @media (max-width: 1200px) { .chart-container { height: 400px; } }
-    @media (max-width: 992px) {
-       .chart-container { height: 380px; }
-       /* Adiciona espaço entre cards empilhados em MD e SM */
-       .value-card { margin-bottom: 1.5rem; }
-    }
-    @media (max-width: 768px) {
-      .main-section { padding: 2.5rem 10px 2rem 10px; }
-      .chart-container { height: 350px; padding: 20px; }
-    }
-    @media (max-width: 576px) {
-      .main-section { padding-top: 2rem;}
-      .chart-container { height: 320px; }
-      .value-card .card-body { padding: 1.25rem; }
-      .value-card .icon-circle { width: 45px; height: 45px; }
-      .value-card .icon-circle i { font-size: 1.3rem; }
-      /* Garante que não haja margin-bottom extra no último card quando empilhado */
-      .row > .col-sm-12:last-child .value-card {
-        margin-bottom: 0;
-      }
-      /* Se a margem de 1.5rem for muito grande em SM, pode ajustar aqui */
-       .value-card { margin-bottom: 1rem; }
+        font-family: 'Inter', sans-serif;
     }
   </style>
 </head>
-<body>
-  <div class="main-section container-fluid">
-     <div class="row g-4 mb-5">
-       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
-           <div class="card-body">
-             <div class="icon-circle bg-primary text-primary mx-auto"> <i class="bi bi-calendar-check"></i> </div>
-             <h6 class="card-subtitle mt-2 mb-2 text-muted">Pagamento Realizado</h6>
-             <p class="card-text fs-4 fw-bold mb-1" id="cardValorPagamentos">R$ 0,00</p>
-             <small class="text-muted" id="cardDataHoje1">--/--/----</small>
-           </div>
-         </div>
-       </div>
-       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
-           <div class="card-body">
-             <div class="icon-circle bg-success text-success mx-auto"> <i class="bi bi-cash-coin"></i> </div>
-             <h6 class="card-subtitle mt-2 mb-2 text-muted">Pagamento Realizado</h6>
-             <p class="card-text fs-4 fw-bold mb-1" id="cardValorRecebido">R$ 0,00</p>
-             <small class="text-muted" id="cardDataHoje2">--/--/----</small>
-           </div>
-         </div>
-       </div>
-       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
-           <div class="card-body">
-             <div class="icon-circle bg-info text-info mx-auto"> <i class="bi bi-wallet2"></i> </div>
-             <h6 class="card-subtitle mt-2 mb-2 text-muted">Previsão Pagamento Terça</h6>
-             <p class="card-text fs-4 fw-bold mb-1" id="cardValorSaldo">R$ 0,00</p>
-             <small class="text-muted">em <span id="cardDataHoje3">--/--/----</span></small>
-           </div>
-         </div>
-       </div>
-       <div class="col-lg-3 col-md-6 col-sm-12"> <div class="value-card card text-center h-100">
-           <div class="card-body">
-             <div class="icon-circle bg-warning text-warning mx-auto"> <i class="bi bi-clipboard-data"></i> </div> <h6 class="card-subtitle mt-2 mb-2 text-muted">Gasto Total (Abril)</h6> <p class="card-text fs-4 fw-bold mb-1" id="cardValorAbril">R$ 0,00</p> <small class="text-muted" id="cardMesReferenciaAbril">Mês de Abril</small> </div>
-         </div>
-       </div>
+<body class="bg-[#1a1d21] text-[#adb5bd] p-4 sm:p-6 md:p-8">
 
-     </div>
-     <div class="row g-4">
-       <div class="col-12">
-         <div class="chart-container">
-           <div id="mainAreaChart">Carregando Gráfico...</div>
-         </div>
-       </div>
-     </div>
+  <div class="p-6 sm:p-8 bg-[#212529] shadow-xl rounded-lg border border-[#495057]">
+
+    <h2 class="text-center text-xl sm:text-2xl font-bold mb-8 text-[#e9ecef]">Previsão de Gastos para Abril</h2>
+
+    <div id="chart" class="mb-10"></div>
+
+    <h3 class="text-center text-lg sm:text-xl font-semibold mb-5 text-[#e9ecef]">Detalhes das Semanas</h3>
+    <div class="overflow-x-auto rounded-lg border border-[#495057]">
+      <table class="min-w-full divide-y divide-[#495057] table-auto">
+        <thead class="bg-[#343a40]">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Semana</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Período</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Valor</th>
+            <th class="px-4 py-3 text-center text-xs font-semibold text-[#adb5bd] uppercase tracking-wider">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#495057]">
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">1ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">01/04 a 04/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 909.665,51</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-green-300 bg-green-500/20 rounded-full">Pago</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">2ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">05/04 a 11/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.978.156,16</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-yellow-300 bg-yellow-500/20 rounded-full">Em andamento</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">3ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">12/04 a 18/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.432.358,51</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">4ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">19/04 a 25/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 1.316.467,26</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#343a40]/50 transition-colors duration-150">
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">5ª Semana</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#adb5bd]">26/04 a 30/04</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-[#e9ecef] text-right font-medium">R$ 410.857,05</td>
+            <td class="px-4 py-3 whitespace-nowrap text-center">
+              <span class="inline-block px-3 py-1 text-xs font-semibold text-gray-400 bg-gray-600/30 rounded-full">Aberto</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-8 pt-4 border-t border-[#495057] text-lg font-medium text-[#e9ecef]">
+      Total Geral: R$ 5.615.717,22
+    </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
   <script>
-    // --- Dados e Configuração Globais ---
-    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril'];
-    const totalGastosMensais = [5686819.08, 6105182.26, 6995663.47, 5570166.05]; // Valor de Abril está aqui
+    // Cores do tema dark para o gráfico
+    const primaryColor = '#4dabf7';
+    const textColor = '#e9ecef';
+    const mutedColor = '#adb5bd';
+    const gridColor = '#495057';
+    const bodyBgColor = '#1a1d21';
 
-    const corPrincipalGrafico = '#4dabf7';
-    const corTextoPrincipal = '#e9ecef';
-    const corTextoSecundario = '#adb5bd';
-    const corBordaGrid = '#495057';
-    const corFundoCard = '#212529';
+    // Dados (mantidos)
+    var dadosSemanal = [909665.51, 1978156.16, 1432358.51, 1316467.26, 410857.05];
 
-    // --- Funções Auxiliares ---
-    const currencyFormatter = (value) => { if (value == null || value === undefined) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
-
-    const baseChartOptions = {
-        chart: { type: 'area', height: '100%', fontFamily: 'Inter, sans-serif', toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 350 }}},
-        dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 3 },
-        markers: { size: 5, strokeWidth: 2, strokeColors: corFundoCard, hover: { size: 7 }},
-        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100] }},
-        grid: { borderColor: corBordaGrid, padding: { top: 5, right: 20, bottom: 0, left: 20 }},
-        yaxis: { title: { text: 'Gasto Total (R$)', style: { color: corTextoSecundario, fontSize: '11px', fontWeight: 500 } }, labels: { formatter: currencyFormatter, style: { fontSize: '11px', colors: [corTextoSecundario] } }},
-        xaxis: { tooltip: { enabled: false }, labels: { style: { fontSize: '11px', colors: corTextoSecundario }, rotate: -20, rotateAlways: false, hideOverlappingLabels: true, trim: true }},
-        tooltip: { y: { formatter: currencyFormatter }, theme: 'dark', x: { show: true, format: 'MMMM' } }, // Format 'MMMM' might not work directly with category names, but ok for tooltip title
-        responsive: [ { breakpoint: 768, options: { markers: { size: 4 }, stroke: { width: 2 }, yaxis: { labels: { style: { fontSize: '10px' }}}, xaxis: { labels: { style: { fontSize: '10px' }}}}}, { breakpoint: 576, options: { markers: { size: 3 }, yaxis: { title: { text: undefined } }}}]
+    // Opções do Gráfico Area Chart (Dark Theme)
+    var options = {
+      chart: {
+        type: 'area',
+        height: 380,
+        background: 'transparent',
+        toolbar: { show: false },
+        fontFamily: 'Inter, sans-serif',
+      },
+      dataLabels: {
+        enabled: false
+      },
+      series: [{
+        name: 'Gastos',
+        data: dadosSemanal
+      }],
+      colors: [primaryColor],
+      stroke: {
+        curve: 'smooth',
+        width: 3
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'dark', type: "vertical", shadeIntensity: 0.5,
+          inverseColors: false, opacityFrom: 0.7, opacityTo: 0.1,
+          stops: [0, 95, 100]
+        },
+         colors: [primaryColor]
+      },
+      markers: {
+          size: 5, colors: [primaryColor], strokeColors: bodyBgColor,
+          strokeWidth: 2, hover: { size: 7 }
+      },
+      xaxis: {
+        categories: ['1ª Sem', '2ª Sem', '3ª Sem', '4ª Sem', '5ª Sem'],
+        labels: {
+          style: { fontSize: '12px', colors: [mutedColor] }
+        },
+        axisBorder: { show: false }, axisTicks: { show: false }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            if (val >= 1000000) { return "R$ " + (val / 1000000).toFixed(1) + 'M'; }
+            else if (val >= 1000){ return "R$ " + (val / 1000).toFixed(0) + 'k'; }
+            return "R$ " + val.toFixed(0);
+          },
+          style: { fontSize: '11px', colors: [mutedColor] }
+        }
+      },
+      tooltip: {
+        theme: 'dark',
+        y: {
+          formatter: function(val) {
+            return "R$ " + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+        }
+      },
+      grid: {
+          show: true, borderColor: gridColor, strokeDashArray: 3,
+          yaxis: { lines: { show: true } },
+          xaxis: { lines: { show: false } },
+          padding: { left: 20, right: 10 }
+      },
+      theme: { mode: 'dark' },
+      // *** OPÇÕES RESPONSIVAS AJUSTADAS PARA MOBILE ***
+      responsive: [
+        {
+          breakpoint: 768, // Telas médias (tablets)
+          options: {
+            chart: { height: 320 },
+            markers: { size: 4, hover: { size: 6 } },
+            stroke: { width: 2 },
+            xaxis: { labels: { style: { fontSize: '11px' } } },
+            yaxis: { labels: { style: { fontSize: '10px' } } }
+          }
+        },
+        {
+          breakpoint: 576, // Telas pequenas (mobile)
+          options: {
+            chart: { height: 280 }, // Altura reduzida
+            markers: { size: 3, hover: { size: 5 } }, // Marcadores menores
+            stroke: { width: 2 },
+            xaxis: {
+                labels: {
+                    style: { fontSize: '10px' }, // Fontes X menores
+                    hideOverlappingLabels: true, // Oculta se sobrepor
+                    rotate: 0 // Garante sem rotação
+                }
+            },
+            yaxis: {
+                labels: {
+                    show: true, // Garante que Y está visível
+                    style: { fontSize: '9px' } // Fontes Y menores
+                }
+            },
+            // Tooltip mantido para checar valores
+          }
+        }
+      ]
     };
 
-    // --- Funções Principais ---
-    function criarApexAreaChartMensal(elementId, seriesData, categories, color) {
-      const options = {
-        ...baseChartOptions,
-        series: [{ name: 'Gasto Total', data: seriesData }],
-        xaxis: { ...baseChartOptions.xaxis, categories: categories }, // Usar as categorias fornecidas
-        colors: [color],
-        fill: { type: 'gradient', gradient: { ...baseChartOptions.fill.gradient, colors: [color] }},
-        markers: { ...baseChartOptions.markers, colors: [color] },
-        title: { text: 'Evolução Mensal de Gastos', align: 'center', style: { fontSize: '18px', fontWeight: '600', color: corTextoPrincipal } },
-        subtitle: { text: 'Valores Totais por Mês', align: 'center', style: { fontSize: '13px', color: corTextoSecundario } }
-      };
-      const chartElement = document.querySelector("#" + elementId);
-      if (chartElement) {
-        chartElement.innerHTML = ''; // Limpa placeholder
-        const chart = new ApexCharts(chartElement, options);
-        chart.render().catch(error => console.error("Erro ao renderizar gráfico:", error));
-      } else {
-        console.error("Elemento do gráfico não encontrado: #" + elementId);
-      }
-    }
-
-    function atualizarCards() {
-      // Seleciona os elementos dos cards
-      const cardData1Elem = document.getElementById('cardDataHoje1');
-      const cardData2Elem = document.getElementById('cardDataHoje2');
-      const cardData3Elem = document.getElementById('cardDataHoje3');
-      const cardValorPagamentos = document.getElementById('cardValorPagamentos');
-      const cardValorRecebido = document.getElementById('cardValorRecebido');
-      const cardValorSaldo = document.getElementById('cardValorSaldo');
-      // Seleciona os elementos do NOVO card de Abril
-      const cardValorAbril = document.getElementById('cardValorAbril');
-      const cardMesReferenciaAbril = document.getElementById('cardMesReferenciaAbril'); // ID do small text do card de Abril
-
-      // Datas (hardcoded como no original) - Exemplo com datas futuras
-      const dataBase = new Date(); // Usar a data atual como base pode ser mais dinâmico
-      const dataCard1 = new Date(dataBase); // Exemplo: hoje
-      const dataCard2 = new Date(dataBase); // Exemplo: hoje
-      dataCard2.setDate(dataBase.getDate() + 1); // Exemplo: amanhã
-
-      // Encontrar a próxima terça-feira
-      let dataCard3 = new Date(dataBase);
-      let diaSemana = dataCard3.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-      let diasAteTerca = (2 - diaSemana + 7) % 7; // Calcula dias até a próxima terça
-      if (diasAteTerca === 0) diasAteTerca = 7; // Se hoje é terça, pega a próxima
-      dataCard3.setDate(dataCard3.getDate() + diasAteTerca);
-
-
-      // Valores (hardcoded como no original para os 3 primeiros cards)
-      let valorPagamentosHoje = 270256.09;
-      let valorRecebidoHoje = 1306708.69;
-      let valorPrevisaoPagamento = 659151.29;
-
-      // Pega o valor de Abril do array de gastos mensais (índice 3)
-      const valorAbril = totalGastosMensais[3]; // 5570166.05
-
-      // Formatador de data pt-BR
-      const dateFormatter = (date) => date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-      // Atualiza os textos dos cards
-      if (cardData1Elem) { cardData1Elem.textContent = dateFormatter(dataCard1); }
-      if (cardData2Elem) { cardData2Elem.textContent = dateFormatter(dataCard2); }
-      if (cardData3Elem) { cardData3Elem.textContent = dateFormatter(dataCard3); }
-
-      if (cardValorPagamentos) { cardValorPagamentos.textContent = currencyFormatter(valorPagamentosHoje); }
-      if (cardValorRecebido) { cardValorRecebido.textContent = currencyFormatter(valorRecebidoHoje); }
-      if (cardValorSaldo) { cardValorSaldo.textContent = currencyFormatter(valorPrevisaoPagamento); }
-
-      // Atualiza o NOVO card de Abril
-      if (cardValorAbril) { cardValorAbril.textContent = currencyFormatter(valorAbril); }
-      if (cardMesReferenciaAbril) { cardMesReferenciaAbril.textContent = "Mês de Abril"; } // Define o texto do rodapé do card
-
-      console.log("Cards atualizados dinamicamente. Card de Abril incluído.");
-    }
-
-    // --- Execução Inicial ---
-    document.addEventListener('DOMContentLoaded', () => {
-      criarApexAreaChartMensal('mainAreaChart', totalGastosMensais, meses, corPrincipalGrafico);
-      atualizarCards(); // Chama a função que atualiza os cards
-    });
+    // Renderiza o gráfico
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
   </script>
-
 </body>
 </html>
