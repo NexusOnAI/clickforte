@@ -40,12 +40,14 @@
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:#4b5563;border-radius:4px}
     ::-webkit-scrollbar-thumb:hover{background:#9ca3af}
-    html,body{height:100%} body{display:flex;flex-direction:column}
+    html,body{height:100%}
+    body{display:flex;flex-direction:column}
     #table-wrapper,#charts-wrapper{flex-grow:1;overflow-y:auto}
     #sheetTable{width:100%}
     #table-wrapper thead{position:sticky;top:0;z-index:10}
-    /* --- abas activas --- */
     .tab-btn.active-tab{background:#4f46e5;color:#fff !important;box-shadow:0 0 5px rgba(99,102,241,.6)}
+    /* filtros */
+    th select{background:#1e1e24;border:1px solid #4f46e5;border-radius:4px;font-size:11px;padding:2px 4px;outline:none;width:100%}
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 text-gray-100 selection:bg-primary-500/60 min-h-screen flex flex-col antialiased">
@@ -56,7 +58,6 @@
       <h1 class="text-lg sm:text-2xl font-extrabold text-primary-400 tracking-tight select-none">Dashboard • Google Sheets API-Excel</h1>
       <div class="flex items-center gap-4 ml-auto">
         <span id="month-total" class="hidden sm:block text-primary-300 font-semibold text-sm"></span>
-        <!-- Informativo de atualização no topo -->
         <span id="last-update" class="text-gray-400 text-xs sm:text-sm"></span>
         <button id="manual-refresh" class="flex items-center gap-2 px-4 py-2 rounded-md border border-primary-600 bg-primary-600/20 hover:bg-primary-600/30 transition text-primary-300 text-sm font-medium shadow-glow">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0014-7h1M19 5a9 9 0 00-14 7H4"/></svg>
@@ -111,6 +112,7 @@
     let headersCache=[], rowsCache=[];
     let chartOverview=null;
     let initialLoadComplete=false, refreshIntervalId=null, isFetching=false;
+    const activeFilters = {}; // coluna => valor selecionado
 
     /* DOM */
     const $loader       = document.getElementById('loader');
@@ -207,20 +209,75 @@
     function stopAutoRefresh(){ if(refreshIntervalId) clearInterval(refreshIntervalId); refreshIntervalId=null;}
 
     /* ---------- Tabela ---------- */
-    function renderTable(h,r){ $sheetTable.innerHTML=''; $sheetTable.appendChild(genHead(h)); $sheetTable.appendChild(genBody(r,h)); }
-    function genHead(headers){
-      const thead=document.createElement('thead'); thead.className='bg-gray-800/90 backdrop-blur-xs';
-      const tr=document.createElement('tr'); tr.className='divide-x divide-primary-700/40';
-      headers.forEach(h=>{
+    function renderTable(headers,rows){
+      $sheetTable.innerHTML='';
+      $sheetTable.appendChild(genHead(headers,rows));
+      $sheetTable.appendChild(genBody(rows,headers));
+      applyFilters(); // garante consistência após reconstrução
+    }
+
+    function genHead(headers,rows){
+      const thead=document.createElement('thead');
+      thead.className='bg-gray-800/90 backdrop-blur-xs';
+      const tr=document.createElement('tr');
+      tr.className='divide-x divide-primary-700/40';
+
+      headers.forEach((h,i)=>{
         const th=document.createElement('th');
         th.scope='col';
+        th.dataset.col=i;
         th.className='px-6 py-3 text-left text-xs font-semibold text-primary-300 uppercase tracking-wider';
-        th.textContent=h;
+
+        // Label
+        const label=document.createElement('span');
+        label.textContent=h;
+        th.appendChild(label);
+
+        // Select com filtros
+        const select=document.createElement('select');
+        select.dataset.col=i;
+        select.className='mt-1';
+        select.innerHTML='<option value="">Todos</option>';
+        // Preenche opções únicas formatadas
+        const uniques=new Set();
+        rows.forEach(r=>{
+          let cell=r[i];
+          const formatted=formatCellValue(cell,h);
+          uniques.add(formatted);
+        });
+        [...uniques].sort().forEach(v=>{
+          if(v==='–' || v==='') return;
+          const opt=document.createElement('option');
+          opt.value=v;
+          opt.textContent=v;
+          select.appendChild(opt);
+        });
+        select.onchange=e=>{
+          const col=+e.target.dataset.col;
+          const val=e.target.value;
+          if(val) activeFilters[col]=val; else delete activeFilters[col];
+          applyFilters();
+        };
+        th.appendChild(select);
         tr.appendChild(th);
       });
       thead.appendChild(tr);
       return thead;
     }
+
+    function formatCellValue(cell,header){
+      const headerLabel=header.trim().toLowerCase();
+      if(headerLabel==='nf') return cell ?? '–';
+      const d=tryParseDate(cell);
+      if(d) return formatDateBR(d);
+      if(typeof cell==='number') return cell.toLocaleString('pt-BR',CURRENCY_FORMAT);
+      if(typeof cell==='string' && cell.match(/^[\d\.\,]+$/)){
+        const num=parseFloat(cell.replace(/\./g,'').replace(',','.'));
+        if(!isNaN(num)) return num.toLocaleString('pt-BR',CURRENCY_FORMAT);
+      }
+      return cell ?? '–';
+    }
+
     function genBody(rows, headers){
       const tbody=document.createElement('tbody');
       tbody.className='divide-y divide-gray-700/60';
@@ -230,24 +287,7 @@
         row.forEach((cell,colIndex)=>{
           const td=document.createElement('td');
           td.className='px-6 py-3 whitespace-nowrap';
-          let content=cell??'–';
-          const headerLabel=headers[colIndex].trim().toLowerCase();
-          if(headerLabel==='nf'){
-            td.textContent=content;
-          }else{
-            const d=tryParseDate(cell);
-            if(d){
-              content=formatDateBR(d);
-            }else{
-              if(typeof cell==='number'){
-                content=cell.toLocaleString('pt-BR',CURRENCY_FORMAT);
-              }else if(typeof cell==='string' && cell.match(/^[\d\.\,]+$/)){
-                const num=parseFloat(cell.replace(/\./g,'').replace(',','.'));
-                if(!isNaN(num)) content=num.toLocaleString('pt-BR',CURRENCY_FORMAT);
-              }
-            }
-            td.textContent=content;
-          }
+          td.textContent=formatCellValue(cell,headers[colIndex]);
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -255,14 +295,25 @@
       return tbody;
     }
 
+    function applyFilters(){
+      const tbody=$sheetTable.querySelector('tbody');
+      if(!tbody) return;
+      Array.from(tbody.rows).forEach(tr=>{
+        let visible=true;
+        for(const [idx,val] of Object.entries(activeFilters)){
+          const cellText=tr.cells[idx].textContent.trim();
+          if(val && cellText!==val){ visible=false; break; }
+        }
+        tr.style.display=visible?'':'none';
+      });
+    }
+
     /* ---------- GRÁFICO ---------- */
     function getTotalsByVenc(headers,rows){
-      /* identifica col. de data_vencimento ---------------------------- */
-      let dateIdx = headers.findIndex(h=>/venc/i.test(h));      // ← aqui
+      let dateIdx = headers.findIndex(h=>/venc/i.test(h));
       if(dateIdx===-1) dateIdx = headers.findIndex(h=>/date/i.test(h));
       if(dateIdx===-1) dateIdx = 0;
 
-      /* colunas numéricas (exceto NF) -------------------------------- */
       const numericIdx = headers.map((h,i)=>({h,i})).filter(c=>
         c.i!==dateIdx && c.h.trim().toLowerCase()!=='nf'
       ).map(c=>c.i);
