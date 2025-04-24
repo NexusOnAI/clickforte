@@ -2,10 +2,10 @@
 <html lang="pt-BR" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard • Google Sheets (ApexCharts Realtime)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard • Google Sheets (Área Distribuída)</title>
 
-  <!-- Fonts & Tailwind -->
+  <!-- Tailwind + Inter -->
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -16,15 +16,12 @@
         fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
         extend: {
           colors: {
-            surface: '#1e1e24',
-            primary: {
-              50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',
-              400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',
-              800:'#3730a3',900:'#312e81'
-            }
+            surface:  '#212529',
+            primary:  { 500:'#4dabf7' },
+            slate:    { 300:'#cbd5e1',600:'#475569' }
           },
-          backdropBlur:{ xs:'2px' },
-          boxShadow:{ glow:'0 0 8px rgba(99,102,241,.4)' }
+          boxShadow:{ glow:'0 0 8px rgba(77,171,247,.35)' },
+          backdropBlur:{ xs:'2px' }
         }
       }
     };
@@ -36,35 +33,25 @@
   <style>
     @keyframes spin{to{transform:rotate(360deg)}}
     .animate-spin{animation:spin 1s linear infinite}
-    ::-webkit-scrollbar{width:8px;height:8px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:#4b5563;border-radius:4px}
-    ::-webkit-scrollbar-thumb:hover{background:#9ca3af}
-    html,body{height:100%}
-    body{display:flex;flex-direction:column}
+    body{background:#1a1d21}
     #table-wrapper,#charts-wrapper{flex-grow:1;overflow-y:auto}
     #sheetTable{width:100%}
-    #table-wrapper thead{position:sticky;top:0;z-index:10}
-    .tab-btn.active-tab{background:#4f46e5;color:#fff !important;box-shadow:0 0 5px rgba(99,102,241,.6)}
-    /* filtros */
-    th select{background:#1e1e24;border:1px solid #4f46e5;border-radius:4px;font-size:11px;padding:2px 4px;outline:none;width:100%}
-    /* layout charts mobile */
-    @media (max-width: 640px){
-      .chart-card{padding:1rem}
-    }
+    ::-webkit-scrollbar{width:8px;height:8px}
+    ::-webkit-scrollbar-thumb{background:#4b5563;border-radius:4px}
+    th select{background:#212529;border:1px solid #4dabf7;border-radius:4px;font-size:11px;padding:2px 4px;width:100%}
+    .tab-btn.active-tab{background:#4dabf7;color:#fff !important;box-shadow:0 0 5px rgba(77,171,247,.55)}
   </style>
 </head>
-<body class="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 text-gray-100 selection:bg-primary-500/60 min-h-screen flex flex-col antialiased">
+<body class="text-slate-300 min-h-screen flex flex-col antialiased">
 
   <!-- Cabeçalho -->
-  <header class="w-full backdrop-blur-sm bg-surface/60 border-b border-primary-700/40 sticky top-0 z-40">
+  <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
-      <h1 class="text-lg sm:text-2xl font-extrabold text-primary-400 tracking-tight select-none">Dashboard • Google Sheets API-Excel</h1>
+      <h1 class="text-lg sm:text-2xl font-extrabold text-primary-500">Dashboard • Google Sheets</h1>
       <div class="flex items-center gap-4 ml-auto">
-        <span id="month-total" class="hidden sm:block text-primary-300 font-semibold text-sm"></span>
-        <span id="last-update" class="text-gray-400 text-xs sm:text-sm"></span>
-        <button id="manual-refresh" class="flex items-center gap-2 px-4 py-2 rounded-md border border-primary-600 bg-primary-600/20 hover:bg-primary-600/30 transition text-primary-300 text-sm font-medium shadow-glow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0014-7h1M19 5a9 9 0 00-14 7H4"/></svg>
+        <span id="month-total" class="hidden sm:block text-primary-500 font-semibold text-sm"></span>
+        <span id="last-update" class="text-slate-400 text-xs sm:text-sm"></span>
+        <button id="manual-refresh" class="px-4 py-2 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20 text-primary-300 text-sm font-medium shadow-glow">
           Atualizar
         </button>
       </div>
@@ -72,434 +59,286 @@
   </header>
 
   <!-- Loader -->
-  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md transition-opacity">
+  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md">
     <div class="h-12 w-12 border-[6px] border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-    <p class="text-primary-300 text-lg font-medium">Carregando dados...</p>
+    <p class="text-primary-300 text-lg font-medium">Carregando…</p>
   </div>
 
-  <!-- Conteúdo -->
+  <!-- Tabs -->
   <main class="w-full max-w-screen-2xl mx-auto px-4 sm:px-8 py-6 flex flex-col gap-6">
-
-    <!-- Abas -->
     <div class="flex justify-center space-x-4">
-      <button id="tab-table"  class="tab-btn relative px-5 py-2 rounded-lg font-medium overflow-hidden text-gray-300 before:absolute before:inset-0 before:bg-primary-600 before:scale-x-0 before:origin-left before:transition-transform hover:before:scale-x-100 before:rounded-lg"><span class="relative z-10">Tabela</span></button>
-      <button id="tab-charts" class="tab-btn relative px-5 py-2 rounded-lg font-medium overflow-hidden text-gray-300 before:absolute before:inset-0 before:bg-primary-600 before:scale-x-0 before:origin-left before:transition-transform hover:before:scale-x-100 before:rounded-lg"><span class="relative z-10">Gráficos</span></button>
+      <button id="tab-table"  class="tab-btn px-5 py-2 rounded-lg font-medium text-slate-300">Tabela</button>
+      <button id="tab-charts" class="tab-btn px-5 py-2 rounded-lg font-medium text-slate-300">Gráficos</button>
     </div>
 
-    <div id="error-message" class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg shadow"></div>
+    <div id="error-message" class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg"></div>
 
     <!-- Tabela -->
-    <section id="table-wrapper" class="hidden w-full overflow-x-auto backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20">
-      <table id="sheetTable" class="min-w-full text-[13px] divide-y divide-gray-700/50"></table>
+    <section id="table-wrapper" class="hidden w-full overflow-x-auto backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-500/20">
+      <table id="sheetTable" class="min-w-full text-[13px] divide-y divide-slate-600/60"></table>
     </section>
 
     <!-- Gráficos -->
-    <section id="charts-wrapper" class="hidden w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-      <div class="chart-card backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20 p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary-300 tracking-wide">Valor Total por <code>data_vencimento</code></h2>
+    <section id="charts-wrapper" class="hidden w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por data_vencimento</h2>
         <div id="chart-overview"></div>
       </div>
-      <div class="chart-card backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20 p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary-300 tracking-wide">Valor Total por <code>data_pagamento</code></h2>
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por data_pagamento</h2>
         <div id="chart-payment"></div>
       </div>
-      <div class="chart-card backdrop-blur-xs bg-surface/70 rounded-2xl shadow-lg ring-1 ring-primary-600/20 p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary-300 tracking-wide">Total por Mês (<code>data_vencimento</code>)</h2>
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Total por Mês (venc.)</h2>
         <div id="chart-monthly"></div>
+      </div>
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-6">
+        <h2 class="text-lg font-semibold mb-4 text-primary-500">Previsão Próximo Dia</h2>
+        <div id="chart-forecast"></div>
       </div>
     </section>
   </main>
 
-  <!-- ------------------------------------------------ JS ------------------------------------------------- -->
+  <!-- ---------------- JS ---------------- -->
   <script>
-    /* CONFIG */
-    const sheetId  = '1gJLltq6O86QIPSj4Id-lIsxG45o7bq2QBW4WGhoXWoo';
+    /* CONFIG ---------------------------------------------------- */
+    const sheetId  = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq'; // ID novo
     const gid      = '0';
     const baseURL  = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL_MS = 2000;
-    const CURRENCY_FORMAT = { style:'currency', currency:'BRL', maximumFractionDigits:2 };
-    const COLORS = ["#818cf8", "#4ade80", "#fb7185"];
+    const REFRESH  = 2000;
+    const CURRENCY = {style:'currency',currency:'BRL',maximumFractionDigits:2};
+    const COLORS   = ['#4dabf7','#4ade80','#fb7185','#facc15'];
 
-    /* Estado global */
-    let headersCache=[], rowsCache=[];
-    let chartOverview=null, chartPayment=null, chartMonthly=null;
-    let initialLoadComplete=false, refreshIntervalId=null, isFetching=false;
-    const activeFilters = {}; // coluna => valor selecionado
+    /* Estado */
+    let headersFull=[], rows=[];
+    let headersDisp=[]; // até "Observação"
+    let chartOverview, chartPayment, chartMonthly, chartForecast;
+    let loaded=false, timer=null, fetching=false;
+    const filters={};
 
-    /* DOM */
-    const $loader       = document.getElementById('loader');
-    const $errorMessage = document.getElementById('error-message');
-    const $tableTab     = document.getElementById('tab-table');
-    const $chartTab     = document.getElementById('tab-charts');
-    const $tableWrap    = document.getElementById('table-wrapper');
-    const $chartWrap    = document.getElementById('charts-wrapper');
-    const $sheetTable   = document.getElementById('sheetTable');
-    const $lastUpdate   = document.getElementById('last-update');
-    const $manualRefresh= document.getElementById('manual-refresh');
-    const $monthTotal   = document.getElementById('month-total');
+    /* DOM refs */
+    const $loader=document.getElementById('loader');
+    const $error=document.getElementById('error-message');
+    const $tableTab=document.getElementById('tab-table');
+    const $chartTab=document.getElementById('tab-charts');
+    const $tableWrap=document.getElementById('table-wrapper');
+    const $chartWrap=document.getElementById('charts-wrapper');
+    const $sheetTable=document.getElementById('sheetTable');
+    const $last=document.getElementById('last-update');
+    const $month=document.getElementById('month-total');
+    document.getElementById('manual-refresh').onclick=loadData;
+    $tableTab.onclick=()=>switchTab('table');
+    $chartTab.onclick=()=>switchTab('charts');
 
-    /* Tabs */
-    $tableTab.onclick = () => activateTab('table');
-    $chartTab.onclick = () => activateTab('charts');
-    function activateTab(tab){
-      [$tableTab,$chartTab].forEach(b=>b.classList.remove('text-white','text-gray-300','active-tab'));
-      if(tab==='table'){
-        $tableWrap.classList.remove('hidden');
-        $chartWrap.classList.add('hidden');
-        $tableTab.classList.add('text-white','active-tab');
-        $chartTab.classList.add('text-gray-300');
-      }else{
-        $chartWrap.classList.remove('hidden');
-        $tableWrap.classList.add('hidden');
-        $chartTab.classList.add('text-white','active-tab');
-        $tableTab.classList.add('text-gray-300');
-        setTimeout(()=>{ [chartOverview,chartPayment,chartMonthly].forEach(c=>c?.updateOptions({},false,false)); },50);
-      }
+    function switchTab(t){
+      [$tableTab,$chartTab].forEach(b=>b.classList.remove('active-tab'));
+      if(t==='table'){ $tableWrap.classList.remove('hidden'); $chartWrap.classList.add('hidden'); $tableTab.classList.add('active-tab'); }
+      else            { $chartWrap.classList.remove('hidden'); $tableWrap.classList.add('hidden'); $chartTab.classList.add('active-tab');
+        setTimeout(()=>[chartOverview,chartPayment,chartMonthly,chartForecast].forEach(c=>c?.updateOptions({},false,false)),50);}
     }
-    $manualRefresh.onclick = refreshData;
 
-    /* Auxiliares */
-    async function fetchSheetData(){
-      const resp = await fetch(`${baseURL}&_=${Date.now()}`);
-      if(!resp.ok) throw new Error(`Erro na requisição HTTP: ${resp.status}`);
-      const txt = await resp.text();
-      return JSON.parse(txt.substring(47,txt.length-2));
+    /* Utils ----------------------------------------------------- */
+    async function fetchSheet(){
+      const r=await fetch(`${baseURL}&_=${Date.now()}`); if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      const txt=await r.text(); return JSON.parse(txt.substring(47,txt.length-2));
     }
-    const pad2 = n=>n.toString().padStart(2,'0');
-    const formatDateBR = d=>`${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
-    const formatMonthBR = d=>`${d.toLocaleDateString('pt-BR',{month:'short'})}/${d.getFullYear()}`;
-    function tryParseDate(value){
-      if(value instanceof Date) return value;
-      if(typeof value!=='string' || !value.trim()) return null;
-      let m=value.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})\)$/);
-      if(m) return new Date(+m[1],+m[2],+m[3]);
-      m=value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if(m) return new Date(+m[1],+m[2]-1,+m[3]);
-      m=value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-      if(m){ let y=+m[3]; if(y<100) y+=2000; return new Date(y,+m[2]-1,+m[1]); }
+    const pad=n=>n.toString().padStart(2,'0');
+    const fBR=d=>`${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+    const fMon=d=>`${d.toLocaleDateString('pt-BR',{month:'short'})}/${d.getFullYear()}`;
+    function tryDate(v){
+      if(v instanceof Date)return v;
+      if(!v||typeof v!=='string')return null;
+      let m=v.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})\)$/); if(m)return new Date(+m[1],+m[2],+m[3]);
+      m=v.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+      m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/); if(m){let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1]);}
       return null;
     }
+    const money=v=>v.toLocaleString('pt-BR',CURRENCY);
+    const comp=v=>v.toLocaleString('pt-BR',{notation:'compact',maximumFractionDigits:1});
+    const tooltip=v=>typeof v==='number'?money(v):'N/A';
 
-    /* Refresh principal */
-    async function refreshData(){
-      if(isFetching) return;
-      isFetching=true;
-      if(!initialLoadComplete) $loader.classList.remove('hidden');
-      $errorMessage.classList.add('hidden');
+    /* Carregar -------------------------------------------------- */
+    async function loadData(){
+      if(fetching) return; fetching=true; $error.classList.add('hidden');
+      if(!loaded) $loader.classList.remove('hidden');
       try{
-        const json = await fetchSheetData();
-        if(!json?.table) throw new Error('Estrutura de dados inválida recebida da API.');
-        const headers = json.table.cols.map(c=>c.label || `Col${c.id}`);
-        const rows    = json.table.rows.map(r=>r.c.map(cell=>cell?.v ?? null));
-        const changed = JSON.stringify(rows) !== JSON.stringify(rowsCache);
-        headersCache=headers; rowsCache=rows;
-
-        if(!initialLoadComplete){
-          renderTable(headers,rows);
-          buildCharts(headers,rows);
-          initialLoadComplete=true;
-          $loader.classList.add('hidden');
-          activateTab('table');
-        }else if(changed){
-          renderTable(headers,rows);
-          updateCharts(headers,rows);
-        }
-        updateMonthlyTotal(headers,rows);
-        $lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-BR')}`;
-
-      }catch(err){
-        console.error("Erro ao buscar ou processar dados:", err);
-        $errorMessage.textContent = `Erro ao carregar dados: ${err.message}`;
-        $errorMessage.classList.remove('hidden');
-        $loader.classList.add('hidden');
-        stopAutoRefresh();
-        $lastUpdate.textContent = `Falha na atualização: ${new Date().toLocaleTimeString('pt-BR')}`;
-      }finally{
-        isFetching=false;
-      }
+        const js=await fetchSheet();
+        headersFull=js.table.cols.map(c=>c.label||`Col${c.id}`);
+        const obsIdx=headersFull.findIndex(h=>h.toLowerCase()==='observação');
+        headersDisp=obsIdx===-1?headersFull:headersFull.slice(0,obsIdx+1);
+        rows=js.table.rows.map(r=>r.c.map(c=>c?.v??null));
+        if(!loaded){ build(); loaded=true; switchTab('table'); } else { update(); }
+        monthTotal(); $last.textContent=`Atualizado: ${new Date().toLocaleTimeString('pt-BR')}`;
+      }catch(e){ console.error(e); $error.textContent=`Erro: ${e.message}`; $error.classList.remove('hidden'); }
+      finally{fetching=false; $loader.classList.add('hidden');}
     }
-    function startAutoRefresh(){ stopAutoRefresh(); if(REFRESH_INTERVAL_MS>0) refreshIntervalId=setInterval(refreshData,REFRESH_INTERVAL_MS);}    
-    function stopAutoRefresh(){ if(refreshIntervalId) clearInterval(refreshIntervalId); refreshIntervalId=null;}
+    timer=setInterval(loadData,REFRESH);
 
-    /* ---------- Tabela ---------- */
-    function renderTable(headers,rows){
+    /* Tabela ---------------------------------------------------- */
+    function buildTable(){
       $sheetTable.innerHTML='';
-      $sheetTable.appendChild(genHead(headers,rows));
-      $sheetTable.appendChild(genBody(rows,headers));
-      applyFilters(); // garante consistência após reconstrução
+      $sheetTable.appendChild(head()); $sheetTable.appendChild(body());
     }
-
-    function genHead(headers,rows){
-      const thead=document.createElement('thead');
-      thead.className='bg-gray-800/90 backdrop-blur-xs';
-      const tr=document.createElement('tr');
-      tr.className='divide-x divide-primary-700/40';
-
-      headers.forEach((h,i)=>{
-        const th=document.createElement('th');
-        th.scope='col';
-        th.dataset.col=i;
-        th.className='px-6 py-3 text-left text-xs font-semibold text-primary-300 uppercase tracking-wider';
-
-        // Label
-        const label=document.createElement('span');
-        label.textContent=h;
-        th.appendChild(label);
-
-        // Select com filtros
-        const select=document.createElement('select');
-        select.dataset.col=i;
-        select.className='mt-1';
-        select.innerHTML='<option value="">Todos</option>';
-        // Preenche opções únicas formatadas
-        const uniques=new Set();
-        rows.forEach(r=>{
-          let cell=r[i];
-          const formatted=formatCellValue(cell,h);
-          uniques.add(formatted);
+    function head(){
+      const thead=document.createElement('thead'); thead.className='bg-surface/90';
+      const tr=document.createElement('tr'); tr.className='divide-x divide-primary-500/30';
+      headersDisp.forEach((h,i)=>{
+        const th=document.createElement('th'); th.className='px-6 py-3 text-left text-xs font-semibold text-primary-500 uppercase';
+        th.appendChild(document.createTextNode(h));
+        const sel=document.createElement('select'); sel.dataset.col=i; sel.className='mt-1';
+        sel.innerHTML='<option value="">Todos</option>';
+        [...new Set(rows.map(r=>format(r[i],h)))].sort().forEach(v=>{
+          if(v==='–'||v==='')return;const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);
         });
-        [...uniques].sort().forEach(v=>{
-          if(v==='–' || v==='') return;
-          const opt=document.createElement('option');
-          opt.value=v;
-          opt.textContent=v;
-          select.appendChild(opt);
-        });
-        select.onchange=e=>{
-          const col=+e.target.dataset.col;
-          const val=e.target.value;
-          if(val) activeFilters[col]=val; else delete activeFilters[col];
-          applyFilters();
-        };
-        th.appendChild(select);
-        tr.appendChild(th);
+        sel.onchange=e=>{const c=+e.target.dataset.col,val=e.target.value;val?filters[c]=val:delete filters[c];applyFilters();};
+        th.appendChild(sel);tr.appendChild(th);
       });
-      thead.appendChild(tr);
-      return thead;
+      thead.appendChild(tr);return thead;
     }
-
-    function formatCellValue(cell,header){
-      const headerLabel=header.trim().toLowerCase();
-      if(headerLabel==='nf') return cell ?? '–';
-      const d=tryParseDate(cell);
-      if(d) return formatDateBR(d);
-      if(typeof cell==='number') return cell.toLocaleString('pt-BR',CURRENCY_FORMAT);
-      if(typeof cell==='string' && cell.match(/^[\d\.\,]+$/)){
-        const num=parseFloat(cell.replace(/\./g,'').replace(',','.'));
-        if(!isNaN(num)) return num.toLocaleString('pt-BR',CURRENCY_FORMAT);
-      }
-      return cell ?? '–';
-    }
-
-    function genBody(rows, headers){
-      const tbody=document.createElement('tbody');
-      tbody.className='divide-y divide-gray-700/60';
-      rows.forEach((row,rowIndex)=>{
-        const tr=document.createElement('tr');
-        tr.className=`${rowIndex%2===0?'bg-surface/50':'bg-surface/70'} hover:bg-primary-600/10 transition`;
-        row.forEach((cell,colIndex)=>{
-          const td=document.createElement('td');
-          td.className='px-6 py-3 whitespace-nowrap';
-          td.textContent=formatCellValue(cell,headers[colIndex]);
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
+    function body(){
+      const tb=document.createElement('tbody'); tb.className='divide-y divide-slate-600/60';
+      rows.forEach((row,idx)=>{
+        const tr=document.createElement('tr'); tr.className=`${idx%2?'bg-surface/70':'bg-surface/60'} hover:bg-primary-500/5`;
+        headersDisp.forEach((h,i)=>{const td=document.createElement('td');td.className='px-6 py-3';td.textContent=format(row[i],h);tr.appendChild(td);});
+        tb.appendChild(tr);
       });
-      return tbody;
+      return tb;
     }
-
+    function format(c,h){
+      h=h.toLowerCase();
+      if(h==='nf')return c??'–';
+      const d=tryDate(c);if(d)return fBR(d);
+      if(typeof c==='number')return money(c);
+      if(typeof c==='string'&&c.match(/^[\d\.,]+$/)){const n=parseFloat(c.replace(/\./g,'').replace(',','.'));if(!isNaN(n))return money(n);}
+      return c??'–';
+    }
     function applyFilters(){
-      const tbody=$sheetTable.querySelector('tbody');
-      if(!tbody) return;
-      Array.from(tbody.rows).forEach(tr=>{
-        let visible=true;
-        for(const [idx,val] of Object.entries(activeFilters)){
-          const cellText=tr.cells[idx].textContent.trim();
-          if(val && cellText!==val){ visible=false; break; }
-        }
-        tr.style.display=visible?'':'none';
+      const tb=$sheetTable.querySelector('tbody');
+      Array.from(tb.rows).forEach(tr=>{
+        let show=true;for(const[i,v]of Object.entries(filters)){if(v&&tr.cells[i].textContent.trim()!==v){show=false;break;}}
+        tr.style.display=show?'':'none';
       });
     }
 
-    /* ---------- GERAÇÃO DE DADOS PARA GRÁFICOS ---------- */
-    function getTotalsByDate(headers,rows,regex){
-      let dateIdx = headers.findIndex(h=>regex.test(h));
-      if(dateIdx===-1) return {labels:[],totals:[]};
-
-      const numericIdx = headers.map((h,i)=>({h,i})).filter(c=>
-        c.i!==dateIdx && c.h.trim().toLowerCase()!=='nf'
-      ).map(c=>c.i);
-
-      const map = new Map();
+    /* Dados p/ gráficos ---------------------------------------- */
+    function byDate(regex){
+      const dIdx=headersFull.findIndex(h=>regex.test(h)); if(dIdx===-1)return{lab:[],tot:[]};
+      const nIdx=headersFull.map((h,i)=>i).filter(i=>i!==dIdx && headersFull[i].toLowerCase()!=='nf');
+      const m=new Map();
       rows.forEach(r=>{
-        const d = tryParseDate(r[dateIdx]);
-        if(!d) return;
-        const key = d.toISOString().split('T')[0];
-        let sum  = map.get(key) || 0;
-        numericIdx.forEach(i=>{
-          let v=r[i];
-          if(v==null) return;
-          if(typeof v==='number'){ sum+=v; }
-          else if(typeof v==='string'){
-            const n=parseFloat(v.replace(/\./g,'').replace(',','.'));
-            if(!isNaN(n)) sum+=n;
-          }
-        });
-        map.set(key,sum);
+        const d=tryDate(r[dIdx]);if(!d)return;
+        const key=d.toISOString().split('T')[0];
+        let s=m.get(key)||0;
+        nIdx.forEach(i=>{let v=r[i];if(v==null)return;v=typeof v==='number'?v:parseFloat(String(v).replace(/\./g,'').replace(',','.'));if(!isNaN(v))s+=v;});
+        m.set(key,s);
       });
-
-      const ordered=[...map.entries()].sort((a,b)=>new Date(a[0])-new Date(b[0]));
-      return {
-        labels : ordered.map(([k])=>formatDateBR(new Date(k))),
-        totals : ordered.map(([_,v])=>v)
-      };
+      const ord=[...m.entries()].sort((a,b)=>new Date(a[0])-new Date(b[0]));
+      return {lab:ord.map(([k])=>fBR(new Date(k))),tot:ord.map(([_,v])=>v)};
     }
-
-    function getMonthlyTotals(headers,rows,regex){
-      let dateIdx = headers.findIndex(h=>regex.test(h));
-      if(dateIdx===-1) return {labels:[],totals:[]};
-      const numericIdx = headers.map((h,i)=>({h,i})).filter(c=>
-        c.i!==dateIdx && c.h.trim().toLowerCase()!=='nf'
-      ).map(c=>c.i);
-      const map = new Map();
+    function byMonth(regex){
+      const dIdx=headersFull.findIndex(h=>regex.test(h));
+      const nIdx=headersFull.map((h,i)=>i).filter(i=>i!==dIdx && headersFull[i].toLowerCase()!=='nf');
+      const m=new Map();
       rows.forEach(r=>{
-        const d = tryParseDate(r[dateIdx]);
-        if(!d) return;
-        const key = `${d.getFullYear()}-${d.getMonth()}`; // ano-mes como chave
-        let sum  = map.get(key) || 0;
-        numericIdx.forEach(i=>{
-          let v=r[i];
-          if(v==null) return;
-          if(typeof v==='number'){ sum+=v; }
-          else if(typeof v==='string'){
-            const n=parseFloat(v.replace(/\./g,'').replace(',','.'));
-            if(!isNaN(n)) sum+=n;
-          }
-        });
-        map.set(key,sum);
+        const d=tryDate(r[dIdx]);if(!d)return;
+        const key=`${d.getFullYear()}-${d.getMonth()}`;
+        let s=m.get(key)||0;
+        nIdx.forEach(i=>{let v=r[i];if(v==null)return;v=typeof v==='number'?v:parseFloat(String(v).replace(/\./g,'').replace(',','.'));if(!isNaN(v))s+=v;});
+        m.set(key,s);
       });
-      const ordered=[...map.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
-      return {
-        labels: ordered.map(([k])=>{
-          const [y,m]=k.split('-');
-          return formatMonthBR(new Date(+y,+m,1));
-        }),
-        totals: ordered.map(([_,v])=>v)
-      };
+      const ord=[...m.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+      return {lab:ord.map(([k])=>{const[y,m]=k.split('-');return fMon(new Date(+y,+m,1));}),tot:ord.map(([_,v])=>v)};
+    }
+    function forecastData(){
+      const {lab,tot}=byDate(/venc/i); if(!lab.length)return{lab:[],r:[],p:[]};
+      const last=lab[lab.length-1].split('/'); const d=new Date(+last[2],+last[1]-1,+last[0]);
+      const next=new Date(d); next.setDate(d.getDate()+1); const nextLab=fBR(next);
+      const base=tot.slice(-3); const pred=base.reduce((a,b)=>a+b,0)/base.length||0;
+      return {lab:lab.concat(nextLab), r:tot.concat(null), p:new Array(tot.length).fill(null).concat(pred)};
     }
 
-    const tooltipFmt=v=>typeof v==='number'?v.toLocaleString('pt-BR',CURRENCY_FORMAT):'N/A';
-    const commonOpts={
-      chart:{toolbar:{show:true,tools:{download:true}},zoom:{enabled:false},foreColor:'#cbd5e1'},
-      tooltip:{theme:'dark',y:{formatter:tooltipFmt}},
-      dataLabels:{enabled:false},
-      grid:{borderColor:'#475569',strokeDashArray:4},
-      legend:{show:false}
-    };
+    /* Apex base */
+    const baseOpts={chart:{foreColor:'#cbd5e1',toolbar:{show:true,tools:{download:true}},zoom:{enabled:false}},
+      tooltip:{theme:'dark',y:{formatter:tooltip}},dataLabels:{enabled:false},
+      grid:{borderColor:'#475569',strokeDashArray:4},legend:{show:false}};
 
-    /* ---------- CONSTRUÇÃO E ATUALIZAÇÃO DOS GRÁFICOS ---------- */
-    function buildCharts(headers,rows){
-      buildOverviewChart(headers,rows);
-      buildPaymentChart(headers,rows);
-      buildMonthlyChart(headers,rows);
-    }
-    function updateCharts(headers,rows){
-      updateOverviewChart(headers,rows);
-      updatePaymentChart(headers,rows);
-      updateMonthlyChart(headers,rows);
-    }
+    /* Gráficos -------------------------------------------------- */
+    function buildCharts(){ overview(); payment(); monthly(); forecastChart(); }
+    function updateCharts(){ overview(true); payment(true); monthly(true); forecastChart(true); }
 
-    /* Overview */
-    function buildOverviewChart(headers,rows){
-      const {labels,totals}=getTotalsByDate(headers,rows,/venc/i);
+    function overview(up=false){
+      const {lab,tot}=byDate(/venc/i);
+      if(up){ chartOverview.updateOptions({xaxis:{categories:lab},series:[{data:tot}]}); return;}
       chartOverview?.destroy();
-      chartOverview=new ApexCharts(document.getElementById('chart-overview'),{
-        ...commonOpts,
-        chart:{...commonOpts.chart,type:'area',height:300},
-        series:[{name:'Total do Dia',data:totals}],
+      chartOverview=new ApexCharts(document.querySelector('#chart-overview'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'area',height:280},
+        series:[{name:'Total',data:tot}],
         colors:[COLORS[0]],
-        xaxis:{categories:labels,tooltip:{enabled:false}},
-        yaxis:{labels:{formatter:v=>typeof v==='number'?v.toLocaleString('pt-BR',{notation:'compact',maximumFractionDigits:1}):''}},
+        xaxis:{categories:lab},
+        yaxis:{labels:{formatter:comp}},
         stroke:{curve:'smooth',width:2},
-        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.5,opacityTo:0.1,stops:[0,90,100]}},
-        markers:{size:0,hover:{size:5}}
-      });
-      chartOverview.render();
+        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:.5,opacityTo:.1,stops:[0,90,100]}}
+      }); chartOverview.render();
     }
-    function updateOverviewChart(headers,rows){
-      const {labels,totals}=getTotalsByDate(headers,rows,/venc/i);
-      chartOverview?.updateOptions({xaxis:{categories:labels},series:[{data:totals}]});
-    }
-
-    /* Pagamento */
-    function buildPaymentChart(headers,rows){
-      const {labels,totals}=getTotalsByDate(headers,rows,/pag/i);
+    function payment(up=false){
+      const {lab,tot}=byDate(/pag/i);
+      if(up){ chartPayment.updateOptions({xaxis:{categories:lab},series:[{data:tot}]}); return;}
       chartPayment?.destroy();
-      chartPayment=new ApexCharts(document.getElementById('chart-payment'),{
-        ...commonOpts,
-        chart:{...commonOpts.chart,type:'bar',height:300},
-        series:[{name:'Total do Dia',data:totals}],
+      chartPayment=new ApexCharts(document.querySelector('#chart-payment'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'area',height:280},
+        series:[{name:'Total',data:tot}],
         colors:[COLORS[1]],
-        xaxis:{categories:labels,labels:{rotate:-45}},
-        yaxis:{labels:{formatter:v=>typeof v==='number'?v.toLocaleString('pt-BR',{notation:'compact',maximumFractionDigits:1}):''}},
-        plotOptions:{bar:{columnWidth:'60%',borderRadius:4}}
-      });
-      chartPayment.render();
+        xaxis:{categories:lab},
+        yaxis:{labels:{formatter:comp}},
+        stroke:{curve:'smooth',width:2},
+        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:.5,opacityTo:.1,stops:[0,90,100]}}
+      }); chartPayment.render();
     }
-    function updatePaymentChart(headers,rows){
-      const {labels,totals}=getTotalsByDate(headers,rows,/pag/i);
-      chartPayment?.updateOptions({xaxis:{categories:labels},series:[{data:totals}]});
-    }
-
-    /* Monthly */
-    function buildMonthlyChart(headers,rows){
-      const {labels,totals}=getMonthlyTotals(headers,rows,/venc/i);
+    function monthly(up=false){
+      const {lab,tot}=byMonth(/venc/i);
+      if(up){ chartMonthly.updateOptions({labels:lab,series:tot}); return;}
       chartMonthly?.destroy();
-      chartMonthly=new ApexCharts(document.getElementById('chart-monthly'),{
-        ...commonOpts,
-        chart:{...commonOpts.chart,type:'donut',height:300},
-        series:totals,
-        labels:labels,
-        colors:COLORS,
-        tooltip:{theme:'dark',y:{formatter:tooltipFmt}},
-        legend:{show:true,position:'bottom',fontSize:'12px'}
-      });
-      chartMonthly.render();
+      chartMonthly=new ApexCharts(document.querySelector('#chart-monthly'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'donut',height:280},
+        series:tot,labels:lab,colors:COLORS,legend:{show:true,position:'bottom',fontSize:'12px'}
+      }); chartMonthly.render();
     }
-    function updateMonthlyChart(headers,rows){
-      const {labels,totals}=getMonthlyTotals(headers,rows,/venc/i);
-      chartMonthly?.updateOptions({labels:labels,series:totals});
+    function forecastChart(up=false){
+      const {lab,r,p}=forecastData();
+      if(up){ chartForecast.updateOptions({xaxis:{categories:lab},series:[{data:r},{data:p}]}); return;}
+      chartForecast?.destroy();
+      chartForecast=new ApexCharts(document.querySelector('#chart-forecast'),{
+        ...baseOpts,
+        chart:{...baseOpts.chart,type:'line',height:280},
+        series:[{name:'Real',data:r},{name:'Previsto',data:p}],
+        stroke:{width:2,dashArray:[0,8]},
+        colors:[COLORS[0],COLORS[2]],
+        markers:{size:4},
+        legend:{show:true,position:'top',fontSize:'12px'}
+      }); chartForecast.render();
     }
 
-    /* Total do mês (usando data de vencimento) */
-    function updateMonthlyTotal(headers,rows){
-      let valueColIdx=headers.findIndex(h=>/valor/i.test(h));
-      if(valueColIdx===-1){
-        for(let i=1;i<headers.length;i++){
-          if(rows.some(r=>typeof r[i]==='number')){valueColIdx=i;break;}
-        }
-      }
-      let dateColIdx=headers.findIndex(h=>/venc/i.test(h));
-      if(dateColIdx===-1) dateColIdx=headers.findIndex(h=>/date/i.test(h));
-      if(dateColIdx===-1) dateColIdx=0;
-      if(valueColIdx===-1){ $monthTotal.textContent=''; return; }
-
-      const now=new Date(), m=now.getMonth(), y=now.getFullYear();
+    /* Total mês ------------------------------------------------- */
+    function monthTotal(){
+      const vIdx=headersFull.findIndex(h=>/valor/i.test(h));
+      const dIdx=headersFull.findIndex(h=>/venc/i.test(h));
+      if(vIdx===-1||dIdx===-1)return;
+      const now=new Date(),m=now.getMonth(),y=now.getFullYear();
       const sum=rows.reduce((acc,r)=>{
-        let v=r[valueColIdx]; if(v==null) return acc;
-        let n=typeof v==='number'?v:parseFloat(String(v).replace(/\./g,'').replace(',','.'));
-        if(isNaN(n)) return acc;
-        const d=tryParseDate(r[dateColIdx]);
-        if(d && d.getMonth()===m && d.getFullYear()===y) acc+=n;
-        return acc;
+        let n=r[vIdx]; n=typeof n==='number'?n:parseFloat(String(n).replace(/\./g,'').replace(',','.')); if(isNaN(n))return acc;
+        const d=tryDate(r[dIdx]); if(d&&d.getMonth()===m&&d.getFullYear()===y) acc+=n; return acc;
       },0);
-      $monthTotal.textContent=`Mês: ${sum.toLocaleString('pt-BR',CURRENCY_FORMAT)}`;
-      $monthTotal.closest('span').classList.remove('hidden');
+      $month.textContent=`Mês: ${money(sum)}`; $month.classList.remove('hidden');
     }
 
-    /* Init */
-    refreshData();
-    startAutoRefresh();
+    /* Build / Update ------------------------------------------- */
+    function build(){ buildTable(); buildCharts(); }
+    function update(){ buildTable(); updateCharts(); applyFilters(); }
+
+    loadData();
   </script>
 </body>
 </html>
