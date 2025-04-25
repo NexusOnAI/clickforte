@@ -35,39 +35,13 @@
     body { background: #1a1d21; display: flex; flex-direction: column; } /* Make body a flex column */
 
     /* Ensure main content area can grow */
-    main {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        /* Standard padding and max-width for default view */
-        max-width: 1280px; /* max-w-screen-2xl */
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 1rem; /* px-4 */
-        padding-right: 1rem; /* px-4 */
-        padding-top: 1.5rem; /* py-6 */
-        padding-bottom: 1.5rem; /* py-6 */
-        width: 100%;
-        gap: 1.5rem; /* gap-6 */
-        transition: max-width 0.3s ease, padding 0.3s ease; /* Smooth transition */
-    }
+    main { flex-grow: 1; display: flex; flex-direction: column; }
 
     #table-wrapper {
         flex-grow: 1; /* Allow table wrapper to grow vertically */
-        overflow: auto; /* Use auto for both horizontal and vertical scroll as needed */
+        overflow: auto; /* Changed from overflow-x-auto to auto for both scrolls */
         max-width: 100%;
         -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        position: relative; /* Needed for sticky header positioning context */
-        /* Default background/shadow/ring for non-fullscreen */
-        backdrop-filter: blur(2px); /* backdrop-blur-xs */
-        background-color: rgba(33, 37, 41, 0.7); /* bg-surface/70 */
-        border-radius: 1rem; /* rounded-2xl */
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
-        /* ring-1 ring-primary-500/20 */
-        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-        --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-        --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) rgba(77, 171, 247, 0.2);
-        padding: 0; /* p-0 is already set but good to confirm */
     }
     #charts-wrapper {
         flex-grow: 1; /* Allow charts wrapper to grow vertically */
@@ -105,93 +79,38 @@
       outline: 2px solid #4dabf7; outline-offset: 2px;
     }
 
-    /* --- Styles for FULL PAGE TABLE VIEW (Layout-based) --- */
+    /* --- Styles for Full-Screen Table View --- */
     main.table-full-screen {
-        max-width: none;      /* Remove max-width constraint */
-        padding: 0;           /* Remove all padding */
-        gap: 0;               /* Remove gap between direct children */
+        max-width: none;     /* Remove max-width constraint */
+        padding-left: 0;     /* Remove horizontal padding */
+        padding-right: 0;
+        padding-top: 0;      /* Remove top padding */
+        padding-bottom: 0;   /* Remove bottom padding */
+        gap: 0;              /* Remove gap between direct children */
     }
-    /* Adjust padding/margins for tabs/filters containers when table is full screen */
-    main.table-full-screen > div:first-of-type { /* Tab buttons container */
-        padding: 0.5rem 1rem; /* Reduced padding */
-        flex-shrink: 0;       /* Prevent shrinking */
-        background-color: #1a1d21; /* Match body background */
+    /* Adjust padding/margin for tabs/filters containers when table is full screen */
+     main.table-full-screen > div:nth-of-type(1) { /* Tab buttons container */
+         padding: 0.75rem 1rem; /* Reduced padding, centered */
+         flex-shrink: 0; /* Prevent shrinking */
     }
-    main.table-full-screen > #filters-bar {
-        padding: 0.5rem 1rem; /* Reduced padding */
-        flex-shrink: 0;       /* Prevent shrinking */
-        background-color: #1a1d21; /* Match body background */
-        border-bottom: 1px solid #475569; /* Add separator */
+     main.table-full-screen > #filters-bar {
+         padding: 0.75rem 1rem; /* Reduced padding */
+         flex-shrink: 0; /* Prevent shrinking */
     }
     /* Ensure table wrapper takes remaining space and looks seamless */
     main.table-full-screen > #table-wrapper {
-        border-radius: 0;       /* Remove rounded corners */
-        box-shadow: none;         /* Remove shadow */
-        --tw-ring-shadow: none; /* Remove ring */
-        backdrop-filter: none;  /* Remove backdrop blur */
-        background-color: transparent; /* Make background transparent or match body */
-        border-top: none;       /* Remove default top border if any */
-        /* flex-grow: 1; is already set */
-        /* overflow: auto; is already set */
-    }
-     /* Ensure sticky header inside the wrapper works in full-screen layout*/
-    main.table-full-screen #sheetTable thead th {
-        position: sticky;
-        top: 0; /* Stick to the top of the scrollable #table-wrapper */
-        z-index: 10; /* Ensure it's above table body */
-        background-color: #212529; /* Explicit background for sticky */
-    }
-    /* --- End Full Page Table Styles --- */
-
-
-    /* --- Styles for Native Full-Screen --- */
-    /* Style the element being fullscreened */
-    #main-content:fullscreen {
-        overflow: hidden; /* Prevent scrollbars on the main element itself */
-        padding: 0 !important; /* Remove padding when fullscreen */
-        background-color: #1a1d21; /* Ensure background */
-        display: flex;
-        flex-direction: column;
-    }
-    /* Ensure the table wrapper takes all space within the fullscreen element */
-     #main-content:fullscreen > #table-wrapper {
-        height: 100%; /* Take full height */
-        flex-grow: 1; /* Grow to fill space */
         border-radius: 0; /* Remove rounded corners */
-        border: none; /* Remove borders */
-        box-shadow: none; /* Remove shadow */
-        --tw-ring-shadow: none; /* Remove ring */
-        backdrop-filter: none; /* Remove blur */
-        background-color: #1a1d21; /* Match background */
-        overflow: auto; /* Allow scrolling within the table wrapper */
-        padding: 0; /* Remove padding */
+        /* flex-grow: 1; is already set */
+        /* No specific height needed, flex-grow handles it */
+        border-top: 1px solid #475569; /* Optional: add a top border */
     }
-     /* Hide other elements when main is fullscreen */
-    #main-content:fullscreen > *:not(#table-wrapper) {
-        display: none !important;
-    }
-     /* Ensure sticky header works within fullscreen table wrapper */
-    #main-content:fullscreen #sheetTable thead th {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background-color: #212529; /* Ensure background */
-    }
-
-    /* Basic styles for zoom controls */
-    .zoom-control {
-        padding: 2px 8px; /* Smaller padding */
-        min-width: 30px; /* Minimum width */
-        line-height: 1; /* Adjust line height */
-    }
-    #zoom-level {
-        min-width: 45px; /* Width for "100%" */
-        text-align: center;
-        background-color: #212529;
-        padding: 4px 6px;
-        border-radius: 4px;
-        margin: 0 4px;
-    }
+    /* Ensure sticky header inside the wrapper works */
+     main.table-full-screen #sheetTable thead th {
+         position: sticky;
+         top: 0; /* Stick to the top of the scrollable #table-wrapper */
+         z-index: 10; /* Ensure it's above table body */
+     }
+     /* --- End Full-Screen Table Styles --- */
 
   </style>
 </head>
@@ -199,31 +118,16 @@
 
   <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40 flex-shrink-0">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-2 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-      <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500 order-1 sm:order-1 shrink-0">Dashboard</h1>
-      <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap grow">
+      <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500 order-1 sm:order-1">Dashboard • Google Sheets</h1>
+      <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap">
           <span id="month-total" class="text-primary-500 font-semibold text-xs sm:text-sm text-center"></span>
           <span id="last-update" class="text-slate-400 text-xs sm:text-sm text-center"></span>
       </div>
-      <div class="flex items-center gap-2 order-2 sm:order-3 ml-auto sm:ml-0 shrink-0">
-           <div id="zoom-controls" class="items-center gap-1 hidden">
-                <button id="zoom-out" title="Diminuir Zoom"
-                        class="zoom-control rounded border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20 text-primary-300 text-sm font-bold shadow-glow">-</button>
-                <span id="zoom-level" class="text-xs font-medium text-slate-300">100%</span>
-                <button id="zoom-in" title="Aumentar Zoom"
-                        class="zoom-control rounded border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20 text-primary-300 text-sm font-bold shadow-glow">+</button>
-          </div>
-           <button id="fullscreen-toggle" title="Tela Cheia API"
-                class="px-2 py-1.5 rounded border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20 text-primary-300 text-xs font-medium shadow-glow hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-                </svg>
-           </button>
-           <button id="manual-refresh"
-                   class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
-                          text-primary-300 text-xs sm:text-sm font-medium shadow-glow">
-             Atualizar
-           </button>
-      </div>
+      <button id="manual-refresh"
+              class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
+                     text-primary-300 text-xs sm:text-sm font-medium shadow-glow order-2 sm:order-3 ml-auto sm:ml-0">
+        Atualizar
+      </button>
     </div>
   </header>
 
@@ -232,7 +136,7 @@
     <p class="text-primary-300 text-lg font-medium">Carregando…</p>
   </div>
 
-  <main id="main-content" class="w-full flex flex-col flex-grow">
+  <main id="main-content" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6 flex-grow">
     <div class="flex justify-center space-x-3 sm:space-x-4 flex-shrink-0">
       <button id="tab-table" class="tab-btn px-4 py-2 sm:px-5 rounded-lg font-medium text-slate-300 hover:bg-primary-500/10 transition-colors duration-200">Tabela</button>
       <button id="tab-charts" class="tab-btn px-4 py-2 sm:px-5 rounded-lg font-medium text-slate-300 hover:bg-primary-500/10 transition-colors duration-200">Gráficos</button>
@@ -250,13 +154,15 @@
     <div id="error-message"
          class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg flex-shrink-0"></div>
 
-    <section id="table-wrapper" class="hidden w-full flex-grow">
-        <table id="sheetTable" class="min-w-full text-xs sm:text-[13px] divide-y divide-slate-600/60">
-      </table>
+    <section id="table-wrapper"
+             class="hidden w-full backdrop-blur-xs bg-surface/70 rounded-2xl
+                    shadow-lg ring-1 ring-primary-500/20 p-0">
+      <table id="sheetTable" class="min-w-full text-xs sm:text-[13px] divide-y divide-slate-600/60">
+        </table>
     </section>
 
     <section id="charts-wrapper"
-             class="hidden w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 flex-grow">
+             class="hidden w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
       <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6 md:col-span-2">
         <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Data de Vencimento</h2>
         <div id="chart-overview"></div>
@@ -273,6 +179,7 @@
       </div>
     </section>
   </main>
+
   <script>
     const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
     const gid     = '0';
@@ -281,18 +188,11 @@
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
     const CHART_COLORS = ['#4dabf7', '#4ade80', '#fb7185', '#facc15', '#a78bfa', '#2dd4bf'];
 
-    // --- Zoom Constants ---
-    const BASE_TABLE_FONT_SIZE = 13; // Base font size in pixels for 100% zoom
-    const ZOOM_STEP = 10; // Zoom step in percentage points
-    const MIN_ZOOM = 50; // Minimum zoom level (50%)
-    const MAX_ZOOM = 200; // Maximum zoom level (200%)
-
     let headersFull = [], sheetRows = [];
     let headersDisplay = []; // Which headers (and their order) to display in the table
     let chartOverview, chartPayment, chartMonthly;
     let isLoaded = false, isFetching = false;
     const activeFilters = {}; // Stores { colIndex: filterValue }
-    let currentZoomLevel = 100; // Initial zoom level percentage
 
     // Cache previous data to avoid unnecessary chart updates
     let prevOverviewData = null, prevPaymentData = null, prevMonthlyData = null;
@@ -310,65 +210,33 @@
     const $filtersActive = document.getElementById('filters-active');
     const $clearFiltersBtn = document.getElementById('clear-filters');
     const $mainContent = document.getElementById('main-content'); // Reference to main element
-    const $manualRefreshBtn = document.getElementById('manual-refresh');
-    // --- New Zoom/Fullscreen DOM Elements ---
-    const $zoomControls = document.getElementById('zoom-controls');
-    const $zoomInBtn = document.getElementById('zoom-in');
-    const $zoomOutBtn = document.getElementById('zoom-out');
-    const $zoomLevelDisplay = document.getElementById('zoom-level');
-    const $fullscreenToggleBtn = document.getElementById('fullscreen-toggle');
-    const $fullscreenIconExpand = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>`;
-    const $fullscreenIconCollapse = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5M15 15l5.25 5.25" /></svg>`;
 
     // Event Listeners
-    $manualRefreshBtn.onclick = loadData;
+    document.getElementById('manual-refresh').onclick = loadData;
     $tableTab.onclick = () => switchTab('table');
     $chartTab.onclick = () => switchTab('charts');
     $clearFiltersBtn.onclick = clearFilters;
-    // --- New Event Listeners ---
-    $zoomInBtn.onclick = zoomIn;
-    $zoomOutBtn.onclick = zoomOut;
-    $fullscreenToggleBtn.onclick = toggleFullScreen; // Native Fullscreen API
-    document.addEventListener('fullscreenchange', handleFullScreenChange);
-
 
     // --- Core Functions ---
 
     function switchTab(tabId) {
       [$tableTab, $chartTab].forEach(btn => btn.classList.remove('active-tab'));
-      // Remove layout modification class initially
-      $mainContent.classList.remove('table-full-screen');
 
       if (tabId === 'table') {
         $tableWrapper.classList.remove('hidden');
         $chartWrapper.classList.add('hidden');
         $tableTab.classList.add('active-tab');
-        // Apply class to MAIN for layout change
-        $mainContent.classList.add('table-full-screen');
-        // Show table-specific controls
-        $zoomControls.classList.remove('hidden');
-        $zoomControls.classList.add('flex');
-        $fullscreenToggleBtn.classList.remove('hidden');
-        applyZoom(); // Re-apply zoom
+        $mainContent.classList.add('table-full-screen'); // <<<<<< ADD class for full screen table
       } else { // Switching to charts
         $chartWrapper.classList.remove('hidden');
         $tableWrapper.classList.add('hidden');
         $chartTab.classList.add('active-tab');
-        // Hide table-specific controls
-        $zoomControls.classList.add('hidden');
-        $zoomControls.classList.remove('flex');
-        $fullscreenToggleBtn.classList.add('hidden');
+        $mainContent.classList.remove('table-full-screen'); // <<<<<< REMOVE class for full screen table
 
-        // Exit native fullscreen if active when switching away from table
-        if (document.fullscreenElement) {
-             document.exitFullscreen().catch(err => console.error("Error exiting fullscreen:", err));
-        }
-
-        // Re-render charts slightly after tab switch for correct sizing in default layout
+        // Re-render charts slightly after tab switch for correct sizing
         setTimeout(() => [chartOverview, chartPayment, chartMonthly].forEach(chart => {
             if (chart && typeof chart.updateOptions === 'function') {
-                // Use a small timeout to ensure layout is recalculated
-                setTimeout(() => chart.updateOptions({}, false, false, false), 50);
+                chart.updateOptions({}, false, false, false); // Trigger resize redraw
             }
         }), 50);
       }
@@ -400,8 +268,7 @@
 
     const formatMonthYear = date => {
         if (!date || isNaN(date.getTime())) return '–';
-        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        const month = monthNames[date.getUTCMonth()];
+        const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' });
         const year = date.getUTCFullYear();
         return `${month}/${year}`;
     };
@@ -409,23 +276,18 @@
     function parseDateValue(value) {
         if (value instanceof Date) return value;
         if (value == null) return null;
-
-        let match = typeof value === 'string' ? value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/) : null;
+        if (typeof value === 'number' && value > 1 && value < 60000) {
+             const utcDays = Math.floor(value - 25569);
+             const date = new Date(0);
+             date.setUTCDate(date.getUTCDate() + utcDays);
+             return date;
+        }
+        if (typeof value !== 'string') return null;
+        let match;
+        match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/);
         if (match) {
             return new Date(Date.UTC(+match[1], +match[2], +match[3]));
         }
-
-        if (typeof value === 'number' && value > 1 && value < 60000) { // Plausible range for date serials
-             const excelEpoch = Date.UTC(1899, 11, 30);
-             const millisecondsPerDay = 24 * 60 * 60 * 1000;
-             const date = new Date(excelEpoch + value * millisecondsPerDay);
-             if (date.getUTCFullYear() > 1900) {
-                 return date;
-             }
-        }
-
-        if (typeof value !== 'string') return null;
-
         match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (match) {
             return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3]));
@@ -437,12 +299,11 @@
             return new Date(Date.UTC(year, +match[2] - 1, +match[1]));
         }
         const parsed = new Date(value);
-        if (!isNaN(parsed.getTime()) && parsed.getUTCFullYear() > 1900) {
+        if (!isNaN(parsed.getTime())) {
              return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate()));
         }
         return null;
     }
-
 
     const formatCurrency = value => typeof value === 'number' && !isNaN(value)
         ? value.toLocaleString('pt-BR', CURRENCY_FORMAT)
@@ -451,6 +312,7 @@
         ? value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 })
         : 'N/A';
     const formatTooltip = value => typeof value === 'number' ? formatCurrency(value) : 'N/A';
+
 
     // --- Data Loading and UI Building ---
 
@@ -470,7 +332,6 @@
         const obsIndex = headersFull.findIndex(header => header && header.toLowerCase().trim() === 'observação');
         headersDisplay = obsIndex === -1 ? [...headersFull] : headersFull.slice(0, obsIndex + 1);
 
-
         sheetRows = jsonData.table.rows.map(row => {
           const cells = Array(headersFull.length).fill(null);
           if (row && row.c) {
@@ -486,10 +347,11 @@
         if (!isLoaded) {
           buildInitialUI();
           isLoaded = true;
-          // Start with table tab active (which applies full-screen layout)
-          switchTab('table');
+          // Determine initial tab based on preference or default to table
+          // Let's default to table and apply full screen immediately if it's the initial view
+          switchTab('table'); // Start with table
         } else {
-          updateUI(); // Rebuilds table and updates charts via filters
+          updateUI();
         }
 
         updateGrandTotalHeader();
@@ -501,42 +363,34 @@
         $errorMsg.classList.remove('hidden');
         $tableWrapper.classList.add('hidden');
         $chartWrapper.classList.add('hidden');
-        $mainContent.classList.remove('table-full-screen'); // Ensure layout class is removed on error
-        // Hide table controls on error
-        $zoomControls.classList.add('hidden');
-        $zoomControls.classList.remove('flex');
-        $fullscreenToggleBtn.classList.add('hidden');
       } finally {
         isFetching = false;
         $loader.classList.add('hidden');
       }
     }
-    loadData(); // Initial load
-    setInterval(loadData, REFRESH_INTERVAL); // Periodic refresh
-
+    loadData();
+    setInterval(loadData, REFRESH_INTERVAL);
 
     function buildTable() {
-      $sheetTable.innerHTML = ''; // Clear existing table content
+      $sheetTable.innerHTML = '';
       const thead = createTableHead();
-      const tbody = createTableBody(); // Create body first for filter population
+      const tbody = createTableBody();
       if (thead) $sheetTable.appendChild(thead);
       if (tbody) $sheetTable.appendChild(tbody);
-      applyFilters(); // Apply filters (updates charts/header total)
-      applyZoom(); // Apply current zoom level
+      applyFilters();
     }
-
 
     function createTableHead() {
         const thead = document.createElement('thead');
-        // Removed background here, handled by sticky rule
+        thead.className = 'bg-surface/90'; // Background for sticky header
         const tr = document.createElement('tr');
         tr.className = 'divide-x divide-primary-500/30';
 
         headersDisplay.forEach((header, index) => {
             const th = document.createElement('th');
-            // Sticky defined via CSS rule: main.table-full-screen #sheetTable thead th
-            th.className = 'px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-semibold text-primary-500 uppercase whitespace-nowrap align-top';
-            const headerText = document.createElement('div');
+            // Sticky is now handled by CSS rule based on parent scroll container
+            th.className = 'px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-semibold text-primary-500 uppercase bg-surface/95 whitespace-nowrap'; // Removed sticky/top/z-index here, handled in CSS
+            const headerText = document.createElement('span');
             headerText.textContent = header;
             th.appendChild(headerText);
 
@@ -545,25 +399,14 @@
             select.className = 'mt-1 block w-full text-xs';
             select.innerHTML = '<option value="">Todos</option>';
 
-            const uniqueValues = [...new Set(sheetRows.map(row => formatCellValue(row[index], header)))]
-                .filter(value => value !== '–' && value !== null && value !== '')
-                .sort((a, b) => {
-                     try {
-                         const numA = parseFloat(String(a).replace(/[R$.]/g, '').replace(',', '.'));
-                         const numB = parseFloat(String(b).replace(/[R$.]/g, '').replace(',', '.'));
-                         if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-                         const dateA = String(a).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-                         const dateB = String(b).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-                         if (dateA && dateB) {
-                             const isoA = `${dateA[3]}-${dateA[2]}-${dateA[1]}`;
-                             const isoB = `${dateB[3]}-${dateB[2]}-${dateB[1]}`;
-                             return isoA.localeCompare(isoB);
-                         }
-                     } catch (e) { /* Ignore */ }
-                     return String(a).localeCompare(String(b), 'pt-BR');
-                });
+            const uniqueValues = [...new Set(sheetRows.map(row => formatCellValue(row[index], header)))].sort((a, b) => {
+                if (a === '–') return -1; if (b === '–') return 1;
+                try { return a.localeCompare(b, 'pt-BR', { numeric: true }); }
+                catch (e) { return a < b ? -1 : (a > b ? 1 : 0); }
+            });
 
             uniqueValues.forEach(value => {
+                if (value === '–' || value === null || value === '') return;
                 const option = document.createElement('option');
                 option.value = value; option.textContent = value;
                 select.appendChild(option);
@@ -585,7 +428,7 @@
         const value = event.target.value;
         if (value) { activeFilters[colIndex] = value; }
         else { delete activeFilters[colIndex]; }
-        applyFilters(); // Re-apply filters and update UI
+        applyFilters();
     }
 
     function createTableBody() {
@@ -595,14 +438,13 @@
         if (sheetRows.length === 0) {
             const tr = document.createElement('tr');
             const td = document.createElement('td');
-            td.colSpan = headersDisplay.length || 1;
+            td.colSpan = headersDisplay.length || 1; // Ensure colspan is at least 1
             td.textContent = 'Nenhum dado encontrado.';
             td.className = 'px-4 py-10 text-center text-slate-400';
             tr.appendChild(td);
             tbody.appendChild(tr);
             return tbody;
         }
-
 
         sheetRows.forEach((row, rowIndex) => {
             const tr = document.createElement('tr');
@@ -619,38 +461,32 @@
         return tbody;
     }
 
-
     function formatCellValue(cellValue, headerLabel) {
         if (cellValue == null || cellValue === '') return '–';
         const headerLower = headerLabel.toLowerCase().trim();
-
         if (headerLower === 'nf') { return String(cellValue); }
-
-        if (/valor|total|preço/i.test(headerLower)) {
+        if (/valor|total|preço/i.test(headerLower) && !/nf/i.test(headerLower)) {
             let numericValue = NaN;
             if (typeof cellValue === 'number') { numericValue = cellValue; }
             else if (typeof cellValue === 'string') {
-                const cleanedString = cellValue.replace(/\./g, '').replace(',', '.').replace(/[R$\s]/g, '');
+                const cleanedString = cellValue.replace(/[R$.]/g, '').replace(',', '.');
                 numericValue = parseFloat(cleanedString);
             }
             return !isNaN(numericValue) ? formatCurrency(numericValue) : String(cellValue);
         }
-
-         if (/data|venc|pag|emissao|emissão/i.test(headerLower)) {
-              const dateValue = parseDateValue(cellValue);
-              if (dateValue && !isNaN(dateValue.getTime())) {
-                  return formatDateBR(dateValue);
-              }
-         }
-
+        const dateValue = parseDateValue(cellValue);
+        if (dateValue && !isNaN(dateValue.getTime())) {
+             if (/data|venc|pag|emissao/i.test(headerLower)) {
+                return formatDateBR(dateValue);
+             }
+        }
         if (typeof cellValue === 'number') { return cellValue.toLocaleString('pt-BR'); }
-        if (typeof cellValue === 'string' && /^-?\d+([.,]\d+)?$/.test(cellValue)) {
-            const num = parseFloat(cellValue.replace(',', '.'));
-            if (!isNaN(num)) return num.toLocaleString('pt-BR');
+        if (typeof cellValue === 'string' && /^-?\d+(\.\d+)?$/.test(cellValue)) {
+            const num = parseFloat(cellValue);
+             if (!isNaN(num)) return num.toLocaleString('pt-BR');
         }
         return String(cellValue);
     }
-
 
     // --- Filtering Logic ---
 
@@ -659,19 +495,14 @@
         if (!tbody) return;
 
         let visibleRowCount = 0;
-        const hasActiveFilters = Object.keys(activeFilters).length > 0;
-
         Array.from(tbody.rows).forEach(tableRow => {
             if (tableRow.cells.length === 1 && tableRow.cells[0].colSpan > 1) {
-                tableRow.style.display = 'none';
-                return;
+                tableRow.style.display = 'none'; return;
             }
             let showRow = true;
-            if (hasActiveFilters) {
-                for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
-                    if (filterValue && tableRow.cells[colIndex]?.textContent.trim() !== filterValue) {
-                        showRow = false; break;
-                    }
+            for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
+                if (filterValue && tableRow.cells[colIndex]?.textContent.trim() !== filterValue) {
+                    showRow = false; break;
                 }
             }
             tableRow.style.display = showRow ? '' : 'none';
@@ -680,17 +511,10 @@
 
         const noDataRow = tbody.querySelector('td[colspan]');
         if (noDataRow) {
-             const onlyNoDataVisible = visibleRowCount === 0 && sheetRows.length > 0;
-             noDataRow.parentElement.style.display = onlyNoDataVisible ? '' : 'none';
-             if(onlyNoDataVisible) noDataRow.textContent = 'Nenhum dado corresponde aos filtros selecionados.';
-             else if(sheetRows.length === 0) noDataRow.parentElement.style.display = '';
+            noDataRow.parentElement.style.display = visibleRowCount === 0 ? '' : 'none';
         }
-
-        updateFilterDisplay();
-        updateCharts(); // Update charts based on filtered data
-        updateGrandTotalHeader(); // Update header total based on filtered data
+        updateFilterDisplay(); updateCharts(); updateGrandTotalHeader();
     }
-
 
     function updateFilterDisplay() {
         const activeFilterKeys = Object.keys(activeFilters);
@@ -699,7 +523,7 @@
             $clearFiltersBtn.style.display = 'none';
         } else {
             const filterParts = activeFilterKeys.map(index =>
-                `${headersDisplay[index]}: "${activeFilters[index]}"`
+                `${headersDisplay[index]}: ${activeFilters[index]}`
             );
             let filterText = 'Filtros: ' + filterParts.join(' | ');
             $filtersActive.textContent = filterText;
@@ -710,7 +534,7 @@
     function clearFilters() {
         Object.keys(activeFilters).forEach(key => delete activeFilters[key]);
         $sheetTable.querySelectorAll('thead select').forEach(select => select.value = '');
-        applyFilters(); // Re-apply (no filters) to show all rows and update UI
+        applyFilters();
     }
 
     // --- Chart Data Aggregation ---
@@ -721,15 +545,10 @@
                JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals);
     }
 
-
     function aggregateByDate(dateColumnRegex) {
         const dateColIndex = headersFull.findIndex(h => h && dateColumnRegex.test(h.toLowerCase()));
         const valueColIndex = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-
-        if (dateColIndex === -1 || valueColIndex === -1) {
-            console.warn(`Could not find required columns for date aggregation (Date Regex: ${dateColumnRegex})`);
-            return { labels: [], totals: [] };
-        }
+        if (dateColIndex === -1 || valueColIndex === -1) return { labels: [], totals: [] };
 
         const aggregationMap = new Map();
         getFilteredRows().forEach(row => {
@@ -738,12 +557,9 @@
             const dateKey = date.toISOString().split('T')[0];
             let value = row[valueColIndex];
             if (value == null) return;
-            value = typeof value === 'number' ? value : parseFloat(String(value).replace(/\./g, '').replace(',', '.').replace(/[R$\s]/g, ''));
-            if (!isNaN(value)) {
-                aggregationMap.set(dateKey, (aggregationMap.get(dateKey) || 0) + value);
-            }
+            value = typeof value === 'number' ? value : parseFloat(String(value).replace(/[R$\s.]/g, '').replace(',', '.'));
+            if (!isNaN(value)) { aggregationMap.set(dateKey, (aggregationMap.get(dateKey) || 0) + value); }
         });
-
         const orderedEntries = [...aggregationMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
         return {
             labels: orderedEntries.map(([key]) => formatDateBR(new Date(key + 'T00:00:00Z'))),
@@ -751,15 +567,10 @@
         };
     }
 
-
     function aggregateByMonth(dateColumnRegex) {
         const dateColIndex = headersFull.findIndex(h => h && dateColumnRegex.test(h.toLowerCase()));
         const valueColIndex = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-
-        if (dateColIndex === -1 || valueColIndex === -1) {
-            console.warn(`Could not find required columns for month aggregation (Date Regex: ${dateColumnRegex})`);
-            return { labels: [], totals: [] };
-        }
+         if (dateColIndex === -1 || valueColIndex === -1) return { labels: [], totals: [] };
 
         const aggregationMap = new Map();
         getFilteredRows().forEach(row => {
@@ -768,12 +579,9 @@
             const monthKey = `${date.getUTCFullYear()}-${padZero(date.getUTCMonth())}`;
             let value = row[valueColIndex];
             if (value == null) return;
-            value = typeof value === 'number' ? value : parseFloat(String(value).replace(/\./g, '').replace(',', '.').replace(/[R$\s]/g, ''));
-            if (!isNaN(value)) {
-                aggregationMap.set(monthKey, (aggregationMap.get(monthKey) || 0) + value);
-            }
+            value = typeof value === 'number' ? value : parseFloat(String(value).replace(/[R$\s.]/g, '').replace(',', '.'));
+            if (!isNaN(value)) { aggregationMap.set(monthKey, (aggregationMap.get(monthKey) || 0) + value); }
         });
-
         const orderedEntries = [...aggregationMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
         return {
             labels: orderedEntries.map(([key]) => {
@@ -784,13 +592,12 @@
         };
     }
 
-
     function getFilteredRows() {
         if (Object.keys(activeFilters).length === 0) { return sheetRows; }
         return sheetRows.filter(row => {
             for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
-                const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
-                if (filterValue && cellFormattedValue.trim() !== filterValue) { return false; }
+                 const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
+                 if (filterValue && cellFormattedValue.trim() !== filterValue) { return false; }
             }
             return true;
         });
@@ -798,49 +605,50 @@
 
     // --- Chart Rendering ---
 
-    const baseChartOptions = { /* ... (options remain the same) ... */ };
+    const baseChartOptions = {
+        chart: { foreColor: '#cbd5e1', toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 500, animateGradually: { enabled: false }, dynamicAnimation: { enabled: true, speed: 350 } }, background: 'transparent' },
+        tooltip: { theme: 'dark', y: { formatter: formatTooltip } }, dataLabels: { enabled: false }, grid: { borderColor: '#475569', strokeDashArray: 4 }, legend: { show: false }, markers: { size: 4, hover: { size: 6 } },
+        noData: { text: 'Sem dados para exibir', align: 'center', verticalAlign: 'middle', style: { color: '#cbd5e1', fontSize: '14px' } }
+    };
 
     function buildCharts() {
-        prevOverviewData = aggregateByDate(/venc/i);
-        prevPaymentData = aggregateByDate(/pag/i);
-        prevMonthlyData = aggregateByMonth(/venc/i);
-        renderOverviewChart(false, prevOverviewData);
-        renderPaymentChart(false, prevPaymentData);
-        renderMonthlyChart(false, prevMonthlyData);
+        prevOverviewData = aggregateByDate(/venc/i); prevPaymentData = aggregateByDate(/pag/i); prevMonthlyData = aggregateByMonth(/venc/i);
+        renderOverviewChart(false, prevOverviewData); renderPaymentChart(false, prevPaymentData); renderMonthlyChart(false, prevMonthlyData);
     }
 
     function updateCharts() {
-        // Update chart data based on filters
+        // Only update charts if the chart tab is potentially visible or could become visible
+        // This prevents unnecessary processing when only the table is shown
+        if($chartWrapper.classList.contains('hidden') && !$chartTab.classList.contains('active-tab')) {
+             // If charts are hidden and tab isn't active, maybe defer update?
+             // For simplicity, let's update them anyway, they are fast.
+        }
+
         const newOverviewData = aggregateByDate(/venc/i);
         const newPaymentData = aggregateByDate(/pag/i);
         const newMonthlyData = aggregateByMonth(/venc/i);
-        renderOverviewChart(true, newOverviewData);
-        renderPaymentChart(true, newPaymentData);
-        renderMonthlyChart(true, newMonthlyData);
+        renderOverviewChart(true, newOverviewData); renderPaymentChart(true, newPaymentData); renderMonthlyChart(true, newMonthlyData);
     }
-
 
     function renderOverviewChart(isUpdate = false, data) {
-        if (isUpdate && !hasDataChanged(data, prevOverviewData)) return;
-        const options = { series: [{ name: 'Total Venc.', data: data.totals }], xaxis: { categories: data.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' }, format: undefined }, tooltip: { enabled: false }, type: 'category' }, yaxis: { labels: { formatter: formatCompact } }, colors: [CHART_COLORS[0]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
-        if (isUpdate && chartOverview) { chartOverview.updateOptions(options, true, true); }
-        else { chartOverview?.destroy(); chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options }); chartOverview.render(); }
-        prevOverviewData = data;
+      if (isUpdate && !hasDataChanged(data, prevOverviewData)) return;
+      const options = { series: [{ name: 'Total Venc.', data: data.totals }], xaxis: { categories: data.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' }, format: undefined }, tooltip: { enabled: false }, type: 'category' }, yaxis: { labels: { formatter: formatCompact } }, colors: [CHART_COLORS[0]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
+      if (isUpdate && chartOverview) { chartOverview.updateOptions(options, true, true); }
+      else { chartOverview?.destroy(); chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options }); chartOverview.render(); }
+      prevOverviewData = data;
     }
-
 
     function renderPaymentChart(isUpdate = false, data) {
-        if (isUpdate && !hasDataChanged(data, prevPaymentData)) return;
-        const options = { series: [{ name: 'Total Pago', data: data.totals }], xaxis: { categories: data.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' }, format: undefined }, tooltip: { enabled: false }, type: 'category' }, yaxis: { labels: { formatter: formatCompact } }, colors: [CHART_COLORS[1]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
-        if (isUpdate && chartPayment) { chartPayment.updateOptions(options, true, true); }
-        else { chartPayment?.destroy(); chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options }); chartPayment.render(); }
-        prevPaymentData = data;
+      if (isUpdate && !hasDataChanged(data, prevPaymentData)) return;
+      const options = { series: [{ name: 'Total Pago', data: data.totals }], xaxis: { categories: data.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' }, format: undefined }, tooltip: { enabled: false }, type: 'category' }, yaxis: { labels: { formatter: formatCompact } }, colors: [CHART_COLORS[1]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
+      if (isUpdate && chartPayment) { chartPayment.updateOptions(options, true, true); }
+      else { chartPayment?.destroy(); chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options }); chartPayment.render(); }
+      prevPaymentData = data;
     }
 
-
     function renderMonthlyChart(isUpdate = false, data) {
-         const dataActuallyChanged = !prevMonthlyData || JSON.stringify(data.totals) !== JSON.stringify(prevMonthlyData.totals) || JSON.stringify(data.labels) !== JSON.stringify(prevMonthlyData.labels);
-        if (isUpdate && !dataActuallyChanged) return;
+        const totalsChanged = !prevMonthlyData || JSON.stringify(data.totals) !== JSON.stringify(prevMonthlyData.totals);
+        if (isUpdate && !totalsChanged) return;
         const grandTotal = data.totals.reduce((sum, total) => sum + total, 0);
         const options = { series: data.totals, labels: data.labels, colors: CHART_COLORS.slice(0, data.labels.length || CHART_COLORS.length), legend: { show: true, position: 'bottom', fontSize: '11px', horizontalAlign: 'center', itemMargin: { horizontal: 5, vertical: 2 } }, plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total Geral', fontSize: '14px', fontWeight: 600, color: '#cbd5e1', formatter: () => formatCurrency(grandTotal) }, value: { show: true, fontSize: '16px', fontWeight: 500, color: '#cbd5e1', formatter: (val) => formatCurrency(parseFloat(val)) } } } } }, responsive: [{ breakpoint: 480, options: { chart: { height: 300 }, legend: { position: 'bottom', fontSize: '10px' }, plotOptions: { pie: { donut: { labels: { total: { fontSize: '12px'}, value: { fontSize: '14px'} } } } } } }] };
         if (isUpdate && chartMonthly) { chartMonthly.updateOptions(options, true, true); }
@@ -848,92 +656,20 @@
         prevMonthlyData = data;
     }
 
-
     // --- Header Update ---
     function updateGrandTotalHeader() {
-        const { totals } = aggregateByMonth(/venc/i);
-        const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
-        const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
-        $monthTotal.textContent = `Total Geral (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
+      const { totals } = aggregateByMonth(/venc/i);
+      const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
+      const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
+      $monthTotal.textContent = `Total Geral (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
     }
-
-    // --- Zoom Functions ---
-    function applyZoom() {
-        const newSize = BASE_TABLE_FONT_SIZE * (currentZoomLevel / 100);
-        if ($sheetTable) {
-             const thead = $sheetTable.querySelector('thead');
-             const tbody = $sheetTable.querySelector('tbody');
-             const fontSizeStyle = `${newSize.toFixed(2)}px`;
-             if(thead) thead.style.fontSize = fontSizeStyle;
-             if(tbody) tbody.style.fontSize = fontSizeStyle;
-        }
-        updateZoomDisplay();
-    }
-
-
-    function updateZoomDisplay() {
-        $zoomLevelDisplay.textContent = `${currentZoomLevel}%`;
-        $zoomOutBtn.disabled = currentZoomLevel <= MIN_ZOOM;
-        $zoomInBtn.disabled = currentZoomLevel >= MAX_ZOOM;
-    }
-
-    function zoomIn() {
-        if (currentZoomLevel < MAX_ZOOM) {
-            currentZoomLevel = Math.min(MAX_ZOOM, currentZoomLevel + ZOOM_STEP);
-            applyZoom();
-        }
-    }
-
-    function zoomOut() {
-        if (currentZoomLevel > MIN_ZOOM) {
-            currentZoomLevel = Math.max(MIN_ZOOM, currentZoomLevel - ZOOM_STEP);
-            applyZoom();
-        }
-    }
-
-    // --- Fullscreen Functions (Native API) ---
-    function toggleFullScreen() {
-      const elementToFullscreen = $mainContent;
-      if (!document.fullscreenElement) {
-        elementToFullscreen.requestFullscreen()
-          .then(() => updateFullscreenButton(true))
-          .catch(err => { console.error(`Error entering fullscreen: ${err.message} (${err.name})`); });
-      } else {
-        document.exitFullscreen()
-          .then(() => updateFullscreenButton(false))
-          .catch(err => { console.error(`Error exiting fullscreen: ${err.message} (${err.name})`); });
-      }
-    }
-
-    function handleFullScreenChange() {
-        updateFullscreenButton(!!document.fullscreenElement);
-        // Optional: re-apply zoom in case browser reset styles on fullscreen exit
-        if (!document.fullscreenElement && $tableTab.classList.contains('active-tab')) {
-            setTimeout(applyZoom, 50); // Delay slightly
-        }
-    }
-
-    function updateFullscreenButton(isFullScreen) {
-        if (isFullScreen) {
-            $fullscreenToggleBtn.innerHTML = $fullscreenIconCollapse;
-            $fullscreenToggleBtn.title = "Sair da Tela Cheia (Nativa)";
-        } else {
-            $fullscreenToggleBtn.innerHTML = $fullscreenIconExpand;
-            $fullscreenToggleBtn.title = "Tela Cheia (Nativa)";
-        }
-    }
-
 
     // --- Initial Setup & Updates ---
     function buildInitialUI() {
-        buildTable();
-        buildCharts();
-        applyZoom();
-        updateFullscreenButton(false);
+      buildTable(); buildCharts();
     }
-
     function updateUI() {
-        buildTable(); // Rebuilds table, applies filters, triggers chart/header updates
+      buildTable(); // Rebuilds table, applies filters, triggers chart updates via applyFilters
     }
 
   </script>
