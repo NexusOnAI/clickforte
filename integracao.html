@@ -15,14 +15,11 @@
         fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
         extend: {
           colors: {
-            surface: '#1f2937',
-            primary: { 500: '#60a5fa' },
-            slate: {
-              300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b',
-              600: '#475569', 700: '#334155'
-            }
+            surface: '#212529',
+            primary: { 500: '#4dabf7' },
+            slate: { 300: '#cbd5e1', 400: '#94a3b8', 600: '#475569' }
           },
-          boxShadow: { glow: '0 0 8px rgba(96, 165, 250, 0.35)' },
+          boxShadow: { glow: '0 0 8px rgba(77,171,247,.35)' },
           backdropBlur: { xs: '2px' }
         }
       }
@@ -34,37 +31,31 @@
   <style>
     @keyframes spin { to { transform: rotate(360deg) } }
     .animate-spin { animation: spin 1s linear infinite }
-    body { background: #111827; }
+    body { background: #1a1d21 }
     #table-wrapper,
     #charts-wrapper { flex-grow: 1; overflow-y: auto }
-    #sheetTable { width: 100%; }
+    #sheetTable { width: 100% }
     ::-webkit-scrollbar { width: 8px; height: 8px }
     ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px }
-
     th select {
-      background: #1f2937; border: 1px solid #475569; border-radius: 4px;
+      background: #212529; border: 1px solid #4dabf7; border-radius: 4px;
       font-size: 11px; padding: 3px 5px; width: 100%; margin-top: 4px;
-      color: #cbd5e1; appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2360a5fa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-      background-repeat: no-repeat; background-position: right 0.5rem center;
-      background-size: 0.65em auto; padding-right: 2rem;
+      color: #cbd5e1;
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234dabf7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      background-size: 0.65em auto;
+      padding-right: 2rem;
     }
-    th select:focus {
-       outline: none; border-color: #60a5fa;
-       box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3);
-    }
+     th select:focus { outline: none; border-color: #4dabf7; box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.3); }
     .tab-btn.active-tab {
-      background: #60a5fa; color: #fff !important;
-      box-shadow: 0 0 5px rgba(96, 165, 250, .55);
+      background: #4dabf7; color: #fff !important;
+      box-shadow: 0 0 5px rgba(77, 171, 247, .55)
     }
-    .chart-card, .info-card {
-      transition: background-color 0.3s ease; background: #1f2937;
-      border-radius: 1rem;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      padding: 1.5rem; border: 1px solid rgba(96, 165, 250, 0.2);
-    }
+    .chart-card { transition: background-color 0.3s ease; }
     button:focus-visible, select:focus-visible {
-      outline: 2px solid #60a5fa; outline-offset: 2px;
+      outline: 2px solid #4dabf7; outline-offset: 2px;
     }
   </style>
 </head>
@@ -110,33 +101,27 @@
 
     <section id="table-wrapper"
              class="hidden w-full overflow-x-auto backdrop-blur-xs bg-surface/70 rounded-2xl
-                    shadow-lg ring-1 ring-slate-700 p-4 sm:p-0">
-      <table id="sheetTable" class="min-w-full text-sm divide-y divide-slate-700"></table>
+                    shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-0">
+      <table id="sheetTable" class="min-w-full text-[13px] divide-y divide-slate-600/60"></table>
     </section>
 
     <section id="charts-wrapper"
-             class="hidden w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+             class="hidden w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
 
-      <div class="chart-card lg:col-span-2">
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6 md:col-span-2">
         <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Data de Vencimento</h2>
         <div id="chart-overview"></div>
       </div>
 
-      <div class="chart-card">
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6">
         <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Data de Pagamento</h2>
         <div id="chart-payment"></div>
       </div>
 
-      <div class="chart-card">
+      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6">
         <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Mês (Vencimento)</h2>
         <div id="chart-monthly"></div>
       </div>
-
-      <div id="card-tomorrow" class="info-card flex flex-col justify-center items-center text-center">
-         <h2 class="text-base sm:text-lg font-semibold mb-2 text-primary-500">Vencendo Amanhã</h2>
-         <p id="tomorrow-total-value" class="text-2xl font-bold text-slate-100">R$ 0,00</p>
-         <p id="tomorrow-date" class="text-xs text-slate-400 mt-1"></p>
-       </div>
 
     </section>
   </main>
@@ -145,9 +130,9 @@
     const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
     const gid     = '0';
     const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL = 600000; // <-- Alterado para 600.000 ms = 10 minutos
+    const REFRESH_INTERVAL = 60000;
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const CHART_COLORS = ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#2dd4bf'];
+    const CHART_COLORS = ['#4dabf7', '#4ade80', '#fb7185', '#facc15', '#a78bfa', '#2dd4bf'];
 
     let headersFull = [], sheetRows = [];
     let headersDisplay = [];
@@ -156,7 +141,6 @@
     const activeFilters = {};
 
     let prevOverviewData = null, prevPaymentData = null, prevMonthlyData = null;
-    let prevTomorrowTotal = null;
 
     const $loader = document.getElementById('loader');
     const $errorMsg = document.getElementById('error-message');
@@ -169,8 +153,6 @@
     const $monthTotal = document.getElementById('month-total');
     const $filtersActive = document.getElementById('filters-active');
     const $clearFiltersBtn = document.getElementById('clear-filters');
-    const $tomorrowTotalValue = document.getElementById('tomorrow-total-value');
-    const $tomorrowDate = document.getElementById('tomorrow-date');
 
     document.getElementById('manual-refresh').onclick = loadData;
     $tableTab.onclick = () => switchTab('table');
@@ -187,88 +169,99 @@
         $chartWrapper.classList.remove('hidden');
         $tableWrapper.classList.add('hidden');
         $chartTab.classList.add('active-tab');
+        // Re-render charts slightly after tab switch to ensure correct sizing
         setTimeout(() => [chartOverview, chartPayment, chartMonthly]
           .forEach(chart => chart?.updateOptions({}, false, false, false)), 50);
       }
     }
 
     async function fetchSheetData() {
-      const response = await fetch(`${baseURL}&_=${Date.now()}`);
+      const response = await fetch(`${baseURL}&_=${Date.now()}`); // Cache buster
       if (!response.ok) throw new Error(`HTTP error ${response.status}`);
       const text = await response.text();
+      // Check if response starts with the expected JSONP wrapper
       if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) {
-        console.error("Invalid Response Text:", text);
-        throw new Error('Formato de resposta inválido da API do Google Sheets.');
+        throw new Error('Invalid response format from Google Sheets API.');
       }
-      try {
-          return JSON.parse(text.substring(47, text.length - 2));
-      } catch(e) {
-          console.error("Error parsing JSON:", e);
-          console.error("Substring attempted:", text.substring(47, text.length - 2));
-          throw new Error('Erro ao processar JSON da resposta do Google Sheets.');
-      }
+      // Extract JSON part
+      return JSON.parse(text.substring(47, text.length - 2));
     }
 
     const padZero = num => num.toString().padStart(2, '0');
 
+    // --- CORREÇÃO AQUI ---
+    // Formata a data usando UTC para evitar problemas de timezone
     const formatDateBR = date => {
         if (!date || isNaN(date.getTime())) return '–';
+        // Use getUTC* methods
         return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
     };
 
+    // --- CORREÇÃO AQUI ---
+    // Formata mês/ano usando UTC
     const formatMonthYear = date => {
         if (!date || isNaN(date.getTime())) return '–';
+        // Use toLocaleDateString with timeZone:'UTC' and getUTCFullYear
         const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' });
         const year = date.getUTCFullYear();
-        const formattedMonth = month.charAt(0).toUpperCase() + month.slice(1).replace('.', '');
-        return `${formattedMonth}/${year}`;
+        return `${month}/${year}`;
     };
 
+    // Função para parsear diferentes formatos de data para um objeto Date (interpretado como UTC)
     function parseDateValue(value) {
         if (value instanceof Date) return value;
         if (value == null) return null;
 
+        // Handle Google Sheets Date Serial Number (days since Dec 30, 1899)
+        // Roughly between 1900 and 2078 for sanity check
         if (typeof value === 'number' && value > 1 && value < 60000) {
-            const utcDays = Math.floor(value - 25569);
-            const date = new Date(0);
-            date.setUTCDate(date.getUTCDate() + utcDays);
-            return date;
+             // Excel epoch starts Dec 30, 1899 (serial 0) or Jan 1, 1900 (serial 1)
+             // JS epoch is Jan 1, 1970 UTC. Difference is 25569 days (for 1900 epoch).
+             const utcDays = Math.floor(value - 25569);
+             const date = new Date(0); // Start at JS epoch
+             date.setUTCDate(date.getUTCDate() + utcDays);
+             return date;
         }
 
         if (typeof value !== 'string') return null;
 
         let match;
-        match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)/);
+        // Match "Date(YYYY,M,D)" - Google Sheets API format
+        match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/);
         if (match) {
+            // Month in Date() is 0-indexed, Day is 1-indexed. Date.UTC expects 0-indexed month, 1-indexed day.
             return new Date(Date.UTC(+match[1], +match[2], +match[3]));
         }
 
+        // Match YYYY-MM-DD
         match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (match) {
+            // Month needs to be 0-indexed for Date.UTC
             return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3]));
         }
 
+        // Match DD/MM/YYYY or DD-MM-YYYY (and DD/MM/YY or DD-MM-YY)
         match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
         if (match) {
             let year = +match[3];
-            if (year < 100) year += 2000;
+            if (year < 100) year += 2000; // Handle YY format, assuming 21st century
+            // Month needs to be 0-indexed for Date.UTC
             return new Date(Date.UTC(year, +match[2] - 1, +match[1]));
         }
 
-        const standardizedDateString = value.replace(/[\/-]/g, '-');
-        const parsed = new Date(standardizedDateString);
-         if (!isNaN(parsed.getTime())) {
+        // If no format matches, try default Date parsing, but it can be unreliable
+        const parsed = new Date(value);
+        if (!isNaN(parsed.getTime())) {
+             // If it parsed correctly, convert it back to UTC midnight to be consistent
              return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate()));
-         }
+        }
 
-        console.warn(`Could not parse date value: ${value}`);
-        return null;
+        return null; // Could not parse
     }
 
-    const formatCurrency = value => typeof value === 'number' ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : 'R$ 0,00';
 
-    const formatCompact = value => typeof value === 'number' ? value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }): '0';
-
+    const formatCurrency = value => value.toLocaleString('pt-BR', CURRENCY_FORMAT);
+    const formatCompact = value => value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 });
     const formatTooltip = value => typeof value === 'number' ? formatCurrency(value) : 'N/A';
 
     async function loadData() {
@@ -279,19 +272,21 @@
 
       try {
         const jsonData = await fetchSheetData();
-
         headersFull = jsonData.table.cols.map(col => col.label || `Col${col.id}`);
-        sheetRows = jsonData.table.rows.map(row => row.c?.map(cell => cell?.v ?? null) ?? []);
 
+        // Define which columns to display (e.g., up to 'Observação')
         const obsIndex = headersFull.findIndex(header => header.toLowerCase().trim() === 'observação');
-        headersDisplay = obsIndex === -1 ? [...headersFull] : headersFull.slice(0, obsIndex + 1);
+        headersDisplay = obsIndex === -1 ? headersFull : headersFull.slice(0, obsIndex + 1);
+
+        // Process rows, ensuring cells are null if empty
+        sheetRows = jsonData.table.rows.map(row => row.c.map(cell => cell?.v ?? null));
 
         if (!isLoaded) {
           buildInitialUI();
           isLoaded = true;
-          switchTab('table');
+          switchTab('table'); // Start with the table tab
         } else {
-          updateUI();
+          updateUI(); // Just update data if already loaded
         }
 
         updateGrandTotalHeader();
@@ -306,64 +301,51 @@
         $loader.classList.add('hidden');
       }
     }
+    loadData(); // Initial load
+    setInterval(loadData, REFRESH_INTERVAL); // Refresh periodically
 
     function buildTable() {
-      $sheetTable.innerHTML = '';
+      $sheetTable.innerHTML = ''; // Clear previous table
       $sheetTable.appendChild(createTableHead());
       $sheetTable.appendChild(createTableBody());
-      updateFilterDisplay();
-    }
-
-    function isNumericOrDateColumn(headerLabel) {
-        const headerLower = headerLabel.toLowerCase().trim();
-        return /valor|total|preço|custo|data|venc|pagto|emiss[aã]o/i.test(headerLower);
+      updateFilterDisplay(); // Update display based on active filters (initially none)
     }
 
     function createTableHead() {
       const thead = document.createElement('thead');
       thead.className = 'bg-surface/90';
       const tr = document.createElement('tr');
-      tr.className = 'divide-x divide-slate-700';
+      tr.className = 'divide-x divide-primary-500/30';
 
       headersDisplay.forEach((header, index) => {
         const th = document.createElement('th');
-        const isNumericDate = isNumericOrDateColumn(header);
-        th.className = `px-4 py-2.5 ${isNumericDate ? 'text-right' : 'text-left'} text-xs font-semibold text-slate-300 uppercase sticky top-0 bg-surface/95 whitespace-nowrap`;
+        th.className = 'px-4 py-3 text-left text-xs font-semibold text-primary-500 uppercase sticky top-0 bg-surface/95 whitespace-nowrap';
         const headerText = document.createElement('span');
         headerText.textContent = header;
         th.appendChild(headerText);
 
+        // Add select filter
         const select = document.createElement('select');
         select.dataset.colIndex = index;
-        select.onchange = handleFilterChange;
-        select.innerHTML = '<option value="">Todos</option>';
+        select.className = 'mt-1 block w-full text-xs'; // Tailwind classes for styling
+        select.innerHTML = '<option value="">Todos</option>'; // Default option
 
-        const uniqueValues = [...new Set(sheetRows.map(row => formatCellValue(row[index], header)))]
-          .filter(value => value !== '–' && value !== null && value !== '')
-          .sort((a, b) => {
-            const numA = parseFloat(String(a).replace(/[R$\s.]/g, '').replace(',', '.'));
-            const numB = parseFloat(String(b).replace(/[R$\s.]/g, '').replace(',', '.'));
-            if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-
-            const dateA = parseDateValue(a);
-            const dateB = parseDateValue(b);
-             if (dateA && dateB && !isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
-                 return dateA.getTime() - dateB.getTime();
-             }
-            return String(a).localeCompare(String(b), 'pt-BR', { sensitivity: 'base' });
-           });
-
+        // Populate options with unique values from the column
+        const uniqueValues = [...new Set(sheetRows.map(row => formatCellValue(row[index], header)))].sort();
         uniqueValues.forEach(value => {
+          if (value === '–' || value === null || value === '') return; // Skip empty/placeholder values
           const option = document.createElement('option');
           option.value = value;
           option.textContent = value;
           select.appendChild(option);
         });
 
+        // Set current filter value if exists
         if (activeFilters[index]) {
           select.value = activeFilters[index];
         }
 
+        select.onchange = handleFilterChange; // Add event listener
         th.appendChild(select);
         tr.appendChild(th);
       });
@@ -376,26 +358,26 @@
         const colIndex = event.target.dataset.colIndex;
         const value = event.target.value;
         if (value) {
-            activeFilters[colIndex] = value;
+            activeFilters[colIndex] = value; // Add or update filter
         } else {
-            delete activeFilters[colIndex];
+            delete activeFilters[colIndex]; // Remove filter if "Todos" is selected
         }
-        applyFilters();
+        applyFilters(); // Re-filter the table and update charts
     }
 
     function createTableBody() {
       const tbody = document.createElement('tbody');
-      tbody.className = 'divide-y divide-slate-700';
+      tbody.className = 'divide-y divide-slate-600/60';
 
       sheetRows.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
-        tr.className = `${rowIndex % 2 ? 'bg-surface/70' : 'bg-surface/60'} hover:bg-slate-600/80 transition-colors duration-150`;
+        tr.className = `${rowIndex % 2 ? 'bg-surface/70' : 'bg-surface/60'} hover:bg-primary-500/10 transition-colors duration-150`; // Alternating row colors
 
+        // Create cells based on *displayed* headers only
         headersDisplay.forEach((header, colIndex) => {
           const td = document.createElement('td');
-          const isNumericDate = isNumericOrDateColumn(header);
-          td.className = `px-4 py-2.5 ${isNumericDate ? 'text-right' : 'text-left'} whitespace-nowrap`;
-          td.textContent = formatCellValue(row[colIndex], header);
+          td.className = 'px-4 py-3 whitespace-nowrap';
+          td.textContent = formatCellValue(row[colIndex], header); // Format cell value
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -403,61 +385,70 @@
       return tbody;
     }
 
+    // Formats cell value based on header label (currency, date, default)
     function formatCellValue(cellValue, headerLabel) {
-        const headerLower = headerLabel.toLowerCase().trim();
+        const headerLower = headerLabel.toLowerCase();
 
-        if (headerLower === 'nf' || headerLower === 'observação') {
-             return cellValue == null || String(cellValue).trim() === '' ? '–' : cellValue;
+        // Specific handling for 'NF' column if needed (keep as is or format number)
+        if (headerLower === 'nf') {
+            return cellValue ?? '–'; // Keep NF as it is, or use '–' if null/undefined
         }
 
-        if (/valor|total|preço|custo/i.test(headerLower)) {
+        // Check if header suggests a currency value
+        if (/valor|total|preço/i.test(headerLower)) {
             let numericValue = NaN;
             if (typeof cellValue === 'number') {
                 numericValue = cellValue;
             } else if (typeof cellValue === 'string') {
+                // Clean string: remove currency symbols, thousand separators, use dot for decimal
                 const cleanedString = String(cellValue).replace(/[R$\s.]/g, '').replace(',', '.');
                 numericValue = parseFloat(cleanedString);
             }
-            return isNaN(numericValue) ? (cellValue == null || String(cellValue).trim() === '' ? '–' : cellValue) : formatCurrency(numericValue);
+            return isNaN(numericValue) ? (cellValue ?? '–') : formatCurrency(numericValue);
         }
 
-        const mightBeDate = /data|venc|pagto|emiss[aã]o/i.test(headerLower);
-        if(mightBeDate) {
-            const dateValue = parseDateValue(cellValue);
-            if (dateValue && !isNaN(dateValue.getTime())) {
-                return formatDateBR(dateValue);
-            }
+        // Attempt to parse as date *only if* it looks like a date or is a number (potential serial date)
+        // Use the corrected parseDateValue and formatDateBR
+        const dateValue = parseDateValue(cellValue);
+        if (dateValue) {
+             // Check if it's a valid date after parsing
+             return !isNaN(dateValue.getTime()) ? formatDateBR(dateValue) : (cellValue ?? '–');
         }
 
+        // Handle plain numbers that are not currency or dates (e.g., quantities)
         if (typeof cellValue === 'number') {
-            return cellValue.toLocaleString('pt-BR');
+             return cellValue.toLocaleString('pt-BR');
         }
         if (typeof cellValue === 'string' && /^\d+(\.\d+)?$/.test(cellValue)) {
-             const num = parseFloat(cellValue);
-             if (!isNaN(num)) return num.toLocaleString('pt-BR');
+              const num = parseFloat(cellValue);
+              if (!isNaN(num)) return num.toLocaleString('pt-BR');
         }
 
-        return cellValue == null || String(cellValue).trim() === '' ? '–' : cellValue;
+        // Default: return value as is, or '–' if null/undefined
+        return cellValue ?? '–';
     }
+
 
     function applyFilters() {
       const tbody = $sheetTable.querySelector('tbody');
       if (!tbody) return;
 
+      // Filter table rows
       Array.from(tbody.rows).forEach(tableRow => {
         let showRow = true;
         for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
+          // Compare filter value with the *formatted text content* of the cell
           if (filterValue && tableRow.cells[colIndex].textContent.trim() !== filterValue) {
             showRow = false;
             break;
           }
         }
-        tableRow.style.display = showRow ? '' : 'none';
+        tableRow.style.display = showRow ? '' : 'none'; // Show or hide row
       });
 
-      updateFilterDisplay();
-      updateCharts();
-      updateGrandTotalHeader();
+      updateFilterDisplay(); // Update the text showing active filters
+      updateCharts(); // Update charts based on filtered data
+      updateGrandTotalHeader(); // Update header total based on filtered data
     }
 
     function updateFilterDisplay() {
@@ -465,51 +456,51 @@
       if (activeFilterKeys.length === 0) {
         $filtersActive.textContent = 'Nenhum filtro ativo';
         $clearFiltersBtn.style.display = 'none';
-      } else {
-        const filterParts = activeFilterKeys.map(index => `${headersDisplay[index]}: ${activeFilters[index]}`);
-        $filtersActive.textContent = 'Filtros: ' + filterParts.join(' | ');
-        $clearFiltersBtn.style.display = 'inline-block';
+        return;
       }
+
+      // Create a string describing active filters: "Header: Value | Header: Value"
+      const filterParts = activeFilterKeys.map(index => `${headersDisplay[index]}: ${activeFilters[index]}`);
+      $filtersActive.textContent = 'Filtros: ' + filterParts.join(' | ');
+      $clearFiltersBtn.style.display = 'inline-block'; // Show clear button
     }
 
     function clearFilters() {
-      Object.keys(activeFilters).forEach(key => delete activeFilters[key]);
+      Object.keys(activeFilters).forEach(key => delete activeFilters[key]); // Clear filter object
+      // Reset select dropdowns in the table header
       $tableWrapper.querySelectorAll('thead select').forEach(select => select.value = '');
-      applyFilters();
+      applyFilters(); // Re-apply (effectively removing) filters
     }
 
+    // Check if chart data (labels or totals) has actually changed
     function hasDataChanged(newData, prevData) {
-        if (prevData === null) return true;
-        if (typeof newData !== 'object' || typeof prevData !== 'object') {
-            return newData !== prevData;
-        }
-        if (newData && prevData && Array.isArray(newData.labels) && Array.isArray(prevData.labels) && Array.isArray(newData.totals) && Array.isArray(prevData.totals)) {
-             return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) ||
-                    JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals);
-        }
-        return true;
+        if (!prevData) return true; // Always update if no previous data
+        return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) ||
+               JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals);
     }
 
+    // Aggregates data by date based on a column header regex (e.g., /venc/i for Vencimento)
     function aggregateByDate(dateColumnRegex) {
         const dateColIndex = headersFull.findIndex(h => dateColumnRegex.test(h.toLowerCase()));
-        if (dateColIndex === -1) {
-            console.warn(`Date column not found for regex: ${dateColumnRegex}`);
-            return { labels: [], totals: [] };
-        }
-        const valueColIndex = headersFull.findIndex(h => /valor|total|preço|custo/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-         if (valueColIndex === -1) {
-            console.warn("Value column (valor/total/preço/custo) not found.");
-            return { labels: [], totals: [] };
-        }
+        if (dateColIndex === -1) return { labels: [], totals: [] }; // Date column not found
+
+        // Find the value column (e.g., 'Valor') - avoid 'Valor NF' if it exists
+        const valueColIndex = headersFull.findIndex(h => /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
+        if (valueColIndex === -1) return { labels: [], totals: [] }; // Value column not found
 
         const aggregationMap = new Map();
         getFilteredRows().forEach(row => {
             const date = parseDateValue(row[dateColIndex]);
+            // Skip if date is invalid or cannot be parsed
             if (!date || isNaN(date.getTime())) return;
+
+            // Use ISO date string (YYYY-MM-DD) as the key for reliable grouping & sorting
             const dateKey = date.toISOString().split('T')[0];
 
             let value = row[valueColIndex];
-            if (value == null) return;
+            if (value == null) return; // Skip null values
+
+            // Convert value to number, handling potential string formats
             value = typeof value === 'number' ? value : parseFloat(String(value).replace(/[R$\s.]/g, '').replace(',', '.'));
 
             if (!isNaN(value)) {
@@ -517,34 +508,36 @@
             }
         });
 
+        // Sort entries by date key
         const orderedEntries = [...aggregationMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
+        // --- CORREÇÃO AQUI --- Use a função formatDateBR corrigida (UTC)
         return {
             labels: orderedEntries.map(([key]) => {
-                const date = new Date(key + 'T00:00:00Z');
-                return formatDateBR(date);
+                 // Create Date object from UTC key (YYYY-MM-DD)
+                 const date = new Date(key + 'T00:00:00Z');
+                 return formatDateBR(date); // Format using UTC-based function
             }),
             totals: orderedEntries.map(([_, value]) => value)
         };
     }
 
+
+    // Aggregates data by month based on a column header regex
     function aggregateByMonth(dateColumnRegex) {
         const dateColIndex = headersFull.findIndex(h => dateColumnRegex.test(h.toLowerCase()));
-        if (dateColIndex === -1) {
-            console.warn(`Date column not found for regex: ${dateColumnRegex}`);
-            return { labels: [], totals: [] };
-        }
-        const valueColIndex = headersFull.findIndex(h => /valor|total|preço|custo/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-         if (valueColIndex === -1) {
-            console.warn("Value column (valor/total/preço/custo) not found.");
-            return { labels: [], totals: [] };
-        }
+        if (dateColIndex === -1) return { labels: [], totals: [] };
+
+        const valueColIndex = headersFull.findIndex(h => /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
+        if (valueColIndex === -1) return { labels: [], totals: [] };
 
         const aggregationMap = new Map();
         getFilteredRows().forEach(row => {
             const date = parseDateValue(row[dateColIndex]);
-            if (!date || isNaN(date.getTime())) return;
-            const monthKey = `${date.getUTCFullYear()}-${padZero(date.getUTCMonth())}`;
+             if (!date || isNaN(date.getTime())) return;
+
+            // Use YYYY-MM key based on UTC date for reliable grouping & sorting
+            const monthKey = `${date.getUTCFullYear()}-${padZero(date.getUTCMonth())}`; // Month is 0-indexed
 
             let value = row[valueColIndex];
             if (value == null) return;
@@ -555,218 +548,224 @@
             }
         });
 
+        // Sort entries by month key
         const orderedEntries = [...aggregationMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
+        // --- CORREÇÃO AQUI --- Use a função formatMonthYear corrigida (UTC)
         return {
             labels: orderedEntries.map(([key]) => {
                 const [year, monthIndex] = key.split('-');
+                // Create Date object for the first day of the month in UTC
                 const date = new Date(Date.UTC(+year, +monthIndex, 1));
-                return formatMonthYear(date);
+                return formatMonthYear(date); // Format using UTC-based function
             }),
             totals: orderedEntries.map(([_, value]) => value)
         };
     }
 
-    function calculateTomorrowTotal() {
-        const dateColIndex = headersFull.findIndex(h => /venc/i.test(h.toLowerCase()));
-        if (dateColIndex === -1) {
-            console.warn("Due Date column (venc) not found for tomorrow's total.");
-            return { total: 0, tomorrowDateObj: null };
-        }
-        const valueColIndex = headersFull.findIndex(h => /valor|total|preço|custo/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-         if (valueColIndex === -1) {
-            console.warn("Value column (valor/total/preço/custo) not found for tomorrow's total.");
-            return { total: 0, tomorrowDateObj: null };
-        }
 
-        const today = new Date();
-        const tomorrow = new Date();
-        tomorrow.setUTCDate(today.getUTCDate() + 1);
-        tomorrow.setUTCHours(0, 0, 0, 0);
-
-        let total = 0;
-        getFilteredRows().forEach(row => {
-            const dueDate = parseDateValue(row[dateColIndex]);
-            if (dueDate && !isNaN(dueDate.getTime()) &&
-                dueDate.getUTCFullYear() === tomorrow.getUTCFullYear() &&
-                dueDate.getUTCMonth() === tomorrow.getUTCMonth() &&
-                dueDate.getUTCDate() === tomorrow.getUTCDate())
-            {
-                let value = row[valueColIndex];
-                if (value != null) {
-                    value = typeof value === 'number' ? value : parseFloat(String(value).replace(/[R$\s.]/g, '').replace(',', '.'));
-                    if (!isNaN(value)) {
-                        total += value;
-                    }
-                }
-            }
-        });
-        return { total: total, tomorrowDateObj: tomorrow };
-    }
-
+    // Gets rows based on current active filters
     function getFilteredRows() {
         if (Object.keys(activeFilters).length === 0) {
-            return sheetRows;
+            return sheetRows; // Return all rows if no filters
         }
         return sheetRows.filter(row => {
             for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
-                const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
-                if (filterValue && cellFormattedValue.trim() !== filterValue) {
-                    return false;
-                }
+                 // Format cell value *exactly* as it appears in the filter dropdown
+                 const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
+                 if (filterValue && cellFormattedValue.trim() !== filterValue) {
+                    return false; // Row doesn't match this filter
+                 }
             }
-            return true;
+            return true; // Row matches all active filters
         });
     }
 
+    // Base options for all ApexCharts
     const baseChartOptions = {
       chart: {
-        foreColor: '#cbd5e1',
-        toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: true } },
+        foreColor: '#cbd5e1', // Text color for axes, etc.
+        toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
         zoom: { enabled: false },
         animations: { enabled: true, easing: 'easeinout', speed: 500, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 350 } }
       },
-      tooltip: { theme: 'dark', y: { formatter: formatTooltip } },
-      dataLabels: { enabled: false },
-      grid: { borderColor: '#475569', strokeDashArray: 4 },
-      legend: { show: false },
-      markers: { size: 4, hover: { size: 6 } }
+      tooltip: { theme: 'dark', y: { formatter: formatTooltip } }, // Dark tooltip, format Y value
+      dataLabels: { enabled: false }, // Disable data labels on lines/areas/bars
+      grid: { borderColor: '#475569', strokeDashArray: 4 }, // Grid line style
+      legend: { show: false }, // Hide legend by default (show specifically for donut)
+      markers: { size: 4, hover: { size: 6 } } // Marker size for line/area charts
     };
+
 
     function buildCharts() {
         renderOverviewChart();
         renderPaymentChart();
         renderMonthlyChart();
-        renderTomorrowTotalCard();
-        prevOverviewData = aggregateByDate(/venc/i);
-        prevPaymentData  = aggregateByDate(/pag/i);
-        prevMonthlyData  = aggregateByMonth(/venc/i);
-        prevTomorrowTotal = calculateTomorrowTotal().total;
+        // Store initial data for comparison on updates
+        prevOverviewData = aggregateByDate(/venc/i); // Use regex for 'Vencimento'
+        prevPaymentData  = aggregateByDate(/pag/i);  // Use regex for 'Pagamento'
+        prevMonthlyData  = aggregateByMonth(/venc/i);// Use regex for 'Vencimento'
     }
 
+    // Update charts only if data has changed
     function updateCharts() {
         renderOverviewChart(true);
         renderPaymentChart(true);
         renderMonthlyChart(true);
-        renderTomorrowTotalCard(true);
-    }
-
-    function renderTomorrowTotalCard(isUpdate = false) {
-        const { total: newTotal, tomorrowDateObj } = calculateTomorrowTotal();
-        if (isUpdate && !hasDataChanged(newTotal, prevTomorrowTotal)) return;
-
-        $tomorrowTotalValue.textContent = formatCurrency(newTotal);
-        $tomorrowDate.textContent = tomorrowDateObj ? `(${formatDateBR(tomorrowDateObj)})` : '';
-        prevTomorrowTotal = newTotal;
     }
 
     function renderOverviewChart(isUpdate = false) {
-        const newData = aggregateByDate(/venc/i);
-        if (isUpdate && !hasDataChanged(newData, prevOverviewData)) return;
+      const newData = aggregateByDate(/venc/i); // Aggregate by due date
+      if (isUpdate && !hasDataChanged(newData, prevOverviewData)) return; // Skip if data hasn't changed
 
-        const options = {
-            series: [{ name: 'Total Venc.', data: newData.totals }],
-            xaxis: { categories: newData.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' } }, tooltip: { enabled: false } },
-            yaxis: { labels: { formatter: formatCompact } },
-            colors: [CHART_COLORS[0]],
-            stroke: { curve: 'smooth', width: 2 },
-            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: .5, opacityTo: .1, stops: [0, 90, 100] } }
-        };
+      const options = {
+        series: [{ name: 'Total Venc.', data: newData.totals }],
+        xaxis: {
+            categories: newData.labels,
+            labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' } },
+            tooltip: { enabled: false } // Don't show tooltip for x-axis category itself
+         },
+        yaxis: { labels: { formatter: formatCompact } }, // Use compact number format (e.g., 1K, 1.5M)
+        colors: [CHART_COLORS[0]], // Use first color
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: .5, opacityTo: .1, stops: [0, 90, 100] } }
+      };
 
-        if (isUpdate && chartOverview) {
-            chartOverview.updateOptions(options, false, true);
-        } else {
-            chartOverview?.destroy();
-            chartOverview = new ApexCharts(document.querySelector('#chart-overview'), {
-                ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options
-            });
-            chartOverview.render();
-        }
-        prevOverviewData = newData;
+      if (isUpdate && chartOverview) {
+        chartOverview.updateOptions(options, false, true); // Update existing chart smoothly
+      } else {
+        chartOverview?.destroy(); // Destroy old chart if exists
+        chartOverview = new ApexCharts(document.querySelector('#chart-overview'), {
+          ...baseChartOptions, // Merge base options
+          chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, // Specific type and height
+          ...options // Apply specific options
+        });
+        chartOverview.render();
+      }
+       prevOverviewData = newData; // Store current data for next comparison
     }
 
     function renderPaymentChart(isUpdate = false) {
-        const newData = aggregateByDate(/pag/i);
-        if (isUpdate && !hasDataChanged(newData, prevPaymentData)) return;
+      const newData = aggregateByDate(/pag/i); // Aggregate by payment date
+      if (isUpdate && !hasDataChanged(newData, prevPaymentData)) return;
 
-        const options = {
-            series: [{ name: 'Total Pago', data: newData.totals }],
-            xaxis: { categories: newData.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' } }, tooltip: { enabled: false } },
-            yaxis: { labels: { formatter: formatCompact } },
-            colors: [CHART_COLORS[1]],
-            stroke: { curve: 'smooth', width: 2 },
-            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: .5, opacityTo: .1, stops: [0, 90, 100] } }
-        };
+      const options = {
+        series: [{ name: 'Total Pago', data: newData.totals }],
+         xaxis: {
+            categories: newData.labels,
+            labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' } },
+            tooltip: { enabled: false }
+         },
+        yaxis: { labels: { formatter: formatCompact } },
+        colors: [CHART_COLORS[1]], // Use second color
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: .5, opacityTo: .1, stops: [0, 90, 100] } }
+      };
 
-        if (isUpdate && chartPayment) {
-            chartPayment.updateOptions(options, false, true);
-        } else {
-            chartPayment?.destroy();
-            chartPayment = new ApexCharts(document.querySelector('#chart-payment'), {
-                ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options
-            });
-            chartPayment.render();
-        }
-        prevPaymentData = newData;
+      if (isUpdate && chartPayment) {
+        chartPayment.updateOptions(options, false, true);
+      } else {
+        chartPayment?.destroy();
+        chartPayment = new ApexCharts(document.querySelector('#chart-payment'), {
+          ...baseChartOptions,
+          chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
+          ...options
+        });
+        chartPayment.render();
+      }
+       prevPaymentData = newData;
     }
 
     function renderMonthlyChart(isUpdate = false) {
-        const newData = aggregateByMonth(/venc/i);
-        if (isUpdate && !hasDataChanged(newData, prevMonthlyData)) return;
+        const newData = aggregateByMonth(/venc/i); // Aggregate by due month
 
-        const grandTotal = newData.totals.reduce((sum, total) => sum + total, 0);
+        // Only check if totals changed for pie/donut, labels might change format but represent same months
+        const totalsChanged = !prevMonthlyData || JSON.stringify(newData.totals) !== JSON.stringify(prevMonthlyData.totals);
+        if (isUpdate && !totalsChanged) return;
+
+        const grandTotal = newData.totals.reduce((sum, total) => sum + total, 0); // Calculate total for donut center
 
         const options = {
-            series: newData.totals, labels: newData.labels,
-            colors: CHART_COLORS.slice(0, newData.labels.length),
-            legend: { ...baseChartOptions.legend, show: true, position: 'bottom', fontSize: '11px', horizontalAlign: 'center', itemMargin: { horizontal: 5, vertical: 3 } },
+            series: newData.totals, // Data series for donut slices
+            labels: newData.labels, // Labels for each slice
+            colors: CHART_COLORS.slice(0, newData.labels.length), // Use colors cyclically
+            legend: { // Show legend for donut chart
+                ...baseChartOptions.legend, // Inherit base settings
+                show: true,
+                position: 'bottom',
+                fontSize: '11px',
+                horizontalAlign: 'center',
+                itemMargin: { horizontal: 5, vertical: 2 }
+            },
             plotOptions: {
                 pie: {
                     donut: {
-                        size: '65%',
-                        labels: {
+                        size: '65%', // Size of the donut hole
+                        labels: { // Configure labels inside the donut
                             show: true,
-                            total: { show: true, label: 'Total Geral', fontSize: '14px', fontWeight: 600, color: '#cbd5e1', formatter: () => formatCurrency(grandTotal) },
-                            value: { fontSize: '16px', fontWeight: 500, color: '#cbd5e1', formatter: (val) => formatCurrency(parseFloat(val)) }
+                            total: { // Configure the "Total" label in the center
+                                show: true,
+                                label: 'Total Geral', // Text above the value
+                                fontSize: '14px',
+                                fontWeight: 600,
+                                color: '#cbd5e1',
+                                formatter: () => formatCurrency(grandTotal) // Display formatted total
+                            },
+                            value: { // Configure the individual slice value shown on hover/select
+                                fontSize: '16px',
+                                fontWeight: 500,
+                                color: '#cbd5e1',
+                                formatter: (val) => formatCurrency(parseFloat(val)) // Format slice value
+                            }
                         }
                     }
                 }
             },
-            responsive: [{ breakpoint: 480, options: { chart: { height: 320 }, legend: { position: 'bottom', fontSize: '10px' } } }]
+            responsive: [{ // Adjust layout for smaller screens
+                breakpoint: 480,
+                options: {
+                    chart: { height: 320 }, // Increase height slightly on small screens
+                    legend: { position: 'bottom', fontSize: '10px' }
+                }
+            }]
         };
 
         if (isUpdate && chartMonthly) {
-            chartMonthly.updateOptions(options, true, true);
+             chartMonthly.updateOptions(options, true, true); // Redraw series and labels
         } else {
             chartMonthly?.destroy();
             chartMonthly = new ApexCharts(document.querySelector('#chart-monthly'), {
-                ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'donut', height: 280 }, ...options
+                ...baseChartOptions,
+                chart: { ...baseChartOptions.chart, type: 'donut', height: 280 }, // Set type to donut
+                ...options
             });
             chartMonthly.render();
         }
-        prevMonthlyData = newData;
+        prevMonthlyData = newData; // Store current data
     }
 
+
+    // Updates the total shown in the header bar based on current filters
     function updateGrandTotalHeader() {
-        const { totals } = aggregateByMonth(/venc/i);
-        const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
-        const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
-        $monthTotal.textContent = `Total Geral (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
+      // Use the same aggregation as the monthly chart (based on due date)
+      const { totals } = aggregateByMonth(/venc/i);
+      const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
+      const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : ''; // Indicate if filters are active
+      $monthTotal.textContent = `Total Geral (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
     }
 
+
+    // Initial setup: Build table and charts once data is loaded
     function buildInitialUI() {
-        buildTable();
-        buildCharts();
+      buildTable();
+      buildCharts();
     }
 
+    // Update UI when data refreshes: Rebuild table, apply filters (which updates charts)
     function updateUI() {
-        buildTable();
-        applyFilters();
-        renderTomorrowTotalCard(true);
+      buildTable(); // Rebuilds table header with potentially new filter options
+      applyFilters(); // Applies existing filters to the new data and updates charts/total
     }
-
-    loadData();
-    setInterval(loadData, REFRESH_INTERVAL); // Agora usa o intervalo de 10 minutos
 
   </script>
 </body>
