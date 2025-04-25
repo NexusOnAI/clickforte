@@ -64,7 +64,7 @@
         padding-left: 0.75rem; /* Keep padding consistent when collapsed */
     }
     .nav-link.active i:not(.submenu-toggle-icon) { /* Ensure main icon color changes */
-      color: #4dabf7;
+     color: #4dabf7;
     }
 
     /* Active Submenu Link Styling */
@@ -212,16 +212,22 @@
 
   <div id="dashboard" class="hidden flex flex-col min-h-screen">
     <header id="profileHeader" class="md:hidden flex justify-between items-center px-4 shadow-sm">
-      <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Abrir menu">
-        <i class="bi bi-list text-xl"></i>
-      </button>
-      <div class="flex items-center cursor-pointer group" onclick="openProfileModal()">
-          <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
-          <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
-      </div>
-    </header>
+        <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Abrir menu">
+            <i class="bi bi-list text-xl"></i>
+        </button>
 
-    <div class="flex flex-1 overflow-hidden"> <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md h-screen sticky top-0 border-r border-[#495057]"> <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center">
+        <div class="flex items-center gap-2"> <button onclick="loadPage('integracao.html', null); return false;" class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d21] focus:ring-[#4dabf7]" aria-label="Abrir Integração">
+                <i class="bi bi-arrows-angle-contract text-lg"></i>
+            </button>
+            <div class="flex items-center cursor-pointer group" onclick="openProfileModal()">
+                <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
+                <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
+            </div>
+        </div>
+    </header>
+    <div class="flex flex-1 overflow-hidden">
+      <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md h-screen sticky top-0 border-r border-[#495057]">
+        <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center">
           <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
         </div>
 
@@ -230,11 +236,6 @@
               <i class="bi bi-house-door-fill w-5 text-center text-lg"></i>
               <span class="sidebar-text text-sm font-medium">Home</span>
           </a>
-          <a href="#" onclick="loadPage('integracao.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-              <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i>
-              <span class="sidebar-text text-sm font-medium">Integração</span>
-          </a>
-
           <div class="nav-item">
             <button onclick="toggleSubmenu('desktopPrevisaoSubmenu', 'desktopPrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
               <span class="flex items-center gap-3">
@@ -305,13 +306,13 @@
           </div>
         </div>
       </nav>
-
-      <main id="mainContent" class="overflow-y-auto p-4 md:p-6 relative bg-[#1a1d21]"> <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
+      <main id="mainContent" class="overflow-y-auto p-4 md:p-6 relative bg-[#1a1d21]">
+        <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4dabf7]"></div>
-       </div>
-       <iframe id="mainFrame" src="home.html" class="w-full h-full rounded-lg shadow-md relative z-10 border border-[#495057]" title="Conteúdo Principal"></iframe>
+        </div>
+        <iframe id="mainFrame" src="home.html" class="w-full h-full rounded-lg shadow-md relative z-10 border border-[#495057]" title="Conteúdo Principal"></iframe>
       </main>
-    </div>
+      </div>
 
     <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
     <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 bg-[#212529] text-[#adb5bd] h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r border-[#495057]">
@@ -323,31 +324,29 @@
         </div>
         <div class="overflow-y-auto flex-grow p-3 space-y-1">
          <a href="#" onclick="loadPage('home.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
-         <a href="#" onclick="loadPage('integracao.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Integração</span></a>
-
          <div class="nav-item">
-            <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
-              <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Previsão</span></span>
-              <i id="mobilePrevisaoIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
-            </button>
-            <div id="mobilePrevisaoSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Maio</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Dezembro</a>
-            </div>
+           <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
+             <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Previsão</span></span>
+             <i id="mobilePrevisaoIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
+           </button>
+           <div id="mobilePrevisaoSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
+             <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
+             <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Maio</a>
+             <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Dezembro</a>
+           </div>
          </div>
 
          <div class="nav-item">
-            <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
-              <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
-              <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
-            </button>
-            <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
-            </div>
+           <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
+             <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
+             <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
+           </button>
+           <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
+             <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Janeiro</a>
+             <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Fevereiro</a>
+             <a href="#" onclick="loadPage('sub_marco.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Março</a>
+             <a href="#" onclick="loadPage('sub_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
+           </div>
           </div>
 
          <a href="#" onclick="loadPage('geral.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
@@ -370,7 +369,7 @@
          </button>
         </div>
        </nav>
-  </div>
+    </div>
 
   <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
     <div class="bg-[#212529] rounded-lg w-full max-w-lg p-6 shadow-xl text-[#e9ecef] transform transition-all duration-200 ease-in-out scale-95 opacity-0 border border-[#495057]" id="profileModalContent">
@@ -392,29 +391,29 @@
           </div>
           <div class="w-full flex-grow space-y-4">
              <div>
-               <label for="profileNameInput" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nome de Usuário</label>
-               <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
-                      class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+                <label for="profileNameInput" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nome de Usuário</label>
+                <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
+                       class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
             </div>
           </div>
         </div>
 
         <div class="space-y-4 border-t border-[#495057] pt-6 mb-6">
-            <h6 class="text-md font-semibold text-[#adb5bd]">Alterar Senha</h6>
-            <div>
-                <label for="currentPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Senha Atual</label>
-                <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
-                       class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+             <h6 class="text-md font-semibold text-[#adb5bd]">Alterar Senha</h6>
+             <div>
+                 <label for="currentPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Senha Atual</label>
+                 <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
+                         class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
             </div>
              <div>
-                <label for="newPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nova Senha</label>
-                <input type="password" id="newPassword" placeholder="Digite a nova senha"
-                       class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+                 <label for="newPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nova Senha</label>
+                 <input type="password" id="newPassword" placeholder="Digite a nova senha"
+                         class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
             </div>
              <div>
-                <label for="confirmPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
-                <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
-                       class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+                 <label for="confirmPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
+                 <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
+                         class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
             </div>
         </div>
         <div class="flex justify-end space-x-3 pt-4 border-t border-[#495057]">
@@ -424,8 +423,6 @@
        </form>
      </div>
   </div>
-
-
   <script>
     // Function to set the --vh CSS variable
     function setVhProperty() {
@@ -536,8 +533,8 @@
             // Fallback if home link isn't found (shouldn't happen with current HTML)
             if (mainFrame) mainFrame.src = 'home.html';
             if (iframeSpinnerOverlay) { // Manually hide spinner if no link to activate
-                hideElement(iframeSpinnerOverlay);
-                iframeSpinnerOverlay.classList.remove('flex');
+                 hideElement(iframeSpinnerOverlay);
+                 iframeSpinnerOverlay.classList.remove('flex');
             }
             console.warn("Home link not found for initial page load.");
          }
@@ -605,7 +602,7 @@
 
       // Sets the active state for a clicked navigation link
       function setActiveLink(clickedLinkElement) {
-          if (!clickedLinkElement) return;
+          if (!clickedLinkElement) return; // Do nothing if no element provided (e.g., for header buttons)
 
           // Remove active class from all nav links in both sidebars
           document.querySelectorAll('#desktopSidebar .nav-link, #mobileSidebar .nav-link').forEach(link => {
@@ -625,33 +622,33 @@
                 const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
                 const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
                  if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
-                      const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
-                      if (parentIconId) {
-                           toggleSubmenu(parentSubmenu.id, parentIconId);
-                      }
+                     const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
+                     if (parentIconId) {
+                          toggleSubmenu(parentSubmenu.id, parentIconId);
+                     }
                  }
             }
           }
       }
 
 
-      function loadPage(pageUrl, clickedLinkElement) {
-         if (iframeSpinnerOverlay) {
-             iframeSpinnerOverlay.classList.remove('hidden');
-             iframeSpinnerOverlay.classList.add('flex');
-         }
+      function loadPage(pageUrl, clickedLinkElement = null) { // Default clickedLinkElement to null
+          if (iframeSpinnerOverlay) {
+               iframeSpinnerOverlay.classList.remove('hidden');
+               iframeSpinnerOverlay.classList.add('flex');
+          }
 
-         setActiveLink(clickedLinkElement); // Use the new function to set active state
+          setActiveLink(clickedLinkElement); // Use the function to set active state (will do nothing if clickedLinkElement is null)
 
-         if(mainFrame) {
-           mainFrame.src = pageUrl;
-         } else {
-           console.error("Elemento iframe 'mainFrame' não encontrado.");
-           if (iframeSpinnerOverlay) {
-               iframeSpinnerOverlay.classList.add('hidden');
-               iframeSpinnerOverlay.classList.remove('flex');
-           }
-         }
+          if(mainFrame) {
+            mainFrame.src = pageUrl;
+          } else {
+            console.error("Elemento iframe 'mainFrame' não encontrado.");
+            if (iframeSpinnerOverlay) {
+                iframeSpinnerOverlay.classList.add('hidden');
+                iframeSpinnerOverlay.classList.remove('flex');
+            }
+          }
       }
 
       // Iframe load/error handling
@@ -695,26 +692,26 @@
         // Close other open submenus *within the same context* (desktop or mobile)
         // unless the desktop sidebar is collapsed (where submenus don't visually open)
         if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-            document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
-                if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
-                    otherSubmenu.classList.remove('submenu-visible');
-                    const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon');
-                    const otherIcon = document.getElementById(otherIconId);
-                    if (otherIcon) otherIcon.classList.remove('rotate-180');
-                }
-            });
+             document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
+                 if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
+                     otherSubmenu.classList.remove('submenu-visible');
+                     const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon');
+                     const otherIcon = document.getElementById(otherIconId);
+                     if (otherIcon) otherIcon.classList.remove('rotate-180');
+                 }
+             });
         }
 
         // Toggle the clicked submenu only if sidebar is not collapsed (desktop) or if it's mobile
         if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-            submenu.classList.toggle('submenu-visible');
-            icon.classList.toggle('rotate-180');
+             submenu.classList.toggle('submenu-visible');
+             icon.classList.toggle('rotate-180');
         } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
-            // In collapsed desktop view, clicking the parent *should* probably navigate
-            // to a default page for that section or do nothing, as submenus are hidden.
-            // Or, we could potentially show a tooltip/popover with the submenu items.
-            // For now, we just log it.
-            console.log("Tentativa de abrir submenu com sidebar desktop recolhida ignorada.");
+             // In collapsed desktop view, clicking the parent *should* probably navigate
+             // to a default page for that section or do nothing, as submenus are hidden.
+             // Or, we could potentially show a tooltip/popover with the submenu items.
+             // For now, we just log it.
+             console.log("Tentativa de abrir submenu com sidebar desktop recolhida ignorada.");
         }
       }
 
@@ -798,9 +795,9 @@
         const perfilLinkMobile = document.querySelector('#mobileConfigSubmenu a[onclick*="openProfileModal"]');
         // Ensure setActiveLink is defined before calling
         if (typeof setActiveLink === 'function') {
-            setActiveLink(perfilLinkDesktop || perfilLinkMobile);
+             setActiveLink(perfilLinkDesktop || perfilLinkMobile);
         } else {
-            console.error('setActiveLink function not defined when opening profile modal.');
+             console.error('setActiveLink function not defined when opening profile modal.');
         }
       }
 
@@ -842,32 +839,32 @@
         let passwordChangeValid = false;
 
         if (passwordChangeAttempted) {
-            // **IMPORTANT:** Implement proper validation and API call here!
-            // 1. Check if currentPassword matches the user's actual current password (via API).
-            // 2. Check if newPassword meets complexity requirements.
-            // 3. Check if newPassword and confirmPassword match.
-            // 4. Ensure newPassword is not empty if attempting change.
-            if (newPassword && newPassword === confirmPassword /* && currentPassword is valid via API */) {
-                 console.log(">>> Password change request (VALID - Placeholder): ", newPassword);
-                 passwordChangeValid = true;
-                 // **API Call:** Send request to update password here.
-                 // **On Success from API:** Maybe show a success message.
-                 // **On Failure from API:** Show API error, alert user, keep modal open.
-                 // Example: Update localStorage ONLY if API call is successful in real scenario
-                 // localStorage.setItem('savedPassword', newPassword); // Update stored password (use cautiously)
-            } else {
-                 console.log(">>> Password change request (INVALID - Placeholder)");
-                 // Display specific error messages to the user
-                 if (!newPassword) {
-                    alert('Nova senha não pode estar vazia.');
-                 } else if (newPassword !== confirmPassword) {
-                     alert('As novas senhas não coincidem.');
-                 } else {
-                     // Assume currentPassword validation failed if logic reaches here
-                     alert('Senha atual incorreta ou erro ao validar.');
-                 }
-                 return; // Stop form submission if password change fails validation
-            }
+             // **IMPORTANT:** Implement proper validation and API call here!
+             // 1. Check if currentPassword matches the user's actual current password (via API).
+             // 2. Check if newPassword meets complexity requirements.
+             // 3. Check if newPassword and confirmPassword match.
+             // 4. Ensure newPassword is not empty if attempting change.
+             if (newPassword && newPassword === confirmPassword /* && currentPassword is valid via API */) {
+                  console.log(">>> Password change request (VALID - Placeholder): ", newPassword);
+                  passwordChangeValid = true;
+                  // **API Call:** Send request to update password here.
+                  // **On Success from API:** Maybe show a success message.
+                  // **On Failure from API:** Show API error, alert user, keep modal open.
+                  // Example: Update localStorage ONLY if API call is successful in real scenario
+                  // localStorage.setItem('savedPassword', newPassword); // Update stored password (use cautiously)
+             } else {
+                  console.log(">>> Password change request (INVALID - Placeholder)");
+                  // Display specific error messages to the user
+                  if (!newPassword) {
+                     alert('Nova senha não pode estar vazia.');
+                  } else if (newPassword !== confirmPassword) {
+                       alert('As novas senhas não coincidem.');
+                  } else {
+                      // Assume currentPassword validation failed if logic reaches here
+                      alert('Senha atual incorreta ou erro ao validar.');
+                  }
+                  return; // Stop form submission if password change fails validation
+             }
         }
         // --- End Password Change Logic Placeholder ---
 
@@ -931,9 +928,9 @@
          } else {
              if(mainFrame) mainFrame.src = 'home.html'; // Fallback load
              if (iframeSpinnerOverlay) { // Hide spinner if no link
-                iframeSpinnerOverlay.classList.add('hidden');
-                iframeSpinnerOverlay.classList.remove('flex');
-            }
+                 iframeSpinnerOverlay.classList.add('hidden');
+                 iframeSpinnerOverlay.classList.remove('flex');
+             }
          }
          console.log('>>> Dashboard configurado para usuário logado.');
 
