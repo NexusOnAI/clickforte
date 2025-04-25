@@ -1,677 +1,193 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard • Google Sheets</title>
-
-  <link rel="preconnect" href="https://fonts.gstatic.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integração de Planilhas - ClickForte (Dark)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
-        extend: {
-          colors: {
-            surface: '#212529',
-            primary: { 500: '#4dabf7' },
-            slate: { 300: '#cbd5e1', 400: '#94a3b8', 600: '#475569' }
-          },
-          boxShadow: { glow: '0 0 8px rgba(77,171,247,.35)' },
-          backdropBlur: { xs: '2px' }
-        }
-      }
-    };
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    @keyframes spin { to { transform: rotate(360deg) } }
-    .animate-spin { animation: spin 1s linear infinite }
-    html, body { height: 100%; } /* Ensure html and body take full height */
-    body { background: #1a1d21; display: flex; flex-direction: column; } /* Make body a flex column */
-
-    /* Ensure main content area can grow */
-    main { flex-grow: 1; display: flex; flex-direction: column; }
-
-    #table-wrapper {
-        flex-grow: 1; /* Allow table wrapper to grow vertically */
-        overflow: auto; /* Changed from overflow-x-auto to auto for both scrolls */
-        max-width: 100%;
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Estilos gerais */
+    /* Removido background-color e color daqui, serão definidos via classe Tailwind no body */
+    body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+        min-height: 100vh;
     }
-    #charts-wrapper {
-        flex-grow: 1; /* Allow charts wrapper to grow vertically */
-        overflow-y: auto;
+    .card {
+        transition: all 0.3s ease-in-out;
+        /* Sombra padrão do Tailwind pode ser suficiente, ou ajuste aqui se necessário */
     }
-    #sheetTable { width: 100%; }
-
-    /* Scrollbar styling */
-    ::-webkit-scrollbar { width: 8px; height: 8px }
-    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px }
-
-    /* Table Header Filter Select Styling */
-    th select {
-      background: #212529; border: 1px solid #4dabf7; border-radius: 4px;
-      font-size: 11px; padding: 4px 6px; width: 100%; margin-top: 4px;
-      color: #cbd5e1;
-      appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234dabf7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-      background-repeat: no-repeat;
-      background-position: right 0.5rem center;
-      background-size: 0.65em auto;
-      padding-right: 2rem;
-    }
-    th select:focus { outline: none; border-color: #4dabf7; box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.3); }
-
-    /* Active Tab Styling */
-    .tab-btn.active-tab {
-      background: #4dabf7; color: #fff !important;
-      box-shadow: 0 0 5px rgba(77, 171, 247, .55)
-    }
-    .chart-card { transition: background-color 0.3s ease; }
-
-    /* Focus Visible Styling */
-    button:focus-visible, select:focus-visible {
-      outline: 2px solid #4dabf7; outline-offset: 2px;
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); /* Sombra um pouco mais visível no dark */
+        /* border-color será definido via classe hover: no HTML */
     }
 
-    /* --- Styles for Full-Screen Table View --- */
-    main.table-full-screen {
-        max-width: none;     /* Remove max-width constraint */
-        padding-left: 0;     /* Remove horizontal padding */
-        padding-right: 0;
-        padding-top: 0;      /* Remove top padding */
-        padding-bottom: 0;   /* Remove bottom padding */
-        gap: 0;              /* Remove gap between direct children */
+    /* Modal */
+    #modalOverlay {
+        display: none; position: fixed; z-index: 1000;
+        left: 0; top: 0; width: 100vw; height: 100vh;
+        background-color: rgba(0, 0, 0, 0.75); /* Overlay escuro mantido */
+        align-items: center; justify-content: center;
+        opacity: 0; transition: opacity 0.3s ease-in-out;
     }
-    /* Adjust padding/margin for tabs/filters containers when table is full screen */
-     main.table-full-screen > div:nth-of-type(1) { /* Tab buttons container */
-         padding: 0.75rem 1rem; /* Reduced padding, centered */
-         flex-shrink: 0; /* Prevent shrinking */
-    }
-     main.table-full-screen > #filters-bar {
-         padding: 0.75rem 1rem; /* Reduced padding */
-         flex-shrink: 0; /* Prevent shrinking */
-    }
-    /* Ensure table wrapper takes remaining space and looks seamless */
-    main.table-full-screen > #table-wrapper {
-        border-radius: 0; /* Remove rounded corners */
-        /* flex-grow: 1; is already set */
-        /* No specific height needed, flex-grow handles it */
-        border-top: 1px solid #475569; /* Optional: add a top border */
-    }
-    /* Ensure sticky header inside the wrapper works */
-     main.table-full-screen #sheetTable thead th {
-         position: sticky;
-         top: 0; /* Stick to the top of the scrollable #table-wrapper */
-         z-index: 10; /* Ensure it's above table body */
-     }
-     /* --- End Full-Screen Table Styles --- */
+    #modalOverlay.visible { display: flex; opacity: 1; }
 
+    #modalContent {
+        position: relative; width: 100%; height: 100%;
+        background: #1a1d21; /* <-- NOVO: Fundo escuro principal para o conteúdo do modal */
+        overflow: hidden;
+        transform: scale(0.95); opacity: 0;
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+    #modalOverlay.visible #modalContent { transform: scale(1); opacity: 1; }
+
+    /* Iframe com fundo placeholder dark */
+    #planilhaIframe {
+      width: 100%; height: 100%; border: none;
+      background-color: #1a1d21; /* <-- NOVO: Fundo escuro placeholder */
+    }
+
+    /* Controles do Modal (mantidos, visualmente OK no dark) */
+    #modalControls {
+        position: absolute; top: 0.75rem; right: 0.75rem;
+        display: flex; gap: 0.5rem; z-index: 10;
+        background-color: rgba(0, 0, 0, 0.4); /* Leve ajuste na opacidade */
+        padding: 0.5rem; border-radius: 0.5rem;
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    #modalControls button {
+        background: transparent; border: none; padding: 0.5rem;
+        border-radius: 9999px; cursor: pointer;
+        color: #e0e0e0; /* Cor do ícone ligeiramente menos brilhante */
+        display: flex; align-items: center; justify-content: center;
+        transition: background-color 0.2s ease-in-out;
+    }
+    #modalControls button:hover { background-color: rgba(255, 255, 255, 0.15); }
+    #modalControls button.close-button:hover { background-color: rgba(239, 68, 68, 0.5); } /* Vermelho mantido */
+    #modalControls button i { font-size: 1.25rem; line-height: 1; }
+    #modalControls button.close-button i { font-size: 1.5rem; }
   </style>
 </head>
-<body class="text-slate-300 min-h-screen flex flex-col antialiased">
+<body class="bg-[#1a1d21] p-6 md:p-10 min-h-screen">
 
-  <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40 flex-shrink-0">
-    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-2 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-      <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500 order-1 sm:order-1">Dashboard • Google Sheets</h1>
-      <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap">
-          <span id="month-total" class="text-primary-500 font-semibold text-xs sm:text-sm text-center"></span>
-          <span id="last-update" class="text-slate-400 text-xs sm:text-sm text-center"></span>
-      </div>
-      <button id="manual-refresh"
-              class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
-                     text-primary-300 text-xs sm:text-sm font-medium shadow-glow order-2 sm:order-3 ml-auto sm:ml-0">
-        Atualizar
-      </button>
+  <h1 class="text-center text-3xl md:text-4xl font-bold text-[#e9ecef] mb-10 md:mb-12">
+      Integração com Planilhas Online
+  </h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
+
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/11D4j_UOwuROnUx7pFr5n0yzNL_CyBKoE/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
+         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
+        <div class="flex flex-col items-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5"> <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i> </div>
+            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">01 - ATC Girus</h2> <p class="text-sm text-[#adb5bd] mb-3">Janeiro</p> <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span> </div>
     </div>
-  </header>
 
-  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md">
-    <div class="h-12 w-12 border-[6px] border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-    <p class="text-primary-300 text-lg font-medium">Carregando…</p>
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/16q-oUZ8yScDU0UhescGwEBK3x7UmWwua/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
+         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
+        <div class="flex flex-col items-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5">
+                <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">02 - ATC Girus</h2>
+            <p class="text-sm text-[#adb5bd] mb-3">Fevereiro</p>
+            <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span>
+        </div>
+    </div>
+
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1VcHvpp6Y-JbkauTADKFl-cKy3mCHbrW0/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
+         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
+       <div class="flex flex-col items-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5">
+                <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">03 - ATC Girus</h2>
+            <p class="text-sm text-[#adb5bd] mb-3">Março</p>
+            <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span>
+        </div>
+    </div>
+
+    <div onclick="openModal('https://docs.google.com/spreadsheets/d/1rFuP8fR3X5Y9aQJgHjUupDj4eXy2JS5J/edit?usp=sharing&ouid=101565245348790263292&rtpof=true&sd=true')"
+         class="cursor-pointer card bg-[#212529] p-6 rounded-xl shadow-md border border-[#495057] hover:border-[#4dabf7]">
+       <div class="flex flex-col items-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-800/50 mb-5">
+                <i class="bi bi-file-earmark-spreadsheet-fill text-3xl text-green-300"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-[#e9ecef] text-center mb-1">04 - ATC Girus</h2>
+            <p class="text-sm text-[#adb5bd] mb-3">Abril</p>
+            <span class="text-xs text-[#4dabf7] font-medium">Abrir Planilha <i class="bi bi-box-arrow-up-right ml-1 text-xs text-[#4dabf7]"></i></span>
+        </div>
+    </div>
   </div>
 
-  <main id="main-content" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6 flex-grow">
-    <div class="flex justify-center space-x-3 sm:space-x-4 flex-shrink-0">
-      <button id="tab-table" class="tab-btn px-4 py-2 sm:px-5 rounded-lg font-medium text-slate-300 hover:bg-primary-500/10 transition-colors duration-200">Tabela</button>
-      <button id="tab-charts" class="tab-btn px-4 py-2 sm:px-5 rounded-lg font-medium text-slate-300 hover:bg-primary-500/10 transition-colors duration-200">Gráficos</button>
-    </div>
-
-    <div id="filters-bar" class="flex flex-wrap items-center justify-center gap-3 flex-shrink-0">
-      <span id="filters-active" class="text-primary-500 text-sm text-center">Nenhum filtro ativo</span>
-      <button id="clear-filters"
-              class="px-3 py-1 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
-                     text-primary-300 text-xs font-medium shadow-glow" style="display: none;">
-        Limpar Filtros
-      </button>
-    </div>
-
-    <div id="error-message"
-         class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg flex-shrink-0"></div>
-
-    <section id="table-wrapper"
-             class="hidden w-full backdrop-blur-xs bg-surface/70 rounded-2xl
-                    shadow-lg ring-1 ring-primary-500/20 p-0">
-      <table id="sheetTable" class="min-w-full text-xs sm:text-[13px] divide-y divide-slate-600/60">
-        </table>
-    </section>
-
-    <section id="charts-wrapper"
-             class="hidden w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6 md:col-span-2">
-        <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Data de Vencimento</h2>
-        <div id="chart-overview"></div>
+  <div id="modalOverlay">
+    <div id="modalContent">
+      <div id="modalControls">
+        <button onclick="zoomIn()" title="Aumentar zoom"> <i class="bi bi-zoom-in"></i> </button>
+        <button onclick="zoomOut()" title="Diminuir zoom"> <i class="bi bi-zoom-out"></i> </button>
+        <button onclick="toggleFullScreen()" title="Tela cheia"> <i class="bi bi-fullscreen"></i> </button>
+        <button onclick="closeModal()" title="Fechar" class="close-button"> <i class="bi bi-x-lg"></i> </button>
       </div>
-
-      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6">
-        <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Data de Pagamento</h2>
-        <div id="chart-payment"></div>
-      </div>
-
-      <div class="chart-card bg-surface/80 rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 sm:p-6">
-        <h2 class="text-base sm:text-lg font-semibold mb-4 text-primary-500">Total por Mês (Vencimento)</h2>
-        <div id="chart-monthly"></div>
-      </div>
-    </section>
-  </main>
+      <iframe id="planilhaIframe" src="" allowfullscreen></iframe> </div>
+  </div>
 
   <script>
-    const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
-    const gid     = '0';
-    const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL = 60000; // 1 minute
-    const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const CHART_COLORS = ['#4dabf7', '#4ade80', '#fb7185', '#facc15', '#a78bfa', '#2dd4bf'];
+    // O JavaScript permanece o mesmo, pois não depende do tema visual
+    let zoomLevel = 1;
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalContent = document.getElementById("modalContent");
+    const iframe = document.getElementById("planilhaIframe");
 
-    let headersFull = [], sheetRows = [];
-    let headersDisplay = []; // Which headers (and their order) to display in the table
-    let chartOverview, chartPayment, chartMonthly;
-    let isLoaded = false, isFetching = false;
-    const activeFilters = {}; // Stores { colIndex: filterValue }
+    // ATENÇÃO: A propriedade 'zoom' não é padrão CSS... (comentário mantido)
 
-    // Cache previous data to avoid unnecessary chart updates
-    let prevOverviewData = null, prevPaymentData = null, prevMonthlyData = null;
+    function openModal(url) {
+      iframe.src = url;
+      zoomLevel = 1;
+      iframe.style.zoom = zoomLevel;
+      modalOverlay.classList.add('visible');
+    }
 
-    // DOM Element References
-    const $loader = document.getElementById('loader');
-    const $errorMsg = document.getElementById('error-message');
-    const $tableTab = document.getElementById('tab-table');
-    const $chartTab = document.getElementById('tab-charts');
-    const $tableWrapper = document.getElementById('table-wrapper');
-    const $chartWrapper = document.getElementById('charts-wrapper');
-    const $sheetTable = document.getElementById('sheetTable');
-    const $lastUpdate = document.getElementById('last-update');
-    const $monthTotal = document.getElementById('month-total');
-    const $filtersActive = document.getElementById('filters-active');
-    const $clearFiltersBtn = document.getElementById('clear-filters');
-    const $mainContent = document.getElementById('main-content'); // Reference to main element
+    function closeModal() {
+      modalOverlay.classList.remove('visible');
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      setTimeout(() => { iframe.src = ""; }, 300);
+    }
 
-    // Event Listeners
-    document.getElementById('manual-refresh').onclick = loadData;
-    $tableTab.onclick = () => switchTab('table');
-    $chartTab.onclick = () => switchTab('charts');
-    $clearFiltersBtn.onclick = clearFilters;
+    function zoomIn() {
+      zoomLevel = Math.min(zoomLevel + 0.1, 3);
+      iframe.style.zoom = zoomLevel;
+      console.log("Aplicando zoom (não padrão):", zoomLevel);
+    }
 
-    // --- Core Functions ---
+    function zoomOut() {
+      zoomLevel = Math.max(zoomLevel - 0.1, 0.5);
+      iframe.style.zoom = zoomLevel;
+      console.log("Aplicando zoom (não padrão):", zoomLevel);
+    }
 
-    function switchTab(tabId) {
-      [$tableTab, $chartTab].forEach(btn => btn.classList.remove('active-tab'));
-
-      if (tabId === 'table') {
-        $tableWrapper.classList.remove('hidden');
-        $chartWrapper.classList.add('hidden');
-        $tableTab.classList.add('active-tab');
-        $mainContent.classList.add('table-full-screen'); // <<<<<< ADD class for full screen table
-      } else { // Switching to charts
-        $chartWrapper.classList.remove('hidden');
-        $tableWrapper.classList.add('hidden');
-        $chartTab.classList.add('active-tab');
-        $mainContent.classList.remove('table-full-screen'); // <<<<<< REMOVE class for full screen table
-
-        // Re-render charts slightly after tab switch for correct sizing
-        setTimeout(() => [chartOverview, chartPayment, chartMonthly].forEach(chart => {
-            if (chart && typeof chart.updateOptions === 'function') {
-                chart.updateOptions({}, false, false, false); // Trigger resize redraw
-            }
-        }), 50);
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        modalContent.requestFullscreen().catch(err => {
+          console.error(`Erro ao ativar tela cheia: ${err.message} (${err.name})`);
+          alert(`Não foi possível ativar a tela cheia. ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) { document.exitFullscreen(); }
       }
     }
 
-    async function fetchSheetData() {
-      const response = await fetch(`${baseURL}&_=${Date.now()}`); // Cache buster
-      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-      const text = await response.text();
-      if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) {
-        throw new Error('Invalid response format from Google Sheets API.');
-      }
-      try {
-        return JSON.parse(text.substring(47, text.length - 2));
-      } catch (e) {
-        console.error("Failed to parse JSONP:", e);
-        console.error("Received text:", text);
-        throw new Error('Failed to parse JSON data from Google Sheets API.');
-      }
-    }
-
-    // --- Formatting Helpers ---
-    const padZero = num => num.toString().padStart(2, '0');
-
-    const formatDateBR = date => {
-        if (!date || isNaN(date.getTime())) return '–';
-        return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
-    };
-
-    const formatMonthYear = date => {
-        if (!date || isNaN(date.getTime())) return '–';
-        const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' });
-        const year = date.getUTCFullYear();
-        return `${month}/${year}`;
-    };
-
-    function parseDateValue(value) {
-        if (value instanceof Date) return value;
-        if (value == null) return null;
-        if (typeof value === 'number' && value > 1 && value < 60000) {
-             const utcDays = Math.floor(value - 25569);
-             const date = new Date(0);
-             date.setUTCDate(date.getUTCDate() + utcDays);
-             return date;
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modalOverlay.classList.contains('visible')) {
+            closeModal();
         }
-        if (typeof value !== 'string') return null;
-        let match;
-        match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/);
-        if (match) {
-            return new Date(Date.UTC(+match[1], +match[2], +match[3]));
-        }
-        match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
-        if (match) {
-            return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3]));
-        }
-        match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
-        if (match) {
-            let year = +match[3];
-            if (year < 100) year += 2000;
-            return new Date(Date.UTC(year, +match[2] - 1, +match[1]));
-        }
-        const parsed = new Date(value);
-        if (!isNaN(parsed.getTime())) {
-             return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate()));
-        }
-        return null;
-    }
-
-    const formatCurrency = value => typeof value === 'number' && !isNaN(value)
-        ? value.toLocaleString('pt-BR', CURRENCY_FORMAT)
-        : '–';
-    const formatCompact = value => typeof value === 'number' && !isNaN(value)
-        ? value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 })
-        : 'N/A';
-    const formatTooltip = value => typeof value === 'number' ? formatCurrency(value) : 'N/A';
-
-
-    // --- Data Loading and UI Building ---
-
-    async function loadData() {
-      if (isFetching) return;
-      isFetching = true;
-      $errorMsg.classList.add('hidden');
-      if (!isLoaded) $loader.classList.remove('hidden');
-
-      try {
-        const jsonData = await fetchSheetData();
-        if (!jsonData || !jsonData.table || !jsonData.table.cols) {
-            throw new Error("Dados recebidos da planilha estão incompletos ou mal formatados.");
-        }
-
-        headersFull = jsonData.table.cols.map(col => col.label || `Col${col.id}`);
-        const obsIndex = headersFull.findIndex(header => header && header.toLowerCase().trim() === 'observação');
-        headersDisplay = obsIndex === -1 ? [...headersFull] : headersFull.slice(0, obsIndex + 1);
-
-        sheetRows = jsonData.table.rows.map(row => {
-          const cells = Array(headersFull.length).fill(null);
-          if (row && row.c) {
-              row.c.forEach((cell, index) => {
-                  if (index < headersFull.length) {
-                      cells[index] = cell?.v ?? null;
-                  }
-              });
-          }
-          return cells;
-        });
-
-        if (!isLoaded) {
-          buildInitialUI();
-          isLoaded = true;
-          // Determine initial tab based on preference or default to table
-          // Let's default to table and apply full screen immediately if it's the initial view
-          switchTab('table'); // Start with table
-        } else {
-          updateUI();
-        }
-
-        updateGrandTotalHeader();
-        $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR')}`;
-
-      } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-        $errorMsg.textContent = `Erro ao carregar dados: ${error.message}. Verifique ID/GID da Planilha e permissões de compartilhamento (qualquer pessoa com o link pode ver).`;
-        $errorMsg.classList.remove('hidden');
-        $tableWrapper.classList.add('hidden');
-        $chartWrapper.classList.add('hidden');
-      } finally {
-        isFetching = false;
-        $loader.classList.add('hidden');
-      }
-    }
-    loadData();
-    setInterval(loadData, REFRESH_INTERVAL);
-
-    function buildTable() {
-      $sheetTable.innerHTML = '';
-      const thead = createTableHead();
-      const tbody = createTableBody();
-      if (thead) $sheetTable.appendChild(thead);
-      if (tbody) $sheetTable.appendChild(tbody);
-      applyFilters();
-    }
-
-    function createTableHead() {
-        const thead = document.createElement('thead');
-        thead.className = 'bg-surface/90'; // Background for sticky header
-        const tr = document.createElement('tr');
-        tr.className = 'divide-x divide-primary-500/30';
-
-        headersDisplay.forEach((header, index) => {
-            const th = document.createElement('th');
-            // Sticky is now handled by CSS rule based on parent scroll container
-            th.className = 'px-2 py-2 sm:px-4 sm:py-3 text-left text-xs font-semibold text-primary-500 uppercase bg-surface/95 whitespace-nowrap'; // Removed sticky/top/z-index here, handled in CSS
-            const headerText = document.createElement('span');
-            headerText.textContent = header;
-            th.appendChild(headerText);
-
-            const select = document.createElement('select');
-            select.dataset.colIndex = index;
-            select.className = 'mt-1 block w-full text-xs';
-            select.innerHTML = '<option value="">Todos</option>';
-
-            const uniqueValues = [...new Set(sheetRows.map(row => formatCellValue(row[index], header)))].sort((a, b) => {
-                if (a === '–') return -1; if (b === '–') return 1;
-                try { return a.localeCompare(b, 'pt-BR', { numeric: true }); }
-                catch (e) { return a < b ? -1 : (a > b ? 1 : 0); }
-            });
-
-            uniqueValues.forEach(value => {
-                if (value === '–' || value === null || value === '') return;
-                const option = document.createElement('option');
-                option.value = value; option.textContent = value;
-                select.appendChild(option);
-            });
-
-            if (activeFilters[index]) { select.value = activeFilters[index]; }
-            select.onchange = handleFilterChange;
-            th.appendChild(select);
-            tr.appendChild(th);
-        });
-
-        thead.appendChild(tr);
-        return thead;
-    }
-
-
-    function handleFilterChange(event) {
-        const colIndex = event.target.dataset.colIndex;
-        const value = event.target.value;
-        if (value) { activeFilters[colIndex] = value; }
-        else { delete activeFilters[colIndex]; }
-        applyFilters();
-    }
-
-    function createTableBody() {
-        const tbody = document.createElement('tbody');
-        tbody.className = 'divide-y divide-slate-600/60';
-
-        if (sheetRows.length === 0) {
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            td.colSpan = headersDisplay.length || 1; // Ensure colspan is at least 1
-            td.textContent = 'Nenhum dado encontrado.';
-            td.className = 'px-4 py-10 text-center text-slate-400';
-            tr.appendChild(td);
-            tbody.appendChild(tr);
-            return tbody;
-        }
-
-        sheetRows.forEach((row, rowIndex) => {
-            const tr = document.createElement('tr');
-            tr.className = `${rowIndex % 2 ? 'bg-surface/70' : 'bg-surface/60'} hover:bg-primary-500/10 transition-colors duration-150`;
-            headersDisplay.forEach((header, colIndex) => {
-                const td = document.createElement('td');
-                td.className = 'px-2 py-2 sm:px-4 sm:py-3 whitespace-nowrap';
-                const cellValue = row[colIndex];
-                td.textContent = formatCellValue(cellValue, header);
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-        return tbody;
-    }
-
-    function formatCellValue(cellValue, headerLabel) {
-        if (cellValue == null || cellValue === '') return '–';
-        const headerLower = headerLabel.toLowerCase().trim();
-        if (headerLower === 'nf') { return String(cellValue); }
-        if (/valor|total|preço/i.test(headerLower) && !/nf/i.test(headerLower)) {
-            let numericValue = NaN;
-            if (typeof cellValue === 'number') { numericValue = cellValue; }
-            else if (typeof cellValue === 'string') {
-                const cleanedString = cellValue.replace(/[R$.]/g, '').replace(',', '.');
-                numericValue = parseFloat(cleanedString);
-            }
-            return !isNaN(numericValue) ? formatCurrency(numericValue) : String(cellValue);
-        }
-        const dateValue = parseDateValue(cellValue);
-        if (dateValue && !isNaN(dateValue.getTime())) {
-             if (/data|venc|pag|emissao/i.test(headerLower)) {
-                return formatDateBR(dateValue);
-             }
-        }
-        if (typeof cellValue === 'number') { return cellValue.toLocaleString('pt-BR'); }
-        if (typeof cellValue === 'string' && /^-?\d+(\.\d+)?$/.test(cellValue)) {
-            const num = parseFloat(cellValue);
-             if (!isNaN(num)) return num.toLocaleString('pt-BR');
-        }
-        return String(cellValue);
-    }
-
-    // --- Filtering Logic ---
-
-    function applyFilters() {
-        const tbody = $sheetTable.querySelector('tbody');
-        if (!tbody) return;
-
-        let visibleRowCount = 0;
-        Array.from(tbody.rows).forEach(tableRow => {
-            if (tableRow.cells.length === 1 && tableRow.cells[0].colSpan > 1) {
-                tableRow.style.display = 'none'; return;
-            }
-            let showRow = true;
-            for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
-                if (filterValue && tableRow.cells[colIndex]?.textContent.trim() !== filterValue) {
-                    showRow = false; break;
-                }
-            }
-            tableRow.style.display = showRow ? '' : 'none';
-            if (showRow) visibleRowCount++;
-        });
-
-        const noDataRow = tbody.querySelector('td[colspan]');
-        if (noDataRow) {
-            noDataRow.parentElement.style.display = visibleRowCount === 0 ? '' : 'none';
-        }
-        updateFilterDisplay(); updateCharts(); updateGrandTotalHeader();
-    }
-
-    function updateFilterDisplay() {
-        const activeFilterKeys = Object.keys(activeFilters);
-        if (activeFilterKeys.length === 0) {
-            $filtersActive.textContent = 'Nenhum filtro ativo';
-            $clearFiltersBtn.style.display = 'none';
-        } else {
-            const filterParts = activeFilterKeys.map(index =>
-                `${headersDisplay[index]}: ${activeFilters[index]}`
-            );
-            let filterText = 'Filtros: ' + filterParts.join(' | ');
-            $filtersActive.textContent = filterText;
-            $clearFiltersBtn.style.display = 'inline-block';
-        }
-    }
-
-    function clearFilters() {
-        Object.keys(activeFilters).forEach(key => delete activeFilters[key]);
-        $sheetTable.querySelectorAll('thead select').forEach(select => select.value = '');
-        applyFilters();
-    }
-
-    // --- Chart Data Aggregation ---
-
-    function hasDataChanged(newData, prevData) {
-        if (!prevData) return true;
-        return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) ||
-               JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals);
-    }
-
-    function aggregateByDate(dateColumnRegex) {
-        const dateColIndex = headersFull.findIndex(h => h && dateColumnRegex.test(h.toLowerCase()));
-        const valueColIndex = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-        if (dateColIndex === -1 || valueColIndex === -1) return { labels: [], totals: [] };
-
-        const aggregationMap = new Map();
-        getFilteredRows().forEach(row => {
-            const date = parseDateValue(row[dateColIndex]);
-            if (!date || isNaN(date.getTime())) return;
-            const dateKey = date.toISOString().split('T')[0];
-            let value = row[valueColIndex];
-            if (value == null) return;
-            value = typeof value === 'number' ? value : parseFloat(String(value).replace(/[R$\s.]/g, '').replace(',', '.'));
-            if (!isNaN(value)) { aggregationMap.set(dateKey, (aggregationMap.get(dateKey) || 0) + value); }
-        });
-        const orderedEntries = [...aggregationMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-        return {
-            labels: orderedEntries.map(([key]) => formatDateBR(new Date(key + 'T00:00:00Z'))),
-            totals: orderedEntries.map(([_, value]) => value)
-        };
-    }
-
-    function aggregateByMonth(dateColumnRegex) {
-        const dateColIndex = headersFull.findIndex(h => h && dateColumnRegex.test(h.toLowerCase()));
-        const valueColIndex = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-         if (dateColIndex === -1 || valueColIndex === -1) return { labels: [], totals: [] };
-
-        const aggregationMap = new Map();
-        getFilteredRows().forEach(row => {
-            const date = parseDateValue(row[dateColIndex]);
-             if (!date || isNaN(date.getTime())) return;
-            const monthKey = `${date.getUTCFullYear()}-${padZero(date.getUTCMonth())}`;
-            let value = row[valueColIndex];
-            if (value == null) return;
-            value = typeof value === 'number' ? value : parseFloat(String(value).replace(/[R$\s.]/g, '').replace(',', '.'));
-            if (!isNaN(value)) { aggregationMap.set(monthKey, (aggregationMap.get(monthKey) || 0) + value); }
-        });
-        const orderedEntries = [...aggregationMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-        return {
-            labels: orderedEntries.map(([key]) => {
-                const [year, monthIndex] = key.split('-');
-                return formatMonthYear(new Date(Date.UTC(+year, +monthIndex, 1)));
-            }),
-            totals: orderedEntries.map(([_, value]) => value)
-        };
-    }
-
-    function getFilteredRows() {
-        if (Object.keys(activeFilters).length === 0) { return sheetRows; }
-        return sheetRows.filter(row => {
-            for (const [colIndex, filterValue] of Object.entries(activeFilters)) {
-                 const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
-                 if (filterValue && cellFormattedValue.trim() !== filterValue) { return false; }
-            }
-            return true;
-        });
-    }
-
-    // --- Chart Rendering ---
-
-    const baseChartOptions = {
-        chart: { foreColor: '#cbd5e1', toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 500, animateGradually: { enabled: false }, dynamicAnimation: { enabled: true, speed: 350 } }, background: 'transparent' },
-        tooltip: { theme: 'dark', y: { formatter: formatTooltip } }, dataLabels: { enabled: false }, grid: { borderColor: '#475569', strokeDashArray: 4 }, legend: { show: false }, markers: { size: 4, hover: { size: 6 } },
-        noData: { text: 'Sem dados para exibir', align: 'center', verticalAlign: 'middle', style: { color: '#cbd5e1', fontSize: '14px' } }
-    };
-
-    function buildCharts() {
-        prevOverviewData = aggregateByDate(/venc/i); prevPaymentData = aggregateByDate(/pag/i); prevMonthlyData = aggregateByMonth(/venc/i);
-        renderOverviewChart(false, prevOverviewData); renderPaymentChart(false, prevPaymentData); renderMonthlyChart(false, prevMonthlyData);
-    }
-
-    function updateCharts() {
-        // Only update charts if the chart tab is potentially visible or could become visible
-        // This prevents unnecessary processing when only the table is shown
-        if($chartWrapper.classList.contains('hidden') && !$chartTab.classList.contains('active-tab')) {
-             // If charts are hidden and tab isn't active, maybe defer update?
-             // For simplicity, let's update them anyway, they are fast.
-        }
-
-        const newOverviewData = aggregateByDate(/venc/i);
-        const newPaymentData = aggregateByDate(/pag/i);
-        const newMonthlyData = aggregateByMonth(/venc/i);
-        renderOverviewChart(true, newOverviewData); renderPaymentChart(true, newPaymentData); renderMonthlyChart(true, newMonthlyData);
-    }
-
-    function renderOverviewChart(isUpdate = false, data) {
-      if (isUpdate && !hasDataChanged(data, prevOverviewData)) return;
-      const options = { series: [{ name: 'Total Venc.', data: data.totals }], xaxis: { categories: data.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' }, format: undefined }, tooltip: { enabled: false }, type: 'category' }, yaxis: { labels: { formatter: formatCompact } }, colors: [CHART_COLORS[0]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
-      if (isUpdate && chartOverview) { chartOverview.updateOptions(options, true, true); }
-      else { chartOverview?.destroy(); chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options }); chartOverview.render(); }
-      prevOverviewData = data;
-    }
-
-    function renderPaymentChart(isUpdate = false, data) {
-      if (isUpdate && !hasDataChanged(data, prevPaymentData)) return;
-      const options = { series: [{ name: 'Total Pago', data: data.totals }], xaxis: { categories: data.labels, labels: { rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px' }, format: undefined }, tooltip: { enabled: false }, type: 'category' }, yaxis: { labels: { formatter: formatCompact } }, colors: [CHART_COLORS[1]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
-      if (isUpdate && chartPayment) { chartPayment.updateOptions(options, true, true); }
-      else { chartPayment?.destroy(); chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 280 }, ...options }); chartPayment.render(); }
-      prevPaymentData = data;
-    }
-
-    function renderMonthlyChart(isUpdate = false, data) {
-        const totalsChanged = !prevMonthlyData || JSON.stringify(data.totals) !== JSON.stringify(prevMonthlyData.totals);
-        if (isUpdate && !totalsChanged) return;
-        const grandTotal = data.totals.reduce((sum, total) => sum + total, 0);
-        const options = { series: data.totals, labels: data.labels, colors: CHART_COLORS.slice(0, data.labels.length || CHART_COLORS.length), legend: { show: true, position: 'bottom', fontSize: '11px', horizontalAlign: 'center', itemMargin: { horizontal: 5, vertical: 2 } }, plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total Geral', fontSize: '14px', fontWeight: 600, color: '#cbd5e1', formatter: () => formatCurrency(grandTotal) }, value: { show: true, fontSize: '16px', fontWeight: 500, color: '#cbd5e1', formatter: (val) => formatCurrency(parseFloat(val)) } } } } }, responsive: [{ breakpoint: 480, options: { chart: { height: 300 }, legend: { position: 'bottom', fontSize: '10px' }, plotOptions: { pie: { donut: { labels: { total: { fontSize: '12px'}, value: { fontSize: '14px'} } } } } } }] };
-        if (isUpdate && chartMonthly) { chartMonthly.updateOptions(options, true, true); }
-        else { chartMonthly?.destroy(); chartMonthly = new ApexCharts(document.querySelector('#chart-monthly'), { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'donut', height: 280 }, ...options }); chartMonthly.render(); }
-        prevMonthlyData = data;
-    }
-
-    // --- Header Update ---
-    function updateGrandTotalHeader() {
-      const { totals } = aggregateByMonth(/venc/i);
-      const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
-      const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
-      $monthTotal.textContent = `Total Geral (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
-    }
-
-    // --- Initial Setup & Updates ---
-    function buildInitialUI() {
-      buildTable(); buildCharts();
-    }
-    function updateUI() {
-      buildTable(); // Rebuilds table, applies filters, triggers chart updates via applyFilters
-    }
-
+    });
   </script>
 </body>
 </html>
