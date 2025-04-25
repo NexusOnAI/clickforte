@@ -11,10 +11,7 @@
   <style>
     html, body { margin: 0; padding: 0; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: Inter, sans-serif; color-scheme: dark; }
     body {
-        padding-top: env(safe-area-inset-top);
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+        /* Safe area padding handled by header/content */
         background-color: #1a1d21;
         color: #e9ecef;
     }
@@ -31,14 +28,22 @@
     ::-webkit-scrollbar-track { background-color: #343a40; border-radius: 9999px; }
 
     #profileHeader {
-        padding-top: calc(env(safe-area-inset-top) + 0.75rem);
-        padding-bottom: 0.75rem;
+        /* Apply safe area padding top here */
+        padding-top: env(safe-area-inset-top);
         position: sticky; top: 0; z-index: 30;
         background-color: rgba(26, 29, 33, 0.85);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid #495057;
+        /* Apply safe area padding left/right within justify */
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
     }
+    /* Apply safe area padding bottom to body or main container if needed */
+    body {
+         padding-bottom: env(safe-area-inset-bottom);
+    }
+
 
     #welcomeScreen { position: fixed; inset: 0; background: #1a1d21; z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out; }
     #welcomeScreen.visible { display: flex; opacity: 1; }
@@ -104,20 +109,20 @@
         transition: width 0.3s ease-in-out; /* Animate sidebar width */
         width: 16rem; /* Expanded width */
         flex-shrink: 0; /* Prevent sidebar from shrinking smaller than its content */
+        /* Adjust height calculation to account for sticky header */
+        height: calc(100vh - 4rem); /* Assuming header height is h-16 (4rem) */
     }
     #mainContent {
-        /* No margin-left needed; flexbox handles width */
-        /* Optional: transition width for smoothness */
          transition: width 0.3s ease-in-out;
          flex: 1; /* Ensure main content takes remaining space */
          min-width: 0; /* Important for flex items to allow shrinking */
+         /* Adjust height calculation */
+         height: calc(100vh - 4rem); /* Assuming header height is h-16 (4rem) */
     }
 
     #desktopSidebar.sidebar-collapsed {
         width: 5rem; /* Collapsed width */
     }
-
-    /* Removed rule that pushed main content */
 
     #desktopSidebar.sidebar-collapsed .sidebar-text,
     #desktopSidebar.sidebar-collapsed .sidebar-logo-full,
@@ -158,9 +163,7 @@
     /* --- End Sidebar Styles --- */
   </style>
   </head>
-<body class="min-h-screen overflow-y-auto antialiased">
-
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-[#1a1d21]/80 backdrop-blur-sm">
+<body class="min-h-screen overflow-y-hidden antialiased"> <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-[#1a1d21]/80 backdrop-blur-sm">
     <div class="bg-[#212529] rounded-lg shadow-xl w-full max-w-md p-8 border border-[#495057]">
       <div class="text-center mb-8">
         <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-12 w-auto" />
@@ -210,24 +213,23 @@
      </div>
   </div>
 
-  <div id="dashboard" class="hidden flex flex-col min-h-screen">
-    <header id="profileHeader" class="md:hidden flex justify-between items-center px-4 shadow-sm">
-        <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Abrir menu">
+  <div id="dashboard" class="hidden flex flex-col min-h-screen"> <header id="profileHeader" class="flex justify-between md:justify-end items-center px-4 h-16 shadow-sm flex-shrink-0">
+        <button id="mobileMenuBtn" class="md:hidden p-2 -ml-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Abrir menu">
             <i class="bi bi-list text-xl"></i>
         </button>
 
-        <div class="flex items-center gap-2"> <button onclick="loadPage('integracao.html', null); return false;" class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d21] focus:ring-[#4dabf7]" aria-label="Abrir Integração">
+        <div class="flex items-center gap-4"> <button onclick="loadPage('integracao.html', null); return false;" class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d21] focus:ring-[#4dabf7]" aria-label="Abrir Integração">
                 <i class="bi bi-arrows-angle-contract text-lg"></i>
             </button>
+
             <div class="flex items-center cursor-pointer group" onclick="openProfileModal()">
-                <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
+                <span id="profileNameHeader" class="font-medium mr-2 text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
                 <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
             </div>
         </div>
     </header>
-    <div class="flex flex-1 overflow-hidden">
-      <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md h-screen sticky top-0 border-r border-[#495057]">
-        <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center">
+    <div class="flex flex-1 overflow-hidden"> <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md border-r border-[#495057] overflow-y-auto flex-shrink-0">
+        <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center flex-shrink-0">
           <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
         </div>
 
@@ -284,16 +286,15 @@
               </a>
               </div>
           </div>
-          </div>
-
-        <div id="desktopSidebarToggle" class="p-3 border-t border-[#495057]">
+        </div>
+        <div id="desktopSidebarToggle" class="p-3 border-t border-[#495057] flex-shrink-0">
            <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-[#adb5bd] hover:bg-[#343a40] hover:text-[#e9ecef] transition-colors duration-150" aria-label="Recolher barra lateral">
                <i id="desktopToggleIcon" class="bi bi-chevron-double-left w-5 text-center text-lg"></i>
                <span class="sidebar-text text-sm font-medium">Recolher</span>
            </button>
         </div>
 
-        <div class="profile-section-bottom mt-auto p-3 border-t border-[#495057]">
+        <div class="profile-section-bottom p-3 border-t border-[#495057] flex-shrink-0">
           <div class="flex items-center gap-3 cursor-pointer group p-2 rounded-md hover:bg-[#343a40]" onclick="openProfileModal(); setActiveLink(document.querySelector('#desktopConfigSubmenu a[onclick*=\'openProfileModal\']'));">
             <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-9 h-9 rounded-full object-cover transition-all duration-200 group-hover:scale-105 ring-1 ring-[#495057] group-hover:ring-[#4dabf7]" />
             <div>
@@ -305,8 +306,8 @@
             </button>
           </div>
         </div>
-      </nav>
-      <main id="mainContent" class="overflow-y-auto p-4 md:p-6 relative bg-[#1a1d21]">
+        </nav>
+      <main id="mainContent" class="flex-1 overflow-y-auto p-4 md:p-6 relative bg-[#1a1d21]">
         <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4dabf7]"></div>
         </div>
@@ -369,9 +370,7 @@
          </button>
         </div>
        </nav>
-    </div>
-
-  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
+    </div> <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
     <div class="bg-[#212529] rounded-lg w-full max-w-lg p-6 shadow-xl text-[#e9ecef] transform transition-all duration-200 ease-in-out scale-95 opacity-0 border border-[#495057]" id="profileModalContent">
       <form id="profileForm">
         <div class="flex justify-between items-start border-b border-[#495057] pb-3 mb-5">
@@ -435,7 +434,7 @@
   </script>
 
   <script>
-      // Element References
+      // Element References (Ensure all are captured correctly)
       const loginOverlay = document.getElementById('loginOverlay');
       const loginErrorDiv = document.getElementById('loginError');
       const formLogin = document.getElementById('formLogin');
@@ -443,8 +442,8 @@
       const passwordField = document.getElementById('password');
       const rememberMe = document.getElementById('rememberMe');
       const loginButton = document.getElementById('loginButton');
-      const buttonText = loginButton.querySelector('.button-text');
-      const spinnerIcon = loginButton.querySelector('.spinner-icon');
+      const buttonText = loginButton?.querySelector('.button-text'); // Add safe navigation
+      const spinnerIcon = loginButton?.querySelector('.spinner-icon'); // Add safe navigation
       const togglePasswordButton = document.getElementById('togglePassword');
       const welcomeScreen = document.getElementById('welcomeScreen');
       const welcomeUserName = document.getElementById('welcomeUserName');
@@ -483,22 +482,24 @@
       function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
 
       // --- Login/Logout Logic ---
-      formLogin.addEventListener('submit', function (e) {
-        e.preventDefault();
-        hideElement(loginErrorDiv);
-        disableButton(loginButton, buttonText, spinnerIcon);
-        setTimeout(() => {
-         const validUsername = localStorage.getItem('savedUsername') || 'admin';
-         const username = usernameField.value.trim();
-         const password = passwordField.value;
-         // Hardcoded password check - Replace with API call in production
-         if (username === validUsername && password === 'admin123') {
-           handleSuccessfulLogin(username, password);
-         } else {
-           handleFailedLogin();
-         }
-        }, 1000); // Simulate network delay
-      });
+      if (formLogin) {
+        formLogin.addEventListener('submit', function (e) {
+          e.preventDefault();
+          hideElement(loginErrorDiv);
+          disableButton(loginButton, buttonText, spinnerIcon);
+          setTimeout(() => {
+           const validUsername = localStorage.getItem('savedUsername') || 'admin';
+           const username = usernameField.value.trim();
+           const password = passwordField.value;
+           // Hardcoded password check - Replace with API call in production
+           if (username === validUsername && password === 'admin123') {
+             handleSuccessfulLogin(username, password);
+           } else {
+             handleFailedLogin();
+           }
+          }, 1000); // Simulate network delay
+        });
+      }
 
       function handleSuccessfulLogin(username, password) {
         if (rememberMe.checked) {
@@ -512,12 +513,14 @@
         localStorage.setItem('isLoggedIn', 'true');
 
         hideFlexElement(loginOverlay);
-        welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
-        welcomeScreen.classList.add('visible'); // Fade in welcome screen
+        if(welcomeUserName) welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
+        if(welcomeScreen) welcomeScreen.classList.add('visible'); // Fade in welcome screen
 
         setTimeout(() => {
-         welcomeScreen.classList.remove('visible'); // Start fading out
-         setTimeout(() => { hideElement(welcomeScreen); }, 500); // Hide after fade out
+          if(welcomeScreen) {
+             welcomeScreen.classList.remove('visible'); // Start fading out
+             setTimeout(() => { hideElement(welcomeScreen); }, 500); // Hide after fade out
+          }
 
          showFlexElement(dashboard);
          updateUserInfo(); // Update profile pictures and names
@@ -530,7 +533,7 @@
          if (homeLink) {
             loadPage('home.html', homeLink);
          } else {
-            // Fallback if home link isn't found (shouldn't happen with current HTML)
+            // Fallback if home link isn't found
             if (mainFrame) mainFrame.src = 'home.html';
             if (iframeSpinnerOverlay) { // Manually hide spinner if no link to activate
                  hideElement(iframeSpinnerOverlay);
@@ -544,81 +547,79 @@
       }
 
       function handleFailedLogin() {
-        loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
-        showElement(loginErrorDiv);
+        if(loginErrorDiv) {
+            loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
+            showElement(loginErrorDiv);
+        }
         enableButton(loginButton, buttonText, spinnerIcon);
-        const loginCard = loginOverlay.querySelector('.bg-\\[\\#212529\\]');
+        const loginCard = loginOverlay?.querySelector('.bg-\\[\\#212529\\]'); // Use safe navigation
         if(loginCard) {
             loginCard.classList.add('animate-shake');
             setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
         }
       }
 
-      togglePasswordButton.addEventListener('click', function() {
-        const icon = this.querySelector('i');
-        if (passwordField.type === 'password') {
-         passwordField.type = 'text';
-         icon.classList.replace('bi-eye-slash', 'bi-eye');
-         this.setAttribute('aria-label', 'Ocultar senha');
-        } else {
-         passwordField.type = 'password';
-         icon.classList.replace('bi-eye', 'bi-eye-slash');
-         this.setAttribute('aria-label', 'Mostrar senha');
-        }
-      });
+      if(togglePasswordButton) {
+        togglePasswordButton.addEventListener('click', function() {
+          const icon = this.querySelector('i');
+          if (passwordField.type === 'password') {
+           passwordField.type = 'text';
+           if(icon) icon.classList.replace('bi-eye-slash', 'bi-eye');
+           this.setAttribute('aria-label', 'Ocultar senha');
+          } else {
+           passwordField.type = 'password';
+           if(icon) icon.classList.replace('bi-eye', 'bi-eye-slash');
+           this.setAttribute('aria-label', 'Mostrar senha');
+          }
+        });
+      }
 
       function logout() {
         localStorage.removeItem('isLoggedIn');
-        // Optionally remove saved password on logout even if 'Remember Me' was checked
         // localStorage.removeItem('savedPassword');
 
         console.log('>>> Logout executado, isLoggedIn removido:', localStorage.getItem('isLoggedIn'));
         hideFlexElement(dashboard);
         showFlexElement(loginOverlay);
         showElement(logoutNotification);
-        setTimeout(() => hideElement(logoutNotification), 4000);
+        if(logoutNotification) setTimeout(() => hideElement(logoutNotification), 4000);
 
-        if (mobileSidebar.classList.contains('translate-x-0')) {
+        if (mobileSidebar?.classList.contains('translate-x-0')) {
          toggleMobileSidebar(); // Close mobile sidebar if open
         }
 
-        passwordField.value = ''; // Clear password field
+        if(passwordField) passwordField.value = ''; // Clear password field
         hideElement(loginErrorDiv); // Hide any previous login errors
 
         // Pre-fill username/password based on localStorage
         const savedUsername = localStorage.getItem('savedUsername');
         const savedPassword = localStorage.getItem('savedPassword');
-        usernameField.value = savedUsername || '';
+        if(usernameField) usernameField.value = savedUsername || '';
         if (savedPassword) {
-         passwordField.value = savedPassword;
-         rememberMe.checked = true;
+         if(passwordField) passwordField.value = savedPassword;
+         if(rememberMe) rememberMe.checked = true;
         } else {
-         rememberMe.checked = false;
+         if(rememberMe) rememberMe.checked = false;
         }
         console.log(">>> Tela de login reconfigurada após logout.");
       }
 
       // --- Navigation and Page Loading ---
 
-      // Sets the active state for a clicked navigation link
       function setActiveLink(clickedLinkElement) {
-          if (!clickedLinkElement) return; // Do nothing if no element provided (e.g., for header buttons)
+          if (!clickedLinkElement) return;
 
-          // Remove active class from all nav links in both sidebars
           document.querySelectorAll('#desktopSidebar .nav-link, #mobileSidebar .nav-link').forEach(link => {
             link.classList.remove('active');
           });
 
-          // Add active class to the clicked link
           clickedLinkElement.classList.add('active');
 
-          // If the clicked link is inside a submenu, also activate the parent button
           const parentSubmenu = clickedLinkElement.closest('.submenu');
           if (parentSubmenu) {
             const parentButton = parentSubmenu.previousElementSibling;
             if (parentButton && parentButton.classList.contains('nav-link')) {
                 parentButton.classList.add('active');
-                // Ensure submenu stays visible if sidebar is not collapsed
                 const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
                 const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
                  if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
@@ -631,14 +632,13 @@
           }
       }
 
-
-      function loadPage(pageUrl, clickedLinkElement = null) { // Default clickedLinkElement to null
+      function loadPage(pageUrl, clickedLinkElement = null) {
           if (iframeSpinnerOverlay) {
                iframeSpinnerOverlay.classList.remove('hidden');
                iframeSpinnerOverlay.classList.add('flex');
           }
 
-          setActiveLink(clickedLinkElement); // Use the function to set active state (will do nothing if clickedLinkElement is null)
+          setActiveLink(clickedLinkElement);
 
           if(mainFrame) {
             mainFrame.src = pageUrl;
@@ -651,7 +651,6 @@
           }
       }
 
-      // Iframe load/error handling
       if (mainFrame && iframeSpinnerOverlay) {
          mainFrame.addEventListener('load', () => {
              iframeSpinnerOverlay.classList.add('hidden');
@@ -661,7 +660,6 @@
              console.error(`XXX Falha ao carregar conteúdo do iframe: ${mainFrame.src}`, e);
              iframeSpinnerOverlay.classList.add('hidden');
              iframeSpinnerOverlay.classList.remove('flex');
-             // Optionally display an error message in the iframe area
          });
       } else {
          console.error("Não foi possível adicionar listeners ao iframe ou spinner não encontrado.");
@@ -670,6 +668,7 @@
 
       // --- Sidebar Logic ---
       function toggleMobileSidebar() {
+        if (!mobileSidebar || !mobileSidebarWrapper) return;
         const isOpen = mobileSidebar.classList.contains('translate-x-0');
         if (isOpen) {
          mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
@@ -686,11 +685,8 @@
         if (!submenu || !icon) { console.error("Submenu/Icon não encontrado:", submenuId, iconId); return; }
 
         const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
-        const isCurrentlyVisible = submenu.classList.contains('submenu-visible');
         const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
 
-        // Close other open submenus *within the same context* (desktop or mobile)
-        // unless the desktop sidebar is collapsed (where submenus don't visually open)
         if (context === 'mobile' || !isDesktopSidebarCollapsed) {
              document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
                  if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
@@ -702,15 +698,10 @@
              });
         }
 
-        // Toggle the clicked submenu only if sidebar is not collapsed (desktop) or if it's mobile
         if (context === 'mobile' || !isDesktopSidebarCollapsed) {
              submenu.classList.toggle('submenu-visible');
              icon.classList.toggle('rotate-180');
         } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
-             // In collapsed desktop view, clicking the parent *should* probably navigate
-             // to a default page for that section or do nothing, as submenus are hidden.
-             // Or, we could potentially show a tooltip/popover with the submenu items.
-             // For now, we just log it.
              console.log("Tentativa de abrir submenu com sidebar desktop recolhida ignorada.");
         }
       }
@@ -720,17 +711,14 @@
              console.error("Elementos da sidebar desktop, botão de toggle ou mainContent não encontrados.");
              return;
          }
-         // Toggle the class on the sidebar
          const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed');
 
-         // Update button and localStorage based on the new state
          if (isCollapsed) {
              desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
              desktopToggleText.textContent = 'Expandir';
              desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
              localStorage.setItem('desktopSidebarState', 'collapsed');
              console.log(">>> Sidebar Desktop Recolhida");
-             // Close any open submenus when collapsing
              document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => {
                  sm.classList.remove('submenu-visible');
                  const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
@@ -743,57 +731,56 @@
              localStorage.setItem('desktopSidebarState', 'expanded');
              console.log(">>> Sidebar Desktop Expandida");
          }
-         // Main content width adjustment is handled by CSS flex properties and transitions
        }
 
        function applyDesktopSidebarState() {
           if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !mainContent) return;
 
           const savedState = localStorage.getItem('desktopSidebarState');
-          // Apply corresponding class to sidebar FIRST
           if (savedState === 'collapsed') {
               desktopSidebar.classList.add('sidebar-collapsed');
           } else {
               desktopSidebar.classList.remove('sidebar-collapsed');
           }
 
-         // THEN Update button icon/text based on the *final* state
          if (desktopSidebar.classList.contains('sidebar-collapsed')) {
-             desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
-             desktopToggleText.textContent = 'Expandir';
-             desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
+             if(desktopToggleIcon) desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
+             if(desktopToggleText) desktopToggleText.textContent = 'Expandir';
+             if(desktopSidebarToggleBtn) desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
              console.log(">>> Aplicando estado inicial: Sidebar Desktop Recolhida");
           } else {
-             desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
-             desktopToggleText.textContent = 'Recolher';
-             desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
+             if(desktopToggleIcon) desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
+             if(desktopToggleText) desktopToggleText.textContent = 'Recolher';
+             if(desktopSidebarToggleBtn) desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
              console.log(">>> Aplicando estado inicial: Sidebar Desktop Expandida");
           }
-          // Main content width adjustment is handled by CSS
        }
 
       // --- Profile Modal Logic ---
       function openProfileModal() {
         const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
-        profileNameInput.value = currentUsername;
-        modalProfileImg.src = currentProfilePic;
-        // Clear password fields when opening
-        document.getElementById('currentPassword').value = '';
-        document.getElementById('newPassword').value = '';
-        document.getElementById('confirmPassword').value = '';
+        if(profileNameInput) profileNameInput.value = currentUsername;
+        if(modalProfileImg) modalProfileImg.src = currentProfilePic;
 
-        profileModal.classList.remove('hidden');
-        profileModal.classList.add('flex');
-        // Force reflow to ensure transition works
-        void profileModal.offsetWidth;
-        profileModal.classList.add('opacity-100');
-        profileModalContent.classList.remove('scale-95', 'opacity-0');
+        const currentPassField = document.getElementById('currentPassword');
+        const newPassField = document.getElementById('newPassword');
+        const confirmPassField = document.getElementById('confirmPassword');
+        if(currentPassField) currentPassField.value = '';
+        if(newPassField) newPassField.value = '';
+        if(confirmPassField) confirmPassField.value = '';
 
-        // Set active link for Perfil
+        if(profileModal) {
+            profileModal.classList.remove('hidden');
+            profileModal.classList.add('flex');
+            void profileModal.offsetWidth; // Force reflow
+            profileModal.classList.add('opacity-100');
+        }
+        if(profileModalContent) profileModalContent.classList.remove('scale-95', 'opacity-0');
+
+
         const perfilLinkDesktop = document.querySelector('#desktopConfigSubmenu a[onclick*="openProfileModal"]');
         const perfilLinkMobile = document.querySelector('#mobileConfigSubmenu a[onclick*="openProfileModal"]');
-        // Ensure setActiveLink is defined before calling
         if (typeof setActiveLink === 'function') {
              setActiveLink(perfilLinkDesktop || perfilLinkMobile);
         } else {
@@ -802,105 +789,86 @@
       }
 
       function closeProfileModal() {
+        if(!profileModal || !profileModalContent) return;
         profileModal.classList.remove('opacity-100');
         profileModalContent.classList.add('scale-95', 'opacity-0');
         setTimeout(() => {
          profileModal.classList.add('hidden');
          profileModal.classList.remove('flex');
-         // Reset image preview if no file was selected, or revert to saved pic
          const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
-         modalProfileImg.src = currentProfilePic;
-         profilePicInput.value = ''; // Clear file input
+         if(modalProfileImg) modalProfileImg.src = currentProfilePic;
+         if(profilePicInput) profilePicInput.value = ''; // Clear file input
         }, 200); // Match duration of transition
       }
 
-      profilePicInput.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-         const reader = new FileReader();
-         reader.onload = function (e) {
-           modalProfileImg.src = e.target.result; // Preview selected image
-         };
-         reader.readAsDataURL(file);
-        }
-      });
+      if(profilePicInput) {
+        profilePicInput.addEventListener('change', function () {
+          const file = this.files?.[0]; // Use optional chaining
+          if (file) {
+           const reader = new FileReader();
+           reader.onload = function (e) {
+             if(modalProfileImg && e.target?.result) modalProfileImg.src = e.target.result as string; // Preview selected image, assert type
+           };
+           reader.readAsDataURL(file);
+          }
+        });
+      }
 
-      profileForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const newName = profileNameInput.value.trim();
-        const newImgSrc = modalProfileImg.src; // Could be placeholder, existing saved pic, or new data URL
+      if(profileForm) {
+        profileForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const newName = profileNameInput?.value?.trim(); // Safe navigation
+          const newImgSrc = modalProfileImg?.src; // Safe navigation
 
-        // --- Password Change Logic Placeholder ---
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+          const currentPassword = (document.getElementById('currentPassword') as HTMLInputElement)?.value;
+          const newPassword = (document.getElementById('newPassword') as HTMLInputElement)?.value;
+          const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement)?.value;
 
-        let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
-        let passwordChangeValid = false;
+          let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
+          // let passwordChangeValid = false; // Not strictly needed here
 
-        if (passwordChangeAttempted) {
-             // **IMPORTANT:** Implement proper validation and API call here!
-             // 1. Check if currentPassword matches the user's actual current password (via API).
-             // 2. Check if newPassword meets complexity requirements.
-             // 3. Check if newPassword and confirmPassword match.
-             // 4. Ensure newPassword is not empty if attempting change.
-             if (newPassword && newPassword === confirmPassword /* && currentPassword is valid via API */) {
-                  console.log(">>> Password change request (VALID - Placeholder): ", newPassword);
-                  passwordChangeValid = true;
-                  // **API Call:** Send request to update password here.
-                  // **On Success from API:** Maybe show a success message.
-                  // **On Failure from API:** Show API error, alert user, keep modal open.
-                  // Example: Update localStorage ONLY if API call is successful in real scenario
-                  // localStorage.setItem('savedPassword', newPassword); // Update stored password (use cautiously)
-             } else {
-                  console.log(">>> Password change request (INVALID - Placeholder)");
-                  // Display specific error messages to the user
-                  if (!newPassword) {
-                     alert('Nova senha não pode estar vazia.');
-                  } else if (newPassword !== confirmPassword) {
-                       alert('As novas senhas não coincidem.');
-                  } else {
-                      // Assume currentPassword validation failed if logic reaches here
-                      alert('Senha atual incorreta ou erro ao validar.');
-                  }
-                  return; // Stop form submission if password change fails validation
-             }
-        }
-        // --- End Password Change Logic Placeholder ---
+          if (passwordChangeAttempted) {
+               if (newPassword && newPassword === confirmPassword /* && currentPassword is valid via API */) {
+                    console.log(">>> Password change request (VALID - Placeholder): ", newPassword);
+                    // passwordChangeValid = true; // Set flag if needed elsewhere
+                    // **API Call:** Send request to update password here.
+               } else {
+                    console.log(">>> Password change request (INVALID - Placeholder)");
+                    if (!newPassword) { alert('Nova senha não pode estar vazia.'); }
+                    else if (newPassword !== confirmPassword) { alert('As novas senhas não coincidem.'); }
+                    else { alert('Senha atual incorreta ou erro ao validar.'); }
+                    return; // Stop form submission if password change fails validation
+               }
+          }
 
+          if (newName) {
+           localStorage.setItem('savedUsername', newName);
+           if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) {
+             localStorage.setItem('savedProfilePic', newImgSrc);
+           } else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) {
+             localStorage.removeItem('savedProfilePic');
+           }
 
-        if (newName) {
-         localStorage.setItem('savedUsername', newName);
-         // Check if the image source is a new Base64 string from file upload
-         if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) {
-           localStorage.setItem('savedProfilePic', newImgSrc);
-         } else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) {
-           // If the source is the default placeholder, remove saved pic from storage
-           localStorage.removeItem('savedProfilePic');
-         }
-         // If the src is not a new data URL and not the default, it means the user didn't change it,
-         // so we don't need to update localStorage for the picture.
-
-         updateUserInfo(); // Update UI elements
-         closeProfileModal(); // Close modal only if name is valid and password change (if attempted) was successful (or not attempted)
-        } else {
-         alert('O nome de usuário não pode ficar vazio.');
-        }
-      });
+           updateUserInfo();
+           closeProfileModal();
+          } else {
+           alert('O nome de usuário não pode ficar vazio.');
+          }
+        });
+      }
 
       function updateUserInfo() {
         const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
         const profilePicBase64 = localStorage.getItem('savedProfilePic');
-        // Use small placeholder if no saved pic, otherwise use saved pic (which could be large but will be sized by CSS)
         const displayPic = profilePicBase64 || DEFAULT_PROFILE_PIC_SMALL;
-        const modalPic = profilePicBase64 || DEFAULT_PROFILE_PIC_LARGE; // For the larger modal view
+        const modalPic = profilePicBase64 || DEFAULT_PROFILE_PIC_LARGE;
 
         if(profileNameHeader) profileNameHeader.textContent = username;
         if(sidebarProfileName) sidebarProfileName.textContent = username;
 
         if(profileImgHeader) profileImgHeader.src = displayPic;
         if(sidebarProfileImg) sidebarProfileImg.src = displayPic;
-        if(modalProfileImg) modalProfileImg.src = modalPic; // Update modal image holder too
+        if(modalProfileImg) modalProfileImg.src = modalPic;
       }
 
 
@@ -919,7 +887,6 @@
          updateUserInfo();
          applyDesktopSidebarState(); // Apply sidebar state before loading page
 
-         // Load initial page after setup
          const homeLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="home.html"]');
          const homeLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="home.html"]');
          const homeLink = homeLinkDesktop || homeLinkMobile;
@@ -927,7 +894,7 @@
             loadPage('home.html', homeLink);
          } else {
              if(mainFrame) mainFrame.src = 'home.html'; // Fallback load
-             if (iframeSpinnerOverlay) { // Hide spinner if no link
+             if (iframeSpinnerOverlay) {
                  iframeSpinnerOverlay.classList.add('hidden');
                  iframeSpinnerOverlay.classList.remove('flex');
              }
@@ -941,16 +908,15 @@
          hideElement(logoutNotification);
          hideElement(loginErrorDiv);
 
-         // Pre-fill login form based on localStorage
          const savedUsername = localStorage.getItem('savedUsername');
          const savedPassword = localStorage.getItem('savedPassword');
-         usernameField.value = savedUsername || '';
+         if(usernameField) usernameField.value = savedUsername || '';
          if (savedPassword) {
-           passwordField.value = savedPassword;
-           rememberMe.checked = true;
+           if(passwordField) passwordField.value = savedPassword;
+           if(rememberMe) rememberMe.checked = true;
          } else {
-           passwordField.value = ''; // Clear password if not saved
-           rememberMe.checked = false;
+           if(passwordField) passwordField.value = ''; // Clear password if not saved
+           if(rememberMe) rememberMe.checked = false;
          }
          console.log('>>> Tela de login configurada.');
         }
