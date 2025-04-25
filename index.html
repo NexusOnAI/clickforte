@@ -215,31 +215,42 @@
       <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Abrir menu">
         <i class="bi bi-list text-xl"></i>
       </button>
-      <div class="flex items-center cursor-pointer group" onclick="openProfileModal()">
-          <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
-          <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
+
+      <div class="flex items-center">
+          <button id="integrationBtnHeader"
+                  class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full transition-colors duration-150 mr-2"
+                  aria-label="Integração"
+                  onclick="loadPage('integracao.html', this); return false;">
+              <i class="bi bi-link-45deg text-xl"></i>
+          </button>
+
+          <div class="flex items-center cursor-pointer group" onclick="openProfileModal()">
+              <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
+              <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
+          </div>
       </div>
     </header>
-
-    <div class="flex flex-1 overflow-hidden"> <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md h-screen sticky top-0 border-r border-[#495057]"> <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center">
+    <div class="flex flex-1 overflow-hidden">
+      <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md h-screen sticky top-0 border-r border-[#495057]">
+        <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center">
           <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
         </div>
 
         <div class="overflow-y-auto flex-grow p-3 space-y-1">
           <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-              <i class="bi bi-house-door-fill w-5 text-center text-lg"></i>
-              <span class="sidebar-text text-sm font-medium">Home</span>
+            <i class="bi bi-house-door-fill w-5 text-center text-lg"></i>
+            <span class="sidebar-text text-sm font-medium">Home</span>
           </a>
           <a href="#" onclick="loadPage('integracao.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-              <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i>
-              <span class="sidebar-text text-sm font-medium">Integração</span>
+            <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i>
+            <span class="sidebar-text text-sm font-medium">Integração</span>
           </a>
 
           <div class="nav-item">
             <button onclick="toggleSubmenu('desktopPrevisaoSubmenu', 'desktopPrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
               <span class="flex items-center gap-3">
-                  <i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i>
-                  <span class="sidebar-text text-sm font-medium">Previsão</span>
+                <i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i>
+                <span class="sidebar-text text-sm font-medium">Previsão</span>
               </span>
               <i id="desktopPrevisaoIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
             </button>
@@ -251,8 +262,8 @@
           <div class="nav-item">
               <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
                 <span class="flex items-center gap-3">
-                    <i class="bi bi-wallet2 w-5 text-center text-lg"></i>
-                    <span class="sidebar-text text-sm font-medium">Gastos</span>
+                  <i class="bi bi-wallet2 w-5 text-center text-lg"></i>
+                  <span class="sidebar-text text-sm font-medium">Gastos</span>
                 </span>
                 <i id="desktopGastosIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
               </button>
@@ -265,15 +276,15 @@
           </div>
 
           <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-              <i class="bi bi-graph-up w-5 text-center text-lg"></i>
-              <span class="sidebar-text text-sm font-medium">Relatório Geral</span>
+            <i class="bi bi-graph-up w-5 text-center text-lg"></i>
+            <span class="sidebar-text text-sm font-medium">Relatório Geral</span>
           </a>
 
           <div class="nav-item">
             <button onclick="toggleSubmenu('desktopConfigSubmenu', 'desktopConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
               <span class="flex items-center gap-3">
-                  <i class="bi bi-gear-fill w-5 text-center text-lg"></i>
-                  <span class="sidebar-text text-sm font-medium">Configurações</span>
+                <i class="bi bi-gear-fill w-5 text-center text-lg"></i>
+                <span class="sidebar-text text-sm font-medium">Configurações</span>
               </span>
               <i id="desktopConfigIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
             </button>
@@ -306,10 +317,11 @@
         </div>
       </nav>
 
-      <main id="mainContent" class="overflow-y-auto p-4 md:p-6 relative bg-[#1a1d21]"> <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
+      <main id="mainContent" class="overflow-y-auto p-4 md:p-6 relative bg-[#1a1d21]">
+        <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4dabf7]"></div>
-       </div>
-       <iframe id="mainFrame" src="home.html" class="w-full h-full rounded-lg shadow-md relative z-10 border border-[#495057]" title="Conteúdo Principal"></iframe>
+        </div>
+        <iframe id="mainFrame" src="home.html" class="w-full h-full rounded-lg shadow-md relative z-10 border border-[#495057]" title="Conteúdo Principal"></iframe>
       </main>
     </div>
 
@@ -326,28 +338,28 @@
          <a href="#" onclick="loadPage('integracao.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Integração</span></a>
 
          <div class="nav-item">
-            <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
-              <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Previsão</span></span>
-              <i id="mobilePrevisaoIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
-            </button>
-            <div id="mobilePrevisaoSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
-              <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Maio</a>
-              <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Dezembro</a>
-            </div>
+           <button onclick="toggleSubmenu('mobilePrevisaoSubmenu', 'mobilePrevisaoIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
+             <span class="flex items-center gap-3"><i class="bi bi-calendar-event-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Previsão</span></span>
+             <i id="mobilePrevisaoIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
+           </button>
+           <div id="mobilePrevisaoSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
+             <a href="#" onclick="loadPage('previsao_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
+             <a href="#" onclick="loadPage('previsao_maio.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Maio</a>
+             <a href="#" onclick="loadPage('previsao_dezembro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Dezembro</a>
+           </div>
          </div>
 
          <div class="nav-item">
-            <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
-              <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
-              <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
-            </button>
-            <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
-            </div>
+           <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
+             <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
+             <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
+           </button>
+           <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
+             <a href="#" onclick="loadPage('sub_janeiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Janeiro</a>
+             <a href="#" onclick="loadPage('sub_fevereiro.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Fevereiro</a>
+             <a href="#" onclick="loadPage('sub_marco.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Março</a>
+             <a href="#" onclick="loadPage('sub_abril.html', this); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
+           </div>
           </div>
 
          <a href="#" onclick="loadPage('geral.html', this); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
@@ -395,7 +407,7 @@
                <label for="profileNameInput" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nome de Usuário</label>
                <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
                       class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
-            </div>
+             </div>
           </div>
         </div>
 
@@ -438,204 +450,226 @@
   </script>
 
   <script>
-      // Element References
-      const loginOverlay = document.getElementById('loginOverlay');
-      const loginErrorDiv = document.getElementById('loginError');
-      const formLogin = document.getElementById('formLogin');
-      const usernameField = document.getElementById('username');
-      const passwordField = document.getElementById('password');
-      const rememberMe = document.getElementById('rememberMe');
-      const loginButton = document.getElementById('loginButton');
-      const buttonText = loginButton.querySelector('.button-text');
-      const spinnerIcon = loginButton.querySelector('.spinner-icon');
-      const togglePasswordButton = document.getElementById('togglePassword');
-      const welcomeScreen = document.getElementById('welcomeScreen');
-      const welcomeUserName = document.getElementById('welcomeUserName');
-      const dashboard = document.getElementById('dashboard');
-      const mainFrame = document.getElementById('mainFrame');
-      const iframeSpinnerOverlay = document.getElementById('iframeSpinnerOverlay');
-      const logoutNotification = document.getElementById('logoutNotification');
-      const mobileSidebarWrapper = document.getElementById('mobileSidebarWrapper');
-      const mobileSidebar = document.getElementById('mobileSidebar');
-      const profileModal = document.getElementById('profileModal');
-      const profileModalContent = document.getElementById('profileModalContent');
-      const profileForm = document.getElementById('profileForm');
-      const profileNameInput = document.getElementById('profileNameInput');
-      const profilePicInput = document.getElementById('profilePicInput');
-      const modalProfileImg = document.getElementById('modalProfileImg');
-      const profileImgHeader = document.getElementById('profileImgHeader');
-      const profileNameHeader = document.getElementById('profileNameHeader');
-      const sidebarProfileImg = document.getElementById('sidebarProfileImg');
-      const sidebarProfileName = document.getElementById('sidebarProfileName');
-      const desktopSidebar = document.getElementById('desktopSidebar');
-      const mainContent = document.getElementById('mainContent');
-      const desktopSidebarToggleBtn = document.getElementById('desktopSidebarToggle')?.querySelector('button');
-      const desktopToggleIcon = document.getElementById('desktopToggleIcon');
-      const desktopToggleText = desktopSidebarToggleBtn?.querySelector('.sidebar-text');
+     // Element References
+     const loginOverlay = document.getElementById('loginOverlay');
+     const loginErrorDiv = document.getElementById('loginError');
+     const formLogin = document.getElementById('formLogin');
+     const usernameField = document.getElementById('username');
+     const passwordField = document.getElementById('password');
+     const rememberMe = document.getElementById('rememberMe');
+     const loginButton = document.getElementById('loginButton');
+     const buttonText = loginButton.querySelector('.button-text');
+     const spinnerIcon = loginButton.querySelector('.spinner-icon');
+     const togglePasswordButton = document.getElementById('togglePassword');
+     const welcomeScreen = document.getElementById('welcomeScreen');
+     const welcomeUserName = document.getElementById('welcomeUserName');
+     const dashboard = document.getElementById('dashboard');
+     const mainFrame = document.getElementById('mainFrame');
+     const iframeSpinnerOverlay = document.getElementById('iframeSpinnerOverlay');
+     const logoutNotification = document.getElementById('logoutNotification');
+     const mobileSidebarWrapper = document.getElementById('mobileSidebarWrapper');
+     const mobileSidebar = document.getElementById('mobileSidebar');
+     const profileModal = document.getElementById('profileModal');
+     const profileModalContent = document.getElementById('profileModalContent');
+     const profileForm = document.getElementById('profileForm');
+     const profileNameInput = document.getElementById('profileNameInput');
+     const profilePicInput = document.getElementById('profilePicInput');
+     const modalProfileImg = document.getElementById('modalProfileImg');
+     const profileImgHeader = document.getElementById('profileImgHeader');
+     const profileNameHeader = document.getElementById('profileNameHeader');
+     const sidebarProfileImg = document.getElementById('sidebarProfileImg');
+     const sidebarProfileName = document.getElementById('sidebarProfileName');
+     const desktopSidebar = document.getElementById('desktopSidebar');
+     const mainContent = document.getElementById('mainContent');
+     const desktopSidebarToggleBtn = document.getElementById('desktopSidebarToggle')?.querySelector('button');
+     const desktopToggleIcon = document.getElementById('desktopToggleIcon');
+     const desktopToggleText = desktopSidebarToggleBtn?.querySelector('.sidebar-text');
+     // --- (NOVO) Referência para o botão de integração no header ---
+     const integrationBtnHeader = document.getElementById('integrationBtnHeader');
 
-      // Constants
-      const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
-      const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
+     // Constants
+     const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
+     const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
 
-      // --- Utility Functions ---
-      function showElement(el) { if (el) el.classList.remove('hidden'); }
-      function hideElement(el) { if (el) el.classList.add('hidden'); }
-      function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
-      function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
-      function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
-      function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
+     // --- Utility Functions ---
+     function showElement(el) { if (el) el.classList.remove('hidden'); }
+     function hideElement(el) { if (el) el.classList.add('hidden'); }
+     function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
+     function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
+     function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
+     function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
 
-      // --- Login/Logout Logic ---
-      formLogin.addEventListener('submit', function (e) {
-        e.preventDefault();
-        hideElement(loginErrorDiv);
-        disableButton(loginButton, buttonText, spinnerIcon);
-        setTimeout(() => {
-         const validUsername = localStorage.getItem('savedUsername') || 'admin';
-         const username = usernameField.value.trim();
-         const password = passwordField.value;
-         // Hardcoded password check - Replace with API call in production
-         if (username === validUsername && password === 'admin123') {
-           handleSuccessfulLogin(username, password);
-         } else {
-           handleFailedLogin();
+     // --- Login/Logout Logic ---
+     formLogin.addEventListener('submit', function (e) {
+       e.preventDefault();
+       hideElement(loginErrorDiv);
+       disableButton(loginButton, buttonText, spinnerIcon);
+       setTimeout(() => {
+        const validUsername = localStorage.getItem('savedUsername') || 'admin';
+        const username = usernameField.value.trim();
+        const password = passwordField.value;
+        // Hardcoded password check - Replace with API call in production
+        if (username === validUsername && password === 'admin123') {
+         handleSuccessfulLogin(username, password);
+        } else {
+         handleFailedLogin();
+        }
+       }, 1000); // Simulate network delay
+     });
+
+     function handleSuccessfulLogin(username, password) {
+       if (rememberMe.checked) {
+        localStorage.setItem('savedUsername', username);
+        localStorage.setItem('savedPassword', password); // Store password if Remember Me is checked (use cautiously)
+       } else {
+        localStorage.removeItem('savedPassword');
+        // Keep username even if not remembered, for convenience or pre-filling
+        localStorage.setItem('savedUsername', username);
+       }
+       localStorage.setItem('isLoggedIn', 'true');
+
+       hideFlexElement(loginOverlay);
+       welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
+       welcomeScreen.classList.add('visible'); // Fade in welcome screen
+
+       setTimeout(() => {
+        welcomeScreen.classList.remove('visible'); // Start fading out
+        setTimeout(() => { hideElement(welcomeScreen); }, 500); // Hide after fade out
+
+        showFlexElement(dashboard);
+        updateUserInfo(); // Update profile pictures and names
+        applyDesktopSidebarState(); // Set sidebar collapsed/expanded based on localStorage
+
+        // Load initial page (e.g., Home)
+        const homeLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="home.html"]');
+        const homeLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="home.html"]');
+        const homeLink = homeLinkDesktop || homeLinkMobile; // Prefer desktop link if available
+        if (homeLink) {
+           loadPage('home.html', homeLink);
+        } else {
+           // Fallback if home link isn't found (shouldn't happen with current HTML)
+           if (mainFrame) mainFrame.src = 'home.html';
+           if (iframeSpinnerOverlay) { // Manually hide spinner if no link to activate
+               hideElement(iframeSpinnerOverlay);
+               iframeSpinnerOverlay.classList.remove('flex');
+           }
+           console.warn("Home link not found for initial page load.");
+        }
+
+        enableButton(loginButton, buttonText, spinnerIcon); // Re-enable login button
+       }, 2000); // Welcome screen duration
+     }
+
+     function handleFailedLogin() {
+       loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
+       showElement(loginErrorDiv);
+       enableButton(loginButton, buttonText, spinnerIcon);
+       const loginCard = loginOverlay.querySelector('.bg-\\[\\#212529\\]');
+       if(loginCard) {
+           loginCard.classList.add('animate-shake');
+           setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
+       }
+     }
+
+     togglePasswordButton.addEventListener('click', function() {
+       const icon = this.querySelector('i');
+       if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+        this.setAttribute('aria-label', 'Ocultar senha');
+       } else {
+        passwordField.type = 'password';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+        this.setAttribute('aria-label', 'Mostrar senha');
+       }
+     });
+
+     function logout() {
+       localStorage.removeItem('isLoggedIn');
+       // Optionally remove saved password on logout even if 'Remember Me' was checked
+       // localStorage.removeItem('savedPassword');
+
+       console.log('>>> Logout executado, isLoggedIn removido:', localStorage.getItem('isLoggedIn'));
+       hideFlexElement(dashboard);
+       showFlexElement(loginOverlay);
+       showElement(logoutNotification);
+       setTimeout(() => hideElement(logoutNotification), 4000);
+
+       if (mobileSidebar.classList.contains('translate-x-0')) {
+        toggleMobileSidebar(); // Close mobile sidebar if open
+       }
+
+       passwordField.value = ''; // Clear password field
+       hideElement(loginErrorDiv); // Hide any previous login errors
+
+       // Pre-fill username/password based on localStorage
+       const savedUsername = localStorage.getItem('savedUsername');
+       const savedPassword = localStorage.getItem('savedPassword');
+       usernameField.value = savedUsername || '';
+       if (savedPassword) {
+        passwordField.value = savedPassword;
+        rememberMe.checked = true;
+       } else {
+        rememberMe.checked = false;
+       }
+       console.log(">>> Tela de login reconfigurada após logout.");
+     }
+
+     // --- Navigation and Page Loading ---
+
+     // Sets the active state for a clicked navigation link
+     function setActiveLink(clickedLinkElement) {
+         if (!clickedLinkElement) return;
+
+         // Remove active class from all nav links in both sidebars AND the header integration button
+         document.querySelectorAll('#desktopSidebar .nav-link, #mobileSidebar .nav-link, #integrationBtnHeader').forEach(link => {
+           link.classList.remove('active'); // Remove active from buttons too if styled that way
+           // Specific styling for buttons might be different, adjust if needed
+           if (link.tagName === 'BUTTON' && link.id === 'integrationBtnHeader') {
+               // Reset any specific active styles for the header button if necessary
+               // Example: link.classList.remove('bg-blue-500');
+           }
+         });
+
+         // Add active class to the clicked link/button
+         clickedLinkElement.classList.add('active');
+         // Add specific active style for the header button if needed
+         if (clickedLinkElement.id === 'integrationBtnHeader') {
+             // Example: clickedLinkElement.classList.add('bg-blue-500');
+             // Using the same .active class as nav-links for consistency here
          }
-        }, 1000); // Simulate network delay
-      });
 
-      function handleSuccessfulLogin(username, password) {
-        if (rememberMe.checked) {
-         localStorage.setItem('savedUsername', username);
-         localStorage.setItem('savedPassword', password); // Store password if Remember Me is checked (use cautiously)
-        } else {
-         localStorage.removeItem('savedPassword');
-         // Keep username even if not remembered, for convenience or pre-filling
-         localStorage.setItem('savedUsername', username);
-        }
-        localStorage.setItem('isLoggedIn', 'true');
 
-        hideFlexElement(loginOverlay);
-        welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
-        welcomeScreen.classList.add('visible'); // Fade in welcome screen
-
-        setTimeout(() => {
-         welcomeScreen.classList.remove('visible'); // Start fading out
-         setTimeout(() => { hideElement(welcomeScreen); }, 500); // Hide after fade out
-
-         showFlexElement(dashboard);
-         updateUserInfo(); // Update profile pictures and names
-         applyDesktopSidebarState(); // Set sidebar collapsed/expanded based on localStorage
-
-         // Load initial page (e.g., Home)
-         const homeLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="home.html"]');
-         const homeLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="home.html"]');
-         const homeLink = homeLinkDesktop || homeLinkMobile; // Prefer desktop link if available
-         if (homeLink) {
-            loadPage('home.html', homeLink);
-         } else {
-            // Fallback if home link isn't found (shouldn't happen with current HTML)
-            if (mainFrame) mainFrame.src = 'home.html';
-            if (iframeSpinnerOverlay) { // Manually hide spinner if no link to activate
-                hideElement(iframeSpinnerOverlay);
-                iframeSpinnerOverlay.classList.remove('flex');
-            }
-            console.warn("Home link not found for initial page load.");
+         // If the clicked link is inside a submenu, also activate the parent button
+         const parentSubmenu = clickedLinkElement.closest('.submenu');
+         if (parentSubmenu) {
+           const parentButton = parentSubmenu.previousElementSibling;
+           if (parentButton && parentButton.classList.contains('nav-link')) {
+               parentButton.classList.add('active');
+               // Ensure submenu stays visible if sidebar is not collapsed
+               const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
+               const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
+                if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
+                    const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
+                    if (parentIconId) {
+                         toggleSubmenu(parentSubmenu.id, parentIconId);
+                    }
+                }
+           }
+         } else if (clickedLinkElement.id === 'integrationBtnHeader') {
+             // If the header integration button is clicked, make sure the sidebar integration link also looks active
+             const sidebarIntegrationLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="integracao.html"]');
+             const sidebarIntegrationLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="integracao.html"]');
+             if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.add('active');
+             if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.add('active');
+         } else if (clickedLinkElement.getAttribute('onclick')?.includes('integracao.html')) {
+             // If a sidebar integration link is clicked, make sure the header button also looks active
+             if (integrationBtnHeader) integrationBtnHeader.classList.add('active');
          }
-
-         enableButton(loginButton, buttonText, spinnerIcon); // Re-enable login button
-        }, 2000); // Welcome screen duration
-      }
-
-      function handleFailedLogin() {
-        loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
-        showElement(loginErrorDiv);
-        enableButton(loginButton, buttonText, spinnerIcon);
-        const loginCard = loginOverlay.querySelector('.bg-\\[\\#212529\\]');
-        if(loginCard) {
-            loginCard.classList.add('animate-shake');
-            setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
-        }
-      }
-
-      togglePasswordButton.addEventListener('click', function() {
-        const icon = this.querySelector('i');
-        if (passwordField.type === 'password') {
-         passwordField.type = 'text';
-         icon.classList.replace('bi-eye-slash', 'bi-eye');
-         this.setAttribute('aria-label', 'Ocultar senha');
-        } else {
-         passwordField.type = 'password';
-         icon.classList.replace('bi-eye', 'bi-eye-slash');
-         this.setAttribute('aria-label', 'Mostrar senha');
-        }
-      });
-
-      function logout() {
-        localStorage.removeItem('isLoggedIn');
-        // Optionally remove saved password on logout even if 'Remember Me' was checked
-        // localStorage.removeItem('savedPassword');
-
-        console.log('>>> Logout executado, isLoggedIn removido:', localStorage.getItem('isLoggedIn'));
-        hideFlexElement(dashboard);
-        showFlexElement(loginOverlay);
-        showElement(logoutNotification);
-        setTimeout(() => hideElement(logoutNotification), 4000);
-
-        if (mobileSidebar.classList.contains('translate-x-0')) {
-         toggleMobileSidebar(); // Close mobile sidebar if open
-        }
-
-        passwordField.value = ''; // Clear password field
-        hideElement(loginErrorDiv); // Hide any previous login errors
-
-        // Pre-fill username/password based on localStorage
-        const savedUsername = localStorage.getItem('savedUsername');
-        const savedPassword = localStorage.getItem('savedPassword');
-        usernameField.value = savedUsername || '';
-        if (savedPassword) {
-         passwordField.value = savedPassword;
-         rememberMe.checked = true;
-        } else {
-         rememberMe.checked = false;
-        }
-        console.log(">>> Tela de login reconfigurada após logout.");
-      }
-
-      // --- Navigation and Page Loading ---
-
-      // Sets the active state for a clicked navigation link
-      function setActiveLink(clickedLinkElement) {
-          if (!clickedLinkElement) return;
-
-          // Remove active class from all nav links in both sidebars
-          document.querySelectorAll('#desktopSidebar .nav-link, #mobileSidebar .nav-link').forEach(link => {
-            link.classList.remove('active');
-          });
-
-          // Add active class to the clicked link
-          clickedLinkElement.classList.add('active');
-
-          // If the clicked link is inside a submenu, also activate the parent button
-          const parentSubmenu = clickedLinkElement.closest('.submenu');
-          if (parentSubmenu) {
-            const parentButton = parentSubmenu.previousElementSibling;
-            if (parentButton && parentButton.classList.contains('nav-link')) {
-                parentButton.classList.add('active');
-                // Ensure submenu stays visible if sidebar is not collapsed
-                const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
-                const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
-                 if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
-                      const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
-                      if (parentIconId) {
-                           toggleSubmenu(parentSubmenu.id, parentIconId);
-                      }
-                 }
-            }
-          }
-      }
+     }
 
 
-      function loadPage(pageUrl, clickedLinkElement) {
+     function loadPage(pageUrl, clickedLinkElement) {
          if (iframeSpinnerOverlay) {
              iframeSpinnerOverlay.classList.remove('hidden');
              iframeSpinnerOverlay.classList.add('flex');
@@ -652,10 +686,10 @@
                iframeSpinnerOverlay.classList.remove('flex');
            }
          }
-      }
+     }
 
-      // Iframe load/error handling
-      if (mainFrame && iframeSpinnerOverlay) {
+     // Iframe load/error handling
+     if (mainFrame && iframeSpinnerOverlay) {
          mainFrame.addEventListener('load', () => {
              iframeSpinnerOverlay.classList.add('hidden');
              iframeSpinnerOverlay.classList.remove('flex');
@@ -666,99 +700,99 @@
              iframeSpinnerOverlay.classList.remove('flex');
              // Optionally display an error message in the iframe area
          });
-      } else {
+     } else {
          console.error("Não foi possível adicionar listeners ao iframe ou spinner não encontrado.");
-      }
+     }
 
 
-      // --- Sidebar Logic ---
-      function toggleMobileSidebar() {
-        const isOpen = mobileSidebar.classList.contains('translate-x-0');
-        if (isOpen) {
-         mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
-         hideElement(mobileSidebarWrapper);
-        } else {
-         mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0');
-         showElement(mobileSidebarWrapper);
-        }
-      }
+     // --- Sidebar Logic ---
+     function toggleMobileSidebar() {
+       const isOpen = mobileSidebar.classList.contains('translate-x-0');
+       if (isOpen) {
+        mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
+        hideElement(mobileSidebarWrapper);
+       } else {
+        mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0');
+        showElement(mobileSidebarWrapper);
+       }
+     }
 
-      function toggleSubmenu(submenuId, iconId) {
-        const submenu = document.getElementById(submenuId);
-        const icon = document.getElementById(iconId);
-        if (!submenu || !icon) { console.error("Submenu/Icon não encontrado:", submenuId, iconId); return; }
+     function toggleSubmenu(submenuId, iconId) {
+       const submenu = document.getElementById(submenuId);
+       const icon = document.getElementById(iconId);
+       if (!submenu || !icon) { console.error("Submenu/Icon não encontrado:", submenuId, iconId); return; }
 
-        const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
-        const isCurrentlyVisible = submenu.classList.contains('submenu-visible');
-        const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
+       const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
+       const isCurrentlyVisible = submenu.classList.contains('submenu-visible');
+       const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
 
-        // Close other open submenus *within the same context* (desktop or mobile)
-        // unless the desktop sidebar is collapsed (where submenus don't visually open)
-        if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-            document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
-                if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
-                    otherSubmenu.classList.remove('submenu-visible');
-                    const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon');
-                    const otherIcon = document.getElementById(otherIconId);
-                    if (otherIcon) otherIcon.classList.remove('rotate-180');
-                }
-            });
-        }
-
-        // Toggle the clicked submenu only if sidebar is not collapsed (desktop) or if it's mobile
-        if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-            submenu.classList.toggle('submenu-visible');
-            icon.classList.toggle('rotate-180');
-        } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
-            // In collapsed desktop view, clicking the parent *should* probably navigate
-            // to a default page for that section or do nothing, as submenus are hidden.
-            // Or, we could potentially show a tooltip/popover with the submenu items.
-            // For now, we just log it.
-            console.log("Tentativa de abrir submenu com sidebar desktop recolhida ignorada.");
-        }
-      }
-
-       function toggleDesktopSidebar() {
-         if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !mainContent) {
-             console.error("Elementos da sidebar desktop, botão de toggle ou mainContent não encontrados.");
-             return;
-         }
-         // Toggle the class on the sidebar
-         const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed');
-
-         // Update button and localStorage based on the new state
-         if (isCollapsed) {
-             desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
-             desktopToggleText.textContent = 'Expandir';
-             desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
-             localStorage.setItem('desktopSidebarState', 'collapsed');
-             console.log(">>> Sidebar Desktop Recolhida");
-             // Close any open submenus when collapsing
-             document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => {
-                 sm.classList.remove('submenu-visible');
-                 const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
-                 if(iconEl) iconEl.classList.remove('rotate-180');
-             });
-         } else {
-             desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
-             desktopToggleText.textContent = 'Recolher';
-             desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
-             localStorage.setItem('desktopSidebarState', 'expanded');
-             console.log(">>> Sidebar Desktop Expandida");
-         }
-         // Main content width adjustment is handled by CSS flex properties and transitions
+       // Close other open submenus *within the same context* (desktop or mobile)
+       // unless the desktop sidebar is collapsed (where submenus don't visually open)
+       if (context === 'mobile' || !isDesktopSidebarCollapsed) {
+           document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
+               if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
+                   otherSubmenu.classList.remove('submenu-visible');
+                   const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon');
+                   const otherIcon = document.getElementById(otherIconId);
+                   if (otherIcon) otherIcon.classList.remove('rotate-180');
+               }
+           });
        }
 
-       function applyDesktopSidebarState() {
-          if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !mainContent) return;
+       // Toggle the clicked submenu only if sidebar is not collapsed (desktop) or if it's mobile
+       if (context === 'mobile' || !isDesktopSidebarCollapsed) {
+           submenu.classList.toggle('submenu-visible');
+           icon.classList.toggle('rotate-180');
+       } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
+           // In collapsed desktop view, clicking the parent *should* probably navigate
+           // to a default page for that section or do nothing, as submenus are hidden.
+           // Or, we could potentially show a tooltip/popover with the submenu items.
+           // For now, we just log it.
+           console.log("Tentativa de abrir submenu com sidebar desktop recolhida ignorada.");
+       }
+     }
 
-          const savedState = localStorage.getItem('desktopSidebarState');
-          // Apply corresponding class to sidebar FIRST
-          if (savedState === 'collapsed') {
-              desktopSidebar.classList.add('sidebar-collapsed');
-          } else {
-              desktopSidebar.classList.remove('sidebar-collapsed');
-          }
+      function toggleDesktopSidebar() {
+        if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !mainContent) {
+            console.error("Elementos da sidebar desktop, botão de toggle ou mainContent não encontrados.");
+            return;
+        }
+        // Toggle the class on the sidebar
+        const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed');
+
+        // Update button and localStorage based on the new state
+        if (isCollapsed) {
+            desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
+            desktopToggleText.textContent = 'Expandir';
+            desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
+            localStorage.setItem('desktopSidebarState', 'collapsed');
+            console.log(">>> Sidebar Desktop Recolhida");
+            // Close any open submenus when collapsing
+            document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => {
+                sm.classList.remove('submenu-visible');
+                const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
+                if(iconEl) iconEl.classList.remove('rotate-180');
+            });
+        } else {
+            desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
+            desktopToggleText.textContent = 'Recolher';
+            desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
+            localStorage.setItem('desktopSidebarState', 'expanded');
+            console.log(">>> Sidebar Desktop Expandida");
+        }
+        // Main content width adjustment is handled by CSS flex properties and transitions
+      }
+
+       function applyDesktopSidebarState() {
+         if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !mainContent) return;
+
+         const savedState = localStorage.getItem('desktopSidebarState');
+         // Apply corresponding class to sidebar FIRST
+         if (savedState === 'collapsed') {
+             desktopSidebar.classList.add('sidebar-collapsed');
+         } else {
+             desktopSidebar.classList.remove('sidebar-collapsed');
+         }
 
          // THEN Update button icon/text based on the *final* state
          if (desktopSidebar.classList.contains('sidebar-collapsed')) {
@@ -772,192 +806,192 @@
              desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
              console.log(">>> Aplicando estado inicial: Sidebar Desktop Expandida");
           }
-          // Main content width adjustment is handled by CSS
+         // Main content width adjustment is handled by CSS
        }
 
-      // --- Profile Modal Logic ---
-      function openProfileModal() {
-        const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
+     // --- Profile Modal Logic ---
+     function openProfileModal() {
+       const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
+       const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
+       profileNameInput.value = currentUsername;
+       modalProfileImg.src = currentProfilePic;
+       // Clear password fields when opening
+       document.getElementById('currentPassword').value = '';
+       document.getElementById('newPassword').value = '';
+       document.getElementById('confirmPassword').value = '';
+
+       profileModal.classList.remove('hidden');
+       profileModal.classList.add('flex');
+       // Force reflow to ensure transition works
+       void profileModal.offsetWidth;
+       profileModal.classList.add('opacity-100');
+       profileModalContent.classList.remove('scale-95', 'opacity-0');
+
+       // Set active link for Perfil
+       const perfilLinkDesktop = document.querySelector('#desktopConfigSubmenu a[onclick*="openProfileModal"]');
+       const perfilLinkMobile = document.querySelector('#mobileConfigSubmenu a[onclick*="openProfileModal"]');
+       // Ensure setActiveLink is defined before calling
+       if (typeof setActiveLink === 'function') {
+           setActiveLink(perfilLinkDesktop || perfilLinkMobile);
+       } else {
+           console.error('setActiveLink function not defined when opening profile modal.');
+       }
+     }
+
+     function closeProfileModal() {
+       profileModal.classList.remove('opacity-100');
+       profileModalContent.classList.add('scale-95', 'opacity-0');
+       setTimeout(() => {
+        profileModal.classList.add('hidden');
+        profileModal.classList.remove('flex');
+        // Reset image preview if no file was selected, or revert to saved pic
         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
-        profileNameInput.value = currentUsername;
         modalProfileImg.src = currentProfilePic;
-        // Clear password fields when opening
-        document.getElementById('currentPassword').value = '';
-        document.getElementById('newPassword').value = '';
-        document.getElementById('confirmPassword').value = '';
+        profilePicInput.value = ''; // Clear file input
+       }, 200); // Match duration of transition
+     }
 
-        profileModal.classList.remove('hidden');
-        profileModal.classList.add('flex');
-        // Force reflow to ensure transition works
-        void profileModal.offsetWidth;
-        profileModal.classList.add('opacity-100');
-        profileModalContent.classList.remove('scale-95', 'opacity-0');
+     profilePicInput.addEventListener('change', function () {
+       const file = this.files[0];
+       if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+         modalProfileImg.src = e.target.result; // Preview selected image
+        };
+        reader.readAsDataURL(file);
+       }
+     });
 
-        // Set active link for Perfil
-        const perfilLinkDesktop = document.querySelector('#desktopConfigSubmenu a[onclick*="openProfileModal"]');
-        const perfilLinkMobile = document.querySelector('#mobileConfigSubmenu a[onclick*="openProfileModal"]');
-        // Ensure setActiveLink is defined before calling
-        if (typeof setActiveLink === 'function') {
-            setActiveLink(perfilLinkDesktop || perfilLinkMobile);
+     profileForm.addEventListener('submit', function (e) {
+       e.preventDefault();
+       const newName = profileNameInput.value.trim();
+       const newImgSrc = modalProfileImg.src; // Could be placeholder, existing saved pic, or new data URL
+
+       // --- Password Change Logic Placeholder ---
+       const currentPassword = document.getElementById('currentPassword').value;
+       const newPassword = document.getElementById('newPassword').value;
+       const confirmPassword = document.getElementById('confirmPassword').value;
+
+       let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
+       let passwordChangeValid = false;
+
+       if (passwordChangeAttempted) {
+           // **IMPORTANT:** Implement proper validation and API call here!
+           // 1. Check if currentPassword matches the user's actual current password (via API).
+           // 2. Check if newPassword meets complexity requirements.
+           // 3. Check if newPassword and confirmPassword match.
+           // 4. Ensure newPassword is not empty if attempting change.
+           if (newPassword && newPassword === confirmPassword /* && currentPassword is valid via API */) {
+               console.log(">>> Password change request (VALID - Placeholder): ", newPassword);
+               passwordChangeValid = true;
+               // **API Call:** Send request to update password here.
+               // **On Success from API:** Maybe show a success message.
+               // **On Failure from API:** Show API error, alert user, keep modal open.
+               // Example: Update localStorage ONLY if API call is successful in real scenario
+               // localStorage.setItem('savedPassword', newPassword); // Update stored password (use cautiously)
+           } else {
+               console.log(">>> Password change request (INVALID - Placeholder)");
+               // Display specific error messages to the user
+               if (!newPassword) {
+                 alert('Nova senha não pode estar vazia.');
+               } else if (newPassword !== confirmPassword) {
+                   alert('As novas senhas não coincidem.');
+               } else {
+                   // Assume currentPassword validation failed if logic reaches here
+                   alert('Senha atual incorreta ou erro ao validar.');
+               }
+               return; // Stop form submission if password change fails validation
+           }
+       }
+       // --- End Password Change Logic Placeholder ---
+
+
+       if (newName) {
+        localStorage.setItem('savedUsername', newName);
+        // Check if the image source is a new Base64 string from file upload
+        if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) {
+         localStorage.setItem('savedProfilePic', newImgSrc);
+        } else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) {
+         // If the source is the default placeholder, remove saved pic from storage
+         localStorage.removeItem('savedProfilePic');
+        }
+        // If the src is not a new data URL and not the default, it means the user didn't change it,
+        // so we don't need to update localStorage for the picture.
+
+        updateUserInfo(); // Update UI elements
+        closeProfileModal(); // Close modal only if name is valid and password change (if attempted) was successful (or not attempted)
+       } else {
+        alert('O nome de usuário não pode ficar vazio.');
+       }
+     });
+
+     function updateUserInfo() {
+       const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
+       const profilePicBase64 = localStorage.getItem('savedProfilePic');
+       // Use small placeholder if no saved pic, otherwise use saved pic (which could be large but will be sized by CSS)
+       const displayPic = profilePicBase64 || DEFAULT_PROFILE_PIC_SMALL;
+       const modalPic = profilePicBase64 || DEFAULT_PROFILE_PIC_LARGE; // For the larger modal view
+
+       if(profileNameHeader) profileNameHeader.textContent = username;
+       if(sidebarProfileName) sidebarProfileName.textContent = username;
+
+       if(profileImgHeader) profileImgHeader.src = displayPic;
+       if(sidebarProfileImg) sidebarProfileImg.src = displayPic;
+       if(modalProfileImg) modalProfileImg.src = modalPic; // Update modal image holder too
+     }
+
+
+     // --- Initialization ---
+     window.addEventListener('DOMContentLoaded', function () {
+       console.log('>>> DOMContentLoaded: Verificando estado de login...');
+       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+       console.log(`>>> Status isLoggedIn: ${isLoggedIn}`);
+
+       if (isLoggedIn) {
+        console.log('>>> Usuário está logado. Configurando dashboard...');
+        hideFlexElement(loginOverlay);
+        showFlexElement(dashboard);
+        hideElement(logoutNotification);
+        hideElement(loginErrorDiv);
+        updateUserInfo();
+        applyDesktopSidebarState(); // Apply sidebar state before loading page
+
+        // Load initial page after setup
+        const homeLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="home.html"]');
+        const homeLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="home.html"]');
+        const homeLink = homeLinkDesktop || homeLinkMobile;
+         if (homeLink) {
+           loadPage('home.html', homeLink);
         } else {
-            console.error('setActiveLink function not defined when opening profile modal.');
+           if(mainFrame) mainFrame.src = 'home.html'; // Fallback load
+           if (iframeSpinnerOverlay) { // Hide spinner if no link
+               iframeSpinnerOverlay.classList.add('hidden');
+               iframeSpinnerOverlay.classList.remove('flex');
+           }
         }
-      }
+        console.log('>>> Dashboard configurado para usuário logado.');
 
-      function closeProfileModal() {
-        profileModal.classList.remove('opacity-100');
-        profileModalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-         profileModal.classList.add('hidden');
-         profileModal.classList.remove('flex');
-         // Reset image preview if no file was selected, or revert to saved pic
-         const currentProfilePic = localStorage.getItem('savedProfilePic') || DEFAULT_PROFILE_PIC_LARGE;
-         modalProfileImg.src = currentProfilePic;
-         profilePicInput.value = ''; // Clear file input
-        }, 200); // Match duration of transition
-      }
+       } else {
+        console.log('>>> Usuário NÃO está logado. Configurando tela de login...');
+        showFlexElement(loginOverlay);
+        hideFlexElement(dashboard);
+        hideElement(logoutNotification);
+        hideElement(loginErrorDiv);
 
-      profilePicInput.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-         const reader = new FileReader();
-         reader.onload = function (e) {
-           modalProfileImg.src = e.target.result; // Preview selected image
-         };
-         reader.readAsDataURL(file);
-        }
-      });
-
-      profileForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const newName = profileNameInput.value.trim();
-        const newImgSrc = modalProfileImg.src; // Could be placeholder, existing saved pic, or new data URL
-
-        // --- Password Change Logic Placeholder ---
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
-        let passwordChangeValid = false;
-
-        if (passwordChangeAttempted) {
-            // **IMPORTANT:** Implement proper validation and API call here!
-            // 1. Check if currentPassword matches the user's actual current password (via API).
-            // 2. Check if newPassword meets complexity requirements.
-            // 3. Check if newPassword and confirmPassword match.
-            // 4. Ensure newPassword is not empty if attempting change.
-            if (newPassword && newPassword === confirmPassword /* && currentPassword is valid via API */) {
-                 console.log(">>> Password change request (VALID - Placeholder): ", newPassword);
-                 passwordChangeValid = true;
-                 // **API Call:** Send request to update password here.
-                 // **On Success from API:** Maybe show a success message.
-                 // **On Failure from API:** Show API error, alert user, keep modal open.
-                 // Example: Update localStorage ONLY if API call is successful in real scenario
-                 // localStorage.setItem('savedPassword', newPassword); // Update stored password (use cautiously)
-            } else {
-                 console.log(">>> Password change request (INVALID - Placeholder)");
-                 // Display specific error messages to the user
-                 if (!newPassword) {
-                    alert('Nova senha não pode estar vazia.');
-                 } else if (newPassword !== confirmPassword) {
-                     alert('As novas senhas não coincidem.');
-                 } else {
-                     // Assume currentPassword validation failed if logic reaches here
-                     alert('Senha atual incorreta ou erro ao validar.');
-                 }
-                 return; // Stop form submission if password change fails validation
-            }
-        }
-        // --- End Password Change Logic Placeholder ---
-
-
-        if (newName) {
-         localStorage.setItem('savedUsername', newName);
-         // Check if the image source is a new Base64 string from file upload
-         if (newImgSrc && newImgSrc !== DEFAULT_PROFILE_PIC_LARGE && newImgSrc.startsWith('data:image/')) {
-           localStorage.setItem('savedProfilePic', newImgSrc);
-         } else if (!newImgSrc || newImgSrc === DEFAULT_PROFILE_PIC_LARGE) {
-           // If the source is the default placeholder, remove saved pic from storage
-           localStorage.removeItem('savedProfilePic');
-         }
-         // If the src is not a new data URL and not the default, it means the user didn't change it,
-         // so we don't need to update localStorage for the picture.
-
-         updateUserInfo(); // Update UI elements
-         closeProfileModal(); // Close modal only if name is valid and password change (if attempted) was successful (or not attempted)
+        // Pre-fill login form based on localStorage
+        const savedUsername = localStorage.getItem('savedUsername');
+        const savedPassword = localStorage.getItem('savedPassword');
+        usernameField.value = savedUsername || '';
+        if (savedPassword) {
+         passwordField.value = savedPassword;
+         rememberMe.checked = true;
         } else {
-         alert('O nome de usuário não pode ficar vazio.');
+         passwordField.value = ''; // Clear password if not saved
+         rememberMe.checked = false;
         }
-      });
-
-      function updateUserInfo() {
-        const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
-        const profilePicBase64 = localStorage.getItem('savedProfilePic');
-        // Use small placeholder if no saved pic, otherwise use saved pic (which could be large but will be sized by CSS)
-        const displayPic = profilePicBase64 || DEFAULT_PROFILE_PIC_SMALL;
-        const modalPic = profilePicBase64 || DEFAULT_PROFILE_PIC_LARGE; // For the larger modal view
-
-        if(profileNameHeader) profileNameHeader.textContent = username;
-        if(sidebarProfileName) sidebarProfileName.textContent = username;
-
-        if(profileImgHeader) profileImgHeader.src = displayPic;
-        if(sidebarProfileImg) sidebarProfileImg.src = displayPic;
-        if(modalProfileImg) modalProfileImg.src = modalPic; // Update modal image holder too
-      }
-
-
-      // --- Initialization ---
-      window.addEventListener('DOMContentLoaded', function () {
-        console.log('>>> DOMContentLoaded: Verificando estado de login...');
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        console.log(`>>> Status isLoggedIn: ${isLoggedIn}`);
-
-        if (isLoggedIn) {
-         console.log('>>> Usuário está logado. Configurando dashboard...');
-         hideFlexElement(loginOverlay);
-         showFlexElement(dashboard);
-         hideElement(logoutNotification);
-         hideElement(loginErrorDiv);
-         updateUserInfo();
-         applyDesktopSidebarState(); // Apply sidebar state before loading page
-
-         // Load initial page after setup
-         const homeLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="home.html"]');
-         const homeLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="home.html"]');
-         const homeLink = homeLinkDesktop || homeLinkMobile;
-          if (homeLink) {
-            loadPage('home.html', homeLink);
-         } else {
-             if(mainFrame) mainFrame.src = 'home.html'; // Fallback load
-             if (iframeSpinnerOverlay) { // Hide spinner if no link
-                iframeSpinnerOverlay.classList.add('hidden');
-                iframeSpinnerOverlay.classList.remove('flex');
-            }
-         }
-         console.log('>>> Dashboard configurado para usuário logado.');
-
-        } else {
-         console.log('>>> Usuário NÃO está logado. Configurando tela de login...');
-         showFlexElement(loginOverlay);
-         hideFlexElement(dashboard);
-         hideElement(logoutNotification);
-         hideElement(loginErrorDiv);
-
-         // Pre-fill login form based on localStorage
-         const savedUsername = localStorage.getItem('savedUsername');
-         const savedPassword = localStorage.getItem('savedPassword');
-         usernameField.value = savedUsername || '';
-         if (savedPassword) {
-           passwordField.value = savedPassword;
-           rememberMe.checked = true;
-         } else {
-           passwordField.value = ''; // Clear password if not saved
-           rememberMe.checked = false;
-         }
-         console.log('>>> Tela de login configurada.');
-        }
-      });
+        console.log('>>> Tela de login configurada.');
+       }
+     });
   </script>
 
   <script src="https://cdn.botpress.cloud/webchat/v2.3/inject.js"></script>
