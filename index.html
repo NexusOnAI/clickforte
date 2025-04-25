@@ -29,41 +29,36 @@
      #desktopTopBar {
         padding-top: env(safe-area-inset-top);
         height: calc(4rem + env(safe-area-inset-top));
-        position: sticky; /* Make sure it's sticky */
-        top: 0; /* Stick to top */
-        z-index: 20; /* Lower z-index than sidebar */
+        position: sticky;
+        top: 0;
+        z-index: 20;
     }
      #desktopSidebar {
-         height: 100vh; /* Full viewport height */
-         top: 0; /* Align to top */
-         position: sticky; /* Stick to the viewport */
-         z-index: 30; /* Higher z-index than header */
-         transition: width 0.3s ease-in-out; /* Keep width transition */
-         width: 16rem; /* Default expanded width */
+         height: 100vh;
+         top: 0;
+         position: sticky;
+         z-index: 30;
+         transition: width 0.3s ease-in-out;
+         width: 16rem;
          flex-shrink: 0;
      }
      #mainContent {
          flex: 1;
          min-width: 0;
-         height: 100vh; /* Full viewport height */
-         overflow-y: auto; /* Scroll within main content */
-         /* Add padding top ONLY on desktop to account for the header height */
-         padding-top: 0; /* Default no padding */
+         height: 100vh;
+         overflow-y: auto;
+         padding-top: 0;
      }
-     /* Apply padding-top to mainContent only on medium screens and up */
      @media (min-width: 768px) {
         #mainContent {
             padding-top: calc(4rem + env(safe-area-inset-top));
         }
      }
 
-
     html { height: -webkit-fill-available; scroll-behavior: smooth; }
     @media (max-width: 768px) {
         .h-screen { height: calc(var(--vh, 1vh) * 100); }
-        /* Sidebar should behave normally on mobile (covered by mobileSidebar anyway) */
         #desktopSidebar { height: auto; top: auto; position: static; z-index: auto; }
-        /* Main content takes full height on mobile */
         #mainContent { height: 100%; padding-top: 0; }
     }
 
@@ -75,7 +70,6 @@
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background-color: #495057; border-radius: 9999px; border: 2px solid #212529; }
     ::-webkit-scrollbar-track { background-color: #343a40; border-radius: 9999px; }
-
 
     #welcomeScreen { position: fixed; inset: 0; background: #1a1d21; z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out; }
     #welcomeScreen.visible { display: flex; opacity: 1; }
@@ -157,10 +151,6 @@
     #desktopSidebar.sidebar-collapsed .nav-link {
         justify-content: center;
     }
-    /* Remove collapsed styles for the deleted profile section */
-    /* #desktopSidebar.sidebar-collapsed .profile-section-bottom { ... } */
-    /* #desktopSidebar.sidebar-collapsed .profile-section-bottom > div:first-child { ... } */
-    /* #desktopSidebar.sidebar-collapsed #sidebarProfileImg { ... } */
 
     #desktopSidebar.sidebar-collapsed .logo-container {
         height: 60px; justify-content: center;
@@ -264,7 +254,7 @@
         </div>
     </header>
 
-    <div class="flex flex-1 relative"> {/* Container wrapper needs to allow overlap - relative positioning might help */}
+    <div class="flex flex-1 relative">
 
       <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md border-r border-[#495057]">
         <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center flex-shrink-0">
@@ -334,7 +324,7 @@
            </button>
         </div>
 
-        </nav>
+      </nav>
 
       <main id="mainContent" class="p-4 md:p-6 relative bg-[#1a1d21]">
         <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
@@ -502,10 +492,6 @@
      const profileNameInput = document.getElementById('profileNameInput');
      const profilePicInput = document.getElementById('profilePicInput');
      const modalProfileImg = document.getElementById('modalProfileImg');
-
-     // Sidebar Profile elements removed from references as the section is gone
-     // const sidebarProfileImg = document.getElementById('sidebarProfileImg');
-     // const sidebarProfileName = document.getElementById('sidebarProfileName');
 
      const sidebarIntegrationLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="integracao.html"]');
      const sidebarIntegrationLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="integracao.html"]');
@@ -847,11 +833,9 @@
         const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE;
 
         if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username;
-        // Removed sidebarProfileName update
         if(profileNameDesktop) profileNameDesktop.textContent = username;
 
         if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall;
-        // Removed sidebarProfileImg update
         if(profileImgDesktop) profileImgDesktop.src = displayPicMedium;
         if(modalProfileImg) modalProfileImg.src = modalPic;
      }
