@@ -29,18 +29,42 @@
      #desktopTopBar {
         padding-top: env(safe-area-inset-top);
         height: calc(4rem + env(safe-area-inset-top));
+        position: sticky; /* Make sure it's sticky */
+        top: 0; /* Stick to top */
+        z-index: 20; /* Lower z-index than sidebar */
     }
      #desktopSidebar {
-         height: calc(100vh - calc(4rem + env(safe-area-inset-top)));
-         top: calc(4rem + env(safe-area-inset-top));
-         position: sticky;
+         height: 100vh; /* Full viewport height */
+         top: 0; /* Align to top */
+         position: sticky; /* Stick to the viewport */
+         z-index: 30; /* Higher z-index than header */
+         transition: width 0.3s ease-in-out; /* Keep width transition */
+         width: 16rem; /* Default expanded width */
+         flex-shrink: 0;
+     }
+     #mainContent {
+         flex: 1;
+         min-width: 0;
+         height: 100vh; /* Full viewport height */
+         overflow-y: auto; /* Scroll within main content */
+         /* Add padding top ONLY on desktop to account for the header height */
+         padding-top: 0; /* Default no padding */
+     }
+     /* Apply padding-top to mainContent only on medium screens and up */
+     @media (min-width: 768px) {
+        #mainContent {
+            padding-top: calc(4rem + env(safe-area-inset-top));
+        }
      }
 
 
     html { height: -webkit-fill-available; scroll-behavior: smooth; }
     @media (max-width: 768px) {
         .h-screen { height: calc(var(--vh, 1vh) * 100); }
-        #desktopSidebar { height: 100vh; top: 0; }
+        /* Sidebar should behave normally on mobile (covered by mobileSidebar anyway) */
+        #desktopSidebar { height: auto; top: auto; position: static; z-index: auto; }
+        /* Main content takes full height on mobile */
+        #mainContent { height: 100%; padding-top: 0; }
     }
 
     iframe { box-shadow: none; background-color: #1a1d21; border: none; width: 100%; height: 100%; display: block; }
@@ -117,31 +141,12 @@
         border-bottom-color: transparent;
     }
 
-    #desktopSidebar {
-        transition: width 0.3s ease-in-out;
-        width: 16rem;
-        flex-shrink: 0;
-    }
-    #mainContent {
-         transition: width 0.3s ease-in-out;
-         flex: 1;
-         min-width: 0;
-         height: calc(100vh - calc(4rem + env(safe-area-inset-top)));
-         overflow-y: auto;
-    }
-     @media (max-width: 768px) {
-         #mainContent { height: 100%; }
-     }
-
-
     #desktopSidebar.sidebar-collapsed {
         width: 5rem;
     }
 
     #desktopSidebar.sidebar-collapsed .sidebar-text,
     #desktopSidebar.sidebar-collapsed .sidebar-logo-full,
-    #desktopSidebar.sidebar-collapsed #sidebarProfileName,
-    #desktopSidebar.sidebar-collapsed #sidebarProfileViewText,
     #desktopSidebar.sidebar-collapsed .submenu-toggle-icon,
     #desktopSidebar.sidebar-collapsed .submenu {
         display: none;
@@ -152,15 +157,11 @@
     #desktopSidebar.sidebar-collapsed .nav-link {
         justify-content: center;
     }
-    #desktopSidebar.sidebar-collapsed .profile-section-bottom {
-        padding-left: 0.5rem; padding-right: 0.5rem;
-    }
-    #desktopSidebar.sidebar-collapsed .profile-section-bottom > div:first-child {
-        gap: 0.5rem; padding: 0.25rem;
-    }
-    #desktopSidebar.sidebar-collapsed #sidebarProfileImg {
-        width: 2rem; height: 2rem;
-    }
+    /* Remove collapsed styles for the deleted profile section */
+    /* #desktopSidebar.sidebar-collapsed .profile-section-bottom { ... } */
+    /* #desktopSidebar.sidebar-collapsed .profile-section-bottom > div:first-child { ... } */
+    /* #desktopSidebar.sidebar-collapsed #sidebarProfileImg { ... } */
+
     #desktopSidebar.sidebar-collapsed .logo-container {
         height: 60px; justify-content: center;
     }
@@ -244,7 +245,7 @@
       </div>
     </header>
 
-    <header id="desktopTopBar" class="hidden md:flex items-center justify-end px-6 bg-[#212529] border-b border-[#495057] sticky top-0 z-20">
+    <header id="desktopTopBar" class="hidden md:flex items-center justify-end px-6 bg-[#212529] border-b border-[#495057]">
         <div class="flex items-center gap-4">
             <button id="integrationBtnDesktop"
                     class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full transition-colors duration-150"
@@ -252,21 +253,18 @@
                     onclick="loadPage('integracao.html', this); return false;">
                 <i class="bi bi-link-45deg text-xl"></i>
             </button>
-
             <div class="h-6 w-px bg-[#495057]"></div>
-
             <div class="flex items-center gap-3 cursor-pointer group profile-trigger" onclick="openProfileModal()">
                 <span id="profileNameDesktop" class="font-medium text-sm text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
                 <img id="profileImgDesktop" src="https://via.placeholder.com/40" alt="Perfil" class="w-9 h-9 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
             </div>
-
             <button onclick="logout(); event.stopPropagation();" class="text-[#adb5bd] hover:text-red-500 hover:bg-red-900/30 p-2 rounded-full transition-colors duration-150" aria-label="Sair">
               <i class="bi bi-box-arrow-right text-lg"></i>
             </button>
         </div>
     </header>
 
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-1 relative"> {/* Container wrapper needs to allow overlap - relative positioning might help */}
 
       <nav id="desktopSidebar" class="hidden md:flex flex-col bg-[#212529] text-[#adb5bd] shadow-md border-r border-[#495057]">
         <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center flex-shrink-0">
@@ -336,16 +334,7 @@
            </button>
         </div>
 
-        <div class="profile-section-bottom p-3 border-t border-[#495057] flex-shrink-0">
-          <div class="flex items-center gap-3 cursor-pointer group p-2 rounded-md hover:bg-[#343a40] profile-trigger" onclick="openProfileModal()">
-            <img id="sidebarProfileImg" src="https://via.placeholder.com/40" alt="Perfil" class="w-9 h-9 rounded-full object-cover transition-all duration-200 group-hover:scale-105 ring-1 ring-[#495057] group-hover:ring-[#4dabf7]" />
-            <div>
-                <span id="sidebarProfileName" class="sidebar-text font-medium text-sm text-[#e9ecef] block group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
-                <span id="sidebarProfileViewText" class="sidebar-text text-xs text-[#adb5bd]">Ver Perfil</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+        </nav>
 
       <main id="mainContent" class="p-4 md:p-6 relative bg-[#1a1d21]">
         <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
@@ -514,8 +503,9 @@
      const profilePicInput = document.getElementById('profilePicInput');
      const modalProfileImg = document.getElementById('modalProfileImg');
 
-     const sidebarProfileImg = document.getElementById('sidebarProfileImg');
-     const sidebarProfileName = document.getElementById('sidebarProfileName');
+     // Sidebar Profile elements removed from references as the section is gone
+     // const sidebarProfileImg = document.getElementById('sidebarProfileImg');
+     // const sidebarProfileName = document.getElementById('sidebarProfileName');
 
      const sidebarIntegrationLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="integracao.html"]');
      const sidebarIntegrationLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="integracao.html"]');
@@ -857,11 +847,11 @@
         const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE;
 
         if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username;
-        if(sidebarProfileName) sidebarProfileName.textContent = username;
+        // Removed sidebarProfileName update
         if(profileNameDesktop) profileNameDesktop.textContent = username;
 
         if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall;
-        if(sidebarProfileImg) sidebarProfileImg.src = displayPicMedium;
+        // Removed sidebarProfileImg update
         if(profileImgDesktop) profileImgDesktop.src = displayPicMedium;
         if(modalProfileImg) modalProfileImg.src = modalPic;
      }
