@@ -37,32 +37,29 @@
 
     main { flex-grow: 1; display: flex; flex-direction: column; }
 
-    /* *** NOVO: Ajuste para containers de visualização *** */
     #report-cards-wrapper, #chart-container { flex-grow: 1; overflow-y: auto; }
-    /* Garante que o container do gráfico ocupe espaço */
-    #chart-container { min-height: 400px; /* Ou altura desejada */ }
+    #chart-container { min-height: 400px; }
 
     ::-webkit-scrollbar { width: 8px; height: 8px }
     ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px }
 
     button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #4dabf7; outline-offset: 2px; }
 
-    /* Estilo para os Cards de Relatório (inalterado) */
     .report-card {
-      background-color: rgba(33, 37, 41, 0.8); /* surface/80 */
-      border: 1px solid rgba(77, 171, 247, 0.2); /* primary-500/20 */
-      border-radius: 0.75rem; /* rounded-xl */
-      padding: 1.25rem; /* p-5 */
+      background-color: rgba(33, 37, 41, 0.8);
+      border: 1px solid rgba(77, 171, 247, 0.2);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       transition: all 0.2s ease-in-out;
-      min-height: 120px; /* Altura mínima para consistência */
+      min-height: 120px;
     }
     .report-card:hover {
-      border-color: rgba(77, 171, 247, 0.4); /* primary-500/40 */
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-      transform: translateY(-2px); /* Efeito leve de elevação */
+      border-color: rgba(77, 171, 247, 0.4);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
     }
     .report-card .title { font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 0.5rem; }
     .report-card .value { font-size: 1.5rem; font-weight: 700; color: #4dabf7; margin-bottom: 0.25rem; line-height: 1.2; }
@@ -72,28 +69,27 @@
     .report-card .value.pending { color: #facc15; }
     .report-card .value.overdue { color: #fb7185; }
 
-    /* *** NOVO: Estilos para botões de visualização *** */
     .view-toggle-button {
       padding: 0.5rem 1rem;
-      border-radius: 0.375rem; /* rounded-md */
-      font-size: 0.875rem; /* text-sm */
-      font-weight: 500; /* font-medium */
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
       cursor: pointer;
       transition: background-color 0.2s ease, color 0.2s ease;
       border: 1px solid transparent;
     }
     .view-toggle-button.active {
-      background-color: rgba(77, 171, 247, 0.15); /* primary-500/15 */
-      color: #4dabf7; /* primary-500 */
-      border-color: rgba(77, 171, 247, 0.3); /* primary-500/30 */
+      background-color: rgba(77, 171, 247, 0.15);
+      color: #4dabf7;
+      border-color: rgba(77, 171, 247, 0.3);
     }
     .view-toggle-button:not(.active) {
-      color: #94a3b8; /* slate-400 */
+      color: #94a3b8;
       background-color: transparent;
     }
      .view-toggle-button:not(.active):hover {
-       background-color: rgba(77, 171, 247, 0.05); /* primary-500/5 */
-       color: #cbd5e1; /* slate-300 */
+       background-color: rgba(77, 171, 247, 0.05);
+       color: #cbd5e1;
     }
 
   </style>
@@ -102,7 +98,7 @@
 
   <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40 flex-shrink-0">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-2 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500 order-1">Painel</h1>
+        <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500 order-1">Relatórios • Google Sheets</h1>
         <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap">
             <span id="grand-total-header" class="text-primary-500 font-semibold text-xs sm:text-sm text-center"></span>
             <span id="last-update" class="text-slate-400 text-xs sm:text-sm text-center"></span>
@@ -126,11 +122,11 @@
     <div id="error-message" class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg flex-shrink-0"></div>
 
     <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-      </section>
+    </section>
 
     <section id="chart-container" class="hidden w-full p-4 bg-surface/80 rounded-lg border border-primary-500/20 flex flex-col items-center">
        <h2 class="text-xl font-semibold text-primary-500 mb-4">Pagamentos por Semana (Mês Atual)</h2>
-       <div class="w-full max-w-3xl h-[400px] sm:h-[500px]"> {/* Limita largura e define altura */}
+       <div class="w-full max-w-3xl h-[400px] sm:h-[500px]">
           <canvas id="weeklyPaymentsChart"></canvas>
        </div>
        <p id="chart-error-message" class="hidden mt-4 text-yellow-300 text-sm"></p>
@@ -139,69 +135,54 @@
   </main>
 
   <script>
-    // --- Constantes e Variáveis Globais ---
-    const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq'; // <<-- Substitua ID
-    const gid     = '0'; // <<-- Substitua GID
+    const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
+    const gid     = '0';
     const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL = 60000; // 1 minuto
+    const REFRESH_INTERVAL = 60000;
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
 
-    // Regex para identificar colunas importantes
     const valorRegex = /valor|total/i;
     const vencRegex = /venc/i;
-    const pagtoRegex = /pag/i; // Essencial para o gráfico
+    const pagtoRegex = /pag/i;
     const statusRegex = /status|situação/i;
 
-    // Palavras-chave para status
     const statusPago = ['pago', 'liquidado', 'quitado'];
     const statusPendente = ['a vencer', 'pendente', 'aberto', 'em aberto'];
     const statusVencido = ['vencido', 'em atraso'];
 
     let headersFull = [], sheetRows = [];
     let isLoaded = false, isFetching = false;
-    let weeklyChartInstance = null; // *** NOVO: Instância do gráfico
+    let weeklyChartInstance = null;
 
-    // Referências DOM
     const $loader = document.getElementById('loader');
     const $errorMsg = document.getElementById('error-message');
     const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
     const $lastUpdate = document.getElementById('last-update');
     const $grandTotalHeader = document.getElementById('grand-total-header');
     const $manualRefreshBtn = document.getElementById('manual-refresh');
-    // *** NOVO: Referências para alternância e gráfico ***
     const $chartContainer = document.getElementById('chart-container');
     const $chartCanvas = document.getElementById('weeklyPaymentsChart');
     const $chartErrorMsg = document.getElementById('chart-error-message');
     const $viewToggleReportsBtn = document.getElementById('view-toggle-reports');
     const $viewToggleChartBtn = document.getElementById('view-toggle-chart');
 
-
-    // Event Listeners
     $manualRefreshBtn.onclick = loadData;
-    // *** NOVO: Listeners para alternância de visualização ***
     $viewToggleReportsBtn.onclick = () => switchView('reports');
     $viewToggleChartBtn.onclick = () => switchView('chart');
 
-    // --- Funções Core ---
-
     async function fetchSheetData() {
-        // (Função inalterada)
         const response = await fetch(`${baseURL}&_=${Date.now()}`); if (!response.ok) throw new Error(`HTTP error ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao parsear JSONP:", e); console.error("Texto recebido:", text); throw new Error('Falha ao parsear dados JSON da API do Google Sheets.'); }
     }
 
-    // --- Helpers de Formatação e Data ---
     const padZero = num => num.toString().padStart(2, '0');
     const formatDateBR = date => {
-       // (Função inalterada)
         if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
     };
     function parseDateValue(value) {
-        // (Função inalterada)
         if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const utcDays = Math.floor(value - 25569); const date = new Date(0); date.setUTCDate(date.getUTCDate() + utcDays); return date; } if (typeof value !== 'string') return null; let match; match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (match) return new Date(Date.UTC(+match[1], +match[2], +match[3])); match = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (match) return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3])); match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (match) { let year = +match[3]; if (year < 100) year += 2000; return new Date(Date.UTC(year, +match[2] - 1, +match[1])); } const parsed = new Date(value); if (!isNaN(parsed.getTime())) return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())); return null;
     }
     const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
     function getNumericValue(cellValue) {
-        // (Função inalterada)
         if (typeof cellValue === 'number') return cellValue;
         if (typeof cellValue === 'string') {
             const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.');
@@ -210,18 +191,16 @@
         }
         return 0;
     }
-    // *** NOVO: Helper para obter a semana do mês (1-5) ***
     function getWeekOfMonth(date) {
         if (!date || isNaN(date.getTime())) return null;
-        const dayOfMonth = date.getUTCDate(); // Usa dia UTC
+        const dayOfMonth = date.getUTCDate();
         if (dayOfMonth <= 7) return 1;
         if (dayOfMonth <= 14) return 2;
         if (dayOfMonth <= 21) return 3;
         if (dayOfMonth <= 28) return 4;
-        return 5; // Dias 29, 30, 31
+        return 5;
     }
 
-    // --- Carregamento de Dados e Construção da UI ---
     async function loadData() {
         if (isFetching) return;
         isFetching = true;
@@ -247,13 +226,8 @@
                 return cells;
             });
 
-            // Constrói/Atualiza os cards de relatório
             buildReportCards();
-
-            // *** NOVO: Prepara e renderiza o gráfico semanal ***
             prepareAndRenderWeeklyChart();
-
-            // Atualiza informações do cabeçalho
             updateHeaderInfo();
             $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR')}`;
             isLoaded = true;
@@ -262,8 +236,7 @@
             console.error("Erro ao carregar dados:", error);
             $errorMsg.textContent = `Erro ao carregar dados: ${error.message}. Verifique ID/GID da Planilha e permissões de compartilhamento.`;
             $errorMsg.classList.remove('hidden');
-            $reportCardsWrapper.innerHTML = ''; // Limpa cards em caso de erro
-            // *** NOVO: Limpa gráfico em caso de erro ***
+            $reportCardsWrapper.innerHTML = '';
             if (weeklyChartInstance) {
                 weeklyChartInstance.destroy();
                 weeklyChartInstance = null;
@@ -277,9 +250,8 @@
         }
     }
 
-    // --- Cálculo de Métricas e Construção dos Cards ---
     function buildReportCards() {
-      $reportCardsWrapper.innerHTML = ''; // Limpa cards existentes
+      $reportCardsWrapper.innerHTML = '';
 
       const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
       const valorIndex = findIndex(valorRegex);
@@ -291,13 +263,11 @@
           $errorMsg.textContent = 'Erro: Coluna de "Valor" não encontrada. Cards não podem ser gerados.';
           $errorMsg.classList.remove('hidden');
           console.error('Coluna de Valor não encontrada. Regex usado:', valorRegex);
-          return; // Interrompe
+          return;
       }
-      // Avisos (não interrompe)
       if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada. Regex:', vencRegex);
       if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada. Regex:', pagtoRegex, 'Gráfico semanal pode não funcionar.');
       if (statusIndex === -1) console.warn('Coluna de Status não encontrada. Regex:', statusRegex);
-
 
       let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0;
       let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0;
@@ -319,7 +289,7 @@
           else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; }
           else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; }
           else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; }
-          else { isPendente = true; } // Default para pendente
+          else { isPendente = true; }
 
           if (isPago) { totalPago += valor; countPago++; }
           else if (isVencido) { totalVencido += valor; countVencido++; }
@@ -352,36 +322,29 @@
         });
     }
 
-    // --- *** NOVO: Funções para o Gráfico Semanal *** ---
-
-    // Prepara os dados e chama a renderização do gráfico
     function prepareAndRenderWeeklyChart() {
-        $chartErrorMsg.classList.add('hidden'); // Esconde msg de erro antiga
+        $chartErrorMsg.classList.add('hidden');
         const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
         const valorIndex = findIndex(valorRegex);
         const pagtoIndex = findIndex(pagtoRegex);
 
-        // Verifica se as colunas essenciais para o gráfico existem
         if (valorIndex === -1 || pagtoIndex === -1) {
             console.warn('Coluna de Valor ou Pagamento não encontrada. Gráfico semanal não será gerado.');
             $chartErrorMsg.textContent = 'Coluna de Valor e/ou Data de Pagamento não encontrada(s) na planilha.';
             $chartErrorMsg.classList.remove('hidden');
-            // Destroi gráfico antigo se existir
             if (weeklyChartInstance) {
               weeklyChartInstance.destroy();
               weeklyChartInstance = null;
             }
-            // Limpa canvas visualmente (opcional, Chart.js costuma limpar ao destruir)
             const ctx = $chartCanvas.getContext('2d');
             ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height);
             return;
         }
 
         const now = new Date();
-        const currentMonth = now.getMonth(); // 0-11
+        const currentMonth = now.getMonth();
         const currentYear = now.getFullYear();
 
-        // Inicializa totais para 5 semanas (simplificado)
         const weeklyTotals = [0, 0, 0, 0, 0];
         const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"];
 
@@ -389,59 +352,35 @@
             const dataPagtoRaw = row[pagtoIndex];
             const dataPagto = parseDateValue(dataPagtoRaw);
 
-            // Verifica se tem data de pagamento válida E se é do mês/ano atual
             if (dataPagto && !isNaN(dataPagto.getTime()) &&
-                dataPagto.getUTCMonth() === currentMonth && // Compara Mês UTC
-                dataPagto.getUTCFullYear() === currentYear) { // Compara Ano UTC
+                dataPagto.getUTCMonth() === currentMonth &&
+                dataPagto.getUTCFullYear() === currentYear) {
 
                 const valor = getNumericValue(row[valorIndex]);
-                const weekNumber = getWeekOfMonth(dataPagto); // 1 a 5
+                const weekNumber = getWeekOfMonth(dataPagto);
 
                 if (weekNumber) {
-                    weeklyTotals[weekNumber - 1] += valor; // Acumula no índice correto (0 a 4)
+                    weeklyTotals[weekNumber - 1] += valor;
                 }
             }
-             // Alternativa: Se confiar na coluna de status "pago" E tiver uma data de vencimento no mês atual
-             /*
-             else {
-                 const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
-                 const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null;
-                 if (statusPago.some(s => statusRaw.includes(s)) &&
-                     dataVenc && !isNaN(dataVenc.getTime()) &&
-                     dataVenc.getUTCMonth() === currentMonth &&
-                     dataVenc.getUTCFullYear() === currentYear) {
-
-                     const valor = getNumericValue(row[valorIndex]);
-                     const weekNumber = getWeekOfMonth(dataVenc); // Usa data de vencimento neste caso
-
-                     if (weekNumber) {
-                         weeklyTotals[weekNumber - 1] += valor;
-                     }
-                 }
-             }
-             */
         });
 
-        // Renderiza o gráfico com os dados calculados
         renderWeeklyChart(weekLabels, weeklyTotals);
     }
 
-    // Renderiza ou atualiza o gráfico de barras
     function renderWeeklyChart(labels, data) {
         const ctx = $chartCanvas.getContext('2d');
 
-        // Destroi instância anterior para evitar sobreposição e memory leaks
         if (weeklyChartInstance) {
             weeklyChartInstance.destroy();
         }
 
-        // Cores baseadas no tema
         const chartColors = {
-            backgroundColor: 'rgba(77, 171, 247, 0.3)', // primary-500 com alpha
-            borderColor: 'rgba(77, 171, 247, 0.8)', // primary-500 mais opaco
+            backgroundColor: 'rgba(77, 171, 247, 0.3)',
+            borderColor: 'rgba(77, 171, 247, 0.8)',
             hoverBackgroundColor: 'rgba(77, 171, 247, 0.5)',
-            hoverBorderColor: '#4dabf7', // primary-500
-            textColor: '#cbd5e1' // slate-300
+            hoverBorderColor: '#4dabf7',
+            textColor: '#cbd5e1'
         };
 
         weeklyChartInstance = new Chart(ctx, {
@@ -460,39 +399,37 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // Permite controlar altura pelo container CSS
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            color: chartColors.textColor, // Cor dos ticks (números)
-                            // Formata os ticks do eixo Y como moeda
+                            color: chartColors.textColor,
                             callback: function(value, index, values) {
                                 return formatCurrency(value);
                             }
                         },
                         grid: {
-                           color: 'rgba(71, 85, 105, 0.3)' // slate-600 com alpha (linhas de grade)
+                           color: 'rgba(71, 85, 105, 0.3)'
                         }
                     },
                     x: {
                         ticks: {
-                            color: chartColors.textColor // Cor dos labels (Semanas)
+                            color: chartColors.textColor
                         },
                          grid: {
-                           color: 'rgba(71, 85, 105, 0.1)' // Quase transparente no eixo X
+                           color: 'rgba(71, 85, 105, 0.1)'
                         }
                     }
                 },
                 plugins: {
                     legend: {
-                        display: false // Oculta a legenda, pois só temos 1 dataset
+                        display: false
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(33, 37, 41, 0.9)', // surface com alpha
+                        backgroundColor: 'rgba(33, 37, 41, 0.9)',
                         titleColor: chartColors.textColor,
                         bodyColor: chartColors.textColor,
-                        // Formata o valor no tooltip como moeda
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
@@ -511,8 +448,6 @@
         });
     }
 
-
-    // --- *** NOVO: Função para alternar visualizações *** ---
     function switchView(viewToShow) {
         if (viewToShow === 'reports') {
             $reportCardsWrapper.classList.remove('hidden');
@@ -524,18 +459,10 @@
             $chartContainer.classList.remove('hidden');
             $viewToggleReportsBtn.classList.remove('active');
             $viewToggleChartBtn.classList.add('active');
-            // Redesenha o gráfico caso ele não esteja visível ao ser criado/atualizado
-            // Isso pode ajudar com problemas de dimensionamento inicial em algumas libs/browsers
-            if (weeklyChartInstance) {
-               // weeklyChartInstance.resize(); // Chart.js v3+ geralmente redimensiona automaticamente
-            }
         }
     }
 
-
-    // --- Atualização do Cabeçalho ---
     function updateHeaderInfo() {
-        // (Função inalterada)
         const valorIndex = headersFull.findIndex(h => h && valorRegex.test(h.toLowerCase()));
         if (valorIndex === -1) {
             $grandTotalHeader.textContent = 'Total Geral: Erro (Coluna Valor?)';
@@ -545,11 +472,9 @@
         $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`;
     }
 
-
-    // --- Inicialização ---
-    switchView('reports'); // Garante que a view inicial seja 'reports'
-    loadData(); // Carrega os dados ao iniciar
-    setInterval(loadData, REFRESH_INTERVAL); // Configura auto-refresh
+    switchView('reports');
+    loadData();
+    setInterval(loadData, REFRESH_INTERVAL);
 
   </script>
 </body>
