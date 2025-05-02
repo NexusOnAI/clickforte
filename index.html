@@ -8,6 +8,9 @@
   <title>ClickForte | Financeiro (Novo Dark/Light)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
         --bg-primary: #1a1d21;
@@ -81,7 +84,7 @@
         --color-scheme: light;
     }
 
-    html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: Inter, sans-serif; color-scheme: var(--color-scheme); }
+    html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: 'Inter', sans-serif; color-scheme: var(--color-scheme); }
     body {
         padding-bottom: env(safe-area-inset-bottom);
         padding-left: env(safe-area-inset-left);
@@ -94,7 +97,8 @@
     #dashboard {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 100vh; /* Fallback */
+        height: calc(var(--vh, 1vh) * 100);
         overflow: hidden;
     }
     #profileHeader {
@@ -128,7 +132,6 @@
         left: 0;
         height: 100vh;
         z-index: 30;
-        transition: width 0.3s ease-in-out;
         width: 16rem;
         flex-shrink: 0;
         overflow: hidden;
@@ -150,7 +153,7 @@
         transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
         width: calc(100% - 16rem);
         background-color: var(--bg-primary);
-         transition: background-color 0.3s ease, margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+        transition: background-color 0.3s ease, margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
     }
      #mainContent {
         flex: 1;
@@ -162,7 +165,7 @@
     @media (min-width: 768px) {
         #dashboard {
             flex-direction: row;
-            height: auto;
+            height: 100vh;
         }
         #profileHeader { display: none; }
         #mobileMainContent { display: none; }
@@ -180,9 +183,6 @@
     }
 
     html { height: -webkit-fill-available; scroll-behavior: smooth; }
-    @media (max-width: 767px) {
-        .h-screen { height: calc(var(--vh, 1vh) * 100); }
-    }
 
     iframe { box-shadow: none; background-color: var(--bg-primary); border: none; width: 100%; height: 100%; display: block; transition: background-color 0.3s ease; }
 
@@ -193,8 +193,16 @@
     ::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 9999px; border: 2px solid var(--border-color-light); transition: background-color 0.3s ease, border-color 0.3s ease; }
     ::-webkit-scrollbar-track { background-color: var(--scrollbar-track); border-radius: 9999px; transition: background-color 0.3s ease; }
 
-    #welcomeScreen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out, background-color 0.3s ease; }
-    #welcomeScreen.visible { display: flex; opacity: 1; }
+    #welcomeScreen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out, background-color 0.3s ease; pointer-events: none;}
+    #welcomeScreen.visible { display: flex; opacity: 1; pointer-events: auto;}
+
+    .nav-link,
+    #integrationBtnHeader,
+    #desktopSidebarToggle button,
+    #themeToggleDesktop, #themeToggleMobile,
+    .mobile-sidebar-footer-button {
+       transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
 
     .nav-link:hover,
     #integrationBtnHeader:hover,
@@ -212,16 +220,16 @@
     }
     #desktopSidebar:not(.sidebar-collapsed) .nav-link.active {
         border-left: 4px solid var(--accent-border-left);
-        padding-left: calc(0.625rem + 4px);
+        padding-left: calc(0.75rem - 4px); /* 12px - 4px = 8px */
     }
     #desktopSidebar.sidebar-collapsed .nav-link.active {
         border-left: none;
-        padding-left: 0.75rem;
+        padding-left: 0.75rem; /* 12px */
         background-color: var(--accent-bg-subtle-hover);
     }
     #mobileSidebar .nav-link.active {
         border-left: 4px solid var(--accent-border-left);
-        padding-left: calc(0.75rem - 4px);
+        padding-left: calc(0.75rem - 4px); /* 12px - 4px = 8px */
     }
 
     .nav-link.active i:not(.submenu-toggle-icon),
@@ -230,19 +238,19 @@
     }
 
     .submenu .nav-link.active {
-        border-left: none; padding-left: 0.5rem;
+        border-left: none; padding-left: 0.5rem; /* 8px */
         background-color: var(--accent-bg-subtle);
         color: var(--text-primary);
         font-weight: 500;
     }
     #desktopSidebar:not(.sidebar-collapsed) .submenu .nav-link.active {
-        padding-left: 0.5rem;
+        padding-left: 0.5rem; /* 8px */
     }
     #desktopSidebar.sidebar-collapsed .submenu .nav-link {
         padding-left: 0.5rem; padding-right: 0.5rem; justify-content: center;
     }
     #mobileSidebar .submenu .nav-link.active {
-        padding-left: 0.5rem;
+        padding-left: 0.5rem; /* 8px */
     }
     .submenu .nav-link.active i { color: inherit; }
 
@@ -251,7 +259,7 @@
     }
     .profile-trigger img {
         ring-color: var(--profile-ring-color);
-        transition: ring-color 0.3s ease;
+        transition: ring-color 0.3s ease, box-shadow 0.15s ease;
     }
     .profile-trigger:hover img {
       ring-color: var(--profile-ring-hover-color);
@@ -263,20 +271,17 @@
     @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
     .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
 
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    .text-xs\+ { font-size: 0.8125rem; line-height: 1.25rem; }
+    .text-xs\+ { font-size: 0.8125rem; /* 13px */ line-height: 1.25rem; }
 
     #iframeSpinnerOverlay > div,
     #mobileIframeSpinnerOverlay > div {
         border-color: var(--accent-color);
         border-bottom-color: transparent;
-         transition: border-color 0.3s ease;
+        transition: border-color 0.3s ease;
     }
     #loginButton .spinner-icon { color: var(--accent-text-on-dark); transition: color 0.3s ease; }
     body.light-theme #loginButton .spinner-icon { color: var(--accent-text-on-light); }
 
-    #desktopSidebar.sidebar-collapsed { width: 5rem; }
     #desktopSidebar.sidebar-collapsed .sidebar-text,
     #desktopSidebar.sidebar-collapsed .sidebar-logo-full,
     #desktopSidebar.sidebar-collapsed .submenu-toggle-icon,
@@ -287,24 +292,25 @@
      { display: none; }
 
     #desktopSidebar.sidebar-collapsed .nav-link i:not(.submenu-toggle-icon) { margin-right: 0; }
-    #desktopSidebar.sidebar-collapsed .nav-link { justify-content: center; }
+    #desktopSidebar.sidebar-collapsed .nav-link { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
     #desktopSidebar.sidebar-collapsed .logo-container { height: 60px; justify-content: center; padding: 0; }
     #desktopSidebar:not(.sidebar-collapsed) .logo-container { padding: 1.25rem; }
     #desktopSidebar.sidebar-collapsed #desktopSidebarToggle button,
     #desktopSidebar.sidebar-collapsed #themeToggleDesktop,
-    #desktopSidebar.sidebar-collapsed #desktopLogoutButton { justify-content: center; }
+    #desktopSidebar.sidebar-collapsed #desktopLogoutButton { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
 
-    #loginOverlay { background-color: var(--bg-overlay-login); backdrop-filter: blur(4px); }
-    #loginOverlay > div { background-color: var(--bg-secondary); border-color: var(--border-color); }
-    #logoutNotification { color: var(--warning-text); background-color: var(--warning-bg-subtle); border-color: var(--warning-border); }
-    #loginError { color: var(--error-text); background-color: var(--error-bg-subtle); border-color: var(--error-border); }
-    label { color: var(--text-primary); }
+    #loginOverlay { background-color: var(--bg-overlay-login); backdrop-filter: blur(4px); transition: opacity 0.3s ease-in-out; }
+    #loginOverlay > div { background-color: var(--bg-secondary); border-color: var(--border-color); transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.5s cubic-bezier(.36,.07,.19,.97); }
+    #logoutNotification { color: var(--warning-text); background-color: var(--warning-bg-subtle); border-color: var(--warning-border); transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+    #loginError { color: var(--error-text); background-color: var(--error-bg-subtle); border-color: var(--error-border); transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+    label { color: var(--text-primary); transition: color 0.3s ease; }
     input[type="text"], input[type="password"], input[type="file"] {
         background-color: var(--bg-tertiary);
         border-color: var(--border-color);
         color: var(--text-primary);
-        placeholder-color: var(--text-tertiary);
+        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.15s ease;
     }
+    input::placeholder { color: var(--text-tertiary); transition: color 0.3s ease; }
     input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus {
         --tw-ring-color: var(--accent-color);
         border-color: var(--accent-color);
@@ -314,58 +320,63 @@
         color: var(--accent-color);
         border-color: var(--border-color);
         background-color: var(--bg-tertiary);
+        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
      }
      input[type="checkbox"]:focus {
         --tw-ring-color: var(--accent-color);
         --tw-ring-offset-color: var(--bg-primary);
+        transition: --tw-ring-offset-color 0.3s ease;
      }
-    #togglePassword { color: var(--text-secondary); }
+    #togglePassword { color: var(--text-secondary); transition: color 0.15s ease; }
     #togglePassword:hover { color: var(--text-primary); }
-    #rememberMe + label { color: var(--text-secondary); }
-    a { color: var(--accent-color); } a:hover { color: var(--accent-color-hover); }
+    #rememberMe + label { color: var(--text-secondary); transition: color 0.3s ease; }
+    a { color: var(--accent-color); transition: color 0.15s ease; }
+    a:hover { color: var(--accent-color-hover); }
     #loginButton {
         background-color: var(--accent-color);
         color: var(--accent-text-on-dark);
         --tw-ring-offset-color: var(--bg-primary);
         --tw-ring-color: var(--accent-color);
+        transition: background-color 0.15s ease, color 0.3s ease, box-shadow 0.15s ease, opacity 0.2s ease, --tw-ring-offset-color 0.3s ease;
     }
     body.light-theme #loginButton { color: var(--accent-text-on-light); }
-    #loginButton:hover { background-color: var(--accent-color-hover); }
+    #loginButton:hover:not(:disabled) { background-color: var(--accent-color-hover); }
     #loginButton:focus {
        box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color);
     }
-    #welcomeScreen p { color: var(--text-secondary); }
+    #welcomeScreen p { color: var(--text-secondary); transition: color 0.3s ease;}
 
-    #profileHeader button, #profileHeader .profile-trigger span { color: var(--text-secondary); }
+    #profileHeader button, #profileHeader .profile-trigger span { color: var(--text-secondary); transition: color 0.15s ease, background-color 0.15s ease; }
     #profileHeader button:hover, #profileHeader .profile-trigger:hover span { color: var(--accent-color); }
     #profileHeader button:hover { background-color: var(--bg-tertiary); }
     #profileImgHeader, #profileImgDesktop {
         ring-offset-color: var(--bg-primary);
         ring-color: var(--profile-ring-color);
+        transition: ring-color 0.3s ease, ring-offset-color 0.3s ease;
     }
     #profileImgHeader:hover, #profileImgDesktop:hover, .profile-trigger:hover img {
         ring-color: var(--profile-ring-hover-color);
     }
 
-    #desktopSidebar { color: var(--text-secondary); background-color: var(--bg-secondary); border-right-color: var(--border-color); }
-    #sidebarLogoContainer { border-bottom-color: var(--border-color); }
-    #desktopSidebar .nav-link { transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, padding-left 0.15s ease; }
-    #desktopSidebar .submenu { border-left-color: var(--border-color); }
-    #desktopSidebar .nav-link:hover, #desktopSidebar .submenu .nav-link:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
-    #desktopSidebarToggle { border-top-color: var(--border-color); }
+    #desktopSidebar { color: var(--text-secondary); background-color: var(--bg-secondary); border-right-color: var(--border-color); transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, width 0.3s ease-in-out; }
+    /* #sidebarLogoContainer CSS is now mainly for layout, border-bottom managed by class */
+    #sidebarLogoContainer { transition: border-color 0.3s ease; }
+    #desktopSidebar .submenu { border-left-color: var(--border-color); transition: border-color 0.3s ease, max-height 0.35s ease-out; }
+    #desktopSidebarToggle { border-top-color: var(--border-color); transition: border-color 0.3s ease; }
 
-    #iframeSpinnerOverlay, #mobileIframeSpinnerOverlay { background-color: var(--bg-overlay-iframe); backdrop-filter: blur(2px); }
+    #iframeSpinnerOverlay, #mobileIframeSpinnerOverlay { background-color: var(--bg-overlay-iframe); backdrop-filter: blur(2px); transition: background-color 0.3s ease, opacity 0.2s ease; opacity: 0; pointer-events: none; }
+    #iframeSpinnerOverlay.flex, #mobileIframeSpinnerOverlay.flex { opacity: 1; pointer-events: auto; }
 
-    #mobileSidebarWrapper { background-color: rgba(0, 0, 0, 0.5); }
-    #mobileSidebar { background-color: var(--bg-secondary); color: var(--text-secondary); border-right-color: var(--border-color); }
-    #mobileSidebar > div:first-child { border-bottom-color: var(--border-color); }
-    #mobileSidebar button:hover { background-color: var(--bg-tertiary); }
-    #mobileSidebar .submenu { border-left-color: var(--border-color); }
-    #mobileSidebar .nav-link:hover, #mobileSidebar .submenu .nav-link:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
-    #mobileSidebar .mobile-sidebar-footer { border-top-color: var(--border-color); }
+    #mobileSidebarWrapper { background-color: rgba(0, 0, 0, 0.5); transition: opacity 0.3s ease-in-out; opacity: 0; pointer-events: none; }
+    #mobileSidebarWrapper.visible { opacity: 1; pointer-events: auto; }
+    #mobileSidebar { background-color: var(--bg-secondary); color: var(--text-secondary); border-right-color: var(--border-color); transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease-in-out; }
+    #mobileSidebar > div:first-child { border-bottom-color: var(--border-color); transition: border-color 0.3s ease; }
+    #mobileSidebar .submenu { border-left-color: var(--border-color); transition: border-color 0.3s ease, max-height 0.35s ease-out; }
+    #mobileSidebar .mobile-sidebar-footer { border-top-color: var(--border-color); transition: border-color 0.3s ease; }
     #mobileSidebar .mobile-sidebar-footer-button {
         color: var(--danger-text);
         background-color: var(--danger-bg-subtle);
+        transition: background-color 0.15s ease, color 0.15s ease;
     }
      #mobileSidebar .mobile-sidebar-footer-button:hover {
         background-color: var(--danger-bg-subtle-hover);
@@ -374,29 +385,32 @@
      #themeToggleMobile {
         color: var(--text-secondary);
         background-color: var(--bg-tertiary);
+        transition: background-color 0.15s ease, color 0.15s ease;
      }
       #themeToggleMobile:hover {
         background-color: var(--border-color);
         color: var(--text-primary);
       }
 
-    #profileModal { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
-    #profileModalContent { background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color); }
-    #profileModalContent h5 { color: var(--text-primary); }
-    #profileModalContent .border-b, #profileModalContent .border-t { border-color: var(--border-color); }
-    #profileModalContent button[onclick*="closeProfileModal"]:not(.bg-\\[) {
+    #profileModal { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); transition: opacity 0.2s ease-in-out; }
+    #profileModalContent { background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color); transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease-in-out, opacity 0.2s ease-in-out; }
+    #profileModalContent h5 { color: var(--text-primary); transition: color 0.3s ease;}
+    #profileModalContent .border-b, #profileModalContent .border-t { border-color: var(--border-color); transition: border-color 0.3s ease;}
+    #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button) {
         color: var(--text-secondary);
-    }
-     #profileModalContent button[onclick*="closeProfileModal"]:not(.bg-\\[):hover {
-       color: var(--text-primary);
-       background-color: var(--bg-tertiary);
+        transition: color 0.15s ease, background-color 0.15s ease;
      }
-     #profileModalContent button.bg-\\[\\#343a40\\] {
+      #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button):hover {
+        color: var(--text-primary);
+        background-color: var(--bg-tertiary);
+      }
+      #profileModalContent button.cancel-button { /* Using class instead of style attribute for cancel button */
         background-color: var(--bg-tertiary);
         color: var(--text-primary);
-        border-color: var(--border-color);
+        border: 1px solid var(--border-color);
+        transition: background-color 0.15s ease, color 0.3s ease, border-color 0.3s ease;
      }
-     #profileModalContent button.bg-\\[\\#343a40\\]:hover {
+     #profileModalContent button.cancel-button:hover {
         background-color: var(--border-color);
      }
 
@@ -405,6 +419,7 @@
         color: var(--accent-text-on-dark);
         --tw-ring-offset-color: var(--bg-secondary);
         --tw-ring-color: var(--accent-color);
+        transition: background-color 0.15s ease, color 0.3s ease, box-shadow 0.15s ease, --tw-ring-offset-color 0.3s ease;
      }
       body.light-theme #profileModalContent button[type="submit"] {
         color: var(--accent-text-on-light);
@@ -416,66 +431,67 @@
         box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-color);
      }
 
-    #modalProfileImg { ring-offset-color: var(--bg-primary); ring-color: var(--profile-ring-color); }
+    #modalProfileImg { ring-offset-color: var(--bg-secondary); ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease, ring-offset-color 0.3s ease; }
     label[for="profilePicInput"] {
         color: var(--accent-color);
         background-color: var(--accent-bg-subtle);
+        transition: color 0.15s ease, background-color 0.15s ease;
     }
     label[for="profilePicInput"]:hover {
         color: var(--accent-color-hover);
         background-color: var(--accent-bg-subtle-hover);
     }
-    #profileModalContent h6 { color: var(--text-secondary); }
+    #profileModalContent h6 { color: var(--text-secondary); transition: color 0.3s ease; }
 
-    .placeholder-\\[\\#adb5bd\\]::placeholder { color: var(--text-tertiary) !important; }
+    .placeholder-\\[\\#adb5bd\\]::placeholder { color: var(--text-tertiary) !important; transition: color 0.3s ease;}
 
   </style>
   </head>
 <body class="min-h-screen antialiased">
 
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm opacity-0 pointer-events-none">
      <div class="bg-secondary rounded-lg shadow-xl w-full max-w-md p-8 border border-border-color">
-        <div class="text-center mb-8">
-         <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-12 w-auto" />
-       </div>
-       <h2 class="text-center text-2xl font-semibold text-primary mb-2">Bem-vindo de volta!</h2>
-       <p class="text-center text-secondary text-sm mb-6">Faça login para acessar seu painel.</p>
-       <div id="logoutNotification" class="hidden mb-4 p-3 text-sm rounded-md text-center">Você foi desconectado!</div>
-       <div id="loginError" class="hidden mb-4 p-3 text-sm rounded-md text-center"></div>
-       <form id="formLogin" novalidate class="space-y-5">
-         <div>
-           <label for="username" class="block mb-1.5 text-sm font-medium">Usuário</label>
-           <input type="text" id="username" placeholder="Digite seu usuário" required
-                  class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-         </div>
-         <div>
-           <label for="password" class="block mb-1.5 text-sm font-medium">Senha</label>
-           <div class="relative">
-             <input type="password" id="password" placeholder="Digite sua senha" required
-                    class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 pr-10 placeholder-[#adb5bd]" />
-             <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-secondary hover:text-primary" aria-label="Mostrar senha">
-               <i class="bi bi-eye-slash text-lg"></i>
-             </button>
-           </div>
-         </div>
-         <div class="flex items-center justify-between text-sm">
-           <div class="flex items-center">
-             <input type="checkbox" id="rememberMe"
-                    class="h-4 w-4 text-accent focus:ring-accent border-border-color rounded bg-tertiary focus:ring-offset-primary" />
-             <label for="rememberMe" class="ml-2 block text-secondary">Lembrar meus dados</label>
-           </div>
-           <a href="#" class="font-medium text-accent hover:text-accent-hover">Esqueceu a senha?</a>
-         </div>
-         <button type="submit" id="loginButton"
-                 class="w-full py-3 px-4 rounded-md font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
-           <span class="button-text">Entrar</span>
-           <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span>
-         </button>
-       </form>
+       <div class="text-center mb-8">
+        <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-12 w-auto" />
       </div>
+      <h2 class="text-center text-2xl font-semibold text-primary mb-2">Bem-vindo de volta!</h2>
+      <p class="text-center text-secondary text-sm mb-6">Faça login para acessar seu painel.</p>
+      <div id="logoutNotification" class="hidden mb-4 p-3 text-sm rounded-md text-center text-warning-text bg-warning-bg-subtle border border-warning-border">Você foi desconectado!</div>
+      <div id="loginError" class="hidden mb-4 p-3 text-sm rounded-md text-center text-error-text bg-error-bg-subtle border border-error-border"></div>
+      <form id="formLogin" novalidate class="space-y-5">
+        <div>
+          <label for="username" class="block mb-1.5 text-sm font-medium">Usuário</label>
+          <input type="text" id="username" placeholder="Digite seu usuário" required
+                 class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
+        </div>
+        <div>
+          <label for="password" class="block mb-1.5 text-sm font-medium">Senha</label>
+          <div class="relative">
+            <input type="password" id="password" placeholder="Digite sua senha" required
+                   class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 pr-10 placeholder-[#adb5bd]" />
+            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-secondary hover:text-primary" aria-label="Mostrar senha">
+              <i class="bi bi-eye-slash text-lg"></i>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center">
+            <input type="checkbox" id="rememberMe"
+                   class="h-4 w-4 text-accent focus:ring-accent border-border-color rounded bg-tertiary focus:ring-offset-primary" />
+            <label for="rememberMe" class="ml-2 block text-secondary">Lembrar meus dados</label>
+          </div>
+          <a href="#" class="font-medium text-accent hover:text-accent-hover">Esqueceu a senha?</a>
+        </div>
+        <button type="submit" id="loginButton"
+                class="w-full py-3 px-4 rounded-md font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
+          <span class="button-text">Entrar</span>
+          <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span>
+        </button>
+      </form>
+     </div>
   </div>
 
-  <div id="welcomeScreen" class="fixed inset-0 z-70 hidden items-center justify-center flex-direction-column opacity-0">
+  <div id="welcomeScreen" class="fixed inset-0 z-70 hidden items-center justify-center flex-col">
      <div class="text-center">
        <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-16 w-auto mb-6 animate-pulse" />
        <h2 class="text-2xl font-semibold text-primary mb-2">Bem-vindo(a)!</h2>
@@ -486,39 +502,40 @@
   <div id="dashboard" class="hidden">
 
      <header id="profileHeader" class="flex justify-between items-center shadow-sm md:hidden">
-       <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 rounded-full" aria-label="Abrir menu">
+       <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 rounded-full hover:bg-tertiary focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent" aria-label="Abrir menu">
          <i class="bi bi-list text-xl"></i>
        </button>
        <div class="flex items-center">
          <button id="integrationBtnHeader"
-                 class="p-2 rounded-full transition-colors duration-150 mr-2"
+                 class="p-2 rounded-full transition-colors duration-150 mr-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent"
                  aria-label="Dados e Previsões"
-                 onclick="loadPage('integracao.html', this, true); return false;">
+                 onclick="loadPage('automate.html', this, true); return false;">
            <i class="bi bi-link-45deg text-xl"></i>
          </button>
-         <div class="flex items-center cursor-pointer group profile-trigger" onclick="openProfileModal()">
-           <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline group-hover:text-accent transition-colors duration-150">Nome</span>
+         <div class="flex items-center cursor-pointer group profile-trigger rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent" onclick="openProfileModal()" tabindex="0">
+           <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline group-hover:text-accent transition-colors duration-150 text-secondary">Nome</span>
            <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 transition-all duration-150" />
          </div>
        </div>
      </header>
 
      <nav id="desktopSidebar" class="shadow-md">
-       <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center border-b h-[60px] justify-center flex-shrink-0">
+       <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center h-[60px] justify-center flex-shrink-0">
          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
+         <img src="https://via.placeholder.com/32" alt="Logo Pequeno" class="sidebar-logo-small mx-auto h-8 w-8 hidden" />
        </div>
 
        <div class="sidebar-scroll-content p-3 space-y-1">
-         <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md">
+         <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
            <i class="bi bi-house-door-fill w-5 text-center text-lg"></i>
            <span class="sidebar-text text-sm font-medium">Home</span>
          </a>
-         <a href="#" onclick="loadPage('automate.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md">
+         <a href="#" onclick="loadPage('automate.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
            <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i>
            <span class="sidebar-text text-sm font-medium">Dados e Previsões</span>
          </a>
          <div class="nav-item">
-           <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
+           <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
              <span class="flex items-center gap-3">
                <i class="bi bi-wallet2 w-5 text-center text-lg"></i>
                <span class="sidebar-text text-sm font-medium">Gastos</span>
@@ -526,17 +543,17 @@
              <i id="desktopGastosIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
            </button>
            <div id="desktopGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-             <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+">Janeiro</a>
-             <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+">Abril</a>
+             <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Janeiro</a>
+             <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Fevereiro</a>
+              <a href="#" onclick="loadPage('sub_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Abril</a>
            </div>
          </div>
-         <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md">
+         <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
            <i class="bi bi-graph-up w-5 text-center text-lg"></i>
            <span class="sidebar-text text-sm font-medium">Relatório Geral</span>
          </a>
           <div class="nav-item">
-            <button onclick="toggleSubmenu('desktopConfigSubmenu', 'desktopConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
+            <button onclick="toggleSubmenu('desktopConfigSubmenu', 'desktopConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
               <span class="flex items-center gap-3">
                 <i class="bi bi-gear-fill w-5 text-center text-lg"></i>
                 <span class="sidebar-text text-sm font-medium">Configurações</span>
@@ -544,26 +561,26 @@
               <i id="desktopConfigIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
             </button>
             <div id="desktopConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-               <a href="#" onclick="openProfileModal(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link">
-                 <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i> Perfil
+               <a href="#" onclick="openProfileModal(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
+                 <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i><span class="sidebar-text">Perfil</span>
                </a>
              </div>
           </div>
        </div>
 
        <div class="p-3 mt-auto border-t border-border-color flex-shrink-0 space-y-1">
-            <button id="themeToggleDesktop" onclick="toggleTheme()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md" aria-label="Alternar Tema">
-                 <i id="themeIconDesktop" class="bi bi-moon-stars-fill w-5 text-center text-lg"></i>
-                 <span class="sidebar-text text-sm font-medium theme-text">Tema Escuro</span>
+            <button id="themeToggleDesktop" onclick="toggleTheme()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Alternar Tema">
+                <i id="themeIconDesktop" class="bi bi-moon-stars-fill w-5 text-center text-lg"></i>
+                <span class="sidebar-text text-sm font-medium theme-text">Tema Escuro</span>
             </button>
 
-            <button id="desktopLogoutButton" onclick="logout()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-danger bg-danger-bg-subtle hover:bg-danger-bg-subtle-hover" aria-label="Sair">
+            <button id="desktopLogoutButton" onclick="logout()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-danger-text bg-danger-bg-subtle hover:bg-danger-bg-subtle-hover focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-danger-text" aria-label="Sair">
                 <i class="bi bi-box-arrow-right w-5 text-center text-lg"></i>
                 <span class="sidebar-text text-sm font-medium">Sair</span>
             </button>
 
             <div id="desktopSidebarToggle">
-                <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md" aria-label="Recolher barra lateral">
+                <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Recolher barra lateral">
                     <i id="desktopToggleIcon" class="bi bi-chevron-double-left w-5 text-center text-lg"></i>
                     <span class="sidebar-text text-sm font-medium">Recolher</span>
                 </button>
@@ -572,82 +589,81 @@
      </nav>
 
      <div id="desktopMainArea">
-
-        <main id="mainContent">
-          <div id="iframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
-          </div>
-          <iframe id="mainFrame" src="home.html" class="w-full h-full relative z-10" title="Conteúdo Principal"></iframe>
-        </main>
+       <main id="mainContent">
+         <div id="iframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
+           <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
+         </div>
+         <iframe id="mainFrame" src="about:blank" class="w-full h-full relative z-10" title="Conteúdo Principal"></iframe>
+       </main>
      </div>
 
      <main id="mobileMainContent" class="md:hidden">
        <div id="mobileIframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
        </div>
-       <iframe id="mobileMainFrame" src="home.html" class="w-full h-full relative z-10" title="Conteúdo Principal Mobile"></iframe>
+       <iframe id="mobileMainFrame" src="about:blank" class="w-full h-full relative z-10" title="Conteúdo Principal Mobile"></iframe>
      </main>
 
      <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
 
      <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r">
-        <div class="p-4 flex justify-between items-center border-b h-[60px]">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-7 w-auto" />
-          <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 rounded-full" aria-label="Fechar menu">
-            <i class="bi bi-x-lg text-xl"></i>
-          </button>
-        </div>
-        <div class="overflow-y-auto flex-grow p-3 space-y-1">
-          <a href="#" onclick="loadPage('home.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
-          <a href="#" onclick="loadPage('automate.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Dados e Previsões</span></a>
-          <div class="nav-item">
-            <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
-              <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
-              <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
-            </button>
-            <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-              <a href="#" onclick="loadPage('sub_janeiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+">Janeiro</a>
-               <a href="#" onclick="loadPage('sub_abril.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+">Abril</a>
-            </div>
+       <div class="p-4 flex justify-between items-center border-b h-[60px]">
+         <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-7 w-auto" />
+         <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 rounded-full hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Fechar menu">
+           <i class="bi bi-x-lg text-xl"></i>
+         </button>
+       </div>
+       <div class="overflow-y-auto flex-grow p-3 space-y-1">
+         <a href="#" onclick="loadPage('home.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
+         <a href="#" onclick="loadPage('automate.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Dados e Previsões</span></a>
+         <div class="nav-item">
+           <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
+             <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
+             <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
+           </button>
+           <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
+             <a href="#" onclick="loadPage('sub_janeiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Janeiro</a>
+              <a href="#" onclick="loadPage('sub_abril.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Abril</a>
            </div>
-          <a href="#" onclick="loadPage('geral.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
+           </div>
+         <a href="#" onclick="loadPage('geral.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
            <div class="nav-item">
-              <button onclick="toggleSubmenu('mobileConfigSubmenu', 'mobileConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
+              <button onclick="toggleSubmenu('mobileConfigSubmenu', 'mobileConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
                 <span class="flex items-center gap-3"><i class="bi bi-gear-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Configurações</span></span>
                 <i id="mobileConfigIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
               </button>
               <div id="mobileConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-                <a href="#" onclick="openProfileModal(); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link">
+                <a href="#" onclick="openProfileModal(); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
                   <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i> Perfil
                 </a>
                </div>
-            </div>
-         </div>
+             </div>
+          </div>
 
-        <div class="p-3 mt-auto border-t mobile-sidebar-footer space-y-2">
-            <button id="themeToggleMobile" onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium">
-                 <i id="themeIconMobile" class="bi bi-moon-stars-fill"></i> <span class="theme-text">Tema Escuro</span>
+       <div class="p-3 mt-auto border-t mobile-sidebar-footer space-y-2">
+            <button id="themeToggleMobile" onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
+                <i id="themeIconMobile" class="bi bi-moon-stars-fill"></i> <span class="theme-text">Tema Escuro</span>
              </button>
-            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium mobile-sidebar-footer-button">
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium mobile-sidebar-footer-button focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-danger-text">
               <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
             </button>
         </div>
      </nav>
   </div>
 
-  <div id="profileModal" class="fixed inset-0 bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
+  <div id="profileModal" class="fixed inset-0 bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out opacity-0 pointer-events-none">
      <div id="profileModalContent" class="rounded-lg w-full max-w-lg p-6 shadow-xl transform transition-all duration-200 ease-in-out scale-95 opacity-0 border">
        <form id="profileForm">
          <div class="flex justify-between items-start border-b pb-3 mb-5">
            <h5 class="text-lg font-semibold">Editar Perfil</h5>
-           <button type="button" onclick="closeProfileModal()" class="rounded-full p-1.5 -mt-1 -mr-1" aria-label="Fechar modal">
+           <button type="button" onclick="closeProfileModal()" class="rounded-full p-1.5 -mt-1 -mr-1 hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Fechar modal">
              <i class="bi bi-x-lg text-xl"></i>
            </button>
          </div>
          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
            <div class="flex-shrink-0 text-center">
              <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 mb-3" />
-             <label for="profilePicInput" class="cursor-pointer text-xs font-medium px-3 py-1.5 rounded-md transition-colors duration-150 inline-block">
+             <label for="profilePicInput" class="cursor-pointer text-xs font-medium px-3 py-1.5 rounded-md transition-colors duration-150 inline-block hover:bg-accent-bg-subtle-hover focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
                <i class="bi bi-upload mr-1"></i> Alterar foto
                <input type="file" id="profilePicInput" accept="image/*" class="hidden" />
              </label>
@@ -663,41 +679,41 @@
          <div class="space-y-4 border-t pt-6 mb-6">
             <h6 class="text-md font-semibold text-secondary">Alterar Senha</h6>
             <div>
-               <label for="currentPassword" class="block mb-1.5 text-sm font-medium">Senha Atual</label>
-               <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
-                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
+              <label for="currentPassword" class="block mb-1.5 text-sm font-medium">Senha Atual</label>
+              <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
+                     class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
             </div>
-             <div>
-               <label for="newPassword" class="block mb-1.5 text-sm font-medium">Nova Senha</label>
-               <input type="password" id="newPassword" placeholder="Digite a nova senha"
-                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-             </div>
-             <div>
-               <label for="confirmPassword" class="block mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
-               <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
-                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-             </div>
+              <div>
+              <label for="newPassword" class="block mb-1.5 text-sm font-medium">Nova Senha</label>
+              <input type="password" id="newPassword" placeholder="Digite a nova senha (mín. 6 caracteres)"
+                     class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
+            </div>
+              <div>
+              <label for="confirmPassword" class="block mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
+              <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
+                     class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
+            </div>
          </div>
          <div class="flex justify-end space-x-3 pt-4 border-t">
-           <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-md border transition duration-150 text-sm font-medium bg-[#343a40]">Cancelar</button>
+           <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-md border transition duration-150 text-sm font-medium cancel-button focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Cancelar</button>
            <button type="submit" class="px-4 py-2 rounded-md transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm font-medium">Salvar Alterações</button>
          </div>
        </form>
       </div>
   </div>
 
-
   <script>
     function setVhProperty() {
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
+
     function showElement(el) { if (el) el.classList.remove('hidden'); }
     function hideElement(el) { if (el) el.classList.add('hidden'); }
-    function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
-    function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
-    function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
-    function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
+    function showFlexElement(el) { if (el) { el.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); el.classList.add('flex'); } }
+    function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden', 'opacity-0', 'pointer-events-none'); } }
+    function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('opacity-0'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
+    function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('opacity-0'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
 
     const bodyElement = document.body;
     const loginOverlay = document.getElementById('loginOverlay');
@@ -707,8 +723,8 @@
     const passwordField = document.getElementById('password');
     const rememberMe = document.getElementById('rememberMe');
     const loginButton = document.getElementById('loginButton');
-    const buttonText = loginButton.querySelector('.button-text');
-    const spinnerIcon = loginButton.querySelector('.spinner-icon');
+    const buttonText = loginButton?.querySelector('.button-text');
+    const spinnerIcon = loginButton?.querySelector('.spinner-icon');
     const togglePasswordButton = document.getElementById('togglePassword');
     const welcomeScreen = document.getElementById('welcomeScreen');
     const welcomeUserName = document.getElementById('welcomeUserName');
@@ -733,6 +749,9 @@
     const desktopSidebarToggleBtn = document.getElementById('desktopSidebarToggle')?.querySelector('button');
     const desktopToggleIcon = document.getElementById('desktopToggleIcon');
     const desktopToggleText = desktopSidebarToggleBtn?.querySelector('.sidebar-text');
+    const desktopSidebarLogoFull = desktopSidebar?.querySelector('.sidebar-logo-full');
+    const desktopSidebarLogoSmall = desktopSidebar?.querySelector('.sidebar-logo-small');
+
 
     const profileModal = document.getElementById('profileModal');
     const profileModalContent = document.getElementById('profileModalContent');
@@ -757,25 +776,31 @@
     const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
     const DEFAULT_PROFILE_PIC_MEDIUM = 'https://via.placeholder.com/40';
     const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
+    const DEFAULT_PROFILE_PIC_SIDEBAR = 'https://via.placeholder.com/32';
 
-    formLogin.addEventListener('submit', function (e) {
-      e.preventDefault();
-      hideElement(loginErrorDiv);
-      disableButton(loginButton, buttonText, spinnerIcon);
-      setTimeout(() => {
-       const validUsername = localStorage.getItem('savedUsername') || 'admin';
-       const username = usernameField.value.trim();
-       const password = passwordField.value;
-       if (username === validUsername && password === 'admin123') {
-         handleSuccessfulLogin(username, password);
-       } else {
-         handleFailedLogin();
-       }
-      }, 1000);
-    });
+
+    if (formLogin) {
+      formLogin.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideElement(loginErrorDiv);
+        if (loginButton && buttonText && spinnerIcon) {
+          disableButton(loginButton, buttonText, spinnerIcon);
+        }
+        setTimeout(() => {
+         const validUsername = localStorage.getItem('savedUsername') || 'admin';
+         const username = usernameField?.value.trim();
+         const password = passwordField?.value;
+         if (username === validUsername && password === 'admin123') {
+           handleSuccessfulLogin(username, password);
+         } else {
+           handleFailedLogin();
+         }
+        }, 1000);
+      });
+    }
 
     function handleSuccessfulLogin(username, password) {
-      if (rememberMe.checked) {
+      if (rememberMe?.checked) {
        localStorage.setItem('savedUsername', username);
        localStorage.setItem('savedPassword', password);
       } else {
@@ -787,11 +812,11 @@
       localStorage.setItem('isLoggedIn', 'true');
 
       hideFlexElement(loginOverlay);
-      welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
-      welcomeScreen.classList.add('visible');
+      if (welcomeUserName) welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
+      if (welcomeScreen) welcomeScreen.classList.add('visible');
 
       setTimeout(() => {
-       welcomeScreen.classList.remove('visible');
+       if (welcomeScreen) welcomeScreen.classList.remove('visible');
        setTimeout(() => { hideElement(welcomeScreen); }, 500);
 
        showFlexElement(dashboard);
@@ -812,29 +837,41 @@
            hideFlexElement(targetSpinner);
            console.warn("Link Home não encontrado para view inicial.");
        }
-       enableButton(loginButton, buttonText, spinnerIcon);
-      }, 2000);
+       if (loginButton && buttonText && spinnerIcon) {
+         enableButton(loginButton, buttonText, spinnerIcon);
+       }
+      }, 1500);
     }
 
     function handleFailedLogin() {
-      loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
-      showElement(loginErrorDiv);
-      enableButton(loginButton, buttonText, spinnerIcon);
-      const loginCard = loginOverlay.querySelector('[class*="bg-secondary"]');
+      if (loginErrorDiv) {
+        loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
+        showElement(loginErrorDiv);
+      }
+      if (loginButton && buttonText && spinnerIcon) {
+         enableButton(loginButton, buttonText, spinnerIcon);
+      }
+      const loginCard = loginOverlay?.querySelector('[class*="bg-secondary"]');
       if(loginCard) {
         loginCard.classList.add('animate-shake');
         setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
       }
     }
 
-    togglePasswordButton.addEventListener('click', function() {
-      const icon = this.querySelector('i');
-      if (passwordField.type === 'password') {
-       passwordField.type = 'text'; icon.classList.replace('bi-eye-slash', 'bi-eye'); this.setAttribute('aria-label', 'Ocultar senha');
-      } else {
-       passwordField.type = 'password'; icon.classList.replace('bi-eye', 'bi-eye-slash'); this.setAttribute('aria-label', 'Mostrar senha');
-      }
-    });
+    if (togglePasswordButton) {
+      togglePasswordButton.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        if (passwordField?.type === 'password') {
+          passwordField.type = 'text';
+          icon?.classList.replace('bi-eye-slash', 'bi-eye');
+          this.setAttribute('aria-label', 'Ocultar senha');
+        } else if (passwordField) {
+          passwordField.type = 'password';
+          icon?.classList.replace('bi-eye', 'bi-eye-slash');
+          this.setAttribute('aria-label', 'Mostrar senha');
+        }
+      });
+    }
 
     function logout() {
       localStorage.removeItem('isLoggedIn');
@@ -845,17 +882,17 @@
       showElement(logoutNotification);
       setTimeout(() => hideElement(logoutNotification), 4000);
 
-      if (mobileSidebar.classList.contains('translate-x-0')) toggleMobileSidebar();
+      if (mobileSidebar?.classList.contains('translate-x-0')) toggleMobileSidebar();
 
-      passwordField.value = '';
+      if (passwordField) passwordField.value = '';
       hideElement(loginErrorDiv);
 
       const savedUsername = localStorage.getItem('savedUsername');
       const savedPassword = localStorage.getItem('savedPassword');
-      usernameField.value = savedUsername || '';
-      rememberMe.checked = !!savedPassword;
+      if (usernameField) usernameField.value = savedUsername || '';
+      if (rememberMe) rememberMe.checked = !!savedPassword;
 
-      console.log(">>> Logout realizado. Tela de login preparada.");
+      console.log("Logout realizado. Tela de login preparada.");
     }
 
     function setActiveLink(clickedLinkElement) {
@@ -878,39 +915,46 @@
             profileTriggers.forEach(trigger => trigger.classList.add('active'));
             if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.add('active');
             if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.add('active');
+
             const parentConfigButtonD = sidebarProfileLinkDesktop?.closest('.nav-item')?.querySelector('button.nav-link');
             const parentConfigButtonM = sidebarProfileLinkMobile?.closest('.nav-item')?.querySelector('button.nav-link');
             if(parentConfigButtonD) parentConfigButtonD.classList.add('active');
             if(parentConfigButtonM) parentConfigButtonM.classList.add('active');
-             const submenuD = parentConfigButtonD?.nextElementSibling;
-             const submenuM = parentConfigButtonM?.nextElementSibling;
-             if (submenuD && !submenuD.classList.contains('submenu-visible') && !desktopSidebar?.classList.contains('sidebar-collapsed')) {
-                toggleSubmenu(submenuD.id, parentConfigButtonD.querySelector('i[id$="Icon"]')?.id);
-             }
-             if (submenuM && !submenuM.classList.contains('submenu-visible')) {
-                 toggleSubmenu(submenuM.id, parentConfigButtonM.querySelector('i[id$="Icon"]')?.id);
-             }
+
+            const submenuD = parentConfigButtonD?.nextElementSibling;
+            const submenuM = parentConfigButtonM?.nextElementSibling;
+            const iconD = parentConfigButtonD?.querySelector('i[id$="Icon"]');
+            const iconM = parentConfigButtonM?.querySelector('i[id$="Icon"]');
+
+            if (submenuD && iconD && !submenuD.classList.contains('submenu-visible') && !desktopSidebar?.classList.contains('sidebar-collapsed')) {
+                toggleSubmenu(submenuD.id, iconD.id);
+            }
+            if (submenuM && iconM && !submenuM.classList.contains('submenu-visible')) {
+                toggleSubmenu(submenuM.id, iconM.id);
+            }
 
         } else {
-            const parentSubmenu = clickedLinkElement.closest('.submenu');
-            if (parentSubmenu) {
-                const parentButton = parentSubmenu.previousElementSibling;
-                if (parentButton && parentButton.classList.contains('nav-link')) {
-                    parentButton.classList.add('active');
-                    const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
-                    const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
-                    if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
-                        const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
-                        if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId);
-                    }
-                }
-            }
-            if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.remove('active');
-            if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.remove('active');
-            if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.remove('active');
+             const parentSubmenu = clickedLinkElement.closest('.submenu');
+             if (parentSubmenu) {
+                 const parentButton = parentSubmenu.previousElementSibling;
+                 if (parentButton && parentButton.classList.contains('nav-link')) {
+                     parentButton.classList.add('active');
+                     const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
+                     const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
+                     if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
+                         const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
+                         if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId);
+                     }
+                 }
+             }
+             if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.remove('active');
+             if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.remove('active');
+             if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.remove('active');
+             profileTriggers.forEach(trigger => trigger.classList.remove('active'));
+             if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.remove('active');
+             if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.remove('active');
         }
     }
-
 
     function loadPage(pageUrl, clickedLinkElement, isMobile = window.innerWidth < 768) {
         const targetFrame = isMobile ? mobileMainFrame : mainFrame;
@@ -935,6 +979,7 @@
             frameElement.addEventListener('error', (e) => {
                 console.error(`Falha ao carregar iframe: ${frameElement.src}`, e);
                 hideFlexElement(spinnerElement);
+                // Poderia exibir uma mensagem de erro no iframe ou em um overlay
             });
         } else {
             console.error("Iframe ou spinner overlay não encontrado para listener.");
@@ -942,13 +987,14 @@
     }
 
     function toggleMobileSidebar() {
+      if (!mobileSidebar || !mobileSidebarWrapper) return;
       const isOpen = mobileSidebar.classList.contains('translate-x-0');
       if (isOpen) {
        mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
-       hideElement(mobileSidebarWrapper);
+       mobileSidebarWrapper.classList.remove('visible');
       } else {
        mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0');
-       showElement(mobileSidebarWrapper);
+       mobileSidebarWrapper.classList.add('visible');
       }
     }
 
@@ -967,7 +1013,8 @@
         document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
             if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
                 otherSubmenu.classList.remove('submenu-visible');
-                const otherIcon = document.getElementById(otherSubmenu.id.replace('Submenu', 'Icon'));
+                const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon');
+                const otherIcon = document.getElementById(otherIconId);
                 if (otherIcon) otherIcon.classList.remove('rotate-180');
             }
         });
@@ -977,7 +1024,7 @@
         submenu.classList.toggle('submenu-visible');
         icon.classList.toggle('rotate-180');
       } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
-          console.log("Toggle de submenu ignorado (desktop colapsado). Clique no ícone deve carregar página se necessário.");
+          console.log("Toggle de submenu ignorado (desktop colapsado).");
       }
     }
 
@@ -986,20 +1033,15 @@
 
         const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed');
         localStorage.setItem('desktopSidebarState', isCollapsed ? 'collapsed' : 'expanded');
+        updateDesktopSidebarUI(isCollapsed);
 
         if (isCollapsed) {
-            desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
-            desktopToggleText.textContent = 'Expandir';
-            desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
             document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => {
                 sm.classList.remove('submenu-visible');
                 const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
                 if(iconEl) iconEl.classList.remove('rotate-180');
             });
         } else {
-            desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
-            desktopToggleText.textContent = 'Recolher';
-            desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
              const activeSubmenuLink = desktopSidebar.querySelector('.submenu .nav-link.active');
              if (activeSubmenuLink) {
                  const submenuDiv = activeSubmenuLink.closest('.submenu');
@@ -1012,173 +1054,223 @@
         }
     }
 
-    function applyDesktopSidebarState() {
-        if (window.innerWidth < 768) return;
-        if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !desktopMainArea) return;
+    function updateDesktopSidebarUI(isCollapsed) {
+        if (!desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn) return;
 
-        const savedState = localStorage.getItem('desktopSidebarState');
-        const shouldBeCollapsed = savedState === 'collapsed';
-        const isCurrentlyCollapsed = desktopSidebar.classList.contains('sidebar-collapsed');
-
-        if (shouldBeCollapsed && !isCurrentlyCollapsed) {
-            desktopSidebar.classList.add('sidebar-collapsed');
+        if (isCollapsed) {
             desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
             desktopToggleText.textContent = 'Expandir';
             desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
-        } else if (!shouldBeCollapsed && isCurrentlyCollapsed) {
-            desktopSidebar.classList.remove('sidebar-collapsed');
+            desktopSidebarLogoFull?.classList.add('hidden');
+            desktopSidebarLogoSmall?.classList.remove('hidden');
+        } else {
             desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
             desktopToggleText.textContent = 'Recolher';
             desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
+            desktopSidebarLogoFull?.classList.remove('hidden');
+            desktopSidebarLogoSmall?.classList.add('hidden');
         }
     }
+
+    function applyDesktopSidebarState() {
+        if (window.innerWidth < 768 || !desktopSidebar) return;
+
+        const savedState = localStorage.getItem('desktopSidebarState');
+        const shouldBeCollapsed = savedState === 'collapsed';
+
+        if (desktopSidebar.classList.contains('sidebar-collapsed') !== shouldBeCollapsed) {
+            desktopSidebar.classList.toggle('sidebar-collapsed', shouldBeCollapsed);
+        }
+        updateDesktopSidebarUI(shouldBeCollapsed);
+    }
+
 
     function openProfileModal() {
       const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
       const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-      profileNameInput.value = currentUsername;
-      modalProfileImg.src = currentProfilePicLarge;
-      document.getElementById('currentPassword').value = '';
-      document.getElementById('newPassword').value = '';
-      document.getElementById('confirmPassword').value = '';
-      profilePicInput.value = '';
+      if (profileNameInput) profileNameInput.value = currentUsername;
+      if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge;
+      const currentPassEl = document.getElementById('currentPassword');
+      const newPassEl = document.getElementById('newPassword');
+      const confirmPassEl = document.getElementById('confirmPassword');
+      if (currentPassEl) currentPassEl.value = '';
+      if (newPassEl) newPassEl.value = '';
+      if (confirmPassEl) confirmPassEl.value = '';
+      if (profilePicInput) profilePicInput.value = '';
 
       const isMobile = window.innerWidth < 768;
       const profileLinkToActivate = isMobile ? sidebarProfileLinkMobile : sidebarProfileLinkDesktop;
       if (profileLinkToActivate) {
           setActiveLink(profileLinkToActivate);
       } else {
-          const triggerToActivate = isMobile ? profileHeaderMobile.querySelector('.profile-trigger') : null;
+          const triggerToActivate = isMobile ? profileHeaderMobile?.querySelector('.profile-trigger') : null;
           if (triggerToActivate) setActiveLink(triggerToActivate);
       }
 
-      profileModal.classList.remove('hidden');
-      profileModal.classList.add('flex');
-      void profileModal.offsetWidth;
-      profileModal.classList.add('opacity-100');
-      profileModalContent.classList.remove('scale-95', 'opacity-0');
+      if (profileModal) {
+          profileModal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+          profileModal.classList.add('flex');
+          void profileModal.offsetWidth;
+          profileModal.classList.add('opacity-100');
+          profileModal.classList.remove('pointer-events-none');
+      }
+      if (profileModalContent) {
+          profileModalContent.classList.remove('scale-95', 'opacity-0');
+      }
     }
 
     function closeProfileModal() {
-      profileModal.classList.remove('opacity-100');
-      profileModalContent.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => {
-       profileModal.classList.add('hidden');
-       profileModal.classList.remove('flex');
-       const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-       modalProfileImg.src = currentProfilePicLarge;
-       profilePicInput.value = '';
+      if (profileModal) {
+          profileModal.classList.remove('opacity-100');
+          profileModalContent?.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => {
+           profileModal.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+           profileModal.classList.remove('flex');
 
-       document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active'));
-       const isMobile = window.innerWidth < 768;
-       const currentFrame = isMobile ? mobileMainFrame : mainFrame;
-       const currentIframeSrc = currentFrame?.src;
-       if (currentIframeSrc) {
-            try {
-                const url = new URL(currentIframeSrc);
-                const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1);
-                if (pageName && pageName !== 'profile.html') {
-                     const linkSelector = `.nav-link[onclick*="'${pageName}'"]`;
-                     const correspondingLink = document.querySelector(linkSelector);
-                     if(correspondingLink && !correspondingLink.classList.contains('profile-sidebar-link')) {
-                         setActiveLink(correspondingLink);
-                     }
-                }
-            } catch (e) {
-                console.error("Erro ao processar URL do iframe:", e);
-            }
-       }
-      }, 200);
+           const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
+           if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge;
+           if (profilePicInput) profilePicInput.value = '';
+
+           document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active'));
+
+           const isMobile = window.innerWidth < 768;
+           const currentFrame = isMobile ? mobileMainFrame : mainFrame;
+           const currentIframeSrc = currentFrame?.src;
+           if (currentIframeSrc && currentIframeSrc !== 'about:blank') {
+               try {
+                   const url = new URL(currentIframeSrc);
+                   const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1);
+                   if (pageName && pageName !== 'profile.html') {
+                       const linkSelector = `.nav-link[onclick*="'${pageName}'"]`;
+                       const correspondingLink = document.querySelector(linkSelector);
+                       if(correspondingLink && !correspondingLink.classList.contains('profile-sidebar-link')) {
+                           setActiveLink(correspondingLink);
+                       }
+                   } else if (!pageName || pageName === 'profile.html') {
+                       // If no specific page was active or it was profile, maybe activate home?
+                       const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
+                       const homeLink = document.querySelector(homeLinkSelector);
+                       if (homeLink) setActiveLink(homeLink);
+                   }
+               } catch (e) {
+                   console.error("Erro ao processar URL do iframe para restaurar link ativo:", e);
+               }
+           } else {
+                // Activate home if no iframe was loaded
+                 const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
+                 const homeLink = document.querySelector(homeLinkSelector);
+                 if (homeLink) setActiveLink(homeLink);
+           }
+          }, 200);
+        }
     }
 
-    profilePicInput.addEventListener('change', function () {
-      const file = this.files[0];
-      if (file && file.type.startsWith('image/')) {
-       const reader = new FileReader();
-       reader.onload = function (e) {
-         modalProfileImg.src = e.target.result;
-       };
-       reader.readAsDataURL(file);
-      } else if (file) {
-       alert("Por favor, selecione um arquivo de imagem válido.");
-       this.value = '';
-      }
-    });
+    if (profilePicInput) {
+      profilePicInput.addEventListener('change', function () {
+        const file = this.files?.[0];
+        if (file && file.type.startsWith('image/')) {
+         const reader = new FileReader();
+         reader.onload = function (e) {
+           if (modalProfileImg && e.target?.result) {
+             modalProfileImg.src = e.target.result.toString();
+           }
+         };
+         reader.readAsDataURL(file);
+        } else if (file) {
+         alert("Por favor, selecione um arquivo de imagem válido.");
+         this.value = '';
+        }
+      });
+    }
 
-    profileForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const newName = profileNameInput.value.trim();
-      const newImgSrc = modalProfileImg.src;
+    if (profileForm) {
+      profileForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const newName = profileNameInput?.value.trim();
+        const newImgSrc = modalProfileImg?.src;
 
-      const currentPassword = document.getElementById('currentPassword').value;
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
-      let passwordChangeOk = true;
+        const currentPasswordEl = document.getElementById('currentPassword');
+        const newPasswordEl = document.getElementById('newPassword');
+        const confirmPasswordEl = document.getElementById('confirmPassword');
 
-      if (passwordChangeAttempted) {
-          const storedPassword = localStorage.getItem('savedPassword') || 'admin123';
-          if (currentPassword !== storedPassword) {
-              alert('Senha atual incorreta!');
-              passwordChangeOk = false;
-          } else if (!newPassword || newPassword !== confirmPassword) {
-              alert('Nova senha e confirmação não coincidem ou estão vazias.');
-              passwordChangeOk = false;
-          } else if (newPassword.length < 6) {
-              alert('A nova senha deve ter pelo menos 6 caracteres.');
-               passwordChangeOk = false;
-          }
+        const currentPassword = currentPasswordEl?.value;
+        const newPassword = newPasswordEl?.value;
+        const confirmPassword = confirmPasswordEl?.value;
 
-          if (passwordChangeOk) {
-              console.log("Senha seria atualizada para (simulação):", newPassword);
-              if(localStorage.getItem('savedPassword')) {
-                  localStorage.setItem('savedPassword', newPassword);
-                  console.log("Senha salva no localStorage atualizada.");
-              } else {
-                  console.log("Senha não estava salva ('Lembrar dados'), apenas validada.");
-              }
-          } else {
-              return;
-          }
-      }
+        let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
+        let passwordChangeOk = true;
 
-      if (newName) {
-          localStorage.setItem('savedUsername', newName);
+        if (passwordChangeAttempted) {
+            const storedPassword = localStorage.getItem('savedPassword') || 'admin123';
+            if (!currentPassword || currentPassword !== storedPassword) {
+                alert('Senha atual incorreta ou não fornecida!');
+                passwordChangeOk = false;
+                currentPasswordEl?.focus();
+            } else if (!newPassword || newPassword !== confirmPassword) {
+                alert('Nova senha e confirmação não coincidem ou estão vazias.');
+                passwordChangeOk = false;
+                newPasswordEl?.focus();
+            } else if (newPassword.length < 6) {
+                alert('A nova senha deve ter pelo menos 6 caracteres.');
+                passwordChangeOk = false;
+                 newPasswordEl?.focus();
+            }
 
-          if (newImgSrc.startsWith('data:image/')) {
-              try {
-                  localStorage.setItem('savedProfilePicLarge', newImgSrc);
-              } catch (error) {
-                  console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error);
-                  alert("Não foi possível salvar a imagem. Pode ser muito grande. Tente uma imagem menor.");
-                  const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-                  modalProfileImg.src = previousPic;
-                  localStorage.removeItem('savedProfilePicLarge');
-                  return;
-              }
-          } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE && localStorage.getItem('savedProfilePicLarge')) {
-              localStorage.removeItem('savedProfilePicLarge');
-          }
+            if (passwordChangeOk) {
+                console.log("Simulação: Senha seria atualizada para:", newPassword);
+                if(localStorage.getItem('savedPassword')) {
+                    localStorage.setItem('savedPassword', newPassword);
+                    console.log("Simulação: Senha salva no localStorage atualizada.");
+                } else {
+                    console.log("Simulação: Senha validada, mas não estava salva ('Lembrar dados').");
+                }
+                 if(currentPasswordEl) currentPasswordEl.value = '';
+                 if(newPasswordEl) newPasswordEl.value = '';
+                 if(confirmPasswordEl) confirmPasswordEl.value = '';
+            } else {
+                return;
+            }
+        }
 
-          updateUserInfo();
-          closeProfileModal();
-      } else {
-         alert('O nome de usuário não pode ficar vazio.');
-      }
-    });
+        if (newName) {
+            localStorage.setItem('savedUsername', newName);
+
+            if (newImgSrc && newImgSrc.startsWith('data:image/')) {
+                try {
+                    localStorage.setItem('savedProfilePicLarge', newImgSrc);
+                } catch (error) {
+                    console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error);
+                    alert("Não foi possível salvar a imagem. Pode ser muito grande (limite ~5MB). Tente uma imagem menor ou remova a atual.");
+                    const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
+                    if (modalProfileImg) modalProfileImg.src = previousPic;
+                    localStorage.removeItem('savedProfilePicLarge');
+                    return;
+                }
+            } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE || !newImgSrc) {
+                 localStorage.removeItem('savedProfilePicLarge');
+                 console.log("Imagem de perfil removida ou redefinida para padrão.");
+            }
+
+            updateUserInfo();
+            closeProfileModal();
+        } else {
+           alert('O nome de usuário não pode ficar vazio.');
+           profileNameInput?.focus();
+        }
+      });
+    }
 
     function updateUserInfo() {
         const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
         const profilePicBase64Large = localStorage.getItem('savedProfilePicLarge');
 
         const displayPicSmall = profilePicBase64Large || DEFAULT_PROFILE_PIC_SMALL;
-        const displayPicMedium = profilePicBase64Large || DEFAULT_PROFILE_PIC_MEDIUM;
         const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE;
 
         if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username;
-
         if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall;
         if(modalProfileImg) modalProfileImg.src = modalPic;
+
     }
 
     function applySavedTheme() {
@@ -1195,11 +1287,7 @@
         const currentTheme = bodyElement.classList.contains('light-theme') ? 'light' : 'dark';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-        if (newTheme === 'light') {
-            bodyElement.classList.add('light-theme');
-        } else {
-            bodyElement.classList.remove('light-theme');
-        }
+        bodyElement.classList.toggle('light-theme', newTheme === 'light');
         localStorage.setItem('theme', newTheme);
         updateThemeToggleUI(newTheme);
     }
@@ -1208,14 +1296,15 @@
         const isLight = theme === 'light';
         const iconClass = isLight ? 'bi-sun-fill' : 'bi-moon-stars-fill';
         const text = isLight ? 'Tema Claro' : 'Tema Escuro';
+        const nextTheme = isLight ? 'escuro' : 'claro';
 
         if (themeIconDesktop) themeIconDesktop.className = `bi ${iconClass} w-5 text-center text-lg`;
         if (themeTextDesktop) themeTextDesktop.textContent = text;
-        if (themeToggleDesktopBtn) themeToggleDesktopBtn.setAttribute('aria-label', `Mudar para tema ${isLight ? 'escuro' : 'claro'}`);
+        if (themeToggleDesktopBtn) themeToggleDesktopBtn.setAttribute('aria-label', `Mudar para tema ${nextTheme}`);
 
         if (themeIconMobile) themeIconMobile.className = `bi ${iconClass}`;
         if (themeTextMobile) themeTextMobile.textContent = text;
-        if (themeToggleMobileBtn) themeToggleMobileBtn.setAttribute('aria-label', `Mudar para tema ${isLight ? 'escuro' : 'claro'}`);
+        if (themeToggleMobileBtn) themeToggleMobileBtn.setAttribute('aria-label', `Mudar para tema ${nextTheme}`);
     }
 
     function handleResize() {
@@ -1242,12 +1331,12 @@
           const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
           const homeLink = document.querySelector(initialLinkSelector);
           if (homeLink) {
-             setTimeout(() => loadPage('home.html', homeLink, isMobile), 50);
+              setTimeout(() => loadPage('home.html', homeLink, isMobile), 50);
           } else {
-             const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-             if(targetFrame) targetFrame.src = 'home.html';
-              hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay);
-             console.warn("Link Home não encontrado na carga inicial.");
+              const targetFrame = isMobile ? mobileMainFrame : mainFrame;
+              if(targetFrame) targetFrame.src = 'home.html';
+               hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay);
+              console.warn("Link Home não encontrado na carga inicial.");
           }
       } else {
           showFlexElement(loginOverlay);
@@ -1257,15 +1346,35 @@
 
           const savedUsername = localStorage.getItem('savedUsername');
           const savedPassword = localStorage.getItem('savedPassword');
-          usernameField.value = savedUsername || '';
-          passwordField.value = '';
-          rememberMe.checked = !!savedPassword;
+          if (usernameField) usernameField.value = savedUsername || '';
+          if (passwordField) passwordField.value = '';
+          if (rememberMe) rememberMe.checked = !!savedPassword;
       }
 
       setupIframeListener(mainFrame, iframeSpinnerOverlay);
       setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay);
 
       window.addEventListener('resize', handleResize);
+
+      document.addEventListener('keydown', (e) => {
+         if (e.key === 'Escape') {
+              if (profileModal?.classList.contains('flex')) {
+                  closeProfileModal();
+              } else if (mobileSidebar?.classList.contains('translate-x-0')) {
+                  toggleMobileSidebar();
+              }
+          }
+      });
+
+       profileTriggers.forEach(trigger => {
+            trigger.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openProfileModal();
+                }
+            });
+       });
+
     });
 
   </script>
