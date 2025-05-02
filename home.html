@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -17,14 +18,22 @@
         extend: {
           colors: {
             surface: '#212529',
-            primary: { 500: '#4dabf7', 600: '#339af0' },
-            slate: { 300: '#cbd5e1', 400: '#94a3b8', 600: '#475569', 700: '#334155' },
-            green: { 400: '#4ade80'},
-            yellow: { 400: '#facc15'},
-            red: { 400: '#fb7185'}
+            primary: { 300: '#6abff9', 400: '#4dabf7', 500: '#339af0', 600: '#1b85db', 700: '#1971c2' },
+            slate: { 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155' },
+            green: { 400: '#4ade80', 500: '#22c55e'},
+            yellow: { 400: '#facc15', 500: '#eab308'},
+            red: { 400: '#fb7185', 500: '#f43f5e'}
           },
-          boxShadow: { glow: '0 0 8px rgba(77,171,247,.35)' },
-          backdropBlur: { xs: '2px' }
+          boxShadow: {
+             glow: '0 0 10px rgba(77,171,247,.4)',
+             card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+             'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)'
+           },
+          backdropBlur: { xs: '3px' },
+          borderRadius: {
+              'xl': '0.75rem',
+              '2xl': '1rem'
+          }
         }
       }
     };
@@ -33,103 +42,207 @@
     @keyframes spin { to { transform: rotate(360deg) } }
     .animate-spin { animation: spin 1s linear infinite }
     html, body { height: 100%; }
-    body { background: #1a1d21; display: flex; flex-direction: column; }
+    body { background: #181a1d; display: flex; flex-direction: column; }
 
     main { flex-grow: 1; display: flex; flex-direction: column; }
 
     #report-cards-wrapper, #chart-container { flex-grow: 1; overflow-y: auto; }
-    #chart-container { min-height: 400px; }
+    #chart-container { min-height: 450px; }
 
     ::-webkit-scrollbar { width: 8px; height: 8px }
-    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px }
+    ::-webkit-scrollbar-track { background: #212529; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #4dabf7; outline-offset: 2px; }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid theme('colors.primary.400'); outline-offset: 2px; }
 
     .report-card {
-      background-color: rgba(33, 37, 41, 0.8);
-      border: 1px solid rgba(77, 171, 247, 0.2);
-      border-radius: 0.75rem;
-      padding: 1.25rem;
+      background-color: rgba(33, 37, 41, 0.85);
+      border: 1px solid rgba(77, 171, 247, 0.15);
+      border-radius: theme('borderRadius.xl');
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s ease-in-out;
-      min-height: 120px;
+      transition: all 0.3s ease-in-out;
+      box-shadow: theme('boxShadow.card');
+      min-height: 130px;
+      position: relative;
+      overflow: hidden;
     }
     .report-card:hover {
       border-color: rgba(77, 171, 247, 0.4);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transform: translateY(-2px);
+      box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.glow');
+      transform: translateY(-4px);
     }
-    .report-card .title { font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 0.5rem; }
-    .report-card .value { font-size: 1.5rem; font-weight: 700; color: #4dabf7; margin-bottom: 0.25rem; line-height: 1.2; }
-    .report-card .value.count { color: #cbd5e1; font-size: 1.75rem; }
-    .report-card .detail { font-size: 0.75rem; color: #475569; margin-top: auto; }
-    .report-card .value.paid { color: #4ade80; }
-    .report-card .value.pending { color: #facc15; }
-    .report-card .value.overdue { color: #fb7185; }
+    .report-card .icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        opacity: 0.15;
+        width: 2.5rem;
+        height: 2.5rem;
+        color: theme('colors.slate.500');
+        transition: opacity 0.3s ease;
+    }
+     .report-card:hover .icon {
+        opacity: 0.3;
+     }
+
+    .report-card .title { font-size: 0.875rem; font-weight: 500; color: theme('colors.slate.400'); margin-bottom: 0.5rem; }
+    .report-card .value { font-size: 1.75rem; font-weight: 700; color: theme('colors.primary.400'); margin-bottom: 0.25rem; line-height: 1.2; }
+    .report-card .value.count { color: theme('colors.slate.300'); font-size: 2rem; }
+    .report-card .detail { font-size: 0.8rem; color: theme('colors.slate.500'); margin-top: auto; }
+
+    .report-card .value.paid { color: theme('colors.green.400') !important; }
+    .report-card .value.pending { color: theme('colors.yellow.400') !important; }
+    .report-card .value.overdue { color: theme('colors.red.400') !important; }
+    .report-card .icon.paid { color: theme('colors.green.500'); }
+    .report-card .icon.pending { color: theme('colors.yellow.500'); }
+    .report-card .icon.overdue { color: theme('colors.red.500'); }
+    .report-card .icon.total { color: theme('colors.primary.500'); }
+
 
     .view-toggle-button {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: theme('borderRadius.lg');
       font-size: 0.875rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      transition: all 0.2s ease;
       border: 1px solid transparent;
     }
     .view-toggle-button.active {
-      background-color: rgba(77, 171, 247, 0.15);
-      color: #4dabf7;
-      border-color: rgba(77, 171, 247, 0.3);
+      background-color: theme('colors.primary.500/20');
+      color: theme('colors.primary.300');
+      border-color: theme('colors.primary.500/40');
+      box-shadow: 0 1px 3px rgba(77,171,247,.1);
     }
     .view-toggle-button:not(.active) {
-      color: #94a3b8;
+      color: theme('colors.slate.400');
       background-color: transparent;
     }
-     .view-toggle-button:not(.active):hover {
-       background-color: rgba(77, 171, 247, 0.05);
-       color: #cbd5e1;
-    }
+      .view-toggle-button:not(.active):hover {
+        background-color: theme('colors.primary.500/10');
+        color: theme('colors.slate.300');
+      }
+
+     header {
+         box-shadow: 0 2px 4px rgba(0,0,0,.2);
+     }
+
+     #manual-refresh {
+         transition: all 0.2s ease;
+         display: inline-flex;
+         align-items: center;
+         gap: 0.5rem;
+     }
+     #manual-refresh:disabled {
+         opacity: 0.7;
+         cursor: not-allowed;
+     }
+     .refresh-icon {
+         width: 1em;
+         height: 1em;
+         display: inline-block;
+     }
+     .refresh-icon.spinning {
+         animation: spin 1s linear infinite;
+     }
+
+      #chart-container {
+          background-color: rgba(33, 37, 41, 0.85);
+          border: 1px solid rgba(77, 171, 247, 0.15);
+          border-radius: theme('borderRadius.xl');
+          padding: 1.5rem;
+          box-shadow: theme('boxShadow.card');
+      }
+
+     #error-message {
+         display: flex;
+         align-items: center;
+         gap: 0.75rem;
+         font-weight: 500;
+     }
+     .error-icon {
+         width: 1.25rem;
+         height: 1.25rem;
+         flex-shrink: 0;
+     }
 
   </style>
 </head>
 <body class="text-slate-300 min-h-screen flex flex-col antialiased">
 
-  <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40 flex-shrink-0">
-    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-2 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500 order-1">Relatórios • Google Sheets</h1>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" />
+    </symbol>
+    <symbol id="icon-chart-bar" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" />
+      <path fill-rule="evenodd" d="M1 14.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H1.75a.75.75 0 01-.75-.75zm6-10a.75.75 0 01.75-.75h8.5a.75.75 0 010 1.5h-8.5a.75.75 0 01-.75-.75zM4 6a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014 6z" clip-rule="evenodd" />
+    </symbol>
+    <symbol id="icon-currency-dollar" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10.75 10.818v2.43a.75.75 0 01-1.5 0v-2.43c-1.092-.115-2.11-.6-2.818-1.215C5.62 8.98 5.002 8.106 5 7.182 5 5.64 6.17 4.448 7.682 4.08c.43-.108.878-.157 1.318-.157h.01a6.32 6.32 0 011.318.157C11.83 4.448 13 5.64 13 7.182c-.002.924-.62 1.798-1.42 2.421-.706.615-1.726 1.1-2.83 1.215z" />
+        <path fill-rule="evenodd" d="M8.894 3.067A.75.75 0 019.75 2.25h.5a.75.75 0 01.75.75v.859a4.834 4.834 0 015.217 4.311c.002.97-.35 1.887-.986 2.606-.66.746-1.52 1.328-2.512 1.663V15a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-1.486c-.99-.335-1.85-.917-2.51-1.663C5.35 11.103 5 10.186 5 9.216a4.834 4.834 0 015.217-4.311V4.75a.75.75 0 01-.75.75h-.5a.75.75 0 01-.856-.817l.012-.116.02-.115.026-.115.033-.114.038-.115.045-.114.05-.114c.017-.038.033-.076.05-.114l.058-.13a.75.75 0 01.56-.44zM10 8.682c.545 0 1.048-.12 1.48-.322.449-.21.799-.512 1.02-.858.22-.346.3-.738.3-1.139 0-.816-.566-1.49-1.318-1.657a4.824 4.824 0 00-1.482-.206 4.843 4.843 0 00-1.482.206C7.766 4.861 7.2 5.535 7.2 6.353c0 .401.08.793.3 1.139.22.346.57.647 1.02.858.432.201.935.321 1.48.332z" clip-rule="evenodd" />
+    </symbol>
+    <symbol id="icon-check-circle" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+    </symbol>
+    <symbol id="icon-clock" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+    </symbol>
+    <symbol id="icon-exclamation-triangle" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+    </symbol>
+    <symbol id="icon-list-bullet" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+    </symbol>
+  </svg>
+
+  <header class="w-full backdrop-blur-sm bg-surface/90 border-b border-primary-500/30 sticky top-0 z-40 flex-shrink-0">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-3 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <div class="flex items-center gap-2 order-1">
+             <svg class="h-6 w-6 sm:h-7 sm:w-7 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2z"></path></svg>
+            <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-400">Relatórios • GSheets</h1>
+        </div>
         <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap">
-            <span id="grand-total-header" class="text-primary-500 font-semibold text-xs sm:text-sm text-center"></span>
+            <span id="grand-total-header" class="text-primary-400 font-semibold text-xs sm:text-sm text-center"></span>
             <span id="last-update" class="text-slate-400 text-xs sm:text-sm text-center"></span>
         </div>
-        <button id="manual-refresh" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20 text-primary-300 text-xs sm:text-sm font-medium shadow-glow order-2 sm:order-3 ml-auto sm:ml-0"> Atualizar </button>
+        <button id="manual-refresh" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border border-primary-600 bg-primary-500/15 hover:bg-primary-500/25 text-primary-300 text-xs sm:text-sm font-medium shadow-glow order-2 sm:order-3 ml-auto sm:ml-0">
+            <svg class="refresh-icon" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg>
+            <span>Atualizar</span>
+        </button>
       </div>
   </header>
 
   <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md">
-    <div class="h-12 w-12 border-[6px] border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-      <p class="text-primary-300 text-lg font-medium">Carregando…</p>
+    <div class="h-14 w-14 border-8 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+      <p class="text-primary-300 text-xl font-semibold">Carregando dados…</p>
   </div>
 
-  <main id="main-content" class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6 flex-grow">
+  <main id="main-content" class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8 flex-grow">
 
-    <div class="flex justify-center gap-2 bg-surface/60 p-1 rounded-lg flex-shrink-0">
+    <div class="flex justify-center gap-2 bg-surface/70 p-1.5 rounded-xl flex-shrink-0 self-center shadow-md">
       <button id="view-toggle-reports" class="view-toggle-button active">Relatórios</button>
       <button id="view-toggle-chart" class="view-toggle-button">Gráfico Semanal</button>
     </div>
 
-    <div id="error-message" class="hidden w-full p-4 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg flex-shrink-0"></div>
+    <div id="error-message" class="hidden w-full p-4 text-slate-300 bg-slate-700/40 border border-slate-600 rounded-lg flex-shrink-0">
+        <svg class="error-icon text-primary-400" aria-hidden="true"><use xlink:href="#icon-exclamation-triangle"></use></svg>
+        <span class="flex-grow text-left"></span>
+    </div>
 
-    <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+    <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
     </section>
 
-    <section id="chart-container" class="hidden w-full p-4 bg-surface/80 rounded-lg border border-primary-500/20 flex flex-col items-center">
-       <h2 class="text-xl font-semibold text-primary-500 mb-4">Pagamentos por Semana (Mês Atual)</h2>
-       <div class="w-full max-w-3xl h-[400px] sm:h-[500px]">
+    <section id="chart-container" class="hidden w-full flex flex-col items-center">
+        <h2 class="text-xl font-semibold text-primary-400 mb-6">Pagamentos por Semana (Mês Atual)</h2>
+        <div class="w-full max-w-4xl h-[450px] sm:h-[550px]">
           <canvas id="weeklyPaymentsChart"></canvas>
-       </div>
-       <p id="chart-error-message" class="hidden mt-4 text-yellow-300 text-sm"></p>
+        </div>
+        <p id="chart-error-message" class="hidden mt-4 text-yellow-400 text-sm font-medium"></p>
     </section>
     <br><br><br><br>
   </main>
@@ -155,57 +268,64 @@
     let weeklyChartInstance = null;
 
     const $loader = document.getElementById('loader');
-    const $errorMsg = document.getElementById('error-message');
+    const $errorMsgContainer = document.getElementById('error-message');
+    const $errorMsgText = $errorMsgContainer.querySelector('span');
     const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
     const $lastUpdate = document.getElementById('last-update');
     const $grandTotalHeader = document.getElementById('grand-total-header');
     const $manualRefreshBtn = document.getElementById('manual-refresh');
+    const $refreshIcon = $manualRefreshBtn.querySelector('.refresh-icon');
+    const $refreshBtnText = $manualRefreshBtn.querySelector('span');
     const $chartContainer = document.getElementById('chart-container');
     const $chartCanvas = document.getElementById('weeklyPaymentsChart');
     const $chartErrorMsg = document.getElementById('chart-error-message');
     const $viewToggleReportsBtn = document.getElementById('view-toggle-reports');
     const $viewToggleChartBtn = document.getElementById('view-toggle-chart');
 
-    $manualRefreshBtn.onclick = loadData;
-    $viewToggleReportsBtn.onclick = () => switchView('reports');
-    $viewToggleChartBtn.onclick = () => switchView('chart');
-
-    async function fetchSheetData() {
-        const response = await fetch(`${baseURL}&_=${Date.now()}`); if (!response.ok) throw new Error(`HTTP error ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao parsear JSONP:", e); console.error("Texto recebido:", text); throw new Error('Falha ao parsear dados JSON da API do Google Sheets.'); }
-    }
+    Chart.register(ChartDataLabels);
 
     const padZero = num => num.toString().padStart(2, '0');
     const formatDateBR = date => {
-        if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
+       if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
     };
     function parseDateValue(value) {
         if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const utcDays = Math.floor(value - 25569); const date = new Date(0); date.setUTCDate(date.getUTCDate() + utcDays); return date; } if (typeof value !== 'string') return null; let match; match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (match) return new Date(Date.UTC(+match[1], +match[2], +match[3])); match = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (match) return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3])); match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (match) { let year = +match[3]; if (year < 100) year += 2000; return new Date(Date.UTC(year, +match[2] - 1, +match[1])); } const parsed = new Date(value); if (!isNaN(parsed.getTime())) return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())); return null;
     }
     const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
+    const formatCurrencyShort = value => {
+        if (typeof value !== 'number' || isNaN(value)) return '–';
+        if (value === 0) return 'R$0';
+        if (value < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0}); // Sem centavos < 1k
+        if (value < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k';
+        return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M';
+    }
+
     function getNumericValue(cellValue) {
-        if (typeof cellValue === 'number') return cellValue;
-        if (typeof cellValue === 'string') {
-            const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.');
-            const num = parseFloat(cleanedString);
-            return isNaN(num) ? 0 : num;
-        }
-        return 0;
+        if (typeof cellValue === 'number') return cellValue; if (typeof cellValue === 'string') { const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); const num = parseFloat(cleanedString); return isNaN(num) ? 0 : num; } return 0;
     }
     function getWeekOfMonth(date) {
-        if (!date || isNaN(date.getTime())) return null;
-        const dayOfMonth = date.getUTCDate();
-        if (dayOfMonth <= 7) return 1;
-        if (dayOfMonth <= 14) return 2;
-        if (dayOfMonth <= 21) return 3;
-        if (dayOfMonth <= 28) return 4;
-        return 5;
+        if (!date || isNaN(date.getTime())) return null; const dayOfMonth = date.getUTCDate(); if (dayOfMonth <= 7) return 1; if (dayOfMonth <= 14) return 2; if (dayOfMonth <= 21) return 3; if (dayOfMonth <= 28) return 4; return 5;
+    }
+
+     async function fetchSheetData() {
+        const response = await fetch(`${baseURL}&_=${Date.now()}`); if (!response.ok) throw new Error(`Erro HTTP ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao parsear JSONP:", e); console.error("Texto recebido:", text); throw new Error('Falha ao parsear dados JSON da API do Google Sheets.'); }
+    }
+
+    function showErrorMessage(message) {
+        $errorMsgText.textContent = message;
+        $errorMsgContainer.classList.remove('hidden');
     }
 
     async function loadData() {
         if (isFetching) return;
         isFetching = true;
-        $errorMsg.classList.add('hidden');
+        $errorMsgContainer.classList.add('hidden');
         if (!isLoaded) $loader.classList.remove('hidden');
+
+        $manualRefreshBtn.disabled = true;
+        $refreshIcon.classList.add('spinning');
+        $refreshBtnText.textContent = 'Atualizando...';
+
 
         try {
             const jsonData = await fetchSheetData();
@@ -215,172 +335,181 @@
 
             headersFull = jsonData.table.cols.map(col => col.label || `Col${col.id}`);
             sheetRows = jsonData.table.rows.map(row => {
-                const cells = Array(headersFull.length).fill(null);
-                if (row && row.c) {
-                    row.c.forEach((cell, index) => {
-                        if (index < headersFull.length) {
-                            cells[index] = cell?.v ?? null;
-                        }
-                    });
-                }
-                return cells;
-            });
+                 const cells = Array(headersFull.length).fill(null);
+                 if (row && row.c) {
+                     row.c.forEach((cell, index) => {
+                         if (index < headersFull.length) {
+                             cells[index] = cell?.v ?? null;
+                         }
+                     });
+                 }
+                 return cells;
+             });
 
             buildReportCards();
             prepareAndRenderWeeklyChart();
             updateHeaderInfo();
-            $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR')}`;
+            $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`;
             isLoaded = true;
 
         } catch (error) {
             console.error("Erro ao carregar dados:", error);
-            $errorMsg.textContent = `Erro ao carregar dados: ${error.message}. Verifique ID/GID da Planilha e permissões de compartilhamento.`;
-            $errorMsg.classList.remove('hidden');
+            showErrorMessage(`Erro ao carregar dados: ${error.message}. Verifique ID/GID da Planilha e permissões.`);
             $reportCardsWrapper.innerHTML = '';
-            if (weeklyChartInstance) {
-                weeklyChartInstance.destroy();
-                weeklyChartInstance = null;
-            }
-            $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico.';
-            $chartErrorMsg.classList.remove('hidden');
+             if (weeklyChartInstance) {
+                 weeklyChartInstance.destroy();
+                 weeklyChartInstance = null;
+             }
+             $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico.';
+             $chartErrorMsg.classList.remove('hidden');
+             $grandTotalHeader.textContent = 'Total Geral: Erro';
 
         } finally {
             isFetching = false;
             $loader.classList.add('hidden');
+            $manualRefreshBtn.disabled = false;
+            $refreshIcon.classList.remove('spinning');
+            $refreshBtnText.textContent = 'Atualizar';
         }
     }
 
-    function buildReportCards() {
-      $reportCardsWrapper.innerHTML = '';
+     function buildReportCards() {
+        $reportCardsWrapper.innerHTML = '';
 
-      const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
-      const valorIndex = findIndex(valorRegex);
-      const vencIndex = findIndex(vencRegex);
-      const pagtoIndex = findIndex(pagtoRegex);
-      const statusIndex = findIndex(statusRegex);
-
-      if (valorIndex === -1) {
-          $errorMsg.textContent = 'Erro: Coluna de "Valor" não encontrada. Cards não podem ser gerados.';
-          $errorMsg.classList.remove('hidden');
-          console.error('Coluna de Valor não encontrada. Regex usado:', valorRegex);
-          return;
-      }
-      if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada. Regex:', vencRegex);
-      if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada. Regex:', pagtoRegex, 'Gráfico semanal pode não funcionar.');
-      if (statusIndex === -1) console.warn('Coluna de Status não encontrada. Regex:', statusRegex);
-
-      let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0;
-      let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0;
-      const today = new Date(); today.setUTCHours(0, 0, 0, 0);
-
-      sheetRows.forEach(row => {
-          const valor = getNumericValue(row[valorIndex]);
-          totalGeral += valor;
-          countTotal++;
-
-          const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null;
-          const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null;
-          const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
-
-          let isPago = false, isPendente = false, isVencido = false;
-
-          if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; }
-          else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; }
-          else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; }
-          else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; }
-          else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; }
-          else { isPendente = true; }
-
-          if (isPago) { totalPago += valor; countPago++; }
-          else if (isVencido) { totalVencido += valor; countVencido++; }
-          else { totalPendente += valor; countPendente++; }
-      });
-
-        const reportData = [
-           { title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '' },
-           { title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid' },
-           { title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending' },
-           { title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue' },
-           { title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid' },
-           { title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending' },
-           { title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue' },
-        ];
-
-        reportData.forEach(data => {
-            const card = document.createElement('div');
-            card.className = 'report-card';
-            const formattedValue = data.valueClass.includes('count')
-                ? data.value.toLocaleString('pt-BR')
-                : formatCurrency(data.value);
-            card.innerHTML = `
-                <div>
-                    <h3 class="title">${data.title}</h3>
-                    <p class="value ${data.valueClass}">${formattedValue}</p>
-                </div>
-                <p class="detail">${data.detail}</p>`;
-            $reportCardsWrapper.appendChild(card);
-        });
-    }
-
-    function prepareAndRenderWeeklyChart() {
-        $chartErrorMsg.classList.add('hidden');
         const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
         const valorIndex = findIndex(valorRegex);
+        const vencIndex = findIndex(vencRegex);
         const pagtoIndex = findIndex(pagtoRegex);
+        const statusIndex = findIndex(statusRegex);
 
-        if (valorIndex === -1 || pagtoIndex === -1) {
-            console.warn('Coluna de Valor ou Pagamento não encontrada. Gráfico semanal não será gerado.');
-            $chartErrorMsg.textContent = 'Coluna de Valor e/ou Data de Pagamento não encontrada(s) na planilha.';
-            $chartErrorMsg.classList.remove('hidden');
-            if (weeklyChartInstance) {
-              weeklyChartInstance.destroy();
-              weeklyChartInstance = null;
-            }
-            const ctx = $chartCanvas.getContext('2d');
-            ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height);
-            return;
+        if (valorIndex === -1) {
+             showErrorMessage('Erro: Coluna de "Valor" não encontrada. Os cards não podem ser gerados.');
+             console.error('Coluna de Valor não encontrada. Regex:', valorRegex);
+             return;
         }
+        if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada. Regex:', vencRegex);
+        if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada. Regex:', pagtoRegex, 'Gráfico semanal pode não funcionar.');
+        if (statusIndex === -1) console.warn('Coluna de Status não encontrada. Regex:', statusRegex);
 
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-
-        const weeklyTotals = [0, 0, 0, 0, 0];
-        const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"];
+        let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0;
+        let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0;
+        const today = new Date(); today.setUTCHours(0, 0, 0, 0);
 
         sheetRows.forEach(row => {
-            const dataPagtoRaw = row[pagtoIndex];
-            const dataPagto = parseDateValue(dataPagtoRaw);
+            const valor = getNumericValue(row[valorIndex]);
+            totalGeral += valor;
+            countTotal++;
 
-            if (dataPagto && !isNaN(dataPagto.getTime()) &&
-                dataPagto.getUTCMonth() === currentMonth &&
-                dataPagto.getUTCFullYear() === currentYear) {
+            const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null;
+            const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null;
+            const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
 
-                const valor = getNumericValue(row[valorIndex]);
-                const weekNumber = getWeekOfMonth(dataPagto);
+            let isPago = false, isPendente = false, isVencido = false;
 
-                if (weekNumber) {
-                    weeklyTotals[weekNumber - 1] += valor;
-                }
-            }
+            if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; }
+            else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; }
+            else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; }
+            else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; }
+            else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; }
+            else { isPendente = true; }
+
+            if (isPago) { totalPago += valor; countPago++; }
+            else if (isVencido) { totalVencido += valor; countVencido++; }
+            else { totalPendente += valor; countPendente++; }
         });
 
-        renderWeeklyChart(weekLabels, weeklyTotals);
+        const reportData = [
+             { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' },
+             { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' },
+             { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' },
+             { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' },
+             { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' },
+             { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' },
+             { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' },
+             { type: 'total', title: "Total de Lançamentos", value: countTotal, detail: ` `, valueClass: 'count', iconId: 'icon-list-bullet'}
+         ];
+
+         reportData.forEach(data => {
+             const card = document.createElement('div');
+             card.className = 'report-card';
+             const formattedValue = data.valueClass.includes('count')
+                 ? data.value.toLocaleString('pt-BR')
+                 : formatCurrency(data.value);
+
+             const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+             iconSVG.classList.add('icon', data.type);
+             const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+             iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`);
+             iconSVG.appendChild(iconUse);
+             card.appendChild(iconSVG);
+
+             const contentDiv = document.createElement('div');
+             contentDiv.innerHTML = `
+                 <div>
+                     <h3 class="title">${data.title}</h3>
+                     <p class="value ${data.valueClass}">${formattedValue}</p>
+                 </div>
+                 <p class="detail">${data.detail}</p>`;
+             card.appendChild(contentDiv);
+
+             $reportCardsWrapper.appendChild(card);
+         });
     }
+
+     function prepareAndRenderWeeklyChart() {
+         $chartErrorMsg.classList.add('hidden');
+         const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
+         const valorIndex = findIndex(valorRegex);
+         const pagtoIndex = findIndex(pagtoRegex);
+
+         if (valorIndex === -1 || pagtoIndex === -1) {
+             console.warn('Coluna de Valor ou Pagamento não encontrada. Gráfico semanal não será gerado.');
+             $chartErrorMsg.textContent = 'Coluna de Valor e/ou Data de Pagamento não encontrada(s) na planilha.';
+             $chartErrorMsg.classList.remove('hidden');
+             if (weeklyChartInstance) {
+                 weeklyChartInstance.destroy(); weeklyChartInstance = null;
+             }
+             const ctx = $chartCanvas.getContext('2d');
+             ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height);
+             return;
+         }
+
+         const now = new Date();
+         const currentMonth = now.getMonth();
+         const currentYear = now.getFullYear();
+
+         const weeklyTotals = [0, 0, 0, 0, 0];
+         const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"];
+
+         sheetRows.forEach(row => {
+             const dataPagtoRaw = row[pagtoIndex];
+             const dataPagto = parseDateValue(dataPagtoRaw);
+
+             if (dataPagto && !isNaN(dataPagto.getTime()) &&
+                 dataPagto.getUTCMonth() === currentMonth &&
+                 dataPagto.getUTCFullYear() === currentYear) {
+                 const valor = getNumericValue(row[valorIndex]);
+                 const weekNumber = getWeekOfMonth(dataPagto);
+                 if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; }
+             }
+         });
+
+         renderWeeklyChart(weekLabels, weeklyTotals);
+     }
 
     function renderWeeklyChart(labels, data) {
         const ctx = $chartCanvas.getContext('2d');
 
-        if (weeklyChartInstance) {
-            weeklyChartInstance.destroy();
-        }
+        if (weeklyChartInstance) { weeklyChartInstance.destroy(); }
 
         const chartColors = {
-            backgroundColor: 'rgba(77, 171, 247, 0.3)',
-            borderColor: 'rgba(77, 171, 247, 0.8)',
-            hoverBackgroundColor: 'rgba(77, 171, 247, 0.5)',
-            hoverBorderColor: '#4dabf7',
-            textColor: '#cbd5e1'
+            backgroundColor: 'rgba(77, 171, 247, 0.5)',
+            borderColor: 'rgba(77, 171, 247, 1)',
+            hoverBackgroundColor: 'rgba(77, 171, 247, 0.7)',
+            hoverBorderColor: tailwind.config.theme.extend.colors.primary[400],
+            textColor: tailwind.config.theme.extend.colors.slate[300],
+            gridColor: 'rgba(71, 85, 105, 0.15)',
+            tooltipBg: 'rgba(33, 37, 41, 0.95)'
         };
 
         weeklyChartInstance = new Chart(ctx, {
@@ -392,58 +521,95 @@
                     data: data,
                     backgroundColor: chartColors.backgroundColor,
                     borderColor: chartColors.borderColor,
-                    borderWidth: 1,
+                    borderWidth: 1.5,
                     hoverBackgroundColor: chartColors.hoverBackgroundColor,
-                    hoverBorderColor: chartColors.hoverBorderColor
+                    hoverBorderColor: chartColors.hoverBorderColor,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    barPercentage: 0.7,
+                    categoryPercentage: 0.8
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 30
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
                             color: chartColors.textColor,
-                            callback: function(value, index, values) {
-                                return formatCurrency(value);
-                            }
+                            callback: function(value) { return formatCurrencyShort(value); }
                         },
                         grid: {
-                           color: 'rgba(71, 85, 105, 0.3)'
+                             color: chartColors.gridColor,
+                             drawTicks: false
+                        },
+                        border: {
+                            display: false
                         }
                     },
                     x: {
                         ticks: {
-                            color: chartColors.textColor
+                             color: chartColors.textColor,
+                             font: { size: 11 }
+                         },
+                        grid: {
+                            display: false
                         },
-                         grid: {
-                           color: 'rgba(71, 85, 105, 0.1)'
+                         border: {
+                            display: false
                         }
                     }
                 },
                 plugins: {
                     legend: {
-                        display: false
+                         display: false
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(33, 37, 41, 0.9)',
+                        enabled: true,
+                        backgroundColor: chartColors.tooltipBg,
                         titleColor: chartColors.textColor,
                         bodyColor: chartColors.textColor,
+                        borderColor: chartColors.borderColor,
+                        borderWidth: 1,
+                        padding: 10,
+                        cornerRadius: 4,
+                        displayColors: false,
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
+                                if (label) { label += ': '; }
                                 if (context.parsed.y !== null) {
                                     label += formatCurrency(context.parsed.y);
                                 }
                                 return label;
                             }
                         }
+                    },
+                    datalabels: {
+                        display: context => context.dataset.data[context.dataIndex] > 0,
+                        anchor: 'end',
+                        align: 'top',
+                        offset: 4,
+                        color: chartColors.textColor,
+                        font: {
+                            size: 10,
+                            weight: '500'
+                        },
+                        formatter: (value, context) => {
+                            return formatCurrencyShort(value);
+                        }
                     }
-                }
+                },
+                 interaction: {
+                    mode: 'index',
+                    intersect: false,
+                 },
             }
         });
     }
@@ -463,14 +629,22 @@
     }
 
     function updateHeaderInfo() {
-        const valorIndex = headersFull.findIndex(h => h && valorRegex.test(h.toLowerCase()));
-        if (valorIndex === -1) {
-            $grandTotalHeader.textContent = 'Total Geral: Erro (Coluna Valor?)';
-            return;
-        }
-        const grandTotal = sheetRows.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0);
-        $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`;
+         const valorIndex = headersFull.findIndex(h => h && valorRegex.test(h.toLowerCase()));
+         if (valorIndex === -1) {
+             $grandTotalHeader.textContent = 'Total Geral: Erro (Coluna Valor?)';
+             return;
+         }
+         if (sheetRows.length > 0) {
+             const grandTotal = sheetRows.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0);
+             $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`;
+         } else {
+              $grandTotalHeader.textContent = 'Total Geral: Erro';
+         }
     }
+
+    $manualRefreshBtn.onclick = loadData;
+    $viewToggleReportsBtn.onclick = () => switchView('reports');
+    $viewToggleChartBtn.onclick = () => switchView('chart');
 
     switchView('reports');
     loadData();
