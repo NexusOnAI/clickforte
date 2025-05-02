@@ -112,7 +112,7 @@
         border-bottom: 1px solid #6b7280;
         font-weight: 600;
     }
-     .apexcharts-tooltip-marker { margin-right: 5px; }
+     /* .apexcharts-tooltip-marker { margin-right: 5px; }  -- Linha removida ou comentada se preferir não ter o espaço */
      /* Donut center label */
      .apexcharts-pie-label { fill: #cbd5e1 !important; }
 
@@ -780,7 +780,7 @@
           formatter: formatCurrency, // Default y-axis formatter (use full currency)
           title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' }
         },
-        marker: { show: true }, // Show color marker in tooltip
+        marker: { show: false }, // <<<--- REMOVIDO O MARCADOR DA TOOLTIP
       },
       dataLabels: { enabled: false }, // Keep data labels off by default
       grid: {
@@ -856,7 +856,7 @@
             axisTicks: { show: false },
         },
          tooltip: { // Customize tooltip specifically for area charts
-            ...baseChartOptions.tooltip,
+            ...baseChartOptions.tooltip, // Inherit base tooltip settings (including marker: false)
              theme: 'dark',
             shared: false, // Show tooltip for individual points
              intersect: true,
@@ -874,7 +874,7 @@
                  }
             }
         },
-         markers: { // Add subtle markers
+         markers: { // Add subtle markers ON THE CHART LINE ITSELF (not tooltip)
             size: 3,
             strokeWidth: 0, // No border on marker
             hover: { size: 6 }
@@ -909,7 +909,7 @@
 
     // Donut Chart (Monthly) Options
     const monthlyOptions = {
-      ...baseChartOptions, // Inherit base options
+      ...baseChartOptions, // Inherit base options (including tooltip.marker: false)
       chart: {
         ...baseChartOptions.chart, // Inherit chart settings from base
         type: 'donut',
@@ -931,7 +931,7 @@
         }
       },
        tooltip: { // Customize tooltip for donut chart
-         ...baseChartOptions.tooltip, // Inherit base tooltip settings
+         ...baseChartOptions.tooltip, // Inherit base tooltip settings (including marker: false)
          theme: 'dark',
          y: {
              formatter: function(value, { seriesIndex, dataPointIndex, w }) {
