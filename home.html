@@ -158,17 +158,10 @@
           box-shadow: theme('boxShadow.card');
       }
 
-     #error-message {
-         display: flex;
-         align-items: center;
-         gap: 0.75rem;
-         font-weight: 500;
-     }
-     .error-icon {
-         width: 1.25rem;
-         height: 1.25rem;
-         flex-shrink: 0;
-     }
+     /* Regras de #error-message e .error-icon não são mais necessárias,
+        mas podem ser deixadas aqui ou removidas se preferir */
+     /* #error-message { ... } */
+     /* .error-icon { ... } */
 
   </style>
 </head>
@@ -229,11 +222,6 @@
       <button id="view-toggle-chart" class="view-toggle-button">Gráfico Semanal</button>
     </div>
 
-    <div id="error-message" class="hidden w-full p-4 text-slate-300 bg-slate-700/40 border border-slate-600 rounded-lg flex-shrink-0">
-        <svg class="error-icon text-primary-400" aria-hidden="true"><use xlink:href="#icon-exclamation-triangle"></use></svg>
-        <span class="flex-grow text-left"></span>
-    </div>
-
     <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
     </section>
 
@@ -268,8 +256,7 @@
     let weeklyChartInstance = null;
 
     const $loader = document.getElementById('loader');
-    const $errorMsgContainer = document.getElementById('error-message');
-    const $errorMsgText = $errorMsgContainer.querySelector('span');
+    // Variáveis $errorMsgContainer e $errorMsgText removidas
     const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
     const $lastUpdate = document.getElementById('last-update');
     const $grandTotalHeader = document.getElementById('grand-total-header');
@@ -295,7 +282,7 @@
     const formatCurrencyShort = value => {
         if (typeof value !== 'number' || isNaN(value)) return '–';
         if (value === 0) return 'R$0';
-        if (value < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0}); // Sem centavos < 1k
+        if (value < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0});
         if (value < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k';
         return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M';
     }
@@ -311,15 +298,12 @@
         const response = await fetch(`${baseURL}&_=${Date.now()}`); if (!response.ok) throw new Error(`Erro HTTP ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao parsear JSONP:", e); console.error("Texto recebido:", text); throw new Error('Falha ao parsear dados JSON da API do Google Sheets.'); }
     }
 
-    function showErrorMessage(message) {
-        $errorMsgText.textContent = message;
-        $errorMsgContainer.classList.remove('hidden');
-    }
+    // Função showErrorMessage removida
 
     async function loadData() {
         if (isFetching) return;
         isFetching = true;
-        $errorMsgContainer.classList.add('hidden');
+        // Linha que escondia $errorMsgContainer removida
         if (!isLoaded) $loader.classList.remove('hidden');
 
         $manualRefreshBtn.disabled = true;
@@ -354,12 +338,13 @@
 
         } catch (error) {
             console.error("Erro ao carregar dados:", error);
-            showErrorMessage(`Erro ao carregar dados: ${error.message}. Verifique ID/GID da Planilha e permissões.`);
+            // Chamada para showErrorMessage removida
             $reportCardsWrapper.innerHTML = '';
              if (weeklyChartInstance) {
                  weeklyChartInstance.destroy();
                  weeklyChartInstance = null;
              }
+             // Ainda mostra o erro específico do gráfico se houver
              $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico.';
              $chartErrorMsg.classList.remove('hidden');
              $grandTotalHeader.textContent = 'Total Geral: Erro';
@@ -383,8 +368,10 @@
         const statusIndex = findIndex(statusRegex);
 
         if (valorIndex === -1) {
-             showErrorMessage('Erro: Coluna de "Valor" não encontrada. Os cards não podem ser gerados.');
+             // Como não há mais showErrorMessage, o erro só vai para o console
+             console.error('Erro: Coluna de "Valor" não encontrada. Os cards não podem ser gerados.');
              console.error('Coluna de Valor não encontrada. Regex:', valorRegex);
+             $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-400 col-span-full">Erro: Coluna de Valor não encontrada.</p>'; // Mensagem alternativa
              return;
         }
         if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada. Regex:', vencRegex);
