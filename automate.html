@@ -44,7 +44,7 @@
     }
     #charts-wrapper {
         flex-grow: 1;
-        overflow-y: auto;
+        overflow-y: auto; /* Allow vertical scroll for charts if needed */
     }
     #sheetTable { width: 100%; }
 
@@ -101,6 +101,21 @@
          #sheetTable th, #sheetTable td { padding: 0.75rem 1rem; }
      }
 
+     /* ApexCharts Tooltip Dark */
+    .apexcharts-tooltip.apexcharts-theme-dark {
+        background: #374151; /* Cor de fundo mais escura */
+        border: 1px solid #4b5563;
+        color: #cbd5e1;
+    }
+    .apexcharts-tooltip.apexcharts-theme-dark .apexcharts-tooltip-title {
+        background: #4b5563;
+        border-bottom: 1px solid #6b7280;
+        font-weight: 600;
+    }
+     .apexcharts-tooltip-marker { margin-right: 5px; }
+     /* Donut center label */
+     .apexcharts-pie-label { fill: #cbd5e1 !important; }
+
   </style>
 </head>
 <body class="text-slate-300 min-h-screen flex flex-col antialiased">
@@ -148,7 +163,7 @@
              class="hidden w-full backdrop-blur-xs bg-surface/70 rounded-lg sm:rounded-2xl
                     shadow-lg ring-1 ring-primary-500/20 p-0">
       <table id="sheetTable" class="min-w-full text-sm divide-y divide-slate-600/60">
-         </table>
+        </table>
     </section>
 
     <section id="charts-wrapper"
@@ -179,9 +194,9 @@
     const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
     const gid     = '0';
     const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL = 60000;
+    const REFRESH_INTERVAL = 60000; // 1 minute
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const CHART_COLORS = ['#4dabf7', '#4ade80', '#fb7185', '#facc15', '#a78bfa', '#2dd4bf'];
+    const CHART_COLORS = ['#4dabf7', '#4ade80', '#fb7185', '#facc15', '#a78bfa', '#2dd4bf', '#ff922b', '#f06595']; // Added more colors
 
     let headersFull = [], sheetRows = [];
     let headersDisplay = [];
@@ -204,7 +219,7 @@
     const $filtersActive = document.getElementById('filters-active');
     const $clearFiltersBtn = document.getElementById('clear-filters');
     const $mainContent = document.getElementById('main-content');
-    const $manualRefreshBtn = document.getElementById('manual-refresh'); // Get refresh button
+    const $manualRefreshBtn = document.getElementById('manual-refresh');
 
     // --- EVENT LISTENERS ---
     $manualRefreshBtn.onclick = loadData;
@@ -225,24 +240,33 @@
         $tableWrapper.classList.add('hidden');
         $chartTab.classList.add('active-tab');
         $mainContent.classList.remove('table-full-screen');
+        // Redraw charts slightly delayed to ensure container dimensions are final
         setTimeout(() => [chartOverview, chartPayment, chartMonthly].forEach(chart => {
-            if (chart && typeof chart.updateOptions === 'function') chart.updateOptions({}, false, false, false);
-        }), 50);
+            // Check if chart exists and is an ApexCharts instance
+            if (chart && typeof chart.updateOptions === 'function') {
+                 chart.updateOptions({}, false, false, false); // Trigger redraw without animation
+            }
+        }), 100); // Increased delay slightly
       }
     }
 
     async function fetchSheetData() {
+      // Append timestamp to prevent caching
       const response = await fetch(`${baseURL}&_=${Date.now()}`);
-      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+      if (!response.ok) throw new Error(`Erro ao buscar dados (HTTP ${response.status})`);
       const text = await response.text();
+      // Basic check for the Google Sheets JSONP wrapper
       if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) {
-        throw new Error('Invalid response format');
+        console.error("Invalid response text:", text.substring(0, 500)); // Log beginning of response
+        throw new Error('Formato de resposta inválido do Google Sheets.');
       }
       try {
+        // Extract JSON string and parse
         return JSON.parse(text.substring(47, text.length - 2));
       } catch (e) {
-        console.error("JSON parse failed:", e, text);
-        throw new Error('Failed to parse JSON');
+        console.error("Falha ao analisar JSON:", e);
+        console.error("Texto recebido:", text.substring(0, 1000)); // Log more of the text if parse fails
+        throw new Error('Falha ao processar os dados recebidos.');
       }
     }
 
@@ -251,179 +275,861 @@
     const formatDateBR = date => !date || isNaN(date.getTime()) ? '–' : `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
     const formatMonthYear = date => {
         if (!date || isNaN(date.getTime())) return '–';
+        // Use 'short' for month abbreviation (e.g., 'jan.')
         const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' });
-        return `${month}/${date.getUTCFullYear()}`;
+        // Remove the period added by some browsers for abbreviations (like 'fev.')
+        const cleanMonth = month.replace('.', '');
+        return `${cleanMonth}/${date.getUTCFullYear()}`;
     };
     function parseDateValue(value) {
-        if (value instanceof Date) return value; if (value == null) return null;
-        if (typeof value === 'number' && value > 1 && value < 60000) { const d = new Date(0); d.setUTCDate(d.getUTCDate() + Math.floor(value - 25569)); return d; }
-        if (typeof value !== 'string') return null; let m;
-        m = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (m) return new Date(Date.UTC(+m[1], +m[2], +m[3]));
-        m = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
-        m = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(Date.UTC(y, +m[2] - 1, +m[1])); }
-        const p = new Date(value); if (!isNaN(p.getTime())) return new Date(Date.UTC(p.getFullYear(), p.getMonth(), p.getDate())); return null;
+        if (value instanceof Date) return value;
+        if (value == null) return null;
+        // Handle Google Sheet's date serial number format (Excel-like)
+        if (typeof value === 'number' && value > 1 && value < 60000) { // Heuristic range for dates
+            const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Excel epoch starts Dec 30, 1899 for UTC
+            const date = new Date(excelEpoch.getTime() + value * 24 * 60 * 60 * 1000);
+             // Adjust for potential timezone offset if needed, but UTC preferred
+            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+        }
+        if (typeof value !== 'string') return null;
+        let m;
+        // Google Sheet's `Date(YYYY,MM,DD)` format (MM is 0-indexed)
+        m = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)/);
+        if (m) return new Date(Date.UTC(+m[1], +m[2], +m[3])); // Month is already 0-indexed
+        // ISO 8601 format `YYYY-MM-DD`
+        m = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); // Month needs -1
+        // Common BR format `DD/MM/YYYY` or `DD-MM-YYYY`
+        m = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+        if (m) {
+            let y = +m[3];
+            if (y < 100) y += 2000; // Handle 2-digit years
+            return new Date(Date.UTC(y, +m[2] - 1, +m[1])); // Month needs -1
+        }
+        // Try generic parsing (less reliable for specific formats)
+        const p = new Date(value);
+        if (!isNaN(p.getTime())) {
+            // Return as UTC date to avoid timezone issues during formatting
+            return new Date(Date.UTC(p.getFullYear(), p.getMonth(), p.getDate()));
+        }
+        return null; // Could not parse
     }
     const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
     const formatCompact = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }) : 'N/A';
+    // Tooltip formatter remains the same, uses formatCurrency
     const formatTooltip = value => typeof value === 'number' ? formatCurrency(value) : 'N/A';
+
 
     // --- DATA LOADING & UI ---
     async function loadData() {
       if (isFetching) return;
       isFetching = true;
       $errorMsg.classList.add('hidden');
-      $manualRefreshBtn.disabled = true; // Disable button during fetch
+      $manualRefreshBtn.disabled = true;
       $manualRefreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
       if (!isLoaded) $loader.classList.remove('hidden');
 
       try {
         const jsonData = await fetchSheetData();
-        if (!jsonData?.table?.cols) throw new Error("Data format invalid");
+        // Verify essential data structure
+        if (!jsonData?.table?.cols || !jsonData?.table?.rows) {
+            throw new Error("Estrutura de dados recebida é inválida.");
+        }
 
+        // Process Headers - Ensure 'Observação' logic is robust
         headersFull = jsonData.table.cols.map(col => col.label || `Col${col.id}`);
-        const obsIndex = headersFull.findIndex(h => h?.toLowerCase().trim() === 'observação');
+        const obsIndex = headersFull.findIndex(h => typeof h === 'string' && h.toLowerCase().trim() === 'observação');
         headersDisplay = obsIndex === -1 ? [...headersFull] : headersFull.slice(0, obsIndex + 1);
+
+        // Process Rows - Handle potentially sparse rows safely
         sheetRows = jsonData.table.rows.map(row => {
           const cells = Array(headersFull.length).fill(null);
-          row?.c?.forEach((cell, i) => { if (i < headersFull.length) cells[i] = cell?.v ?? null });
+          row?.c?.forEach((cell, i) => {
+            if (i < headersFull.length) {
+              // Extract value, handle null/undefined cells
+              cells[i] = cell?.v ?? null;
+            }
+          });
           return cells;
         });
 
-        if (!isLoaded) { buildInitialUI(); isLoaded = true; switchTab('table'); }
-        else { updateUI(); }
-        updateGrandTotalHeader();
-        $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`; // Shorter time format
+        if (!isLoaded) {
+          buildInitialUI();
+          isLoaded = true;
+          // Default to table tab on first load
+          switchTab('table');
+        } else {
+          updateUI();
+        }
+        updateGrandTotalHeader(); // Update total after data processing
+        $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
 
       } catch (error) {
-        console.error("Load data error:", error);
-        $errorMsg.textContent = `Erro: ${error.message}.`;
+        console.error("Erro ao carregar dados:", error);
+        $errorMsg.textContent = `Erro ao carregar: ${error.message}. Verifique a planilha ou a conexão.`;
         $errorMsg.classList.remove('hidden');
-        if (!isLoaded) { $tableWrapper.classList.add('hidden'); $chartWrapper.classList.add('hidden'); } // Hide sections if first load failed
+        if (!isLoaded) {
+          $tableWrapper.classList.add('hidden');
+          $chartWrapper.classList.add('hidden');
+        } // Hide sections if first load failed
       } finally {
         isFetching = false;
         $loader.classList.add('hidden');
-        $manualRefreshBtn.disabled = false; // Re-enable button
+        $manualRefreshBtn.disabled = false;
         $manualRefreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
       }
     }
+    // Initial load
     loadData();
+    // Setup refresh interval
     setInterval(loadData, REFRESH_INTERVAL);
 
+
+    // --- TABLE BUILDING ---
     function buildTable() {
-      $sheetTable.innerHTML = '';
-      const thead = createTableHead(); const tbody = createTableBody();
-      if (thead) $sheetTable.appendChild(thead); if (tbody) $sheetTable.appendChild(tbody);
-      applyFilters();
+      $sheetTable.innerHTML = ''; // Clear previous table content
+      const thead = createTableHead();
+      const tbody = createTableBody(); // Create body *before* filtering
+      if (thead) $sheetTable.appendChild(thead);
+      if (tbody) $sheetTable.appendChild(tbody);
+      applyFilters(); // Apply filters which will hide/show rows in the existing tbody
     }
 
     function createTableHead() {
-        const thead = document.createElement('thead'); thead.className = 'bg-surface/90';
-        const tr = document.createElement('tr'); tr.className = 'divide-x divide-primary-500/30';
+        const thead = document.createElement('thead');
+        thead.className = 'bg-surface/90 sticky top-0 z-10'; // Make header sticky
+        const tr = document.createElement('tr');
+        tr.className = 'divide-x divide-primary-500/30';
+
         headersDisplay.forEach((header, index) => {
             const th = document.createElement('th');
-            th.className = 'text-left text-xs font-semibold text-primary-500 uppercase bg-surface/95 whitespace-nowrap'; // Padding from global CSS
-            const headerText = document.createElement('span'); headerText.textContent = header; th.appendChild(headerText);
-            const select = document.createElement('select'); select.dataset.colIndex = index;
-            select.className = 'mt-1 block w-full'; select.innerHTML = '<option value="">Todos</option>';
-            const uniqueValues = [...new Set(sheetRows.map(row => formatCellValue(row[index], header)))]
-                .sort((a, b) => { if (a === '–') return -1; if (b === '–') return 1; try { return a.localeCompare(b, 'pt-BR', { numeric: true }); } catch (e) { return a < b ? -1 : (a > b ? 1 : 0); } });
-            uniqueValues.forEach(value => { if (value === '–' || value == null || value === '') return; const opt = document.createElement('option'); opt.value = value; opt.textContent = value; select.appendChild(opt); });
-            if (activeFilters[index]) select.value = activeFilters[index];
-            select.onchange = handleFilterChange; th.appendChild(select); tr.appendChild(th);
+            // Added vertical padding for filter space
+            th.className = 'text-left text-xs font-semibold text-primary-500 uppercase bg-surface/95 whitespace-nowrap px-2 sm:px-4 py-2';
+
+            const headerText = document.createElement('span');
+            headerText.textContent = header || `Coluna ${index + 1}`; // Fallback for empty header
+            th.appendChild(headerText);
+
+            // Create select filter
+            const select = document.createElement('select');
+            select.dataset.colIndex = index; // Store index for filtering
+            select.className = 'mt-1 block w-full filter-select'; // Added class for easier selection later
+            select.innerHTML = '<option value="">Todos</option>'; // Default option
+
+            // Populate filter options (use raw values before formatting for consistency)
+             const uniqueValues = [...new Set(sheetRows.map(row => row[index]))]
+                .map(value => formatCellValue(value, header)) // Format *after* getting unique raw values
+                .filter(value => value !== '–' && value != null && value !== '') // Filter out blanks/placeholders
+                .sort((a, b) => {
+                    // Attempt locale-sensitive numeric sort, fallback to string compare
+                    try { return String(a).localeCompare(String(b), 'pt-BR', { numeric: true }); }
+                    catch (e) { return String(a) < String(b) ? -1 : (String(a) > String(b) ? 1 : 0); }
+                });
+
+            uniqueValues.forEach(value => {
+                const opt = document.createElement('option');
+                opt.value = value; // Use the formatted value for filtering comparison
+                opt.textContent = value; // Show formatted value
+                select.appendChild(opt);
+            });
+
+            // Restore filter selection if active
+            if (activeFilters[index]) {
+                select.value = activeFilters[index];
+            }
+
+            select.onchange = handleFilterChange; // Attach event listener
+            th.appendChild(select);
+            tr.appendChild(th);
         });
-        thead.appendChild(tr); return thead;
+
+        thead.appendChild(tr);
+        return thead;
     }
 
     function handleFilterChange(event) {
-        const colIndex = event.target.dataset.colIndex; const value = event.target.value;
-        if (value) activeFilters[colIndex] = value; else delete activeFilters[colIndex];
-        applyFilters();
+        const colIndex = event.target.dataset.colIndex;
+        const value = event.target.value;
+
+        if (value) {
+            activeFilters[colIndex] = value; // Set filter
+        } else {
+            delete activeFilters[colIndex]; // Clear filter
+        }
+        applyFilters(); // Re-apply all filters
     }
 
-    function createTableBody() {
-        const tbody = document.createElement('tbody'); tbody.className = 'divide-y divide-slate-600/60';
-        if (sheetRows.length === 0) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = headersDisplay.length || 1; td.textContent = 'Nenhum dado encontrado.'; td.className = 'px-4 py-8 text-center text-slate-400 text-sm'; tr.appendChild(td); tbody.appendChild(tr); return tbody; }
+
+     function createTableBody() {
+        const tbody = document.createElement('tbody');
+        tbody.className = 'divide-y divide-slate-600/60';
+
+        if (sheetRows.length === 0) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = headersDisplay.length || 1; // Span across all columns
+            td.textContent = 'Nenhum dado encontrado.';
+            td.className = 'px-4 py-8 text-center text-slate-400 text-sm';
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+            return tbody;
+        }
+
         sheetRows.forEach((row, rowIndex) => {
-            const tr = document.createElement('tr'); tr.className = `${rowIndex % 2 ? 'bg-surface/70' : 'bg-surface/60'} hover:bg-primary-500/10 transition-colors duration-150`;
+            const tr = document.createElement('tr');
+            // Alternating row colors
+            tr.className = `${rowIndex % 2 ? 'bg-surface/70' : 'bg-surface/60'} hover:bg-primary-500/10 transition-colors duration-150`;
+            tr.dataset.rowIndex = rowIndex; // Keep track of original row index if needed
+
             headersDisplay.forEach((header, colIndex) => {
-                const td = document.createElement('td'); td.className = 'whitespace-nowrap'; // Padding from global CSS
-                td.textContent = formatCellValue(row[colIndex], header); tr.appendChild(td);
+                const td = document.createElement('td');
+                // Ensure padding matches header, handle wrapping for longer content if needed
+                td.className = 'whitespace-nowrap px-2 sm:px-4 py-2 align-top'; // Align top for consistency
+                td.textContent = formatCellValue(row[colIndex], header);
+                // Optionally add title attribute for long content
+                if (td.textContent.length > 50) { // Example length check
+                    td.title = td.textContent;
+                }
+                tr.appendChild(td);
             });
             tbody.appendChild(tr);
         });
+
+        // Add a hidden row for "No results" message during filtering
+        const trNoResults = document.createElement('tr');
+        trNoResults.className = 'hidden no-results-row'; // Class to easily select and hide/show
+        const tdNoResults = document.createElement('td');
+        tdNoResults.colSpan = headersDisplay.length || 1;
+        tdNoResults.textContent = 'Nenhum resultado corresponde aos filtros selecionados.';
+        tdNoResults.className = 'px-4 py-8 text-center text-slate-400 text-sm';
+        trNoResults.appendChild(tdNoResults);
+        tbody.appendChild(trNoResults);
+
+
         return tbody;
     }
 
-    function formatCellValue(cellValue, headerLabel) {
-        if (cellValue == null || cellValue === '') return '–'; const headerLower = headerLabel.toLowerCase().trim();
+     function formatCellValue(cellValue, headerLabel) {
+        if (cellValue == null || cellValue === '') return '–'; // Consistent placeholder
+
+        const headerLower = (headerLabel || '').toLowerCase().trim();
+
+        // Prioritize NF formatting if header matches exactly
         if (headerLower === 'nf') return String(cellValue);
-        if (/valor|total|preço/i.test(headerLower) && !/nf/i.test(headerLower)) { let n = NaN; if (typeof cellValue === 'number') n = cellValue; else if (typeof cellValue === 'string') n = parseFloat(cellValue.replace(/[R$.]/g, '').replace(',', '.')); return !isNaN(n) ? formatCurrency(n) : String(cellValue); }
-        const d = parseDateValue(cellValue); if (d && !isNaN(d.getTime())) { if (/data|venc|pag|emissao/i.test(headerLower)) return formatDateBR(d); }
-        if (typeof cellValue === 'number') return cellValue.toLocaleString('pt-BR'); if (typeof cellValue === 'string' && /^-?\d+(\.\d+)?$/.test(cellValue)) { const num = parseFloat(cellValue); if (!isNaN(num)) return num.toLocaleString('pt-BR'); }
+
+        // Handle currency columns (avoiding 'NF')
+        if (/valor|total|preço/i.test(headerLower)) {
+            let n = NaN;
+            if (typeof cellValue === 'number') {
+                n = cellValue;
+            } else if (typeof cellValue === 'string') {
+                // Robust parsing for pt-BR currency format
+                const cleaned = cellValue.replace(/[R$\s.]/g, '').replace(',', '.');
+                n = parseFloat(cleaned);
+            }
+            return !isNaN(n) ? formatCurrency(n) : String(cellValue); // Fallback to string if parsing fails
+        }
+
+        // Handle date columns
+         const d = parseDateValue(cellValue);
+         if (d && !isNaN(d.getTime())) {
+             // Check common date-related keywords in header
+             if (/data|venc|pag|emissao/i.test(headerLower)) {
+                 return formatDateBR(d);
+             }
+         }
+
+        // Handle numbers that might be strings (e.g., IDs)
+        if (typeof cellValue === 'number') return cellValue.toLocaleString('pt-BR');
+        if (typeof cellValue === 'string' && /^-?\d+(\.\d+)?$/.test(cellValue)) {
+            const num = parseFloat(cellValue);
+            if (!isNaN(num)) return num.toLocaleString('pt-BR');
+        }
+
+        // Default: return as string
         return String(cellValue);
     }
 
     // --- FILTERING ---
     function applyFilters() {
-        const tbody = $sheetTable.querySelector('tbody'); if (!tbody) return; let visibleRowCount = 0;
-        Array.from(tbody.rows).forEach(tr => {
-            if (tr.cells.length === 1 && tr.cells[0].colSpan > 1) { tr.style.display = 'none'; return; } let show = true;
-            for (const [idx, val] of Object.entries(activeFilters)) { if (val && tr.cells[idx]?.textContent.trim() !== val) { show = false; break; } }
-            tr.style.display = show ? '' : 'none'; if (show) visibleRowCount++;
+        const tbody = $sheetTable.querySelector('tbody');
+        if (!tbody) return;
+
+        let visibleRowCount = 0;
+        const filterKeys = Object.keys(activeFilters);
+        const noResultsRow = tbody.querySelector('.no-results-row'); // Get the dedicated 'no results' row
+
+
+         Array.from(tbody.rows).forEach(tr => {
+            // Skip the special 'no results' row from filtering logic
+            if (tr.classList.contains('no-results-row')) return;
+            // Skip header row if somehow included (shouldn't happen with querySelector('tbody'))
+            if (tr.parentElement.tagName === 'THEAD') return;
+
+
+            let show = true;
+            if (filterKeys.length > 0) {
+                 // Check if the row matches *all* active filters
+                 show = filterKeys.every(colIndex => {
+                     const filterValue = activeFilters[colIndex];
+                     const cellContent = tr.cells[colIndex]?.textContent?.trim() || '';
+                     // Exact match comparison
+                     return cellContent === filterValue;
+                 });
+            }
+
+
+            tr.style.display = show ? '' : 'none'; // Show or hide row
+            if (show) visibleRowCount++;
         });
-        const noDataRow = tbody.querySelector('td[colspan]'); if (noDataRow) noDataRow.parentElement.style.display = visibleRowCount === 0 ? '' : 'none';
-        updateFilterDisplay(); updateCharts(); updateGrandTotalHeader();
+
+
+        // Show/hide the 'no results' row
+        if (noResultsRow) {
+             noResultsRow.style.display = (visibleRowCount === 0 && sheetRows.length > 0 && filterKeys.length > 0) ? '' : 'none';
+        }
+
+        updateFilterDisplay(); // Update the text showing active filters
+        updateCharts();        // Update charts based on filtered data
+        updateGrandTotalHeader(); // Update the header total based on filtered data
     }
+
 
     function updateFilterDisplay() {
         const keys = Object.keys(activeFilters);
-        if (keys.length === 0) { $filtersActive.textContent = 'Nenhum filtro ativo'; $clearFiltersBtn.style.display = 'none'; $filtersActive.classList.add('w-full'); }
-        else { const parts = keys.map(i => `${headersDisplay[i]}: ${activeFilters[i]}`); $filtersActive.textContent = 'Filtros: ' + parts.join(' | '); $clearFiltersBtn.style.display = 'inline-block'; $filtersActive.classList.remove('w-full'); }
+        if (keys.length === 0) {
+            $filtersActive.textContent = 'Nenhum filtro ativo';
+            $clearFiltersBtn.style.display = 'none';
+            $filtersActive.classList.add('w-full', 'sm:w-auto'); // Adjust layout classes
+             $filtersActive.classList.remove('sm:mr-auto'); // Remove specific margin if needed
+        } else {
+             // Create more readable filter display
+            const parts = keys.map(i => `${headersDisplay[i] || `Col ${i+1}`}: "${activeFilters[i]}"`);
+             $filtersActive.textContent = `Filtros Ativos: ${parts.join('; ')}`;
+            $clearFiltersBtn.style.display = 'inline-block';
+            $filtersActive.classList.remove('w-full'); // Allow button to be beside it on larger screens
+             $filtersActive.classList.add('sm:w-auto', 'sm:mr-auto'); // Auto width on small+, push button right
+        }
     }
+
 
     function clearFilters() {
-        Object.keys(activeFilters).forEach(key => delete activeFilters[key]);
-        $sheetTable.querySelectorAll('thead select').forEach(sel => sel.value = ''); applyFilters();
+        Object.keys(activeFilters).forEach(key => delete activeFilters[key]); // Clear internal state
+        // Reset all select elements in the table header
+        $sheetTable.querySelectorAll('thead .filter-select').forEach(sel => sel.value = '');
+        applyFilters(); // Re-apply (which now means showing all rows)
     }
+
 
     // --- CHART DATA AGGREGATION ---
-    function hasDataChanged(newData, prevData) { return !prevData || JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) || JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals); }
+    // Helper to check if relevant chart data has changed significantly
+    function hasDataChanged(newData, prevData) {
+        if (!prevData) return true; // If no previous data, it has changed
+        // Compare labels and totals arrays using JSON stringify (simple deep comparison)
+        return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) ||
+               JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals);
+    }
+
+
+    // Aggregates data by a specific date column (finds first match for regex)
     function aggregateByDate(dateColRegex) {
-        const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase())); const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase())); if (dateIdx === -1 || valIdx === -1) return { labels: [], totals: [] };
-        const map = new Map(); getFilteredRows().forEach(row => { const d = parseDateValue(row[dateIdx]); if (!d || isNaN(d.getTime())) return; const key = d.toISOString().split('T')[0]; let v = row[valIdx]; if (v == null) return; v = typeof v === 'number' ? v : parseFloat(String(v).replace(/[R$\s.]/g, '').replace(',', '.')); if (!isNaN(v)) map.set(key, (map.get(key) || 0) + v); });
-        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])); return { labels: entries.map(([k]) => formatDateBR(new Date(k + 'T00:00:00Z'))), totals: entries.map(([_, v]) => v) };
+        // Find column indices case-insensitively
+        const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase()));
+        const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
+
+        // Return empty if essential columns not found
+        if (dateIdx === -1 || valIdx === -1) {
+            console.warn(`Colunas para agregação por data (${dateColRegex}) não encontradas.`);
+            return { labels: [], totals: [] };
+        }
+
+        const map = new Map();
+        getFilteredRows().forEach(row => {
+            const dateValue = row[dateIdx];
+            const rawValue = row[valIdx];
+
+            const d = parseDateValue(dateValue);
+            // Skip if date is invalid
+            if (!d || isNaN(d.getTime())) return;
+
+            // Use ISO date string (YYYY-MM-DD) as key for consistent sorting
+            const key = d.toISOString().split('T')[0];
+
+             // Parse the value robustly
+            let v = NaN;
+            if (rawValue == null) return; // Skip null/undefined values
+            if (typeof rawValue === 'number') {
+                v = rawValue;
+            } else if (typeof rawValue === 'string') {
+                const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.');
+                v = parseFloat(cleaned);
+            }
+
+            // Add to map if value is a valid number
+            if (!isNaN(v)) {
+                map.set(key, (map.get(key) || 0) + v);
+            }
+        });
+
+        // Sort entries by date key and format for chart
+        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+        return {
+            // Format date keys back to BR format for labels
+            labels: entries.map(([key]) => formatDateBR(new Date(key + 'T00:00:00Z'))), // Add time part for UTC date object
+            totals: entries.map(([_, value]) => parseFloat(value.toFixed(2))) // Ensure totals are numbers
+        };
     }
+
+
+    // Aggregates data by month from a specific date column
     function aggregateByMonth(dateColRegex) {
-        const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase())); const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase())); if (dateIdx === -1 || valIdx === -1) return { labels: [], totals: [] };
-        const map = new Map(); getFilteredRows().forEach(row => { const d = parseDateValue(row[dateIdx]); if (!d || isNaN(d.getTime())) return; const key = `${d.getUTCFullYear()}-${padZero(d.getUTCMonth())}`; let v = row[valIdx]; if (v == null) return; v = typeof v === 'number' ? v : parseFloat(String(v).replace(/[R$\s.]/g, '').replace(',', '.')); if (!isNaN(v)) map.set(key, (map.get(key) || 0) + v); });
-        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])); return { labels: entries.map(([k]) => { const [y, m] = k.split('-'); return formatMonthYear(new Date(Date.UTC(+y, +m, 1))); }), totals: entries.map(([_, v]) => v) };
+        const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase()));
+        const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
+
+        if (dateIdx === -1 || valIdx === -1) {
+            console.warn(`Colunas para agregação por mês (${dateColRegex}) não encontradas.`);
+            return { labels: [], totals: [] };
+        }
+
+        const map = new Map();
+        getFilteredRows().forEach(row => {
+            const dateValue = row[dateIdx];
+            const rawValue = row[valIdx];
+
+            const d = parseDateValue(dateValue);
+            if (!d || isNaN(d.getTime())) return;
+
+            // Use YYYY-MM as key for chronological sorting
+            const key = `${d.getUTCFullYear()}-${padZero(d.getUTCMonth())}`; // Month is 0-indexed
+
+            let v = NaN;
+            if (rawValue == null) return;
+             if (typeof rawValue === 'number') {
+                v = rawValue;
+            } else if (typeof rawValue === 'string') {
+                const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.');
+                v = parseFloat(cleaned);
+            }
+
+
+            if (!isNaN(v)) {
+                map.set(key, (map.get(key) || 0) + v);
+            }
+        });
+
+        // Sort entries by YYYY-MM key
+        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+
+        return {
+            // Format keys to Month/Year for labels
+            labels: entries.map(([key]) => {
+                const [y, m] = key.split('-');
+                // Create date object for formatting (use UTC day 1)
+                return formatMonthYear(new Date(Date.UTC(+y, +m, 1)));
+            }),
+            totals: entries.map(([_, value]) => parseFloat(value.toFixed(2))) // Ensure totals are numbers
+        };
     }
-    function getFilteredRows() { if (Object.keys(activeFilters).length === 0) return sheetRows; return sheetRows.filter(row => { for (const [idx, val] of Object.entries(activeFilters)) { const cellVal = formatCellValue(row[idx], headersDisplay[idx]); if (val && cellVal.trim() !== val) return false; } return true; }); }
 
-    // --- CHART RENDERING ---
-    const baseChartOptions = { chart: { foreColor: '#cbd5e1', toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 500 }, background: 'transparent' }, tooltip: { theme: 'dark', y: { formatter: formatTooltip } }, dataLabels: { enabled: false }, grid: { borderColor: '#475569', strokeDashArray: 3, padding: { left: 0, right: 10 } }, legend: { show: false }, markers: { size: 0 }, noData: { text: 'Sem dados', align: 'center', verticalAlign: 'middle', style: { color: '#cbd5e1', fontSize: '12px' } } };
-    const overviewOptions = { chart: { type: 'area', height: 220 }, xaxis: { categories: [], labels: { show: true, rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '9px' }, format: undefined }, tooltip: { enabled: false }, type: 'category', tickAmount: 6 }, yaxis: { labels: { show: true, style: { fontSize: '10px' }, formatter: formatCompact } }, colors: [CHART_COLORS[0]], stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100] } } };
-    const paymentOptions = { ...overviewOptions, colors: [CHART_COLORS[1]] };
-    const monthlyOptions = { chart: { type: 'donut', height: 220 }, labels: [], colors: CHART_COLORS, legend: { show: true, position: 'bottom', fontSize: '10px', horizontalAlign: 'center', itemMargin: { horizontal: 4, vertical: 1 }, offsetY: 0 }, plotOptions: { pie: { donut: { size: '70%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '12px', fontWeight: 500, color: '#cbd5e1', formatter: (w) => formatCurrency(w.globals.seriesTotals.reduce((a, b) => a + b, 0)) }, value: { show: true, fontSize: '13px', fontWeight: 500, color: '#cbd5e1', formatter: (val) => formatCurrency(parseFloat(val)) } } } } }, responsive: [{ breakpoint: 400, options: { chart: { height: 200 }, legend: { fontSize: '9px', itemMargin: { horizontal: 2 } }, plotOptions: { pie: { donut: { size: '65%', labels: { total: { fontSize: '11px'}, value: { fontSize: '12px'} } } } } } }] };
+    // Gets rows respecting active filters
+    function getFilteredRows() {
+        const filterKeys = Object.keys(activeFilters);
+        if (filterKeys.length === 0) {
+            return sheetRows; // Return all if no filters
+        }
 
-    function buildCharts() { prevOverviewData = aggregateByDate(/venc/i); prevPaymentData = aggregateByDate(/pag/i); prevMonthlyData = aggregateByMonth(/venc/i); renderOverviewChart(false, prevOverviewData); renderPaymentChart(false, prevPaymentData); renderMonthlyChart(false, prevMonthlyData); }
-    function updateCharts() { const d1 = aggregateByDate(/venc/i); const d2 = aggregateByDate(/pag/i); const d3 = aggregateByMonth(/venc/i); renderOverviewChart(true, d1); renderPaymentChart(true, d2); renderMonthlyChart(true, d3); }
-    function renderOverviewChart(isUpdate = false, data) { if (isUpdate && !hasDataChanged(data, prevOverviewData)) return; const opts = { ...overviewOptions, series: [{ name: 'Total Venc.', data: data.totals }], xaxis: { ...overviewOptions.xaxis, categories: data.labels } }; if (isUpdate && chartOverview) chartOverview.updateOptions(opts, true, true); else { chartOverview?.destroy(); chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...baseChartOptions, ...opts }); chartOverview.render(); } prevOverviewData = data; }
-    function renderPaymentChart(isUpdate = false, data) { if (isUpdate && !hasDataChanged(data, prevPaymentData)) return; const opts = { ...paymentOptions, series: [{ name: 'Total Pago', data: data.totals }], xaxis: { ...paymentOptions.xaxis, categories: data.labels } }; if (isUpdate && chartPayment) chartPayment.updateOptions(opts, true, true); else { chartPayment?.destroy(); chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...baseChartOptions, ...opts }); chartPayment.render(); } prevPaymentData = data; }
-    function renderMonthlyChart(isUpdate = false, data) { const changed = !prevMonthlyData || JSON.stringify(data.totals) !== JSON.stringify(prevMonthlyData.totals); if (isUpdate && !changed) return; const total = data.totals.reduce((s, t) => s + t, 0); const opts = { ...monthlyOptions, series: data.totals, labels: data.labels, plotOptions: { pie: { donut: { ...monthlyOptions.plotOptions.pie.donut, labels: { ...monthlyOptions.plotOptions.pie.donut.labels, total: { ...monthlyOptions.plotOptions.pie.donut.labels.total, formatter: () => formatCurrency(total) } } } } } }; if (isUpdate && chartMonthly) chartMonthly.updateOptions(opts, true, true); else { chartMonthly?.destroy(); chartMonthly = new ApexCharts(document.querySelector('#chart-monthly'), { ...baseChartOptions, ...opts }); chartMonthly.render(); } prevMonthlyData = data; }
+        return sheetRows.filter(row => {
+            // Check if the row matches *all* active filters
+             return filterKeys.every(colIndex => {
+                const filterValue = activeFilters[colIndex];
+                // Format cell value *exactly* as it appears in the table/filter dropdown
+                 const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
+                // Compare formatted values
+                 return cellFormattedValue.trim() === filterValue;
+            });
+        });
+    }
+
+
+    // --- CHART RENDERING (Improved Options) ---
+
+    // Base options shared by all charts
+    const baseChartOptions = {
+      chart: {
+        foreColor: '#cbd5e1', // Text color for labels, etc.
+        toolbar: {
+          show: false, // Default to false, enable per chart type if needed
+           tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false }, // Customize default tools
+           export: { csv: { /* CSV export options */ }, svg: { /* SVG options */ }, png: { /* PNG options */ } }
+        },
+        zoom: { enabled: false }, // Default zoom state
+        animations: {
+          enabled: true,
+          easing: 'easeinout', // Smoother animation
+          speed: 600, // Slightly faster animation
+          animateGradually: { enabled: true, delay: 150 },
+          dynamicAnimation: { enabled: true, speed: 400 }
+        },
+        background: 'transparent' // Match card background
+      },
+      tooltip: {
+        theme: 'dark', // Use dark theme tooltip
+        style: { fontSize: '11px' },
+        x: { show: false }, // Default x-axis tooltip (customize per chart)
+        y: {
+          formatter: formatCurrency, // Default y-axis formatter (use full currency)
+          title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' }
+        },
+        marker: { show: true }, // Show color marker in tooltip
+      },
+      dataLabels: { enabled: false }, // Keep data labels off by default
+      grid: {
+        borderColor: '#404a59', // Slightly darker grid lines
+        strokeDashArray: 4, // Dashed lines
+        padding: { left: 5, right: 15, top: 0, bottom: 0 } // Adjust padding
+      },
+      legend: {
+        show: false, // Hide legend by default (donut chart enables it)
+        fontSize: '11px',
+        offsetY: 5,
+        itemMargin: { horizontal: 5, vertical: 2 },
+      },
+      markers: {
+          size: 0, // No markers by default
+          strokeWidth: 0,
+          hover: { size: 5 } // Show marker on hover
+      },
+      noData: {
+        text: 'Sem dados para exibir',
+        align: 'center', verticalAlign: 'middle',
+        style: { color: '#94a3b8', fontSize: '12px' }
+      }
+    };
+
+    // --- Specific Chart Options ---
+
+    // Area Chart (Overview & Payment) Options
+    const areaBaseOptions = {
+        ...baseChartOptions, // Inherit base options
+        chart: {
+            ...baseChartOptions.chart,
+            type: 'area',
+            height: 250, // Slightly taller
+            toolbar: { // Enable toolbar for area charts
+                show: true,
+                tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true },
+                autoSelected: 'zoom' // Default tool selection
+            },
+             zoom: { enabled: true } // Allow zooming
+        },
+        xaxis: {
+            categories: [], // To be populated with data labels (dates)
+             type: 'category', // Treat labels as distinct categories
+            tickAmount: 6, // Approximate number of ticks
+            labels: {
+                show: true,
+                rotate: -45, // Rotate labels for better fit
+                rotateAlways: false,
+                hideOverlappingLabels: true,
+                style: { fontSize: '10px', colors: '#94a3b8' }, // Lighter color for axis labels
+                format: undefined // Use category labels directly
+            },
+            tooltip: { enabled: false }, // Disable default x-axis tooltip, handled in main tooltip
+            title: { // Add X-axis title
+                text: 'Data',
+                style: { color: '#94a3b8', fontSize: '10px', fontWeight: 'normal' }
+            },
+             axisBorder: { show: true, color: '#404a59' }, // Show axis line
+            axisTicks: { show: true, color: '#404a59' }, // Show axis ticks
+        },
+        yaxis: {
+            labels: {
+                show: true,
+                style: { fontSize: '10px', colors: '#94a3b8' },
+                formatter: formatCompact // Use compact format (e.g., 1k, 1.5M) for axis
+            },
+            title: { // Add Y-axis title
+                text: 'Valor (R$)',
+                style: { color: '#94a3b8', fontSize: '10px', fontWeight: 'normal' }
+            },
+             axisBorder: { show: false },
+            axisTicks: { show: false },
+        },
+         tooltip: { // Customize tooltip specifically for area charts
+            ...baseChartOptions.tooltip,
+             theme: 'dark',
+            shared: false, // Show tooltip for individual points
+             intersect: true,
+            x: {
+                 // Show the category label (date) in the tooltip title
+                 formatter: function(val, { seriesIndex, dataPointIndex, w }) {
+                    // Ensure w.globals.categoryLabels exists and has the index
+                    return w.globals.categoryLabels?.[dataPointIndex] ?? '';
+                 }
+            },
+            y: {
+                 formatter: formatCurrency, // Use full currency format in tooltip body
+                 title: {
+                     formatter: (seriesName) => seriesName ? seriesName + ':' : '' // Show series name
+                 }
+            }
+        },
+         markers: { // Add subtle markers
+            size: 3,
+            strokeWidth: 0, // No border on marker
+            hover: { size: 6 }
+        },
+        stroke: {
+            curve: 'smooth', // Smooth line curve
+            width: 2
+        },
+        fill: { // Gradient fill
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.6,
+                opacityTo: 0.1,
+                stops: [0, 95, 100]
+            }
+        }
+    };
+
+    // Overview chart specific options (inherits from areaBaseOptions)
+    const overviewOptions = {
+        ...areaBaseOptions,
+         colors: [CHART_COLORS[0]], // Use first color
+    };
+
+    // Payment chart specific options (inherits from areaBaseOptions)
+    const paymentOptions = {
+        ...areaBaseOptions,
+        colors: [CHART_COLORS[1]], // Use second color
+    };
+
+
+    // Donut Chart (Monthly) Options
+    const monthlyOptions = {
+      ...baseChartOptions, // Inherit base options
+      chart: {
+        ...baseChartOptions.chart, // Inherit chart settings from base
+        type: 'donut',
+        height: 280, // Slightly taller donut chart
+      },
+      labels: [], // Populated with Month/Year labels
+      colors: CHART_COLORS, // Use the defined color palette
+      legend: { // Enable and configure legend for donut
+        show: true,
+        position: 'bottom', // Position below chart
+        horizontalAlign: 'center',
+        fontSize: '10px',
+        itemMargin: { horizontal: 6, vertical: 2 },
+        offsetY: 0, // Adjust vertical position if needed
+        formatter: function(seriesName, opts) {
+            // Show series name and its value in the legend
+            const value = opts.w.globals.series[opts.seriesIndex];
+            return `${seriesName}: ${formatCurrency(value)}`;
+        }
+      },
+       tooltip: { // Customize tooltip for donut chart
+         ...baseChartOptions.tooltip, // Inherit base tooltip settings
+         theme: 'dark',
+         y: {
+             formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+                 // Calculate percentage for the tooltip
+                 const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                 const percentage = total === 0 ? 0 : (value / total * 100);
+                 // Return formatted currency and percentage
+                 return `${formatCurrency(value)} (${percentage.toFixed(1)}%)`;
+             },
+             title: {
+                 // Use the label (Month/Year) as the title in the tooltip
+                 formatter: (seriesName) => seriesName // seriesName here is the label from `labels` array
+             }
+         }
+       },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '65%', // Make donut hole slightly smaller
+            labels: {
+              show: true, // Show labels in the center
+              total: {
+                show: true,
+                label: 'Total (Filtro)', // Label for the total value
+                fontSize: '13px',
+                fontWeight: 600,
+                color: '#cbd5e1',
+                 // Formatter dynamically calculates sum of *visible* series (respects legend clicks)
+                formatter: (w) => {
+                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                    return formatCurrency(total);
+                }
+              },
+              value: {
+                show: true, // Show value when hovering a slice
+                fontSize: '16px',
+                fontWeight: 500,
+                color: '#cbd5e1', // Color for the individual value
+                formatter: (val) => formatCurrency(parseFloat(val)) // Format individual slice value
+              }
+            }
+          }
+        }
+      },
+       // Responsive adjustments for smaller screens
+      responsive: [{
+        breakpoint: 480, // Apply below 480px width
+        options: {
+          chart: { height: 240 }, // Smaller chart height
+          legend: {
+             fontSize: '9px',
+             itemMargin: { horizontal: 4, vertical: 1 },
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                 size: '70%', // Slightly larger hole on mobile might look better
+                labels: {
+                  total: { fontSize: '12px' },
+                  value: { fontSize: '14px' }
+                }
+              }
+            }
+          }
+        }
+      }]
+    };
+
+
+    // --- Chart Rendering Functions ---
+
+    // Destroys existing chart instance safely
+    function destroyChart(chartInstance) {
+        if (chartInstance && typeof chartInstance.destroy === 'function') {
+            chartInstance.destroy();
+        }
+        return null; // Return null to clear the variable
+    }
+
+    // Build all charts initially
+    function buildCharts() {
+        prevOverviewData = aggregateByDate(/venc/i);
+        prevPaymentData = aggregateByDate(/pag/i);
+        prevMonthlyData = aggregateByMonth(/venc/i);
+
+        // Destroy existing charts before creating new ones
+        chartOverview = destroyChart(chartOverview);
+        chartPayment = destroyChart(chartPayment);
+        chartMonthly = destroyChart(chartMonthly);
+
+
+        renderOverviewChart(false, prevOverviewData);
+        renderPaymentChart(false, prevPaymentData);
+        renderMonthlyChart(false, prevMonthlyData);
+    }
+
+    // Update charts with potentially new data (after filter or refresh)
+    function updateCharts() {
+        const newDataOverview = aggregateByDate(/venc/i);
+        const newDataPayment = aggregateByDate(/pag/i);
+        const newDataMonthly = aggregateByMonth(/venc/i);
+
+
+        renderOverviewChart(true, newDataOverview);
+        renderPaymentChart(true, newDataPayment);
+        renderMonthlyChart(true, newDataMonthly);
+    }
+
+    // Render/Update Overview Chart
+    function renderOverviewChart(isUpdate = false, data) {
+         // Only update if data has actually changed
+        if (isUpdate && !hasDataChanged(data, prevOverviewData)) return;
+
+        const opts = {
+            series: [{ name: 'Total Venc.', data: data.totals }],
+            xaxis: { ...overviewOptions.xaxis, categories: data.labels }
+        };
+
+        if (isUpdate && chartOverview) {
+             chartOverview.updateOptions(opts, true, true); // Animate update
+        } else {
+             chartOverview = destroyChart(chartOverview); // Ensure clean state
+            chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...overviewOptions, ...opts });
+            chartOverview.render();
+        }
+        prevOverviewData = data; // Store current data as previous for next comparison
+    }
+
+    // Render/Update Payment Chart
+    function renderPaymentChart(isUpdate = false, data) {
+        if (isUpdate && !hasDataChanged(data, prevPaymentData)) return;
+
+        const opts = {
+            series: [{ name: 'Total Pago', data: data.totals }],
+            xaxis: { ...paymentOptions.xaxis, categories: data.labels }
+        };
+
+        if (isUpdate && chartPayment) {
+            chartPayment.updateOptions(opts, true, true);
+        } else {
+             chartPayment = destroyChart(chartPayment);
+            chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...paymentOptions, ...opts });
+            chartPayment.render();
+        }
+        prevPaymentData = data;
+    }
+
+    // Render/Update Monthly Donut Chart
+    function renderMonthlyChart(isUpdate = false, data) {
+        // Donut charts often rely on legend clicks to filter, so we might need to update more often
+        // Let's use hasDataChanged for consistency, but be mindful it compares totals/labels
+         if (isUpdate && !hasDataChanged(data, prevMonthlyData)) return;
+
+
+         const opts = {
+             series: data.totals,
+             labels: data.labels,
+             // No need to update plotOptions dynamically here unless total formatter logic changes drastically
+         };
+
+        if (isUpdate && chartMonthly) {
+             // For donut, update series and labels seems sufficient usually
+             chartMonthly.updateOptions(opts, true, true);
+        } else {
+             chartMonthly = destroyChart(chartMonthly);
+             // Merge base, monthly specific, and dynamic opts
+            chartMonthly = new ApexCharts(document.querySelector('#chart-monthly'), { ...monthlyOptions, ...opts });
+            chartMonthly.render();
+        }
+        prevMonthlyData = data;
+    }
+
 
     // --- HEADER UPDATE ---
     function updateGrandTotalHeader() {
-      const { totals } = aggregateByMonth(/venc/i);
+      // Calculate total based on currently *filtered* rows using the same aggregation logic
+      const { totals } = aggregateByMonth(/venc/i); // Uses getFilteredRows() inside
       const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
+
+      // Determine if filters are active
       const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
-      // Updated selector to match new header structure
-      document.getElementById('month-total').textContent = `Total (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
+
+      // Update the text content
+      $monthTotal.textContent = `Total (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
     }
 
     // --- INIT & UPDATES ---
-    function buildInitialUI() { buildTable(); buildCharts(); }
-    function updateUI() { buildTable(); /* updateCharts called within applyFilters */ }
+    function buildInitialUI() {
+      buildTable();
+      buildCharts();
+      // updateGrandTotalHeader(); // Called within build/applyFilters now
+    }
+    function updateUI() {
+      // Rebuild table to update filter options and content
+      buildTable();
+      // updateCharts(); // Called within applyFilters after table rebuild
+       // updateGrandTotalHeader(); // Called within applyFilters
+    }
 
   </script>
 </body>
