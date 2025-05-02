@@ -5,54 +5,124 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>ClickForte | Financeiro (Novo Dark)</title>
+  <title>ClickForte | Financeiro (Novo Dark/Light)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: Inter, sans-serif; color-scheme: dark; }
+    :root {
+        --bg-primary: #1a1d21;
+        --bg-secondary: #212529;
+        --bg-tertiary: #343a40;
+        --bg-overlay: rgba(26, 29, 33, 0.85);
+        --bg-overlay-login: rgba(26, 29, 33, 0.8);
+        --bg-overlay-iframe: rgba(26, 29, 33, 0.6);
+        --text-primary: #e9ecef;
+        --text-secondary: #adb5bd;
+        --text-tertiary: #495057;
+        --border-color: #495057;
+        --border-color-light: #343a40;
+        --scrollbar-track: #343a40;
+        --scrollbar-thumb: #495057;
+        --accent-color: #4dabf7;
+        --accent-color-hover: #369aea;
+        --accent-text-on-dark: #1a1d21;
+        --accent-text-on-light: #ffffff;
+        --accent-bg-subtle: rgba(77, 171, 247, 0.15);
+        --accent-bg-subtle-hover: rgba(77, 171, 247, 0.25);
+        --accent-border-left: #4dabf7;
+        --focus-ring-color: rgba(77, 171, 247, 0.5);
+        --profile-ring-color: #4dabf7;
+        --profile-ring-hover-color: #63bfff;
+        --danger-text: #f06565;
+        --danger-bg-subtle: rgba(240, 101, 101, 0.2);
+        --danger-bg-subtle-hover: rgba(240, 101, 101, 0.4);
+        --warning-text: #ffd43b;
+        --warning-bg-subtle: rgba(255, 212, 59, 0.2);
+        --warning-border: rgba(255, 212, 59, 0.4);
+        --error-text: #ff8787;
+        --error-bg-subtle: rgba(255, 135, 135, 0.2);
+        --error-border: rgba(255, 135, 135, 0.4);
+        --color-scheme: dark;
+    }
+
+    body.light-theme {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-tertiary: #e9ecef;
+        --bg-overlay: rgba(255, 255, 255, 0.85);
+        --bg-overlay-login: rgba(255, 255, 255, 0.8);
+        --bg-overlay-iframe: rgba(255, 255, 255, 0.6);
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-tertiary: #adb5bd;
+        --border-color: #dee2e6;
+        --border-color-light: #f8f9fa;
+        --scrollbar-track: #e9ecef;
+        --scrollbar-thumb: #adb5bd;
+        --accent-color: #0d6efd;
+        --accent-color-hover: #0b5ed7;
+        --accent-text-on-dark: #ffffff;
+        --accent-text-on-light: #ffffff;
+        --accent-bg-subtle: rgba(13, 110, 253, 0.1);
+        --accent-bg-subtle-hover: rgba(13, 110, 253, 0.2);
+        --accent-border-left: #0d6efd;
+        --focus-ring-color: rgba(13, 110, 253, 0.5);
+        --profile-ring-color: #0d6efd;
+        --profile-ring-hover-color: #409cff;
+        --danger-text: #dc3545;
+        --danger-bg-subtle: rgba(220, 53, 69, 0.1);
+        --danger-bg-subtle-hover: rgba(220, 53, 69, 0.2);
+        --warning-text: #ffc107;
+        --warning-bg-subtle: rgba(255, 193, 7, 0.1);
+        --warning-border: rgba(255, 193, 7, 0.4);
+        --error-text: #dc3545;
+        --error-bg-subtle: rgba(220, 53, 69, 0.1);
+        --error-border: rgba(220, 53, 69, 0.4);
+        --color-scheme: light;
+    }
+
+    html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: Inter, sans-serif; color-scheme: var(--color-scheme); }
     body {
         padding-bottom: env(safe-area-inset-bottom);
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
-        background-color: #1a1d21;
-        color: #e9ecef;
-        overflow: hidden; /* Impede rolagem do body */
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        overflow: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
     #dashboard {
         display: flex;
-        flex-direction: column; /* Mobile First: Coluna */
-        height: 100vh; /* Ocupa toda a altura */
-        overflow: hidden; /* Container não rola */
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
     }
     #profileHeader {
         padding-top: calc(env(safe-area-inset-top) + 0.75rem);
         padding-bottom: 0.75rem;
         position: sticky; top: 0; z-index: 30;
-        background-color: rgba(26, 29, 33, 0.85);
+        background-color: var(--bg-overlay);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid #495057;
-        flex-shrink: 0; /* Header não encolhe */
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     #mobileMainContent {
-        flex-grow: 1; /* Ocupa espaço restante */
-        overflow-y: auto; /* Permite rolagem interna */
-        min-height: 0; /* Necessário para flex grow funcionar corretamente com overflow */
-        position: relative; /* Para spinner */
+        flex-grow: 1;
+        overflow-y: auto;
+        min-height: 0;
+        position: relative;
+        background-color: var(--bg-primary);
+        transition: background-color 0.3s ease;
     }
-    #desktopTopBar {
-        display: none; /* Escondido por padrão (mobile) */
-        padding-top: env(safe-area-inset-top);
-        height: calc(4rem + env(safe-area-inset-top));
-        position: sticky;
-        top: 0;
-        z-index: 20;
-        background-color: #212529;
-        border-bottom: 1px solid #495057;
-        flex-shrink: 0;
-    }
+
+    #desktopTopBar { display: none; }
+
     #desktopSidebar {
-        display: none; /* Escondido por padrão (mobile) */
+        display: none;
         position: fixed;
         top: 0;
         left: 0;
@@ -62,46 +132,51 @@
         width: 16rem;
         flex-shrink: 0;
         overflow: hidden;
-        border-right: 1px solid #495057;
+        border-right: 1px solid var(--border-color);
         flex-direction: column;
+        background-color: var(--bg-secondary);
+        transition: background-color 0.3s ease, border-color 0.3s ease, width 0.3s ease-in-out;
     }
     #desktopSidebar .sidebar-scroll-content {
         flex-grow: 1;
         overflow-y: auto;
     }
     #desktopMainArea {
-        display: none; /* Escondido por padrão (mobile) */
+        display: none;
         height: 100vh;
         flex-direction: column;
         overflow: hidden;
         margin-left: 16rem;
         transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
         width: calc(100% - 16rem);
+        background-color: var(--bg-primary);
+         transition: background-color 0.3s ease, margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
     }
-     #mainContent { /* Estilo base para conteúdo desktop */
+     #mainContent {
         flex: 1;
         min-width: 0;
         overflow-y: auto;
         position: relative;
-        background-color: #1a1d21;
     }
 
     @media (min-width: 768px) {
         #dashboard {
-            flex-direction: row; /* Desktop: Linha */
-            height: auto; /* Altura automática no desktop */
+            flex-direction: row;
+            height: auto;
         }
-        #profileHeader { display: none; } /* Esconde header mobile */
-        #mobileMainContent { display: none; } /* Esconde area main mobile */
+        #profileHeader { display: none; }
+        #mobileMainContent { display: none; }
 
-        #desktopSidebar { display: flex; } /* Mostra sidebar desktop */
-        #desktopMainArea { display: flex; } /* Mostra area main desktop */
-        #desktopTopBar { display: flex; } /* Mostra topbar desktop */
+        #desktopSidebar { display: flex; }
+        #desktopMainArea { display: flex; }
 
-         #desktopSidebar.sidebar-collapsed ~ #desktopMainArea {
-             margin-left: 5rem;
-             width: calc(100% - 5rem);
-         }
+        #desktopSidebar.sidebar-collapsed {
+            width: 5rem;
+        }
+        #desktopSidebar.sidebar-collapsed ~ #desktopMainArea {
+            margin-left: 5rem;
+            width: calc(100% - 5rem);
+        }
     }
 
     html { height: -webkit-fill-available; scroll-behavior: smooth; }
@@ -109,49 +184,56 @@
         .h-screen { height: calc(var(--vh, 1vh) * 100); }
     }
 
-    iframe { box-shadow: none; background-color: #1a1d21; border: none; width: 100%; height: 100%; display: block; }
+    iframe { box-shadow: none; background-color: var(--bg-primary); border: none; width: 100%; height: 100%; display: block; transition: background-color 0.3s ease; }
 
-    :focus-visible { outline: 2px solid rgb(77 171 247 / 0.5); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; transition: outline-color 0.3s ease; }
     button:focus, a:focus, input:focus { outline: none; }
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-thumb { background-color: #495057; border-radius: 9999px; border: 2px solid #212529; }
-    ::-webkit-scrollbar-track { background-color: #343a40; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 9999px; border: 2px solid var(--border-color-light); transition: background-color 0.3s ease, border-color 0.3s ease; }
+    ::-webkit-scrollbar-track { background-color: var(--scrollbar-track); border-radius: 9999px; transition: background-color 0.3s ease; }
 
-    #welcomeScreen { position: fixed; inset: 0; background: #1a1d21; z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out; }
+    #welcomeScreen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out, background-color 0.3s ease; }
     #welcomeScreen.visible { display: flex; opacity: 1; }
 
+    .nav-link:hover,
+    #integrationBtnHeader:hover,
+    #desktopSidebarToggle button:hover,
+    #themeToggleDesktop:hover, #themeToggleMobile:hover,
+    .mobile-sidebar-footer-button:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
     .nav-link.active,
-    #integrationBtnHeader.active,
-    #integrationBtnDesktop.active {
-        background-color: rgba(77, 171, 247, 0.15);
-        color: #4dabf7;
+    #integrationBtnHeader.active {
+        background-color: var(--accent-bg-subtle);
+        color: var(--accent-color);
         font-weight: 500;
     }
     #desktopSidebar:not(.sidebar-collapsed) .nav-link.active {
-        border-left: 4px solid #4dabf7;
+        border-left: 4px solid var(--accent-border-left);
         padding-left: calc(0.625rem + 4px);
     }
     #desktopSidebar.sidebar-collapsed .nav-link.active {
         border-left: none;
         padding-left: 0.75rem;
-        background-color: rgba(77, 171, 247, 0.25);
+        background-color: var(--accent-bg-subtle-hover);
     }
     #mobileSidebar .nav-link.active {
-        border-left: 4px solid #4dabf7;
+        border-left: 4px solid var(--accent-border-left);
         padding-left: calc(0.75rem - 4px);
     }
 
     .nav-link.active i:not(.submenu-toggle-icon),
-    #integrationBtnHeader.active i,
-    #integrationBtnDesktop.active i {
-      color: #4dabf7;
+    #integrationBtnHeader.active i {
+       color: var(--accent-color);
     }
 
     .submenu .nav-link.active {
         border-left: none; padding-left: 0.5rem;
-        background-color: rgba(77, 171, 247, 0.1);
-        color: #e9ecef;
+        background-color: var(--accent-bg-subtle);
+        color: var(--text-primary);
+        font-weight: 500;
     }
     #desktopSidebar:not(.sidebar-collapsed) .submenu .nav-link.active {
         padding-left: 0.5rem;
@@ -165,7 +247,14 @@
     .submenu .nav-link.active i { color: inherit; }
 
     .profile-trigger.active img {
-        box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.5);
+        box-shadow: 0 0 0 3px var(--focus-ring-color);
+    }
+    .profile-trigger img {
+        ring-color: var(--profile-ring-color);
+        transition: ring-color 0.3s ease;
+    }
+    .profile-trigger:hover img {
+      ring-color: var(--profile-ring-hover-color);
     }
 
     .submenu { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; }
@@ -180,59 +269,191 @@
 
     #iframeSpinnerOverlay > div,
     #mobileIframeSpinnerOverlay > div {
-        border-color: #4dabf7;
+        border-color: var(--accent-color);
         border-bottom-color: transparent;
+         transition: border-color 0.3s ease;
     }
+    #loginButton .spinner-icon { color: var(--accent-text-on-dark); transition: color 0.3s ease; }
+    body.light-theme #loginButton .spinner-icon { color: var(--accent-text-on-light); }
 
-    #desktopSidebar.sidebar-collapsed {
-        width: 5rem;
-    }
-
+    #desktopSidebar.sidebar-collapsed { width: 5rem; }
     #desktopSidebar.sidebar-collapsed .sidebar-text,
     #desktopSidebar.sidebar-collapsed .sidebar-logo-full,
     #desktopSidebar.sidebar-collapsed .submenu-toggle-icon,
-    #desktopSidebar.sidebar-collapsed .submenu {
-        display: none;
+    #desktopSidebar.sidebar-collapsed .submenu,
+    #desktopSidebar.sidebar-collapsed #desktopSidebarToggle .sidebar-text,
+    #desktopSidebar.sidebar-collapsed #themeToggleDesktop .sidebar-text,
+    #desktopSidebar.sidebar-collapsed #desktopLogoutButton .sidebar-text
+     { display: none; }
+
+    #desktopSidebar.sidebar-collapsed .nav-link i:not(.submenu-toggle-icon) { margin-right: 0; }
+    #desktopSidebar.sidebar-collapsed .nav-link { justify-content: center; }
+    #desktopSidebar.sidebar-collapsed .logo-container { height: 60px; justify-content: center; padding: 0; }
+    #desktopSidebar:not(.sidebar-collapsed) .logo-container { padding: 1.25rem; }
+    #desktopSidebar.sidebar-collapsed #desktopSidebarToggle button,
+    #desktopSidebar.sidebar-collapsed #themeToggleDesktop,
+    #desktopSidebar.sidebar-collapsed #desktopLogoutButton { justify-content: center; }
+
+    #loginOverlay { background-color: var(--bg-overlay-login); backdrop-filter: blur(4px); }
+    #loginOverlay > div { background-color: var(--bg-secondary); border-color: var(--border-color); }
+    #logoutNotification { color: var(--warning-text); background-color: var(--warning-bg-subtle); border-color: var(--warning-border); }
+    #loginError { color: var(--error-text); background-color: var(--error-bg-subtle); border-color: var(--error-border); }
+    label { color: var(--text-primary); }
+    input[type="text"], input[type="password"], input[type="file"] {
+        background-color: var(--bg-tertiary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+        placeholder-color: var(--text-tertiary);
     }
-    #desktopSidebar.sidebar-collapsed .nav-link i:not(.submenu-toggle-icon) {
-        margin-right: 0;
+    input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus {
+        --tw-ring-color: var(--accent-color);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px var(--focus-ring-color);
     }
-    #desktopSidebar.sidebar-collapsed .nav-link {
-        justify-content: center;
+     input[type="checkbox"] {
+        color: var(--accent-color);
+        border-color: var(--border-color);
+        background-color: var(--bg-tertiary);
+     }
+     input[type="checkbox"]:focus {
+        --tw-ring-color: var(--accent-color);
+        --tw-ring-offset-color: var(--bg-primary);
+     }
+    #togglePassword { color: var(--text-secondary); }
+    #togglePassword:hover { color: var(--text-primary); }
+    #rememberMe + label { color: var(--text-secondary); }
+    a { color: var(--accent-color); } a:hover { color: var(--accent-color-hover); }
+    #loginButton {
+        background-color: var(--accent-color);
+        color: var(--accent-text-on-dark);
+        --tw-ring-offset-color: var(--bg-primary);
+        --tw-ring-color: var(--accent-color);
+    }
+    body.light-theme #loginButton { color: var(--accent-text-on-light); }
+    #loginButton:hover { background-color: var(--accent-color-hover); }
+    #loginButton:focus {
+       box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color);
+    }
+    #welcomeScreen p { color: var(--text-secondary); }
+
+    #profileHeader button, #profileHeader .profile-trigger span { color: var(--text-secondary); }
+    #profileHeader button:hover, #profileHeader .profile-trigger:hover span { color: var(--accent-color); }
+    #profileHeader button:hover { background-color: var(--bg-tertiary); }
+    #profileImgHeader, #profileImgDesktop {
+        ring-offset-color: var(--bg-primary);
+        ring-color: var(--profile-ring-color);
+    }
+    #profileImgHeader:hover, #profileImgDesktop:hover, .profile-trigger:hover img {
+        ring-color: var(--profile-ring-hover-color);
     }
 
-    #desktopSidebar.sidebar-collapsed .logo-container {
-        height: 60px; justify-content: center;
+    #desktopSidebar { color: var(--text-secondary); background-color: var(--bg-secondary); border-right-color: var(--border-color); }
+    #sidebarLogoContainer { border-bottom-color: var(--border-color); }
+    #desktopSidebar .nav-link { transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, padding-left 0.15s ease; }
+    #desktopSidebar .submenu { border-left-color: var(--border-color); }
+    #desktopSidebar .nav-link:hover, #desktopSidebar .submenu .nav-link:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
+    #desktopSidebarToggle { border-top-color: var(--border-color); }
+
+    #iframeSpinnerOverlay, #mobileIframeSpinnerOverlay { background-color: var(--bg-overlay-iframe); backdrop-filter: blur(2px); }
+
+    #mobileSidebarWrapper { background-color: rgba(0, 0, 0, 0.5); }
+    #mobileSidebar { background-color: var(--bg-secondary); color: var(--text-secondary); border-right-color: var(--border-color); }
+    #mobileSidebar > div:first-child { border-bottom-color: var(--border-color); }
+    #mobileSidebar button:hover { background-color: var(--bg-tertiary); }
+    #mobileSidebar .submenu { border-left-color: var(--border-color); }
+    #mobileSidebar .nav-link:hover, #mobileSidebar .submenu .nav-link:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
+    #mobileSidebar .mobile-sidebar-footer { border-top-color: var(--border-color); }
+    #mobileSidebar .mobile-sidebar-footer-button {
+        color: var(--danger-text);
+        background-color: var(--danger-bg-subtle);
     }
-    #desktopSidebar.sidebar-collapsed #desktopSidebarToggle button {
-        justify-content: center;
+     #mobileSidebar .mobile-sidebar-footer-button:hover {
+        background-color: var(--danger-bg-subtle-hover);
+        color: var(--danger-text);
+     }
+     #themeToggleMobile {
+        color: var(--text-secondary);
+        background-color: var(--bg-tertiary);
+     }
+      #themeToggleMobile:hover {
+        background-color: var(--border-color);
+        color: var(--text-primary);
+      }
+
+    #profileModal { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
+    #profileModalContent { background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color); }
+    #profileModalContent h5 { color: var(--text-primary); }
+    #profileModalContent .border-b, #profileModalContent .border-t { border-color: var(--border-color); }
+    #profileModalContent button[onclick*="closeProfileModal"]:not(.bg-\\[) {
+        color: var(--text-secondary);
     }
+     #profileModalContent button[onclick*="closeProfileModal"]:not(.bg-\\[):hover {
+       color: var(--text-primary);
+       background-color: var(--bg-tertiary);
+     }
+     #profileModalContent button.bg-\\[\\#343a40\\] {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+     }
+     #profileModalContent button.bg-\\[\\#343a40\\]:hover {
+        background-color: var(--border-color);
+     }
+
+     #profileModalContent button[type="submit"] {
+        background-color: var(--accent-color);
+        color: var(--accent-text-on-dark);
+        --tw-ring-offset-color: var(--bg-secondary);
+        --tw-ring-color: var(--accent-color);
+     }
+      body.light-theme #profileModalContent button[type="submit"] {
+        color: var(--accent-text-on-light);
+      }
+     #profileModalContent button[type="submit"]:hover {
+        background-color: var(--accent-color-hover);
+     }
+     #profileModalContent button[type="submit"]:focus {
+        box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-color);
+     }
+
+    #modalProfileImg { ring-offset-color: var(--bg-primary); ring-color: var(--profile-ring-color); }
+    label[for="profilePicInput"] {
+        color: var(--accent-color);
+        background-color: var(--accent-bg-subtle);
+    }
+    label[for="profilePicInput"]:hover {
+        color: var(--accent-color-hover);
+        background-color: var(--accent-bg-subtle-hover);
+    }
+    #profileModalContent h6 { color: var(--text-secondary); }
+
+    .placeholder-\\[\\#adb5bd\\]::placeholder { color: var(--text-tertiary) !important; }
 
   </style>
   </head>
 <body class="min-h-screen antialiased">
 
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-[#1a1d21]/80 backdrop-blur-sm">
-      <div class="bg-[#212529] rounded-lg shadow-xl w-full max-w-md p-8 border border-[#495057]">
-       <div class="text-center mb-8">
+  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+     <div class="bg-secondary rounded-lg shadow-xl w-full max-w-md p-8 border border-border-color">
+        <div class="text-center mb-8">
          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-12 w-auto" />
        </div>
-       <h2 class="text-center text-2xl font-semibold text-[#e9ecef] mb-2">Bem-vindo de volta!</h2>
-       <p class="text-center text-[#adb5bd] text-sm mb-6">Faça login para acessar seu painel.</p>
-       <div id="logoutNotification" class="hidden mb-4 p-3 text-sm text-yellow-300 bg-yellow-900/30 border border-yellow-700/50 rounded-md text-center">Você foi desconectado!</div>
-       <div id="loginError" class="hidden mb-4 p-3 text-sm text-red-300 bg-red-900/30 border border-red-700/50 rounded-md text-center"></div>
+       <h2 class="text-center text-2xl font-semibold text-primary mb-2">Bem-vindo de volta!</h2>
+       <p class="text-center text-secondary text-sm mb-6">Faça login para acessar seu painel.</p>
+       <div id="logoutNotification" class="hidden mb-4 p-3 text-sm rounded-md text-center">Você foi desconectado!</div>
+       <div id="loginError" class="hidden mb-4 p-3 text-sm rounded-md text-center"></div>
        <form id="formLogin" novalidate class="space-y-5">
          <div>
-           <label for="username" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Usuário</label>
+           <label for="username" class="block mb-1.5 text-sm font-medium">Usuário</label>
            <input type="text" id="username" placeholder="Digite seu usuário" required
-                  class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+                  class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
          </div>
          <div>
-           <label for="password" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Senha</label>
+           <label for="password" class="block mb-1.5 text-sm font-medium">Senha</label>
            <div class="relative">
              <input type="password" id="password" placeholder="Digite sua senha" required
-                    class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 pr-10 placeholder-[#adb5bd]" />
-             <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-[#adb5bd] hover:text-[#e9ecef]" aria-label="Mostrar senha">
+                    class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 pr-10 placeholder-[#adb5bd]" />
+             <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-secondary hover:text-primary" aria-label="Mostrar senha">
                <i class="bi bi-eye-slash text-lg"></i>
              </button>
            </div>
@@ -240,232 +461,228 @@
          <div class="flex items-center justify-between text-sm">
            <div class="flex items-center">
              <input type="checkbox" id="rememberMe"
-                    class="h-4 w-4 text-[#4dabf7] focus:ring-[#4dabf7] border-[#495057] rounded bg-[#343a40] focus:ring-offset-[#1a1d21]" />
-             <label for="rememberMe" class="ml-2 block text-[#adb5bd]">Lembrar meus dados</label>
+                    class="h-4 w-4 text-accent focus:ring-accent border-border-color rounded bg-tertiary focus:ring-offset-primary" />
+             <label for="rememberMe" class="ml-2 block text-secondary">Lembrar meus dados</label>
            </div>
-           <a href="#" class="font-medium text-[#4dabf7] hover:text-[#63bfff]">Esqueceu a senha?</a>
+           <a href="#" class="font-medium text-accent hover:text-accent-hover">Esqueceu a senha?</a>
          </div>
          <button type="submit" id="loginButton"
-                 class="w-full py-3 px-4 rounded-md font-semibold text-[#1a1d21] bg-[#4dabf7] hover:bg-[#369aea] shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d21] focus:ring-[#4dabf7] transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
+                 class="w-full py-3 px-4 rounded-md font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
            <span class="button-text">Entrar</span>
            <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span>
          </button>
        </form>
-     </div>
+      </div>
   </div>
 
-  <div id="welcomeScreen" class="fixed inset-0 bg-[#1a1d21] z-70 hidden items-center justify-center flex-direction-column opacity-0 transition-opacity duration-500 ease-in-out">
+  <div id="welcomeScreen" class="fixed inset-0 z-70 hidden items-center justify-center flex-direction-column opacity-0">
      <div class="text-center">
        <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-16 w-auto mb-6 animate-pulse" />
-       <h2 class="text-2xl font-semibold text-[#e9ecef] mb-2">Bem-vindo(a)!</h2>
-       <p class="text-[#adb5bd]" id="welcomeUserName">Carregando seu painel...</p>
+       <h2 class="text-2xl font-semibold text-primary mb-2">Bem-vindo(a)!</h2>
+       <p class="text-secondary" id="welcomeUserName">Carregando seu painel...</p>
      </div>
   </div>
 
   <div id="dashboard" class="hidden">
 
-     <header id="profileHeader" class="flex justify-between items-center px-4 shadow-sm md:hidden">
-       <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Abrir menu">
+     <header id="profileHeader" class="flex justify-between items-center shadow-sm md:hidden">
+       <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 rounded-full" aria-label="Abrir menu">
          <i class="bi bi-list text-xl"></i>
        </button>
        <div class="flex items-center">
-          <button id="integrationBtnHeader"
-                  class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full transition-colors duration-150 mr-2"
-                  aria-label="Dados e Previsões"
-                  onclick="loadPage('integracao.html', this, true); return false;">
-             <i class="bi bi-link-45deg text-xl"></i>
-          </button>
-          <div class="flex items-center cursor-pointer group profile-trigger" onclick="openProfileModal()">
-             <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
-             <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
-          </div>
+         <button id="integrationBtnHeader"
+                 class="p-2 rounded-full transition-colors duration-150 mr-2"
+                 aria-label="Dados e Previsões"
+                 onclick="loadPage('integracao.html', this, true); return false;">
+           <i class="bi bi-link-45deg text-xl"></i>
+         </button>
+         <div class="flex items-center cursor-pointer group profile-trigger" onclick="openProfileModal()">
+           <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline group-hover:text-accent transition-colors duration-150">Nome</span>
+           <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 transition-all duration-150" />
+         </div>
        </div>
      </header>
 
-     <nav id="desktopSidebar" class="bg-[#212529] text-[#adb5bd] shadow-md">
-        <div id="sidebarLogoContainer" class="logo-container p-5 flex flex-col items-center border-b border-[#495057] h-[60px] justify-center flex-shrink-0">
-          <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
-        </div>
+     <nav id="desktopSidebar" class="shadow-md">
+       <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center border-b h-[60px] justify-center flex-shrink-0">
+         <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
+       </div>
 
-        <div class="sidebar-scroll-content p-3 space-y-1">
-          <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-            <i class="bi bi-house-door-fill w-5 text-center text-lg"></i>
-            <span class="sidebar-text text-sm font-medium">Home</span>
-          </a>
-          <a href="#" onclick="loadPage('automate.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-            <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i>
-            <span class="sidebar-text text-sm font-medium">Dados e Previsões</span>
-          </a>
-           <div class="nav-item">
-             <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
-               <span class="flex items-center gap-3">
-                 <i class="bi bi-wallet2 w-5 text-center text-lg"></i>
-                 <span class="sidebar-text text-sm font-medium">Gastos</span>
-               </span>
-               <i id="desktopGastosIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
-             </button>
-             <div id="desktopGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
-              </div>
-          </div>
-          <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]">
-            <i class="bi bi-graph-up w-5 text-center text-lg"></i>
-            <span class="sidebar-text text-sm font-medium">Relatório Geral</span>
-          </a>
+       <div class="sidebar-scroll-content p-3 space-y-1">
+         <a href="#" onclick="loadPage('home.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md">
+           <i class="bi bi-house-door-fill w-5 text-center text-lg"></i>
+           <span class="sidebar-text text-sm font-medium">Home</span>
+         </a>
+         <a href="#" onclick="loadPage('automate.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md">
+           <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i>
+           <span class="sidebar-text text-sm font-medium">Dados e Previsões</span>
+         </a>
+         <div class="nav-item">
+           <button onclick="toggleSubmenu('desktopGastosSubmenu', 'desktopGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
+             <span class="flex items-center gap-3">
+               <i class="bi bi-wallet2 w-5 text-center text-lg"></i>
+               <span class="sidebar-text text-sm font-medium">Gastos</span>
+             </span>
+             <i id="desktopGastosIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
+           </button>
+           <div id="desktopGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
+             <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+">Janeiro</a>
+             <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+">Fevereiro</a>
+              <a href="#" onclick="loadPage('sub_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+">Abril</a>
+           </div>
+         </div>
+         <a href="#" onclick="loadPage('geral.html', this); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md">
+           <i class="bi bi-graph-up w-5 text-center text-lg"></i>
+           <span class="sidebar-text text-sm font-medium">Relatório Geral</span>
+         </a>
           <div class="nav-item">
-            <button onclick="toggleSubmenu('desktopConfigSubmenu', 'desktopConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
+            <button onclick="toggleSubmenu('desktopConfigSubmenu', 'desktopConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
               <span class="flex items-center gap-3">
                 <i class="bi bi-gear-fill w-5 text-center text-lg"></i>
                 <span class="sidebar-text text-sm font-medium">Configurações</span>
               </span>
               <i id="desktopConfigIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
             </button>
-            <div id="desktopConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="openProfileModal(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef] profile-sidebar-link">
-                <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i> Perfil
-              </a>
-              </div>
+            <div id="desktopConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
+               <a href="#" onclick="openProfileModal(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link">
+                 <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i> Perfil
+               </a>
+             </div>
           </div>
-        </div>
+       </div>
 
-        <div id="desktopSidebarToggle" class="p-3 border-t border-[#495057] flex-shrink-0">
-            <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-[#adb5bd] hover:bg-[#343a40] hover:text-[#e9ecef] transition-colors duration-150" aria-label="Recolher barra lateral">
-                <i id="desktopToggleIcon" class="bi bi-chevron-double-left w-5 text-center text-lg"></i>
-                <span class="sidebar-text text-sm font-medium">Recolher</span>
+       <div class="p-3 mt-auto border-t border-border-color flex-shrink-0 space-y-1">
+            <button id="themeToggleDesktop" onclick="toggleTheme()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md" aria-label="Alternar Tema">
+                 <i id="themeIconDesktop" class="bi bi-moon-stars-fill w-5 text-center text-lg"></i>
+                 <span class="sidebar-text text-sm font-medium theme-text">Tema Escuro</span>
             </button>
-        </div>
+
+            <button id="desktopLogoutButton" onclick="logout()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-danger bg-danger-bg-subtle hover:bg-danger-bg-subtle-hover" aria-label="Sair">
+                <i class="bi bi-box-arrow-right w-5 text-center text-lg"></i>
+                <span class="sidebar-text text-sm font-medium">Sair</span>
+            </button>
+
+            <div id="desktopSidebarToggle">
+                <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md" aria-label="Recolher barra lateral">
+                    <i id="desktopToggleIcon" class="bi bi-chevron-double-left w-5 text-center text-lg"></i>
+                    <span class="sidebar-text text-sm font-medium">Recolher</span>
+                </button>
+            </div>
+       </div>
      </nav>
 
      <div id="desktopMainArea">
-          <header id="desktopTopBar" class="items-center justify-end px-6">
-            <div class="flex items-center gap-4">
-                <button id="integrationBtnDesktop"
-                        class="p-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full transition-colors duration-150"
-                        aria-label="Dados e Previsões"
-                        onclick="loadPage('integracao.html', this); return false;">
-                   <i class="bi bi-link-45deg text-xl"></i>
-                </button>
-                <div class="h-6 w-px bg-[#495057]"></div>
-                <div class="flex items-center gap-3 cursor-pointer group profile-trigger" onclick="openProfileModal()">
-                    <span id="profileNameDesktop" class="font-medium text-sm text-[#e9ecef] group-hover:text-[#4dabf7] transition-colors duration-150">Nome do Usuário</span>
-                    <img id="profileImgDesktop" src="https://via.placeholder.com/40" alt="Perfil" class="w-9 h-9 rounded-full object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] group-hover:ring-[#63bfff] transition-all duration-150" />
-                </div>
-                <button onclick="logout(); event.stopPropagation();" class="text-[#adb5bd] hover:text-red-500 hover:bg-red-900/30 p-2 rounded-full transition-colors duration-150" aria-label="Sair">
-                   <i class="bi bi-box-arrow-right text-lg"></i>
-                </button>
-            </div>
-          </header>
 
-          <main id="mainContent" class="p-4 md:p-6">
-            <div id="iframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
-             <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4dabf7]"></div>
-            </div>
-            <iframe id="mainFrame" src="home.html" class="w-full h-full rounded-lg shadow-md relative z-10 border border-[#495057]" title="Conteúdo Principal"></iframe>
-          </main>
+        <main id="mainContent">
+          <div id="iframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
+          </div>
+          <iframe id="mainFrame" src="home.html" class="w-full h-full relative z-10" title="Conteúdo Principal"></iframe>
+        </main>
      </div>
 
-     <main id="mobileMainContent" class="p-4 md:hidden">
-        <div id="mobileIframeSpinnerOverlay" class="absolute inset-0 bg-[#1a1d21]/60 backdrop-blur-sm z-20 hidden items-center justify-center rounded-lg">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4dabf7]"></div>
-        </div>
-        <iframe id="mobileMainFrame" src="home.html" class="w-full h-full rounded-lg shadow-md relative z-10 border border-[#495057]" title="Conteúdo Principal Mobile"></iframe>
+     <main id="mobileMainContent" class="md:hidden">
+       <div id="mobileIframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
+         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
+       </div>
+       <iframe id="mobileMainFrame" src="home.html" class="w-full h-full relative z-10" title="Conteúdo Principal Mobile"></iframe>
      </main>
 
      <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
-     <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 bg-[#212529] text-[#adb5bd] h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r border-[#495057]">
-         <div class="p-4 flex justify-between items-center border-b border-[#495057] h-[60px]">
+
+     <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r">
+        <div class="p-4 flex justify-between items-center border-b h-[60px]">
           <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-7 w-auto" />
-          <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 text-[#adb5bd] hover:text-[#4dabf7] hover:bg-[#343a40] rounded-full" aria-label="Fechar menu">
+          <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 rounded-full" aria-label="Fechar menu">
             <i class="bi bi-x-lg text-xl"></i>
           </button>
-         </div>
-         <div class="overflow-y-auto flex-grow p-3 space-y-1">
-          <a href="#" onclick="loadPage('home.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
-          <a href="#" onclick="loadPage('automate.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Dados e Previsões</span></a>
-           <div class="nav-item">
-            <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
+        </div>
+        <div class="overflow-y-auto flex-grow p-3 space-y-1">
+          <a href="#" onclick="loadPage('home.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
+          <a href="#" onclick="loadPage('automate.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md"> <i class="bi bi-arrows-angle-contract w-5 text-center text-lg"></i> <span class="text-sm font-medium">Dados e Previsões</span></a>
+          <div class="nav-item">
+            <button onclick="toggleSubmenu('mobileGastosSubmenu', 'mobileGastosIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
               <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
               <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
             </button>
-            <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-              <a href="#" onclick="loadPage('sub_janeiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Janeiro</a>
-              <a href="#" onclick="loadPage('sub_fevereiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Fevereiro</a>
-              <a href="#" onclick="loadPage('sub_marco.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Março</a>
-              <a href="#" onclick="loadPage('sub_abril.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef]">Abril</a>
+            <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
+              <a href="#" onclick="loadPage('sub_janeiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+">Janeiro</a>
+               <a href="#" onclick="loadPage('sub_abril.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+">Abril</a>
             </div>
            </div>
-          <a href="#" onclick="loadPage('geral.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef]"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
+          <a href="#" onclick="loadPage('geral.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md"> <i class="bi bi-graph-up w-5 text-center text-lg"></i> <span class="text-sm font-medium">Relatório Geral</span></a>
            <div class="nav-item">
-             <button onclick="toggleSubmenu('mobileConfigSubmenu', 'mobileConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md transition-colors duration-150 hover:bg-[#343a40] hover:text-[#e9ecef] w-full text-left">
-               <span class="flex items-center gap-3"><i class="bi bi-gear-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Configurações</span></span>
-               <i id="mobileConfigIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
-             </button>
-             <div id="mobileConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l border-[#495057]">
-               <a href="#" onclick="openProfileModal(); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ hover:bg-[#343a40] hover:text-[#e9ecef] profile-sidebar-link">
+              <button onclick="toggleSubmenu('mobileConfigSubmenu', 'mobileConfigIcon')" class="nav-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-md w-full text-left">
+                <span class="flex items-center gap-3"><i class="bi bi-gear-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Configurações</span></span>
+                <i id="mobileConfigIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
+              </button>
+              <div id="mobileConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
+                <a href="#" onclick="openProfileModal(); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link">
                   <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i> Perfil
-               </a>
+                </a>
                </div>
-           </div>
-           </div>
-         <div class="p-3 mt-auto border-t border-[#495057]">
-          <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-red-400 bg-red-900/20 hover:bg-red-900/40 hover:text-red-300 transition-colors duration-150 text-sm font-medium">
-            <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
-          </button>
+            </div>
          </div>
-        </nav>
+
+        <div class="p-3 mt-auto border-t mobile-sidebar-footer space-y-2">
+            <button id="themeToggleMobile" onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium">
+                 <i id="themeIconMobile" class="bi bi-moon-stars-fill"></i> <span class="theme-text">Tema Escuro</span>
+             </button>
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium mobile-sidebar-footer-button">
+              <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
+            </button>
+        </div>
+     </nav>
   </div>
 
-  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
-     <div class="bg-[#212529] rounded-lg w-full max-w-lg p-6 shadow-xl text-[#e9ecef] transform transition-all duration-200 ease-in-out scale-95 opacity-0 border border-[#495057]" id="profileModalContent">
+  <div id="profileModal" class="fixed inset-0 bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out">
+     <div id="profileModalContent" class="rounded-lg w-full max-w-lg p-6 shadow-xl transform transition-all duration-200 ease-in-out scale-95 opacity-0 border">
        <form id="profileForm">
-         <div class="flex justify-between items-start border-b border-[#495057] pb-3 mb-5">
-           <h5 class="text-lg font-semibold text-[#e9ecef]">Editar Perfil</h5>
-           <button type="button" onclick="closeProfileModal()" class="text-[#adb5bd] hover:text-[#e9ecef] hover:bg-[#343a40] rounded-full p-1.5 -mt-1 -mr-1" aria-label="Fechar modal">
+         <div class="flex justify-between items-start border-b pb-3 mb-5">
+           <h5 class="text-lg font-semibold">Editar Perfil</h5>
+           <button type="button" onclick="closeProfileModal()" class="rounded-full p-1.5 -mt-1 -mr-1" aria-label="Fechar modal">
              <i class="bi bi-x-lg text-xl"></i>
            </button>
          </div>
          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
            <div class="flex-shrink-0 text-center">
-             <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 ring-offset-[#1a1d21] ring-[#4dabf7] mb-3" />
-             <label for="profilePicInput" class="cursor-pointer text-xs text-[#4dabf7] hover:text-[#63bfff] font-medium px-3 py-1.5 rounded-md bg-[#4dabf7]/20 hover:bg-[#4dabf7]/30 transition-colors duration-150 inline-block">
+             <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 mb-3" />
+             <label for="profilePicInput" class="cursor-pointer text-xs font-medium px-3 py-1.5 rounded-md transition-colors duration-150 inline-block">
                <i class="bi bi-upload mr-1"></i> Alterar foto
                <input type="file" id="profilePicInput" accept="image/*" class="hidden" />
              </label>
            </div>
            <div class="w-full flex-grow space-y-4">
-              <div>
-                <label for="profileNameInput" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nome de Usuário</label>
-                <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
-                       class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
-              </div>
+             <div>
+               <label for="profileNameInput" class="block mb-1.5 text-sm font-medium">Nome de Usuário</label>
+               <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
+                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
+             </div>
            </div>
          </div>
-         <div class="space-y-4 border-t border-[#495057] pt-6 mb-6">
-             <h6 class="text-md font-semibold text-[#adb5bd]">Alterar Senha</h6>
+         <div class="space-y-4 border-t pt-6 mb-6">
+            <h6 class="text-md font-semibold text-secondary">Alterar Senha</h6>
+            <div>
+               <label for="currentPassword" class="block mb-1.5 text-sm font-medium">Senha Atual</label>
+               <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
+                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
+            </div>
              <div>
-                 <label for="currentPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Senha Atual</label>
-                 <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
-                        class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+               <label for="newPassword" class="block mb-1.5 text-sm font-medium">Nova Senha</label>
+               <input type="password" id="newPassword" placeholder="Digite a nova senha"
+                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
              </div>
-              <div>
-                 <label for="newPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Nova Senha</label>
-                 <input type="password" id="newPassword" placeholder="Digite a nova senha"
-                        class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
-             </div>
-              <div>
-                 <label for="confirmPassword" class="block text-[#e9ecef] mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
-                 <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
-                        class="w-full px-4 py-2.5 bg-[#343a40] border border-[#495057] rounded-md text-[#e9ecef] focus:ring-2 focus:ring-[#4dabf7] focus:border-[#4dabf7] transition duration-200 placeholder-[#adb5bd]" />
+             <div>
+               <label for="confirmPassword" class="block mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
+               <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
+                      class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
              </div>
          </div>
-         <div class="flex justify-end space-x-3 pt-4 border-t border-[#495057]">
-           <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-[#343a40] text-[#e9ecef] rounded-md hover:bg-[#495057] border border-[#495057] transition duration-150 text-sm font-medium">Cancelar</button>
-           <button type="submit" class="px-4 py-2 bg-[#4dabf7] text-[#1a1d21] rounded-md hover:bg-[#369aea] transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d21] focus:ring-[#4dabf7] text-sm font-medium">Salvar Alterações</button>
+         <div class="flex justify-end space-x-3 pt-4 border-t">
+           <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-md border transition duration-150 text-sm font-medium bg-[#343a40]">Cancelar</button>
+           <button type="submit" class="px-4 py-2 rounded-md transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm font-medium">Salvar Alterações</button>
          </div>
-        </form>
+       </form>
       </div>
   </div>
 
@@ -475,196 +692,204 @@
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
-    setVhProperty();
-    window.addEventListener('resize', setVhProperty);
-    window.addEventListener('orientationchange', setVhProperty);
-  </script>
+    function showElement(el) { if (el) el.classList.remove('hidden'); }
+    function hideElement(el) { if (el) el.classList.add('hidden'); }
+    function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
+    function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
+    function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
+    function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
 
-  <script>
-     const loginOverlay = document.getElementById('loginOverlay');
-     const loginErrorDiv = document.getElementById('loginError');
-     const formLogin = document.getElementById('formLogin');
-     const usernameField = document.getElementById('username');
-     const passwordField = document.getElementById('password');
-     const rememberMe = document.getElementById('rememberMe');
-     const loginButton = document.getElementById('loginButton');
-     const buttonText = loginButton.querySelector('.button-text');
-     const spinnerIcon = loginButton.querySelector('.spinner-icon');
-     const togglePasswordButton = document.getElementById('togglePassword');
-     const welcomeScreen = document.getElementById('welcomeScreen');
-     const welcomeUserName = document.getElementById('welcomeUserName');
-     const dashboard = document.getElementById('dashboard');
-     const mainFrame = document.getElementById('mainFrame');
-     const iframeSpinnerOverlay = document.getElementById('iframeSpinnerOverlay');
-     const mobileMainFrame = document.getElementById('mobileMainFrame');
-     const mobileIframeSpinnerOverlay = document.getElementById('mobileIframeSpinnerOverlay');
-     const mobileMainContent = document.getElementById('mobileMainContent');
-     const logoutNotification = document.getElementById('logoutNotification');
+    const bodyElement = document.body;
+    const loginOverlay = document.getElementById('loginOverlay');
+    const loginErrorDiv = document.getElementById('loginError');
+    const formLogin = document.getElementById('formLogin');
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
+    const rememberMe = document.getElementById('rememberMe');
+    const loginButton = document.getElementById('loginButton');
+    const buttonText = loginButton.querySelector('.button-text');
+    const spinnerIcon = loginButton.querySelector('.spinner-icon');
+    const togglePasswordButton = document.getElementById('togglePassword');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const welcomeUserName = document.getElementById('welcomeUserName');
+    const dashboard = document.getElementById('dashboard');
+    const logoutNotification = document.getElementById('logoutNotification');
 
-     const mobileSidebarWrapper = document.getElementById('mobileSidebarWrapper');
-     const mobileSidebar = document.getElementById('mobileSidebar');
-     const profileHeaderMobile = document.getElementById('profileHeader');
-     const integrationBtnHeaderMobile = document.getElementById('integrationBtnHeader');
-     const profileNameHeaderMobile = document.getElementById('profileNameHeader');
-     const profileImgHeaderMobile = document.getElementById('profileImgHeader');
+    const mobileMainFrame = document.getElementById('mobileMainFrame');
+    const mobileIframeSpinnerOverlay = document.getElementById('mobileIframeSpinnerOverlay');
+    const mobileMainContent = document.getElementById('mobileMainContent');
+    const mobileSidebarWrapper = document.getElementById('mobileSidebarWrapper');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const profileHeaderMobile = document.getElementById('profileHeader');
+    const integrationBtnHeaderMobile = document.getElementById('integrationBtnHeader');
+    const profileNameHeaderMobile = document.getElementById('profileNameHeader');
+    const profileImgHeaderMobile = document.getElementById('profileImgHeader');
 
-     const desktopTopBar = document.getElementById('desktopTopBar');
-     const integrationBtnDesktop = document.getElementById('integrationBtnDesktop');
-     const profileNameDesktop = document.getElementById('profileNameDesktop');
-     const profileImgDesktop = document.getElementById('profileImgDesktop');
-     const desktopSidebar = document.getElementById('desktopSidebar');
-     const desktopMainArea = document.getElementById('desktopMainArea');
-     const mainContent = document.getElementById('mainContent');
-     const desktopSidebarToggleBtn = document.getElementById('desktopSidebarToggle')?.querySelector('button');
-     const desktopToggleIcon = document.getElementById('desktopToggleIcon');
-     const desktopToggleText = desktopSidebarToggleBtn?.querySelector('.sidebar-text');
+    const mainFrame = document.getElementById('mainFrame');
+    const iframeSpinnerOverlay = document.getElementById('iframeSpinnerOverlay');
+    const desktopSidebar = document.getElementById('desktopSidebar');
+    const desktopMainArea = document.getElementById('desktopMainArea');
+    const mainContent = document.getElementById('mainContent');
+    const desktopSidebarToggleBtn = document.getElementById('desktopSidebarToggle')?.querySelector('button');
+    const desktopToggleIcon = document.getElementById('desktopToggleIcon');
+    const desktopToggleText = desktopSidebarToggleBtn?.querySelector('.sidebar-text');
 
-     const profileModal = document.getElementById('profileModal');
-     const profileModalContent = document.getElementById('profileModalContent');
-     const profileForm = document.getElementById('profileForm');
-     const profileNameInput = document.getElementById('profileNameInput');
-     const profilePicInput = document.getElementById('profilePicInput');
-     const modalProfileImg = document.getElementById('modalProfileImg');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalContent = document.getElementById('profileModalContent');
+    const profileForm = document.getElementById('profileForm');
+    const profileNameInput = document.getElementById('profileNameInput');
+    const profilePicInput = document.getElementById('profilePicInput');
+    const modalProfileImg = document.getElementById('modalProfileImg');
 
-     const sidebarIntegrationLinkDesktop = document.querySelector('#desktopSidebar .nav-link[onclick*="integracao.html"]');
-     const sidebarIntegrationLinkMobile = document.querySelector('#mobileSidebar .nav-link[onclick*="integracao.html"]');
-     const sidebarProfileLinkDesktop = document.querySelector('#desktopSidebar .profile-sidebar-link');
-     const sidebarProfileLinkMobile = document.querySelector('#mobileSidebar .profile-sidebar-link');
+    const sidebarIntegrationLinkDesktop = document.querySelector('#desktopSidebar a[onclick*="automate.html"]');
+    const sidebarIntegrationLinkMobile = document.querySelector('#mobileSidebar a[onclick*="automate.html"]');
+    const sidebarProfileLinkDesktop = document.querySelector('#desktopSidebar .profile-sidebar-link');
+    const sidebarProfileLinkMobile = document.querySelector('#mobileSidebar .profile-sidebar-link');
+    const profileTriggers = document.querySelectorAll('.profile-trigger');
 
-     const profileTriggers = document.querySelectorAll('.profile-trigger');
+    const themeToggleDesktopBtn = document.getElementById('themeToggleDesktop');
+    const themeIconDesktop = document.getElementById('themeIconDesktop');
+    const themeTextDesktop = themeToggleDesktopBtn?.querySelector('.theme-text');
+    const themeToggleMobileBtn = document.getElementById('themeToggleMobile');
+    const themeIconMobile = document.getElementById('themeIconMobile');
+    const themeTextMobile = themeToggleMobileBtn?.querySelector('.theme-text');
 
-     const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
-     const DEFAULT_PROFILE_PIC_MEDIUM = 'https://via.placeholder.com/40';
-     const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
+    const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
+    const DEFAULT_PROFILE_PIC_MEDIUM = 'https://via.placeholder.com/40';
+    const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
 
-     function showElement(el) { if (el) el.classList.remove('hidden'); }
-     function hideElement(el) { if (el) el.classList.add('hidden'); }
-     function showFlexElement(el) { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
-     function hideFlexElement(el) { if (el) { el.classList.remove('flex'); el.classList.add('hidden'); } }
-     function disableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = true; if(textEl) textEl.classList.add('hidden'); if(spinnerEl) spinnerEl.classList.remove('hidden'); }
-     function enableButton(btn, textEl, spinnerEl) { if(btn) btn.disabled = false; if(textEl) textEl.classList.remove('hidden'); if(spinnerEl) spinnerEl.classList.add('hidden'); }
-
-     formLogin.addEventListener('submit', function (e) {
-       e.preventDefault();
-       hideElement(loginErrorDiv);
-       disableButton(loginButton, buttonText, spinnerIcon);
-       setTimeout(() => {
-        const validUsername = localStorage.getItem('savedUsername') || 'admin';
-        const username = usernameField.value.trim();
-        const password = passwordField.value;
-        if (username === validUsername && password === 'admin123') {
+    formLogin.addEventListener('submit', function (e) {
+      e.preventDefault();
+      hideElement(loginErrorDiv);
+      disableButton(loginButton, buttonText, spinnerIcon);
+      setTimeout(() => {
+       const validUsername = localStorage.getItem('savedUsername') || 'admin';
+       const username = usernameField.value.trim();
+       const password = passwordField.value;
+       if (username === validUsername && password === 'admin123') {
          handleSuccessfulLogin(username, password);
-        } else {
+       } else {
          handleFailedLogin();
-        }
-       }, 1000);
-     });
-
-     function handleSuccessfulLogin(username, password) {
-       if (rememberMe.checked) {
-        localStorage.setItem('savedUsername', username);
-        localStorage.setItem('savedPassword', password);
-       } else {
-        localStorage.removeItem('savedPassword');
-        localStorage.setItem('savedUsername', username);
        }
-       localStorage.setItem('isLoggedIn', 'true');
+      }, 1000);
+    });
 
-       hideFlexElement(loginOverlay);
-       welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
-       welcomeScreen.classList.add('visible');
+    function handleSuccessfulLogin(username, password) {
+      if (rememberMe.checked) {
+       localStorage.setItem('savedUsername', username);
+       localStorage.setItem('savedPassword', password);
+      } else {
+       localStorage.removeItem('savedPassword');
+       if(localStorage.getItem('savedUsername') !== username) {
+         localStorage.setItem('savedUsername', username);
+       }
+      }
+      localStorage.setItem('isLoggedIn', 'true');
 
-       setTimeout(() => {
-        welcomeScreen.classList.remove('visible');
-        setTimeout(() => { hideElement(welcomeScreen); }, 500);
+      hideFlexElement(loginOverlay);
+      welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
+      welcomeScreen.classList.add('visible');
 
-        const isMobile = window.innerWidth < 768;
-        showFlexElement(dashboard); // Always show dashboard as flex now
+      setTimeout(() => {
+       welcomeScreen.classList.remove('visible');
+       setTimeout(() => { hideElement(welcomeScreen); }, 500);
 
-        updateUserInfo();
-        applyDesktopSidebarState(); // Apply state for desktop view consistency
+       showFlexElement(dashboard);
 
-        const initialLinkSelector = isMobile ? '#mobileSidebar .nav-link[onclick*="home.html"]' : '#desktopSidebar .nav-link[onclick*="home.html"]';
-        const homeLink = document.querySelector(initialLinkSelector);
+       updateUserInfo();
+       applyDesktopSidebarState();
+       applySavedTheme();
 
-        if (homeLink) {
+       const isMobile = window.innerWidth < 768;
+       const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
+       const homeLink = document.querySelector(initialLinkSelector);
+       if (homeLink) {
            loadPage('home.html', homeLink, isMobile);
-        } else {
-            const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-            const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
-            if (targetFrame) targetFrame.src = 'home.html';
-            hideFlexElement(targetSpinner);
-            console.warn("Home link not found for current view.");
-        }
-        enableButton(loginButton, buttonText, spinnerIcon);
-       }, 2000);
-     }
-
-     function handleFailedLogin() {
-       loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
-       showElement(loginErrorDiv);
-       enableButton(loginButton, buttonText, spinnerIcon);
-       const loginCard = loginOverlay.querySelector('.bg-\\[\\#212529\\]');
-       if(loginCard) {
-          loginCard.classList.add('animate-shake');
-          setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
-       }
-     }
-
-     togglePasswordButton.addEventListener('click', function() {
-       const icon = this.querySelector('i');
-       if (passwordField.type === 'password') {
-        passwordField.type = 'text'; icon.classList.replace('bi-eye-slash', 'bi-eye'); this.setAttribute('aria-label', 'Ocultar senha');
        } else {
-        passwordField.type = 'password'; icon.classList.replace('bi-eye', 'bi-eye-slash'); this.setAttribute('aria-label', 'Mostrar senha');
+           const targetFrame = isMobile ? mobileMainFrame : mainFrame;
+           const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
+           if (targetFrame) targetFrame.src = 'home.html';
+           hideFlexElement(targetSpinner);
+           console.warn("Link Home não encontrado para view inicial.");
        }
-     });
+       enableButton(loginButton, buttonText, spinnerIcon);
+      }, 2000);
+    }
 
-     function logout() {
-        localStorage.removeItem('isLoggedIn');
+    function handleFailedLogin() {
+      loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
+      showElement(loginErrorDiv);
+      enableButton(loginButton, buttonText, spinnerIcon);
+      const loginCard = loginOverlay.querySelector('[class*="bg-secondary"]');
+      if(loginCard) {
+        loginCard.classList.add('animate-shake');
+        setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
+      }
+    }
 
-        hideFlexElement(dashboard);
-        showFlexElement(loginOverlay);
-        showElement(logoutNotification);
-        setTimeout(() => hideElement(logoutNotification), 4000);
+    togglePasswordButton.addEventListener('click', function() {
+      const icon = this.querySelector('i');
+      if (passwordField.type === 'password') {
+       passwordField.type = 'text'; icon.classList.replace('bi-eye-slash', 'bi-eye'); this.setAttribute('aria-label', 'Ocultar senha');
+      } else {
+       passwordField.type = 'password'; icon.classList.replace('bi-eye', 'bi-eye-slash'); this.setAttribute('aria-label', 'Mostrar senha');
+      }
+    });
 
-        if (mobileSidebar.classList.contains('translate-x-0')) toggleMobileSidebar();
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
 
-        passwordField.value = '';
-        hideElement(loginErrorDiv);
+      hideFlexElement(dashboard);
+      showFlexElement(loginOverlay);
 
-        const savedUsername = localStorage.getItem('savedUsername');
-        const savedPassword = localStorage.getItem('savedPassword');
-        usernameField.value = savedUsername || '';
-        rememberMe.checked = !!savedPassword;
-        console.log(">>> Logged out. Login screen prepared.");
-     }
+      showElement(logoutNotification);
+      setTimeout(() => hideElement(logoutNotification), 4000);
 
-     function setActiveLink(clickedLinkElement) {
+      if (mobileSidebar.classList.contains('translate-x-0')) toggleMobileSidebar();
+
+      passwordField.value = '';
+      hideElement(loginErrorDiv);
+
+      const savedUsername = localStorage.getItem('savedUsername');
+      const savedPassword = localStorage.getItem('savedPassword');
+      usernameField.value = savedUsername || '';
+      rememberMe.checked = !!savedPassword;
+
+      console.log(">>> Logout realizado. Tela de login preparada.");
+    }
+
+    function setActiveLink(clickedLinkElement) {
         if (!clickedLinkElement) return;
 
-        document.querySelectorAll('.nav-link, #integrationBtnHeader, #integrationBtnDesktop, .profile-trigger, .profile-sidebar-link').forEach(el => {
+        document.querySelectorAll('.nav-link, #integrationBtnHeader, .profile-trigger, .profile-sidebar-link').forEach(el => {
             el.classList.remove('active');
         });
 
         clickedLinkElement.classList.add('active');
 
-        const isIntegration = clickedLinkElement.getAttribute('onclick')?.includes('integracao.html');
-        const isProfileTrigger = clickedLinkElement.classList.contains('profile-trigger') || clickedLinkElement.classList.contains('profile-sidebar-link');
+        const isIntegrationPage = clickedLinkElement.getAttribute('onclick')?.includes('automate.html') || clickedLinkElement.getAttribute('onclick')?.includes('integracao.html');
+        const isProfileTriggerOrLink = clickedLinkElement.classList.contains('profile-trigger') || clickedLinkElement.classList.contains('profile-sidebar-link');
 
-        if (isIntegration) {
-           if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.add('active');
-           if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.add('active');
-           if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.add('active');
-           if (integrationBtnDesktop) integrationBtnDesktop.classList.add('active');
-        } else if (isProfileTrigger) {
+        if (isIntegrationPage) {
+            if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.add('active');
+            if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.add('active');
+            if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.add('active');
+        } else if (isProfileTriggerOrLink) {
+            profileTriggers.forEach(trigger => trigger.classList.add('active'));
             if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.add('active');
             if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.add('active');
-            profileTriggers.forEach(trigger => trigger.classList.add('active'));
             const parentConfigButtonD = sidebarProfileLinkDesktop?.closest('.nav-item')?.querySelector('button.nav-link');
             const parentConfigButtonM = sidebarProfileLinkMobile?.closest('.nav-item')?.querySelector('button.nav-link');
             if(parentConfigButtonD) parentConfigButtonD.classList.add('active');
             if(parentConfigButtonM) parentConfigButtonM.classList.add('active');
+             const submenuD = parentConfigButtonD?.nextElementSibling;
+             const submenuM = parentConfigButtonM?.nextElementSibling;
+             if (submenuD && !submenuD.classList.contains('submenu-visible') && !desktopSidebar?.classList.contains('sidebar-collapsed')) {
+                toggleSubmenu(submenuD.id, parentConfigButtonD.querySelector('i[id$="Icon"]')?.id);
+             }
+             if (submenuM && !submenuM.classList.contains('submenu-visible')) {
+                 toggleSubmenu(submenuM.id, parentConfigButtonM.querySelector('i[id$="Icon"]')?.id);
+             }
 
         } else {
             const parentSubmenu = clickedLinkElement.closest('.submenu');
@@ -675,33 +900,36 @@
                     const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
                     const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
                     if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
-                       const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
-                       if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId);
+                        const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
+                        if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId);
                     }
                 }
             }
+            if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.remove('active');
+            if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.remove('active');
+            if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.remove('active');
         }
-     }
+    }
 
 
-     function loadPage(pageUrl, clickedLinkElement, isMobile = false) {
-         const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-         const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
+    function loadPage(pageUrl, clickedLinkElement, isMobile = window.innerWidth < 768) {
+        const targetFrame = isMobile ? mobileMainFrame : mainFrame;
+        const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
 
-         showFlexElement(targetSpinner);
-         setActiveLink(clickedLinkElement);
-         if(targetFrame) {
-            // Set timeout to ensure spinner is visible before src change potentially blocks thread
-            setTimeout(() => {
-                targetFrame.src = pageUrl;
-            }, 50);
-         } else {
-            console.error(`Elemento iframe '${isMobile ? 'mobileMainFrame' : 'mainFrame'}' não encontrado.`);
-            hideFlexElement(targetSpinner);
-         }
-     }
+        if(!targetFrame || !targetSpinner) {
+            console.error("Iframe ou Spinner não encontrado para:", isMobile ? "Mobile" : "Desktop");
+            return;
+        }
 
-     function setupIframeListener(frameElement, spinnerElement) {
+        showFlexElement(targetSpinner);
+        setActiveLink(clickedLinkElement);
+
+        setTimeout(() => {
+            targetFrame.src = pageUrl;
+        }, 50);
+    }
+
+    function setupIframeListener(frameElement, spinnerElement) {
         if (frameElement && spinnerElement) {
             frameElement.addEventListener('load', () => hideFlexElement(spinnerElement));
             frameElement.addEventListener('error', (e) => {
@@ -711,187 +939,235 @@
         } else {
             console.error("Iframe ou spinner overlay não encontrado para listener.");
         }
-     }
+    }
 
-     setupIframeListener(mainFrame, iframeSpinnerOverlay);
-     setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay);
+    function toggleMobileSidebar() {
+      const isOpen = mobileSidebar.classList.contains('translate-x-0');
+      if (isOpen) {
+       mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
+       hideElement(mobileSidebarWrapper);
+      } else {
+       mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0');
+       showElement(mobileSidebarWrapper);
+      }
+    }
 
+    function toggleSubmenu(submenuId, iconId) {
+      const submenu = document.getElementById(submenuId);
+      const icon = document.getElementById(iconId);
+      if (!submenu || !icon) {
+          console.warn("Submenu ou ícone não encontrado:", submenuId, iconId);
+          return;
+      }
 
-     function toggleMobileSidebar() {
-       const isOpen = mobileSidebar.classList.contains('translate-x-0');
-       if (isOpen) {
-        mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
-        hideElement(mobileSidebarWrapper);
-       } else {
-        mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0');
-        showElement(mobileSidebarWrapper);
-       }
-     }
+      const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
+      const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
 
-     function toggleSubmenu(submenuId, iconId) {
-       const submenu = document.getElementById(submenuId);
-       const icon = document.getElementById(iconId);
-       if (!submenu || !icon) return;
+      if (context === 'mobile' || !isDesktopSidebarCollapsed) {
+        document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
+            if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
+                otherSubmenu.classList.remove('submenu-visible');
+                const otherIcon = document.getElementById(otherSubmenu.id.replace('Submenu', 'Icon'));
+                if (otherIcon) otherIcon.classList.remove('rotate-180');
+            }
+        });
+      }
 
-       const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
-       const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
+      if (context === 'mobile' || !isDesktopSidebarCollapsed) {
+        submenu.classList.toggle('submenu-visible');
+        icon.classList.toggle('rotate-180');
+      } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
+          console.log("Toggle de submenu ignorado (desktop colapsado). Clique no ícone deve carregar página se necessário.");
+      }
+    }
 
-       if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-          document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
-              if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
-                 otherSubmenu.classList.remove('submenu-visible');
-                 const otherIcon = document.getElementById(otherSubmenu.id.replace('Submenu', 'Icon'));
-                 if (otherIcon) otherIcon.classList.remove('rotate-180');
-              }
-          });
-       }
-
-       if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-          submenu.classList.toggle('submenu-visible');
-          icon.classList.toggle('rotate-180');
-       } else {
-          console.log("Submenu toggle ignored (desktop collapsed).");
-       }
-     }
-
-      function toggleDesktopSidebar() {
+    function toggleDesktopSidebar() {
         if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !desktopMainArea) return;
+
         const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('desktopSidebarState', isCollapsed ? 'collapsed' : 'expanded');
+
         if (isCollapsed) {
             desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
             desktopToggleText.textContent = 'Expandir';
             desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
-            localStorage.setItem('desktopSidebarState', 'collapsed');
-            desktopMainArea.style.marginLeft = '5rem';
-            desktopMainArea.style.width = 'calc(100% - 5rem)';
             document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => {
-               sm.classList.remove('submenu-visible');
-               const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
-               if(iconEl) iconEl.classList.remove('rotate-180');
+                sm.classList.remove('submenu-visible');
+                const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
+                if(iconEl) iconEl.classList.remove('rotate-180');
             });
         } else {
             desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
             desktopToggleText.textContent = 'Recolher';
             desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
-            localStorage.setItem('desktopSidebarState', 'expanded');
-            desktopMainArea.style.marginLeft = '16rem';
-            desktopMainArea.style.width = 'calc(100% - 16rem)';
+             const activeSubmenuLink = desktopSidebar.querySelector('.submenu .nav-link.active');
+             if (activeSubmenuLink) {
+                 const submenuDiv = activeSubmenuLink.closest('.submenu');
+                 const parentButton = submenuDiv?.previousElementSibling;
+                 if (submenuDiv && parentButton && !submenuDiv.classList.contains('submenu-visible')) {
+                     const iconId = parentButton.querySelector('i[id$="Icon"]')?.id;
+                     if (iconId) toggleSubmenu(submenuDiv.id, iconId);
+                 }
+             }
         }
+    }
+
+    function applyDesktopSidebarState() {
+        if (window.innerWidth < 768) return;
+        if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !desktopMainArea) return;
+
+        const savedState = localStorage.getItem('desktopSidebarState');
+        const shouldBeCollapsed = savedState === 'collapsed';
+        const isCurrentlyCollapsed = desktopSidebar.classList.contains('sidebar-collapsed');
+
+        if (shouldBeCollapsed && !isCurrentlyCollapsed) {
+            desktopSidebar.classList.add('sidebar-collapsed');
+            desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
+            desktopToggleText.textContent = 'Expandir';
+            desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
+        } else if (!shouldBeCollapsed && isCurrentlyCollapsed) {
+            desktopSidebar.classList.remove('sidebar-collapsed');
+            desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
+            desktopToggleText.textContent = 'Recolher';
+            desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
+        }
+    }
+
+    function openProfileModal() {
+      const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
+      const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
+      profileNameInput.value = currentUsername;
+      modalProfileImg.src = currentProfilePicLarge;
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      profilePicInput.value = '';
+
+      const isMobile = window.innerWidth < 768;
+      const profileLinkToActivate = isMobile ? sidebarProfileLinkMobile : sidebarProfileLinkDesktop;
+      if (profileLinkToActivate) {
+          setActiveLink(profileLinkToActivate);
+      } else {
+          const triggerToActivate = isMobile ? profileHeaderMobile.querySelector('.profile-trigger') : null;
+          if (triggerToActivate) setActiveLink(triggerToActivate);
       }
 
-       function applyDesktopSidebarState() {
-         if (window.innerWidth < 768) return; // Only apply on desktop
-         if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !desktopMainArea) return;
+      profileModal.classList.remove('hidden');
+      profileModal.classList.add('flex');
+      void profileModal.offsetWidth;
+      profileModal.classList.add('opacity-100');
+      profileModalContent.classList.remove('scale-95', 'opacity-0');
+    }
 
-         const savedState = localStorage.getItem('desktopSidebarState');
-         if (savedState === 'collapsed') {
-              if (!desktopSidebar.classList.contains('sidebar-collapsed')) {
-                  desktopSidebar.classList.add('sidebar-collapsed');
-                  desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
-                  desktopToggleText.textContent = 'Expandir';
-                  desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
-              }
-              desktopMainArea.style.marginLeft = '5rem';
-              desktopMainArea.style.width = 'calc(100% - 5rem)';
-         } else {
-              if (desktopSidebar.classList.contains('sidebar-collapsed')) {
-                  desktopSidebar.classList.remove('sidebar-collapsed');
-                  desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
-                  desktopToggleText.textContent = 'Recolher';
-                  desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
-              }
-              desktopMainArea.style.marginLeft = '16rem';
-              desktopMainArea.style.width = 'calc(100% - 16rem)';
-         }
-       }
-
-     function openProfileModal() {
-        const isMobile = window.innerWidth < 768;
-        const profileLinkToActivate = isMobile ? sidebarProfileLinkMobile : sidebarProfileLinkDesktop;
-        if (profileLinkToActivate) {
-             setActiveLink(profileLinkToActivate);
-        } else {
-             console.warn("Sidebar profile link not found for activation.");
-             const firstTrigger = document.querySelector('.profile-trigger');
-             if (firstTrigger) setActiveLink(firstTrigger);
-        }
-
-       const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
+    function closeProfileModal() {
+      profileModal.classList.remove('opacity-100');
+      profileModalContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+       profileModal.classList.add('hidden');
+       profileModal.classList.remove('flex');
        const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-       profileNameInput.value = currentUsername;
        modalProfileImg.src = currentProfilePicLarge;
-       document.getElementById('currentPassword').value = '';
-       document.getElementById('newPassword').value = '';
-       document.getElementById('confirmPassword').value = '';
+       profilePicInput.value = '';
 
-       profileModal.classList.remove('hidden');
-       profileModal.classList.add('flex');
-       void profileModal.offsetWidth;
-       profileModal.classList.add('opacity-100');
-       profileModalContent.classList.remove('scale-95', 'opacity-0');
-     }
+       document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active'));
+       const isMobile = window.innerWidth < 768;
+       const currentFrame = isMobile ? mobileMainFrame : mainFrame;
+       const currentIframeSrc = currentFrame?.src;
+       if (currentIframeSrc) {
+            try {
+                const url = new URL(currentIframeSrc);
+                const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1);
+                if (pageName && pageName !== 'profile.html') {
+                     const linkSelector = `.nav-link[onclick*="'${pageName}'"]`;
+                     const correspondingLink = document.querySelector(linkSelector);
+                     if(correspondingLink && !correspondingLink.classList.contains('profile-sidebar-link')) {
+                         setActiveLink(correspondingLink);
+                     }
+                }
+            } catch (e) {
+                console.error("Erro ao processar URL do iframe:", e);
+            }
+       }
+      }, 200);
+    }
 
-     function closeProfileModal() {
-       profileModal.classList.remove('opacity-100');
-       profileModalContent.classList.add('scale-95', 'opacity-0');
-       setTimeout(() => {
-        profileModal.classList.add('hidden');
-        profileModal.classList.remove('flex');
-        const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-        modalProfileImg.src = currentProfilePicLarge;
-        profilePicInput.value = '';
-        document.querySelectorAll('.profile-trigger, .profile-sidebar-link').forEach(el => el.classList.remove('active'));
-       }, 200);
-     }
-
-     profilePicInput.addEventListener('change', function () {
-       const file = this.files[0];
-       if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
+    profilePicInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file && file.type.startsWith('image/')) {
+       const reader = new FileReader();
+       reader.onload = function (e) {
          modalProfileImg.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-       }
-     });
+       };
+       reader.readAsDataURL(file);
+      } else if (file) {
+       alert("Por favor, selecione um arquivo de imagem válido.");
+       this.value = '';
+      }
+    });
 
-     profileForm.addEventListener('submit', function (e) {
-       e.preventDefault();
-       const newName = profileNameInput.value.trim();
-       const newImgDataUrl = modalProfileImg.src.startsWith('data:image/') ? modalProfileImg.src : null;
+    profileForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const newName = profileNameInput.value.trim();
+      const newImgSrc = modalProfileImg.src;
 
-       const currentPassword = document.getElementById('currentPassword').value;
-       const newPassword = document.getElementById('newPassword').value;
-       const confirmPassword = document.getElementById('confirmPassword').value;
-       let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
-       if (passwordChangeAttempted) {
-           if (newPassword && newPassword === confirmPassword ) {
-               console.log("Password change VALID (Placeholder):", newPassword);
-               // Placeholder: Actually update password here
-               // localStorage.setItem('savedPassword', newPassword); // Example if storing locally (unsafe)
-           } else {
-               console.log("Password change INVALID (Placeholder)");
-               alert('Falha ao alterar senha. Verifique os campos.');
-               return;
-           }
-       }
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
+      let passwordChangeOk = true;
 
-       if (newName) {
-        localStorage.setItem('savedUsername', newName);
-        if (newImgDataUrl) {
-           localStorage.setItem('savedProfilePicLarge', newImgDataUrl);
-        } else if (modalProfileImg.src === DEFAULT_PROFILE_PIC_LARGE) {
-           localStorage.removeItem('savedProfilePicLarge');
-        }
+      if (passwordChangeAttempted) {
+          const storedPassword = localStorage.getItem('savedPassword') || 'admin123';
+          if (currentPassword !== storedPassword) {
+              alert('Senha atual incorreta!');
+              passwordChangeOk = false;
+          } else if (!newPassword || newPassword !== confirmPassword) {
+              alert('Nova senha e confirmação não coincidem ou estão vazias.');
+              passwordChangeOk = false;
+          } else if (newPassword.length < 6) {
+              alert('A nova senha deve ter pelo menos 6 caracteres.');
+               passwordChangeOk = false;
+          }
 
-        updateUserInfo();
-        closeProfileModal();
-       } else {
-        alert('O nome de usuário não pode ficar vazio.');
-       }
-     });
+          if (passwordChangeOk) {
+              console.log("Senha seria atualizada para (simulação):", newPassword);
+              if(localStorage.getItem('savedPassword')) {
+                  localStorage.setItem('savedPassword', newPassword);
+                  console.log("Senha salva no localStorage atualizada.");
+              } else {
+                  console.log("Senha não estava salva ('Lembrar dados'), apenas validada.");
+              }
+          } else {
+              return;
+          }
+      }
 
-     function updateUserInfo() {
+      if (newName) {
+          localStorage.setItem('savedUsername', newName);
+
+          if (newImgSrc.startsWith('data:image/')) {
+              try {
+                  localStorage.setItem('savedProfilePicLarge', newImgSrc);
+              } catch (error) {
+                  console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error);
+                  alert("Não foi possível salvar a imagem. Pode ser muito grande. Tente uma imagem menor.");
+                  const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
+                  modalProfileImg.src = previousPic;
+                  localStorage.removeItem('savedProfilePicLarge');
+                  return;
+              }
+          } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE && localStorage.getItem('savedProfilePicLarge')) {
+              localStorage.removeItem('savedProfilePicLarge');
+          }
+
+          updateUserInfo();
+          closeProfileModal();
+      } else {
+         alert('O nome de usuário não pode ficar vazio.');
+      }
+    });
+
+    function updateUserInfo() {
         const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
         const profilePicBase64Large = localStorage.getItem('savedProfilePicLarge');
 
@@ -900,87 +1176,98 @@
         const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE;
 
         if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username;
-        if(profileNameDesktop) profileNameDesktop.textContent = username;
 
         if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall;
-        if(profileImgDesktop) profileImgDesktop.src = displayPicMedium;
         if(modalProfileImg) modalProfileImg.src = modalPic;
-     }
+    }
 
-     function handleResize() {
-         const stillLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-         if (stillLoggedIn) {
-             const currentlyMobile = window.innerWidth < 768;
-             if (currentlyMobile) {
-                  // Ensure correct mobile elements are shown/hidden if needed
-                  showElement(profileHeaderMobile);
-                  showElement(mobileMainContent);
-                  hideElement(desktopSidebar);
-                  hideElement(desktopMainArea);
-                  hideElement(desktopTopBar);
-             } else {
-                  // Ensure correct desktop elements are shown/hidden
-                  hideElement(profileHeaderMobile);
-                  hideElement(mobileMainContent);
-                  showFlexElement(desktopSidebar);
-                  showFlexElement(desktopMainArea);
-                  showFlexElement(desktopTopBar);
-                  applyDesktopSidebarState(); // Apply correct margin/width on resize to desktop
-                  if (mobileSidebar.classList.contains('translate-x-0')) { // Close mobile sidebar if open
-                      toggleMobileSidebar();
-                  }
-             }
-         }
-     }
+    function applySavedTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            bodyElement.classList.add('light-theme');
+        } else {
+            bodyElement.classList.remove('light-theme');
+        }
+        updateThemeToggleUI(savedTheme);
+    }
 
-     window.addEventListener('DOMContentLoaded', function () {
-       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-       const isMobile = window.innerWidth < 768;
+    function toggleTheme() {
+        const currentTheme = bodyElement.classList.contains('light-theme') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-       if (isLoggedIn) {
-            hideFlexElement(loginOverlay);
-            showFlexElement(dashboard); // Show the main container
+        if (newTheme === 'light') {
+            bodyElement.classList.add('light-theme');
+        } else {
+            bodyElement.classList.remove('light-theme');
+        }
+        localStorage.setItem('theme', newTheme);
+        updateThemeToggleUI(newTheme);
+    }
 
-            if (isMobile) {
-                // Mobile view setup handled by default CSS + handleResize ensures visibility
-            } else {
-                // Desktop view setup handled by default CSS + handleResize ensures visibility
-            }
+    function updateThemeToggleUI(theme) {
+        const isLight = theme === 'light';
+        const iconClass = isLight ? 'bi-sun-fill' : 'bi-moon-stars-fill';
+        const text = isLight ? 'Tema Claro' : 'Tema Escuro';
 
-            updateUserInfo();
-            applyDesktopSidebarState(); // Apply desktop state initially if not mobile
+        if (themeIconDesktop) themeIconDesktop.className = `bi ${iconClass} w-5 text-center text-lg`;
+        if (themeTextDesktop) themeTextDesktop.textContent = text;
+        if (themeToggleDesktopBtn) themeToggleDesktopBtn.setAttribute('aria-label', `Mudar para tema ${isLight ? 'escuro' : 'claro'}`);
 
-            const initialLinkSelector = isMobile ? '#mobileSidebar .nav-link[onclick*="home.html"]' : '#desktopSidebar .nav-link[onclick*="home.html"]';
-            const homeLink = document.querySelector(initialLinkSelector);
-            if (homeLink) {
-               loadPage('home.html', homeLink, isMobile);
-            } else {
-                const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-                const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
-                if(targetFrame) targetFrame.src = 'home.html';
-                hideFlexElement(targetSpinner);
-                console.warn("Link Home não encontrado na carga inicial.");
-            }
+        if (themeIconMobile) themeIconMobile.className = `bi ${iconClass}`;
+        if (themeTextMobile) themeTextMobile.textContent = text;
+        if (themeToggleMobileBtn) themeToggleMobileBtn.setAttribute('aria-label', `Mudar para tema ${isLight ? 'escuro' : 'claro'}`);
+    }
 
-       } else {
-            showFlexElement(loginOverlay);
-            hideFlexElement(dashboard);
-            hideElement(logoutNotification);
-            hideElement(loginErrorDiv);
+    function handleResize() {
+        const stillLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (stillLoggedIn) {
+            applyDesktopSidebarState();
+        }
+        setVhProperty();
+    }
 
-            const savedUsername = localStorage.getItem('savedUsername');
-            const savedPassword = localStorage.getItem('savedPassword');
-            usernameField.value = savedUsername || '';
-            passwordField.value = '';
-            rememberMe.checked = !!savedPassword;
-       }
+    window.addEventListener('DOMContentLoaded', function () {
+      setVhProperty();
+      applySavedTheme();
 
-       // Initial check on load
-       handleResize();
-       // Add resize listener
-       window.addEventListener('resize', handleResize);
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const isMobile = window.innerWidth < 768;
 
-     });
+      if (isLoggedIn) {
+          hideFlexElement(loginOverlay);
+          showFlexElement(dashboard);
+          updateUserInfo();
+          applyDesktopSidebarState();
+
+          const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
+          const homeLink = document.querySelector(initialLinkSelector);
+          if (homeLink) {
+             setTimeout(() => loadPage('home.html', homeLink, isMobile), 50);
+          } else {
+             const targetFrame = isMobile ? mobileMainFrame : mainFrame;
+             if(targetFrame) targetFrame.src = 'home.html';
+              hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay);
+             console.warn("Link Home não encontrado na carga inicial.");
+          }
+      } else {
+          showFlexElement(loginOverlay);
+          hideFlexElement(dashboard);
+          hideElement(logoutNotification);
+          hideElement(loginErrorDiv);
+
+          const savedUsername = localStorage.getItem('savedUsername');
+          const savedPassword = localStorage.getItem('savedPassword');
+          usernameField.value = savedUsername || '';
+          passwordField.value = '';
+          rememberMe.checked = !!savedPassword;
+      }
+
+      setupIframeListener(mainFrame, iframeSpinnerOverlay);
+      setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay);
+
+      window.addEventListener('resize', handleResize);
+    });
+
   </script>
 
 </body>
