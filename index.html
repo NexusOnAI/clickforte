@@ -29,7 +29,7 @@
         --accent-color: #4dabf7;
         --accent-color-hover: #369aea;
         --accent-text-on-dark: #1a1d21;
-        --accent-text-on-light: #ffffff; /* Mantido para caso necessário, mas contexto é dark */
+        --accent-text-on-light: #ffffff;
         --accent-bg-subtle: rgba(77, 171, 247, 0.15);
         --accent-bg-subtle-hover: rgba(77, 171, 247, 0.25);
         --accent-border-left: #4dabf7;
@@ -47,341 +47,118 @@
         --error-border: rgba(255, 135, 135, 0.4);
         --color-scheme: dark;
     }
-
     html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: 'Inter', sans-serif; color-scheme: dark; }
-    body {
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
-        background-color: var(--bg-primary);
-        color: var(--text-primary);
-        overflow: hidden;
-    }
-    #dashboard {
-        display: flex;
-        flex-direction: column;
-        height: 100vh; /* Fallback */
-        height: calc(var(--vh, 1vh) * 100);
-        overflow: hidden;
-    }
-    #profileHeader {
-        padding-top: calc(env(safe-area-inset-top) + 0.75rem);
-        padding-bottom: 0.75rem;
-        position: sticky; top: 0; z-index: 30;
-        background-color: var(--bg-overlay);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border-color);
-        flex-shrink: 0;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    #mobileMainContent {
-        flex-grow: 1;
-        overflow-y: auto;
-        min-height: 0;
-        position: relative;
-        background-color: var(--bg-primary);
-    }
-
+    body { padding-bottom: env(safe-area-inset-bottom); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); background-color: var(--bg-primary); color: var(--text-primary); overflow: hidden; }
+    #dashboard { display: flex; flex-direction: column; height: 100vh; height: calc(var(--vh, 1vh) * 100); overflow: hidden; }
+    #profileHeader { padding-top: calc(env(safe-area-inset-top) + 0.75rem); padding-bottom: 0.75rem; position: sticky; top: 0; z-index: 30; background-color: var(--bg-overlay); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); flex-shrink: 0; padding-left: 1rem; padding-right: 1rem; }
+    #mobileMainContent { flex-grow: 1; overflow-y: auto; min-height: 0; position: relative; background-color: var(--bg-primary); }
     #desktopTopBar { display: none; }
-
-    #desktopSidebar {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        z-index: 30;
-        width: 16rem;
-        flex-shrink: 0;
-        overflow: hidden;
-        border-right: 1px solid var(--border-color);
-        flex-direction: column;
-        background-color: var(--bg-secondary);
-        transition: width 0.3s ease-in-out;
-    }
-    #desktopSidebar .sidebar-scroll-content {
-        flex-grow: 1;
-        overflow-y: auto;
-    }
-    #desktopMainArea {
-        display: none;
-        height: 100vh;
-        flex-direction: column;
-        overflow: hidden;
-        margin-left: 16rem;
-        transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
-        width: calc(100% - 16rem);
-        background-color: var(--bg-primary);
-    }
-     #mainContent {
-        flex: 1;
-        min-width: 0;
-        overflow-y: auto;
-        position: relative;
-    }
-
-    @media (min-width: 768px) {
-        #dashboard {
-            flex-direction: row;
-            height: 100vh;
-        }
-        #profileHeader { display: none; }
-        #mobileMainContent { display: none; }
-
-        #desktopSidebar { display: flex; }
-        #desktopMainArea { display: flex; }
-
-        #desktopSidebar.sidebar-collapsed {
-            width: 5rem;
-        }
-        #desktopSidebar.sidebar-collapsed ~ #desktopMainArea {
-            margin-left: 5rem;
-            width: calc(100% - 5rem);
-        }
-    }
-
+    #desktopSidebar { display: none; position: fixed; top: 0; left: 0; height: 100vh; z-index: 30; width: 16rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid var(--border-color); flex-direction: column; background-color: var(--bg-secondary); transition: width 0.3s ease-in-out; }
+    #desktopSidebar .sidebar-scroll-content { flex-grow: 1; overflow-y: auto; }
+    #desktopMainArea { display: none; height: 100vh; flex-direction: column; overflow: hidden; margin-left: 16rem; transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out; width: calc(100% - 16rem); background-color: var(--bg-primary); }
+     #mainContent { flex: 1; min-width: 0; overflow-y: auto; position: relative; }
+    @media (min-width: 768px) { #dashboard { flex-direction: row; height: 100vh; } #profileHeader { display: none; } #mobileMainContent { display: none; } #desktopSidebar { display: flex; } #desktopMainArea { display: flex; } #desktopSidebar.sidebar-collapsed { width: 5rem; } #desktopSidebar.sidebar-collapsed ~ #desktopMainArea { margin-left: 5rem; width: calc(100% - 5rem); } }
     html { height: -webkit-fill-available; scroll-behavior: smooth; }
-
     iframe { box-shadow: none; background-color: var(--bg-primary); border: none; width: 100%; height: 100%; display: block; }
-
     :focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
     button:focus, a:focus, input:focus { outline: none; }
-
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 9999px; border: 2px solid var(--border-color-light); }
     ::-webkit-scrollbar-track { background-color: var(--scrollbar-track); border-radius: 9999px; }
-
     #welcomeScreen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out; pointer-events: none;}
     #welcomeScreen.visible { display: flex; opacity: 1; pointer-events: auto;}
-
-    .nav-link,
-    #integrationBtnHeader,
-    #desktopSidebarToggle button,
-    .mobile-sidebar-footer-button {
-        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .nav-link:hover,
-    #integrationBtnHeader:hover,
-    #desktopSidebarToggle button:hover,
-    .mobile-sidebar-footer-button:hover {
-      background-color: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
-    .nav-link.active,
-    #integrationBtnHeader.active {
-        background-color: var(--accent-bg-subtle);
-        color: var(--accent-color);
-        font-weight: 500;
-    }
-    #desktopSidebar:not(.sidebar-collapsed) .nav-link.active {
-        border-left: 4px solid var(--accent-border-left);
-        padding-left: calc(0.75rem - 4px); /* 12px - 4px = 8px */
-    }
-    #desktopSidebar.sidebar-collapsed .nav-link.active {
-        border-left: none;
-        padding-left: 0.75rem; /* 12px */
-        background-color: var(--accent-bg-subtle-hover);
-    }
-    #mobileSidebar .nav-link.active {
-        border-left: 4px solid var(--accent-border-left);
-        padding-left: calc(0.75rem - 4px); /* 12px - 4px = 8px */
-    }
-
-    .nav-link.active i:not(.submenu-toggle-icon),
-    #integrationBtnHeader.active i {
-       color: var(--accent-color);
-    }
-
-    .submenu .nav-link.active {
-        border-left: none; padding-left: 0.5rem; /* 8px */
-        background-color: var(--accent-bg-subtle);
-        color: var(--text-primary);
-        font-weight: 500;
-    }
-    #desktopSidebar:not(.sidebar-collapsed) .submenu .nav-link.active {
-        padding-left: 0.5rem; /* 8px */
-    }
-    #desktopSidebar.sidebar-collapsed .submenu .nav-link {
-        padding-left: 0.5rem; padding-right: 0.5rem; justify-content: center;
-    }
-    #mobileSidebar .submenu .nav-link.active {
-        padding-left: 0.5rem; /* 8px */
-    }
+    .nav-link, #integrationBtnHeader, #desktopSidebarToggle button, .mobile-sidebar-footer-button { transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
+    .nav-link:hover, #integrationBtnHeader:hover, #desktopSidebarToggle button:hover, .mobile-sidebar-footer-button:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
+    .nav-link.active, #integrationBtnHeader.active { background-color: var(--accent-bg-subtle); color: var(--accent-color); font-weight: 500; }
+    #desktopSidebar:not(.sidebar-collapsed) .nav-link.active { border-left: 4px solid var(--accent-border-left); padding-left: calc(0.75rem - 4px); }
+    #desktopSidebar.sidebar-collapsed .nav-link.active { border-left: none; padding-left: 0.75rem; background-color: var(--accent-bg-subtle-hover); }
+    #mobileSidebar .nav-link.active { border-left: 4px solid var(--accent-border-left); padding-left: calc(0.75rem - 4px); }
+    .nav-link.active i:not(.submenu-toggle-icon), #integrationBtnHeader.active i { color: var(--accent-color); }
+    .submenu .nav-link.active { border-left: none; padding-left: 0.5rem; background-color: var(--accent-bg-subtle); color: var(--text-primary); font-weight: 500; }
+    #desktopSidebar:not(.sidebar-collapsed) .submenu .nav-link.active { padding-left: 0.5rem; }
+    #desktopSidebar.sidebar-collapsed .submenu .nav-link { padding-left: 0.5rem; padding-right: 0.5rem; justify-content: center; }
+    #mobileSidebar .submenu .nav-link.active { padding-left: 0.5rem; }
     .submenu .nav-link.active i { color: inherit; }
-
-    .profile-trigger.active img {
-        box-shadow: 0 0 0 3px var(--focus-ring-color);
-    }
-    .profile-trigger img {
-        ring-color: var(--profile-ring-color);
-        transition: ring-color 0.3s ease, box-shadow 0.15s ease;
-    }
-    .profile-trigger:hover img {
-      ring-color: var(--profile-ring-hover-color);
-    }
-
+    .profile-trigger.active img { box-shadow: 0 0 0 3px var(--focus-ring-color); }
+    .profile-trigger img { ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease, box-shadow 0.15s ease; }
+    .profile-trigger:hover img { ring-color: var(--profile-ring-hover-color); }
     .submenu { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; }
     .submenu-visible { max-height: 500px; }
-
     @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
     .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-
-    .text-xs\+ { font-size: 0.8125rem; /* 13px */ line-height: 1.25rem; }
-
-    #iframeSpinnerOverlay > div,
-    #mobileIframeSpinnerOverlay > div {
-        border-color: var(--accent-color);
-        border-bottom-color: transparent;
-    }
+    .text-xs\+ { font-size: 0.8125rem; line-height: 1.25rem; }
+    #iframeSpinnerOverlay > div, #mobileIframeSpinnerOverlay > div { border-color: var(--accent-color); border-bottom-color: transparent; }
     #loginButton .spinner-icon { color: var(--accent-text-on-dark); }
-
-    #desktopSidebar.sidebar-collapsed .sidebar-text,
-    #desktopSidebar.sidebar-collapsed .sidebar-logo-full,
-    #desktopSidebar.sidebar-collapsed .submenu-toggle-icon,
-    #desktopSidebar.sidebar-collapsed .submenu,
-    #desktopSidebar.sidebar-collapsed #desktopSidebarToggle .sidebar-text,
-    #desktopSidebar.sidebar-collapsed #desktopLogoutButton .sidebar-text
-     { display: none; }
-
+    #desktopSidebar.sidebar-collapsed .sidebar-text, #desktopSidebar.sidebar-collapsed .submenu-toggle-icon, #desktopSidebar.sidebar-collapsed .submenu, #desktopSidebar.sidebar-collapsed #desktopSidebarToggle .sidebar-text, #desktopSidebar.sidebar-collapsed #desktopLogoutButton .sidebar-text { display: none; }
     #desktopSidebar.sidebar-collapsed .nav-link i:not(.submenu-toggle-icon) { margin-right: 0; }
     #desktopSidebar.sidebar-collapsed .nav-link { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
-    #desktopSidebar.sidebar-collapsed .logo-container { height: 60px; justify-content: center; padding: 0; }
-    #desktopSidebar:not(.sidebar-collapsed) .logo-container { padding: 1.25rem; }
-    #desktopSidebar.sidebar-collapsed #desktopSidebarToggle button,
-    #desktopSidebar.sidebar-collapsed #desktopLogoutButton { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
-
+    #desktopSidebar.sidebar-collapsed .logo-container { height: auto; justify-content: center; padding: 0.75rem 0; }
+    #desktopSidebar:not(.sidebar-collapsed) .logo-container { padding: 0.75rem; }
+    #desktopSidebar.sidebar-collapsed #desktopSidebarToggle button, #desktopSidebar.sidebar-collapsed #desktopLogoutButton { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
     #loginOverlay { background-color: var(--bg-overlay-login); backdrop-filter: blur(4px); transition: opacity 0.3s ease-in-out; }
     #loginOverlay > div { background-color: var(--bg-secondary); border-color: var(--border-color); transition: transform 0.5s cubic-bezier(.36,.07,.19,.97); }
     #logoutNotification { color: var(--warning-text); background-color: var(--warning-bg-subtle); border-color: var(--warning-border); }
     #loginError { color: var(--error-text); background-color: var(--error-bg-subtle); border-color: var(--error-border); }
     label { color: var(--text-primary); }
-    input[type="text"], input[type="password"], input[type="file"] {
-        background-color: var(--bg-tertiary);
-        border-color: var(--border-color);
-        color: var(--text-primary);
-        transition: box-shadow 0.15s ease, border-color 0.15s ease;
-    }
+    input[type="text"], input[type="password"], input[type="file"] { background-color: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary); transition: box-shadow 0.15s ease, border-color 0.15s ease; }
     input::placeholder { color: var(--text-tertiary); }
-    input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus {
-        --tw-ring-color: var(--accent-color);
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 2px var(--focus-ring-color);
-    }
-     input[type="checkbox"] {
-        color: var(--accent-color);
-        border-color: var(--border-color);
-        background-color: var(--bg-tertiary);
-     }
-     input[type="checkbox"]:focus {
-        --tw-ring-color: var(--accent-color);
-        --tw-ring-offset-color: var(--bg-primary);
-     }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus { --tw-ring-color: var(--accent-color); border-color: var(--accent-color); box-shadow: 0 0 0 2px var(--focus-ring-color); }
+    input[type="checkbox"] { color: var(--accent-color); border-color: var(--border-color); background-color: var(--bg-tertiary); }
+    input[type="checkbox"]:focus { --tw-ring-color: var(--accent-color); --tw-ring-offset-color: var(--bg-primary); }
     #togglePassword { color: var(--text-secondary); transition: color 0.15s ease; }
     #togglePassword:hover { color: var(--text-primary); }
     #rememberMe + label { color: var(--text-secondary); }
     a { color: var(--accent-color); transition: color 0.15s ease; }
     a:hover { color: var(--accent-color-hover); }
-    #loginButton {
-        background-color: var(--accent-color);
-        color: var(--accent-text-on-dark);
-        --tw-ring-offset-color: var(--bg-primary);
-        --tw-ring-color: var(--accent-color);
-        transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
-    }
+    #loginButton { background-color: var(--accent-color); color: var(--accent-text-on-dark); --tw-ring-offset-color: var(--bg-primary); --tw-ring-color: var(--accent-color); transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease; }
     #loginButton:hover:not(:disabled) { background-color: var(--accent-color-hover); }
-    #loginButton:focus {
-       box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color);
-    }
+    #loginButton:focus { box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color); }
     #welcomeScreen p { color: var(--text-secondary); }
-
     #profileHeader button, #profileHeader .profile-trigger span { color: var(--text-secondary); transition: color 0.15s ease, background-color 0.15s ease; }
     #profileHeader button:hover, #profileHeader .profile-trigger:hover span { color: var(--accent-color); }
     #profileHeader button:hover { background-color: var(--bg-tertiary); }
-    #profileImgHeader, #profileImgDesktop {
-        ring-offset-color: var(--bg-primary);
-        ring-color: var(--profile-ring-color);
-        transition: ring-color 0.3s ease;
-    }
-    #profileImgHeader:hover, #profileImgDesktop:hover, .profile-trigger:hover img {
-        ring-color: var(--profile-ring-hover-color);
-    }
-
+    #profileImgHeader, #profileImgDesktop { ring-offset-color: var(--bg-primary); ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease; }
+    #profileImgHeader:hover, #profileImgDesktop:hover, .profile-trigger:hover img { ring-color: var(--profile-ring-hover-color); }
     #desktopSidebar { color: var(--text-secondary); background-color: var(--bg-secondary); border-right-color: var(--border-color); transition: width 0.3s ease-in-out; }
     #desktopSidebar .submenu { border-left-color: var(--border-color); transition: max-height 0.35s ease-out; }
     #desktopSidebarToggle { border-top-color: var(--border-color); }
-
     #iframeSpinnerOverlay, #mobileIframeSpinnerOverlay { background-color: var(--bg-overlay-iframe); backdrop-filter: blur(2px); transition: opacity 0.2s ease; opacity: 0; pointer-events: none; }
     #iframeSpinnerOverlay.flex, #mobileIframeSpinnerOverlay.flex { opacity: 1; pointer-events: auto; }
-
     #mobileSidebarWrapper { background-color: rgba(0, 0, 0, 0.5); transition: opacity 0.3s ease-in-out; opacity: 0; pointer-events: none; }
     #mobileSidebarWrapper.visible { opacity: 1; pointer-events: auto; }
     #mobileSidebar { background-color: var(--bg-secondary); color: var(--text-secondary); border-right-color: var(--border-color); transition: transform 0.3s ease-in-out; }
     #mobileSidebar > div:first-child { border-bottom-color: var(--border-color); }
     #mobileSidebar .submenu { border-left-color: var(--border-color); transition: max-height 0.35s ease-out; }
     #mobileSidebar .mobile-sidebar-footer { border-top-color: var(--border-color); }
-    #mobileSidebar .mobile-sidebar-footer-button {
-        color: var(--danger-text);
-        background-color: var(--danger-bg-subtle);
-        transition: background-color 0.15s ease, color 0.15s ease;
-    }
-     #mobileSidebar .mobile-sidebar-footer-button:hover {
-        background-color: var(--danger-bg-subtle-hover);
-        color: var(--danger-text);
-     }
-
+    #mobileSidebar .mobile-sidebar-footer-button { color: var(--danger-text); background-color: var(--danger-bg-subtle); transition: background-color 0.15s ease, color 0.15s ease; }
+    #mobileSidebar .mobile-sidebar-footer-button:hover { background-color: var(--danger-bg-subtle-hover); color: var(--danger-text); }
     #profileModal { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); transition: opacity 0.2s ease-in-out; }
     #profileModalContent { background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color); transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out; }
     #profileModalContent h5 { color: var(--text-primary); }
     #profileModalContent .border-b, #profileModalContent .border-t { border-color: var(--border-color); }
-    #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button) {
-        color: var(--text-secondary);
-        transition: color 0.15s ease, background-color 0.15s ease;
-     }
-      #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button):hover {
-        color: var(--text-primary);
-        background-color: var(--bg-tertiary);
-      }
-     #profileModalContent button.cancel-button {
-        background-color: var(--bg-tertiary);
-        color: var(--text-primary);
-        border: 1px solid var(--border-color);
-        transition: background-color 0.15s ease;
-     }
-    #profileModalContent button.cancel-button:hover {
-        background-color: var(--border-color);
-    }
-
-     #profileModalContent button[type="submit"] {
-        background-color: var(--accent-color);
-        color: var(--accent-text-on-dark);
-        --tw-ring-offset-color: var(--bg-secondary);
-        --tw-ring-color: var(--accent-color);
-        transition: background-color 0.15s ease, box-shadow 0.15s ease;
-     }
-     #profileModalContent button[type="submit"]:hover {
-        background-color: var(--accent-color-hover);
-     }
-    #profileModalContent button[type="submit"]:focus {
-        box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-color);
-    }
-
+    #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button) { color: var(--text-secondary); transition: color 0.15s ease, background-color 0.15s ease; }
+    #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button):hover { color: var(--text-primary); background-color: var(--bg-tertiary); }
+    #profileModalContent button.cancel-button { background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); transition: background-color 0.15s ease; }
+    #profileModalContent button.cancel-button:hover { background-color: var(--border-color); }
+    #profileModalContent button[type="submit"] { background-color: var(--accent-color); color: var(--accent-text-on-dark); --tw-ring-offset-color: var(--bg-secondary); --tw-ring-color: var(--accent-color); transition: background-color 0.15s ease, box-shadow 0.15s ease; }
+    #profileModalContent button[type="submit"]:hover { background-color: var(--accent-color-hover); }
+    #profileModalContent button[type="submit"]:focus { box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-color); }
     #modalProfileImg { ring-offset-color: var(--bg-secondary); ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease; }
-    label[for="profilePicInput"] {
-        color: var(--accent-color);
-        background-color: var(--accent-bg-subtle);
-        transition: color 0.15s ease, background-color 0.15s ease;
-    }
-    label[for="profilePicInput"]:hover {
-        color: var(--accent-color-hover);
-        background-color: var(--accent-bg-subtle-hover);
-    }
+    label[for="profilePicInput"] { color: var(--accent-color); background-color: var(--accent-bg-subtle); transition: color 0.15s ease, background-color 0.15s ease; }
+    label[for="profilePicInput"]:hover { color: var(--accent-color-hover); background-color: var(--accent-bg-subtle-hover); }
     #profileModalContent h6 { color: var(--text-secondary); }
-
     .placeholder-\\[\\#adb5bd\\]::placeholder { color: var(--text-tertiary) !important; }
 
+    /* Novas regras para tamanho do logo */
+    #desktopSidebar.sidebar-collapsed .sidebar-logo-full {
+        height: 2rem; /* 32px */
+    }
+    #desktopSidebar .sidebar-logo-full {
+        transition: height 0.3s ease-in-out;
+        width: auto;
+        max-width: 100%;
+    }
+    /* Fim novas regras */
   </style>
   </head>
 <body class="min-h-screen antialiased">
@@ -457,9 +234,8 @@
      </header>
 
      <nav id="desktopSidebar" class="shadow-md">
-      <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center h-[60px] justify-center flex-shrink-0">
-       <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-9 w-auto" />
-       <img src="https://via.placeholder.com/32" alt="Logo Pequeno" class="sidebar-logo-small mx-auto h-8 w-8 hidden" />
+      <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center h-[72px] justify-center flex-shrink-0">
+       <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-12 w-auto" />
       </div>
 
       <div class="sidebar-scroll-content p-3 space-y-1">
@@ -632,11 +408,7 @@
   </div>
 
   <script>
-    function setVhProperty() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-
+    function setVhProperty() { let vh = window.innerHeight * 0.01; document.documentElement.style.setProperty('--vh', `${vh}px`); }
     function showElement(el) { if (el) el.classList.remove('hidden'); }
     function hideElement(el) { if (el) el.classList.add('hidden'); }
     function showFlexElement(el) { if (el) { el.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); el.classList.add('flex'); } }
@@ -659,7 +431,6 @@
     const welcomeUserName = document.getElementById('welcomeUserName');
     const dashboard = document.getElementById('dashboard');
     const logoutNotification = document.getElementById('logoutNotification');
-
     const mobileMainFrame = document.getElementById('mobileMainFrame');
     const mobileIframeSpinnerOverlay = document.getElementById('mobileIframeSpinnerOverlay');
     const mobileMainContent = document.getElementById('mobileMainContent');
@@ -669,7 +440,6 @@
     const integrationBtnHeaderMobile = document.getElementById('integrationBtnHeader');
     const profileNameHeaderMobile = document.getElementById('profileNameHeader');
     const profileImgHeaderMobile = document.getElementById('profileImgHeader');
-
     const mainFrame = document.getElementById('mainFrame');
     const iframeSpinnerOverlay = document.getElementById('iframeSpinnerOverlay');
     const desktopSidebar = document.getElementById('desktopSidebar');
@@ -679,593 +449,42 @@
     const desktopToggleIcon = document.getElementById('desktopToggleIcon');
     const desktopToggleText = desktopSidebarToggleBtn?.querySelector('.sidebar-text');
     const desktopSidebarLogoFull = desktopSidebar?.querySelector('.sidebar-logo-full');
-    const desktopSidebarLogoSmall = desktopSidebar?.querySelector('.sidebar-logo-small');
-
-
     const profileModal = document.getElementById('profileModal');
     const profileModalContent = document.getElementById('profileModalContent');
     const profileForm = document.getElementById('profileForm');
     const profileNameInput = document.getElementById('profileNameInput');
     const profilePicInput = document.getElementById('profilePicInput');
     const modalProfileImg = document.getElementById('modalProfileImg');
-
     const sidebarIntegrationLinkDesktop = document.querySelector('#desktopSidebar a[onclick*="automate.html"]');
     const sidebarIntegrationLinkMobile = document.querySelector('#mobileSidebar a[onclick*="automate.html"]');
     const sidebarProfileLinkDesktop = document.querySelector('#desktopSidebar .profile-sidebar-link');
     const sidebarProfileLinkMobile = document.querySelector('#mobileSidebar .profile-sidebar-link');
     const profileTriggers = document.querySelectorAll('.profile-trigger');
-
-    // Theme related variables removed
-
     const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
     const DEFAULT_PROFILE_PIC_MEDIUM = 'https://via.placeholder.com/40';
     const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
     const DEFAULT_PROFILE_PIC_SIDEBAR = 'https://via.placeholder.com/32';
 
-
-    if (formLogin) {
-      formLogin.addEventListener('submit', function (e) {
-        e.preventDefault();
-        hideElement(loginErrorDiv);
-        if (loginButton && buttonText && spinnerIcon) {
-          disableButton(loginButton, buttonText, spinnerIcon);
-        }
-        setTimeout(() => {
-         const validUsername = localStorage.getItem('savedUsername') || 'admin';
-         const username = usernameField?.value.trim();
-         const password = passwordField?.value;
-         if (username === validUsername && password === 'admin123') {
-           handleSuccessfulLogin(username, password);
-         } else {
-           handleFailedLogin();
-         }
-        }, 1000);
-      });
-    }
-
-    function handleSuccessfulLogin(username, password) {
-      if (rememberMe?.checked) {
-       localStorage.setItem('savedUsername', username);
-       localStorage.setItem('savedPassword', password);
-      } else {
-       localStorage.removeItem('savedPassword');
-       if(localStorage.getItem('savedUsername') !== username) {
-         localStorage.setItem('savedUsername', username);
-       }
-      }
-      localStorage.setItem('isLoggedIn', 'true');
-
-      hideFlexElement(loginOverlay);
-      if (welcomeUserName) welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`;
-      if (welcomeScreen) welcomeScreen.classList.add('visible');
-
-      setTimeout(() => {
-       if (welcomeScreen) welcomeScreen.classList.remove('visible');
-       setTimeout(() => { hideElement(welcomeScreen); }, 500);
-
-       showFlexElement(dashboard);
-
-       updateUserInfo();
-       applyDesktopSidebarState();
-       // applySavedTheme() removed
-
-       const isMobile = window.innerWidth < 768;
-       const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
-       const homeLink = document.querySelector(initialLinkSelector);
-       if (homeLink) {
-           loadPage('home.html', homeLink, isMobile);
-       } else {
-           const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-           const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
-           if (targetFrame) targetFrame.src = 'home.html';
-           hideFlexElement(targetSpinner);
-           console.warn("Link Home não encontrado para view inicial.");
-       }
-       if (loginButton && buttonText && spinnerIcon) {
-         enableButton(loginButton, buttonText, spinnerIcon);
-       }
-      }, 1500);
-    }
-
-    function handleFailedLogin() {
-      if (loginErrorDiv) {
-        loginErrorDiv.textContent = 'Usuário ou senha incorretos.';
-        showElement(loginErrorDiv);
-      }
-      if (loginButton && buttonText && spinnerIcon) {
-         enableButton(loginButton, buttonText, spinnerIcon);
-      }
-      const loginCard = loginOverlay?.querySelector('[class*="bg-secondary"]');
-      if(loginCard) {
-        loginCard.classList.add('animate-shake');
-        setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500);
-      }
-    }
-
-    if (togglePasswordButton) {
-      togglePasswordButton.addEventListener('click', function() {
-        const icon = this.querySelector('i');
-        if (passwordField?.type === 'password') {
-          passwordField.type = 'text';
-          icon?.classList.replace('bi-eye-slash', 'bi-eye');
-          this.setAttribute('aria-label', 'Ocultar senha');
-        } else if (passwordField) {
-          passwordField.type = 'password';
-          icon?.classList.replace('bi-eye', 'bi-eye-slash');
-          this.setAttribute('aria-label', 'Mostrar senha');
-        }
-      });
-    }
-
-    function logout() {
-      localStorage.removeItem('isLoggedIn');
-
-      hideFlexElement(dashboard);
-      showFlexElement(loginOverlay);
-
-      showElement(logoutNotification);
-      setTimeout(() => hideElement(logoutNotification), 4000);
-
-      if (mobileSidebar?.classList.contains('translate-x-0')) toggleMobileSidebar();
-
-      if (passwordField) passwordField.value = '';
-      hideElement(loginErrorDiv);
-
-      const savedUsername = localStorage.getItem('savedUsername');
-      const savedPassword = localStorage.getItem('savedPassword');
-      if (usernameField) usernameField.value = savedUsername || '';
-      if (rememberMe) rememberMe.checked = !!savedPassword;
-
-      console.log("Logout realizado. Tela de login preparada.");
-    }
-
-    function setActiveLink(clickedLinkElement) {
-        if (!clickedLinkElement) return;
-
-        document.querySelectorAll('.nav-link, #integrationBtnHeader, .profile-trigger, .profile-sidebar-link').forEach(el => {
-             el.classList.remove('active');
-        });
-
-        clickedLinkElement.classList.add('active');
-
-        const isIntegrationPage = clickedLinkElement.getAttribute('onclick')?.includes('automate.html') || clickedLinkElement.getAttribute('onclick')?.includes('integracao.html');
-        const isProfileTriggerOrLink = clickedLinkElement.classList.contains('profile-trigger') || clickedLinkElement.classList.contains('profile-sidebar-link');
-
-        if (isIntegrationPage) {
-            if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.add('active');
-            if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.add('active');
-            if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.add('active');
-        } else if (isProfileTriggerOrLink) {
-             profileTriggers.forEach(trigger => trigger.classList.add('active'));
-             if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.add('active');
-             if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.add('active');
-
-             const parentConfigButtonD = sidebarProfileLinkDesktop?.closest('.nav-item')?.querySelector('button.nav-link');
-             const parentConfigButtonM = sidebarProfileLinkMobile?.closest('.nav-item')?.querySelector('button.nav-link');
-             if(parentConfigButtonD) parentConfigButtonD.classList.add('active');
-             if(parentConfigButtonM) parentConfigButtonM.classList.add('active');
-
-             const submenuD = parentConfigButtonD?.nextElementSibling;
-             const submenuM = parentConfigButtonM?.nextElementSibling;
-             const iconD = parentConfigButtonD?.querySelector('i[id$="Icon"]');
-             const iconM = parentConfigButtonM?.querySelector('i[id$="Icon"]');
-
-             if (submenuD && iconD && !submenuD.classList.contains('submenu-visible') && !desktopSidebar?.classList.contains('sidebar-collapsed')) {
-                 toggleSubmenu(submenuD.id, iconD.id);
-             }
-             if (submenuM && iconM && !submenuM.classList.contains('submenu-visible')) {
-                 toggleSubmenu(submenuM.id, iconM.id);
-             }
-
-        } else {
-             const parentSubmenu = clickedLinkElement.closest('.submenu');
-             if (parentSubmenu) {
-                 const parentButton = parentSubmenu.previousElementSibling;
-                 if (parentButton && parentButton.classList.contains('nav-link')) {
-                     parentButton.classList.add('active');
-                     const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
-                     const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile';
-                     if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) {
-                         const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id;
-                         if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId);
-                     }
-                 }
-             }
-             if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.remove('active');
-             if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.remove('active');
-             if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.remove('active');
-             profileTriggers.forEach(trigger => trigger.classList.remove('active'));
-             if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.remove('active');
-             if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.remove('active');
-         }
-    }
-
-    function loadPage(pageUrl, clickedLinkElement, isMobile = window.innerWidth < 768) {
-        const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-        const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay;
-
-        if(!targetFrame || !targetSpinner) {
-             console.error("Iframe ou Spinner não encontrado para:", isMobile ? "Mobile" : "Desktop");
-             return;
-        }
-
-        showFlexElement(targetSpinner);
-        setActiveLink(clickedLinkElement);
-
-        setTimeout(() => {
-             targetFrame.src = pageUrl;
-        }, 50);
-    }
-
-    function setupIframeListener(frameElement, spinnerElement) {
-        if (frameElement && spinnerElement) {
-             frameElement.addEventListener('load', () => hideFlexElement(spinnerElement));
-             frameElement.addEventListener('error', (e) => {
-                 console.error(`Falha ao carregar iframe: ${frameElement.src}`, e);
-                 hideFlexElement(spinnerElement);
-             });
-        } else {
-             console.error("Iframe ou spinner overlay não encontrado para listener.");
-        }
-    }
-
-    function toggleMobileSidebar() {
-      if (!mobileSidebar || !mobileSidebarWrapper) return;
-      const isOpen = mobileSidebar.classList.contains('translate-x-0');
-      if (isOpen) {
-       mobileSidebar.classList.replace('translate-x-0', '-translate-x-full');
-       mobileSidebarWrapper.classList.remove('visible');
-      } else {
-       mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0');
-       mobileSidebarWrapper.classList.add('visible');
-      }
-    }
-
-    function toggleSubmenu(submenuId, iconId) {
-      const submenu = document.getElementById(submenuId);
-      const icon = document.getElementById(iconId);
-      if (!submenu || !icon) {
-          console.warn("Submenu ou ícone não encontrado:", submenuId, iconId);
-          return;
-      }
-
-      const context = submenuId.includes('desktop') ? 'desktop' : 'mobile';
-      const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed');
-
-      if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-        document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => {
-            if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) {
-                otherSubmenu.classList.remove('submenu-visible');
-                const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon');
-                const otherIcon = document.getElementById(otherIconId);
-                if (otherIcon) otherIcon.classList.remove('rotate-180');
-            }
-        });
-      }
-
-      if (context === 'mobile' || !isDesktopSidebarCollapsed) {
-        submenu.classList.toggle('submenu-visible');
-        icon.classList.toggle('rotate-180');
-      } else if (context === 'desktop' && isDesktopSidebarCollapsed) {
-          console.log("Toggle de submenu ignorado (desktop colapsado).");
-      }
-    }
-
-    function toggleDesktopSidebar() {
-         if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !desktopMainArea) return;
-
-         const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed');
-         localStorage.setItem('desktopSidebarState', isCollapsed ? 'collapsed' : 'expanded');
-         updateDesktopSidebarUI(isCollapsed);
-
-         if (isCollapsed) {
-             document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => {
-                 sm.classList.remove('submenu-visible');
-                 const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon');
-                 if(iconEl) iconEl.classList.remove('rotate-180');
-             });
-         } else {
-              const activeSubmenuLink = desktopSidebar.querySelector('.submenu .nav-link.active');
-              if (activeSubmenuLink) {
-                  const submenuDiv = activeSubmenuLink.closest('.submenu');
-                  const parentButton = submenuDiv?.previousElementSibling;
-                  if (submenuDiv && parentButton && !submenuDiv.classList.contains('submenu-visible')) {
-                      const iconId = parentButton.querySelector('i[id$="Icon"]')?.id;
-                      if (iconId) toggleSubmenu(submenuDiv.id, iconId);
-                  }
-              }
-         }
-    }
-
-    function updateDesktopSidebarUI(isCollapsed) {
-         if (!desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn) return;
-
-         if (isCollapsed) {
-             desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right');
-             desktopToggleText.textContent = 'Expandir';
-             desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral');
-             desktopSidebarLogoFull?.classList.add('hidden');
-             desktopSidebarLogoSmall?.classList.remove('hidden');
-         } else {
-             desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left');
-             desktopToggleText.textContent = 'Recolher';
-             desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral');
-             desktopSidebarLogoFull?.classList.remove('hidden');
-             desktopSidebarLogoSmall?.classList.add('hidden');
-         }
-    }
-
-    function applyDesktopSidebarState() {
-         if (window.innerWidth < 768 || !desktopSidebar) return;
-
-         const savedState = localStorage.getItem('desktopSidebarState');
-         const shouldBeCollapsed = savedState === 'collapsed';
-
-         if (desktopSidebar.classList.contains('sidebar-collapsed') !== shouldBeCollapsed) {
-             desktopSidebar.classList.toggle('sidebar-collapsed', shouldBeCollapsed);
-         }
-         updateDesktopSidebarUI(shouldBeCollapsed);
-    }
-
-
-    function openProfileModal() {
-      const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão';
-      const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-      if (profileNameInput) profileNameInput.value = currentUsername;
-      if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge;
-      const currentPassEl = document.getElementById('currentPassword');
-      const newPassEl = document.getElementById('newPassword');
-      const confirmPassEl = document.getElementById('confirmPassword');
-      if (currentPassEl) currentPassEl.value = '';
-      if (newPassEl) newPassEl.value = '';
-      if (confirmPassEl) confirmPassEl.value = '';
-      if (profilePicInput) profilePicInput.value = '';
-
-      const isMobile = window.innerWidth < 768;
-      const profileLinkToActivate = isMobile ? sidebarProfileLinkMobile : sidebarProfileLinkDesktop;
-      if (profileLinkToActivate) {
-          setActiveLink(profileLinkToActivate);
-      } else {
-          const triggerToActivate = isMobile ? profileHeaderMobile?.querySelector('.profile-trigger') : null;
-          if (triggerToActivate) setActiveLink(triggerToActivate);
-      }
-
-      if (profileModal) {
-          profileModal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
-          profileModal.classList.add('flex');
-          void profileModal.offsetWidth;
-          profileModal.classList.add('opacity-100');
-          profileModal.classList.remove('pointer-events-none');
-      }
-      if (profileModalContent) {
-          profileModalContent.classList.remove('scale-95', 'opacity-0');
-      }
-    }
-
-    function closeProfileModal() {
-      if (profileModal) {
-          profileModal.classList.remove('opacity-100');
-          profileModalContent?.classList.add('scale-95', 'opacity-0');
-          setTimeout(() => {
-           profileModal.classList.add('hidden', 'opacity-0', 'pointer-events-none');
-           profileModal.classList.remove('flex');
-
-           const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-           if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge;
-           if (profilePicInput) profilePicInput.value = '';
-
-           document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active'));
-
-           const isMobile = window.innerWidth < 768;
-           const currentFrame = isMobile ? mobileMainFrame : mainFrame;
-           const currentIframeSrc = currentFrame?.src;
-           if (currentIframeSrc && currentIframeSrc !== 'about:blank') {
-               try {
-                   const url = new URL(currentIframeSrc);
-                   const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1);
-                   if (pageName && pageName !== 'profile.html') {
-                       const linkSelector = `.nav-link[onclick*="'${pageName}'"]`;
-                       const correspondingLink = document.querySelector(linkSelector);
-                       if(correspondingLink && !correspondingLink.classList.contains('profile-sidebar-link')) {
-                           setActiveLink(correspondingLink);
-                       }
-                   } else if (!pageName || pageName === 'profile.html') {
-                       const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
-                       const homeLink = document.querySelector(homeLinkSelector);
-                       if (homeLink) setActiveLink(homeLink);
-                   }
-               } catch (e) {
-                   console.error("Erro ao processar URL do iframe para restaurar link ativo:", e);
-               }
-           } else {
-                const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
-                const homeLink = document.querySelector(homeLinkSelector);
-                if (homeLink) setActiveLink(homeLink);
-           }
-          }, 200);
-         }
-    }
-
-    if (profilePicInput) {
-      profilePicInput.addEventListener('change', function () {
-        const file = this.files?.[0];
-        if (file && file.type.startsWith('image/')) {
-         const reader = new FileReader();
-         reader.onload = function (e) {
-           if (modalProfileImg && e.target?.result) {
-             modalProfileImg.src = e.target.result.toString();
-           }
-         };
-         reader.readAsDataURL(file);
-        } else if (file) {
-         alert("Por favor, selecione um arquivo de imagem válido.");
-         this.value = '';
-        }
-      });
-    }
-
-    if (profileForm) {
-      profileForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const newName = profileNameInput?.value.trim();
-        const newImgSrc = modalProfileImg?.src;
-
-        const currentPasswordEl = document.getElementById('currentPassword');
-        const newPasswordEl = document.getElementById('newPassword');
-        const confirmPasswordEl = document.getElementById('confirmPassword');
-
-        const currentPassword = currentPasswordEl?.value;
-        const newPassword = newPasswordEl?.value;
-        const confirmPassword = confirmPasswordEl?.value;
-
-        let passwordChangeAttempted = currentPassword || newPassword || confirmPassword;
-        let passwordChangeOk = true;
-
-        if (passwordChangeAttempted) {
-            const storedPassword = localStorage.getItem('savedPassword') || 'admin123';
-            if (!currentPassword || currentPassword !== storedPassword) {
-                alert('Senha atual incorreta ou não fornecida!');
-                passwordChangeOk = false;
-                currentPasswordEl?.focus();
-            } else if (!newPassword || newPassword !== confirmPassword) {
-                alert('Nova senha e confirmação não coincidem ou estão vazias.');
-                passwordChangeOk = false;
-                newPasswordEl?.focus();
-            } else if (newPassword.length < 6) {
-                alert('A nova senha deve ter pelo menos 6 caracteres.');
-                passwordChangeOk = false;
-                 newPasswordEl?.focus();
-            }
-
-            if (passwordChangeOk) {
-                console.log("Simulação: Senha seria atualizada para:", newPassword);
-                if(localStorage.getItem('savedPassword')) {
-                     localStorage.setItem('savedPassword', newPassword);
-                     console.log("Simulação: Senha salva no localStorage atualizada.");
-                } else {
-                     console.log("Simulação: Senha validada, mas não estava salva ('Lembrar dados').");
-                }
-                 if(currentPasswordEl) currentPasswordEl.value = '';
-                 if(newPasswordEl) newPasswordEl.value = '';
-                 if(confirmPasswordEl) confirmPasswordEl.value = '';
-            } else {
-                return;
-            }
-        }
-
-        if (newName) {
-            localStorage.setItem('savedUsername', newName);
-
-            if (newImgSrc && newImgSrc.startsWith('data:image/')) {
-                try {
-                    localStorage.setItem('savedProfilePicLarge', newImgSrc);
-                } catch (error) {
-                    console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error);
-                    alert("Não foi possível salvar a imagem. Pode ser muito grande (limite ~5MB). Tente uma imagem menor ou remova a atual.");
-                    const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE;
-                    if (modalProfileImg) modalProfileImg.src = previousPic;
-                    localStorage.removeItem('savedProfilePicLarge');
-                    return;
-                }
-            } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE || !newImgSrc) {
-                 localStorage.removeItem('savedProfilePicLarge');
-                 console.log("Imagem de perfil removida ou redefinida para padrão.");
-            }
-
-            updateUserInfo();
-            closeProfileModal();
-        } else {
-           alert('O nome de usuário não pode ficar vazio.');
-           profileNameInput?.focus();
-        }
-      });
-    }
-
-    function updateUserInfo() {
-        const username = localStorage.getItem('savedUsername') || 'Nome Padrão';
-        const profilePicBase64Large = localStorage.getItem('savedProfilePicLarge');
-
-        const displayPicSmall = profilePicBase64Large || DEFAULT_PROFILE_PIC_SMALL;
-        const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE;
-
-        if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username;
-        if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall;
-        if(modalProfileImg) modalProfileImg.src = modalPic;
-
-    }
-
-    // Theme related functions removed: applySavedTheme, toggleTheme, updateThemeToggleUI
-
-    function handleResize() {
-        const stillLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        if (stillLoggedIn) {
-             applyDesktopSidebarState();
-        }
-        setVhProperty();
-    }
-
-    window.addEventListener('DOMContentLoaded', function () {
-      setVhProperty();
-      // applySavedTheme() removed
-
-      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      const isMobile = window.innerWidth < 768;
-
-      if (isLoggedIn) {
-          hideFlexElement(loginOverlay);
-          showFlexElement(dashboard);
-          updateUserInfo();
-          applyDesktopSidebarState();
-
-          const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]';
-          const homeLink = document.querySelector(initialLinkSelector);
-          if (homeLink) {
-               setTimeout(() => loadPage('home.html', homeLink, isMobile), 50);
-          } else {
-               const targetFrame = isMobile ? mobileMainFrame : mainFrame;
-               if(targetFrame) targetFrame.src = 'home.html';
-                hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay);
-               console.warn("Link Home não encontrado na carga inicial.");
-          }
-      } else {
-          showFlexElement(loginOverlay);
-          hideFlexElement(dashboard);
-          hideElement(logoutNotification);
-          hideElement(loginErrorDiv);
-
-          const savedUsername = localStorage.getItem('savedUsername');
-          const savedPassword = localStorage.getItem('savedPassword');
-          if (usernameField) usernameField.value = savedUsername || '';
-          if (passwordField) passwordField.value = '';
-          if (rememberMe) rememberMe.checked = !!savedPassword;
-      }
-
-      setupIframeListener(mainFrame, iframeSpinnerOverlay);
-      setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay);
-
-      window.addEventListener('resize', handleResize);
-
-      document.addEventListener('keydown', (e) => {
-         if (e.key === 'Escape') {
-             if (profileModal?.classList.contains('flex')) {
-                 closeProfileModal();
-             } else if (mobileSidebar?.classList.contains('translate-x-0')) {
-                 toggleMobileSidebar();
-             }
-         }
-      });
-
-       profileTriggers.forEach(trigger => {
-            trigger.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openProfileModal();
-                }
-            });
-       });
-
-    });
-
+    if (formLogin) { formLogin.addEventListener('submit', function (e) { e.preventDefault(); hideElement(loginErrorDiv); if (loginButton && buttonText && spinnerIcon) { disableButton(loginButton, buttonText, spinnerIcon); } setTimeout(() => { const validUsername = localStorage.getItem('savedUsername') || 'admin'; const username = usernameField?.value.trim(); const password = passwordField?.value; if (username === validUsername && password === 'admin123') { handleSuccessfulLogin(username, password); } else { handleFailedLogin(); } }, 1000); }); }
+    function handleSuccessfulLogin(username, password) { if (rememberMe?.checked) { localStorage.setItem('savedUsername', username); localStorage.setItem('savedPassword', password); } else { localStorage.removeItem('savedPassword'); if(localStorage.getItem('savedUsername') !== username) { localStorage.setItem('savedUsername', username); } } localStorage.setItem('isLoggedIn', 'true'); hideFlexElement(loginOverlay); if (welcomeUserName) welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`; if (welcomeScreen) welcomeScreen.classList.add('visible'); setTimeout(() => { if (welcomeScreen) welcomeScreen.classList.remove('visible'); setTimeout(() => { hideElement(welcomeScreen); }, 500); showFlexElement(dashboard); updateUserInfo(); applyDesktopSidebarState(); const isMobile = window.innerWidth < 768; const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(initialLinkSelector); if (homeLink) { loadPage('home.html', homeLink, isMobile); } else { const targetFrame = isMobile ? mobileMainFrame : mainFrame; const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay; if (targetFrame) targetFrame.src = 'home.html'; hideFlexElement(targetSpinner); console.warn("Link Home não encontrado para view inicial."); } if (loginButton && buttonText && spinnerIcon) { enableButton(loginButton, buttonText, spinnerIcon); } }, 1500); }
+    function handleFailedLogin() { if (loginErrorDiv) { loginErrorDiv.textContent = 'Usuário ou senha incorretos.'; showElement(loginErrorDiv); } if (loginButton && buttonText && spinnerIcon) { enableButton(loginButton, buttonText, spinnerIcon); } const loginCard = loginOverlay?.querySelector('[class*="bg-secondary"]'); if(loginCard) { loginCard.classList.add('animate-shake'); setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500); } }
+    if (togglePasswordButton) { togglePasswordButton.addEventListener('click', function() { const icon = this.querySelector('i'); if (passwordField?.type === 'password') { passwordField.type = 'text'; icon?.classList.replace('bi-eye-slash', 'bi-eye'); this.setAttribute('aria-label', 'Ocultar senha'); } else if (passwordField) { passwordField.type = 'password'; icon?.classList.replace('bi-eye', 'bi-eye-slash'); this.setAttribute('aria-label', 'Mostrar senha'); } }); }
+    function logout() { localStorage.removeItem('isLoggedIn'); hideFlexElement(dashboard); showFlexElement(loginOverlay); showElement(logoutNotification); setTimeout(() => hideElement(logoutNotification), 4000); if (mobileSidebar?.classList.contains('translate-x-0')) toggleMobileSidebar(); if (passwordField) passwordField.value = ''; hideElement(loginErrorDiv); const savedUsername = localStorage.getItem('savedUsername'); const savedPassword = localStorage.getItem('savedPassword'); if (usernameField) usernameField.value = savedUsername || ''; if (rememberMe) rememberMe.checked = !!savedPassword; console.log("Logout realizado. Tela de login preparada."); }
+    function setActiveLink(clickedLinkElement) { if (!clickedLinkElement) return; document.querySelectorAll('.nav-link, #integrationBtnHeader, .profile-trigger, .profile-sidebar-link').forEach(el => { el.classList.remove('active'); }); clickedLinkElement.classList.add('active'); const isIntegrationPage = clickedLinkElement.getAttribute('onclick')?.includes('automate.html') || clickedLinkElement.getAttribute('onclick')?.includes('integracao.html'); const isProfileTriggerOrLink = clickedLinkElement.classList.contains('profile-trigger') || clickedLinkElement.classList.contains('profile-sidebar-link'); if (isIntegrationPage) { if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.add('active'); if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.add('active'); if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.add('active'); } else if (isProfileTriggerOrLink) { profileTriggers.forEach(trigger => trigger.classList.add('active')); if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.add('active'); if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.add('active'); const parentConfigButtonD = sidebarProfileLinkDesktop?.closest('.nav-item')?.querySelector('button.nav-link'); const parentConfigButtonM = sidebarProfileLinkMobile?.closest('.nav-item')?.querySelector('button.nav-link'); if(parentConfigButtonD) parentConfigButtonD.classList.add('active'); if(parentConfigButtonM) parentConfigButtonM.classList.add('active'); const submenuD = parentConfigButtonD?.nextElementSibling; const submenuM = parentConfigButtonM?.nextElementSibling; const iconD = parentConfigButtonD?.querySelector('i[id$="Icon"]'); const iconM = parentConfigButtonM?.querySelector('i[id$="Icon"]'); if (submenuD && iconD && !submenuD.classList.contains('submenu-visible') && !desktopSidebar?.classList.contains('sidebar-collapsed')) { toggleSubmenu(submenuD.id, iconD.id); } if (submenuM && iconM && !submenuM.classList.contains('submenu-visible')) { toggleSubmenu(submenuM.id, iconM.id); } } else { const parentSubmenu = clickedLinkElement.closest('.submenu'); if (parentSubmenu) { const parentButton = parentSubmenu.previousElementSibling; if (parentButton && parentButton.classList.contains('nav-link')) { parentButton.classList.add('active'); const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed'); const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile'; if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) { const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id; if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId); } } } if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.remove('active'); if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.remove('active'); if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.remove('active'); profileTriggers.forEach(trigger => trigger.classList.remove('active')); if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.remove('active'); if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.remove('active'); } }
+    function loadPage(pageUrl, clickedLinkElement, isMobile = window.innerWidth < 768) { const targetFrame = isMobile ? mobileMainFrame : mainFrame; const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay; if(!targetFrame || !targetSpinner) { console.error("Iframe ou Spinner não encontrado para:", isMobile ? "Mobile" : "Desktop"); return; } showFlexElement(targetSpinner); setActiveLink(clickedLinkElement); setTimeout(() => { targetFrame.src = pageUrl; }, 50); }
+    function setupIframeListener(frameElement, spinnerElement) { if (frameElement && spinnerElement) { frameElement.addEventListener('load', () => hideFlexElement(spinnerElement)); frameElement.addEventListener('error', (e) => { console.error(`Falha ao carregar iframe: ${frameElement.src}`, e); hideFlexElement(spinnerElement); }); } else { console.error("Iframe ou spinner overlay não encontrado para listener."); } }
+    function toggleMobileSidebar() { if (!mobileSidebar || !mobileSidebarWrapper) return; const isOpen = mobileSidebar.classList.contains('translate-x-0'); if (isOpen) { mobileSidebar.classList.replace('translate-x-0', '-translate-x-full'); mobileSidebarWrapper.classList.remove('visible'); } else { mobileSidebar.classList.replace('-translate-x-full', 'translate-x-0'); mobileSidebarWrapper.classList.add('visible'); } }
+    function toggleSubmenu(submenuId, iconId) { const submenu = document.getElementById(submenuId); const icon = document.getElementById(iconId); if (!submenu || !icon) { console.warn("Submenu ou ícone não encontrado:", submenuId, iconId); return; } const context = submenuId.includes('desktop') ? 'desktop' : 'mobile'; const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed'); if (context === 'mobile' || !isDesktopSidebarCollapsed) { document.querySelectorAll(`.submenu[id*="${context}"]`).forEach(otherSubmenu => { if (otherSubmenu.id !== submenuId && otherSubmenu.classList.contains('submenu-visible')) { otherSubmenu.classList.remove('submenu-visible'); const otherIconId = otherSubmenu.id.replace('Submenu', 'Icon'); const otherIcon = document.getElementById(otherIconId); if (otherIcon) otherIcon.classList.remove('rotate-180'); } }); } if (context === 'mobile' || !isDesktopSidebarCollapsed) { submenu.classList.toggle('submenu-visible'); icon.classList.toggle('rotate-180'); } else if (context === 'desktop' && isDesktopSidebarCollapsed) { console.log("Toggle de submenu ignorado (desktop colapsado)."); } }
+    function toggleDesktopSidebar() { if (!desktopSidebar || !desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn || !desktopMainArea) return; const isCollapsed = desktopSidebar.classList.toggle('sidebar-collapsed'); localStorage.setItem('desktopSidebarState', isCollapsed ? 'collapsed' : 'expanded'); updateDesktopSidebarUI(isCollapsed); if (isCollapsed) { document.querySelectorAll('#desktopSidebar .submenu.submenu-visible').forEach(sm => { sm.classList.remove('submenu-visible'); const iconEl = sm.previousElementSibling?.querySelector('.submenu-toggle-icon'); if(iconEl) iconEl.classList.remove('rotate-180'); }); } else { const activeSubmenuLink = desktopSidebar.querySelector('.submenu .nav-link.active'); if (activeSubmenuLink) { const submenuDiv = activeSubmenuLink.closest('.submenu'); const parentButton = submenuDiv?.previousElementSibling; if (submenuDiv && parentButton && !submenuDiv.classList.contains('submenu-visible')) { const iconId = parentButton.querySelector('i[id$="Icon"]')?.id; if (iconId) toggleSubmenu(submenuDiv.id, iconId); } } } }
+    function updateDesktopSidebarUI(isCollapsed) { if (!desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn) return; if (isCollapsed) { desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right'); desktopToggleText.textContent = 'Expandir'; desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral'); } else { desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left'); desktopToggleText.textContent = 'Recolher'; desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral'); } }
+    function applyDesktopSidebarState() { if (window.innerWidth < 768 || !desktopSidebar) return; const savedState = localStorage.getItem('desktopSidebarState'); const shouldBeCollapsed = savedState === 'collapsed'; if (desktopSidebar.classList.contains('sidebar-collapsed') !== shouldBeCollapsed) { desktopSidebar.classList.toggle('sidebar-collapsed', shouldBeCollapsed); } updateDesktopSidebarUI(shouldBeCollapsed); }
+    function openProfileModal() { const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão'; const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (profileNameInput) profileNameInput.value = currentUsername; if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge; const currentPassEl = document.getElementById('currentPassword'); const newPassEl = document.getElementById('newPassword'); const confirmPassEl = document.getElementById('confirmPassword'); if (currentPassEl) currentPassEl.value = ''; if (newPassEl) newPassEl.value = ''; if (confirmPassEl) confirmPassEl.value = ''; if (profilePicInput) profilePicInput.value = ''; const isMobile = window.innerWidth < 768; const profileLinkToActivate = isMobile ? sidebarProfileLinkMobile : sidebarProfileLinkDesktop; if (profileLinkToActivate) { setActiveLink(profileLinkToActivate); } else { const triggerToActivate = isMobile ? profileHeaderMobile?.querySelector('.profile-trigger') : null; if (triggerToActivate) setActiveLink(triggerToActivate); } if (profileModal) { profileModal.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); profileModal.classList.add('flex'); void profileModal.offsetWidth; profileModal.classList.add('opacity-100'); profileModal.classList.remove('pointer-events-none'); } if (profileModalContent) { profileModalContent.classList.remove('scale-95', 'opacity-0'); } }
+    function closeProfileModal() { if (profileModal) { profileModal.classList.remove('opacity-100'); profileModalContent?.classList.add('scale-95', 'opacity-0'); setTimeout(() => { profileModal.classList.add('hidden', 'opacity-0', 'pointer-events-none'); profileModal.classList.remove('flex'); const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge; if (profilePicInput) profilePicInput.value = ''; document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active')); const isMobile = window.innerWidth < 768; const currentFrame = isMobile ? mobileMainFrame : mainFrame; const currentIframeSrc = currentFrame?.src; if (currentIframeSrc && currentIframeSrc !== 'about:blank') { try { const url = new URL(currentIframeSrc); const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1); if (pageName && pageName !== 'profile.html') { const linkSelector = `.nav-link[onclick*="'${pageName}'"]`; const correspondingLink = document.querySelector(linkSelector); if(correspondingLink && !correspondingLink.classList.contains('profile-sidebar-link')) { setActiveLink(correspondingLink); } } else if (!pageName || pageName === 'profile.html') { const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } } catch (e) { console.error("Erro ao processar URL do iframe para restaurar link ativo:", e); } } else { const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } }, 200); } }
+    if (profilePicInput) { profilePicInput.addEventListener('change', function () { const file = this.files?.[0]; if (file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = function (e) { if (modalProfileImg && e.target?.result) { modalProfileImg.src = e.target.result.toString(); } }; reader.readAsDataURL(file); } else if (file) { alert("Por favor, selecione um arquivo de imagem válido."); this.value = ''; } }); }
+    if (profileForm) { profileForm.addEventListener('submit', function (e) { e.preventDefault(); const newName = profileNameInput?.value.trim(); const newImgSrc = modalProfileImg?.src; const currentPasswordEl = document.getElementById('currentPassword'); const newPasswordEl = document.getElementById('newPassword'); const confirmPasswordEl = document.getElementById('confirmPassword'); const currentPassword = currentPasswordEl?.value; const newPassword = newPasswordEl?.value; const confirmPassword = confirmPasswordEl?.value; let passwordChangeAttempted = currentPassword || newPassword || confirmPassword; let passwordChangeOk = true; if (passwordChangeAttempted) { const storedPassword = localStorage.getItem('savedPassword') || 'admin123'; if (!currentPassword || currentPassword !== storedPassword) { alert('Senha atual incorreta ou não fornecida!'); passwordChangeOk = false; currentPasswordEl?.focus(); } else if (!newPassword || newPassword !== confirmPassword) { alert('Nova senha e confirmação não coincidem ou estão vazias.'); passwordChangeOk = false; newPasswordEl?.focus(); } else if (newPassword.length < 6) { alert('A nova senha deve ter pelo menos 6 caracteres.'); passwordChangeOk = false; newPasswordEl?.focus(); } if (passwordChangeOk) { console.log("Simulação: Senha seria atualizada para:", newPassword); if(localStorage.getItem('savedPassword')) { localStorage.setItem('savedPassword', newPassword); console.log("Simulação: Senha salva no localStorage atualizada."); } else { console.log("Simulação: Senha validada, mas não estava salva ('Lembrar dados')."); } if(currentPasswordEl) currentPasswordEl.value = ''; if(newPasswordEl) newPasswordEl.value = ''; if(confirmPasswordEl) confirmPasswordEl.value = ''; } else { return; } } if (newName) { localStorage.setItem('savedUsername', newName); if (newImgSrc && newImgSrc.startsWith('data:image/')) { try { localStorage.setItem('savedProfilePicLarge', newImgSrc); } catch (error) { console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error); alert("Não foi possível salvar a imagem. Pode ser muito grande (limite ~5MB). Tente uma imagem menor ou remova a atual."); const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (modalProfileImg) modalProfileImg.src = previousPic; localStorage.removeItem('savedProfilePicLarge'); return; } } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE || !newImgSrc) { localStorage.removeItem('savedProfilePicLarge'); console.log("Imagem de perfil removida ou redefinida para padrão."); } updateUserInfo(); closeProfileModal(); } else { alert('O nome de usuário não pode ficar vazio.'); profileNameInput?.focus(); } }); }
+    function updateUserInfo() { const username = localStorage.getItem('savedUsername') || 'Nome Padrão'; const profilePicBase64Large = localStorage.getItem('savedProfilePicLarge'); const displayPicSmall = profilePicBase64Large || DEFAULT_PROFILE_PIC_SMALL; const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE; if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username; if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall; if(modalProfileImg) modalProfileImg.src = modalPic; }
+    function handleResize() { const stillLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; if (stillLoggedIn) { applyDesktopSidebarState(); } setVhProperty(); }
+    window.addEventListener('DOMContentLoaded', function () { setVhProperty(); const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; const isMobile = window.innerWidth < 768; if (isLoggedIn) { hideFlexElement(loginOverlay); showFlexElement(dashboard); updateUserInfo(); applyDesktopSidebarState(); const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(initialLinkSelector); if (homeLink) { setTimeout(() => loadPage('home.html', homeLink, isMobile), 50); } else { const targetFrame = isMobile ? mobileMainFrame : mainFrame; if(targetFrame) targetFrame.src = 'home.html'; hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay); console.warn("Link Home não encontrado na carga inicial."); } } else { showFlexElement(loginOverlay); hideFlexElement(dashboard); hideElement(logoutNotification); hideElement(loginErrorDiv); const savedUsername = localStorage.getItem('savedUsername'); const savedPassword = localStorage.getItem('savedPassword'); if (usernameField) usernameField.value = savedUsername || ''; if (passwordField) passwordField.value = ''; if (rememberMe) rememberMe.checked = !!savedPassword; } setupIframeListener(mainFrame, iframeSpinnerOverlay); setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay); window.addEventListener('resize', handleResize); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (profileModal?.classList.contains('flex')) { closeProfileModal(); } else if (mobileSidebar?.classList.contains('translate-x-0')) { toggleMobileSidebar(); } } }); profileTriggers.forEach(trigger => { trigger.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfileModal(); } }); }); });
   </script>
 
 </body>
