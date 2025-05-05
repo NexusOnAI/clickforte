@@ -47,11 +47,13 @@
 
     <script>
       // --- Configuration ---
-      const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq'; const gidReports = '0'; const gidTable = '446722751';
+      const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq'; // <<< Substitua pelo ID da sua Planilha
+      const gidReports = '0';                                // <<< GID da aba Relatórios/Fonte 1
+      const gidTable = '446722751';                           // <<< GID da aba Tabela/Fonte 2
       const baseURLReports = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidReports}`;
       const baseURLTable = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidTable}`;
-      const REFRESH_INTERVAL = 60000; const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-      // FORECAST_WEEKS_TOTAL removed
+      const REFRESH_INTERVAL = 60000; // 60 segundos
+      const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
 
       // --- Regex & Status ---
       const valorRegex = /valor|total/i; const vencRegex = /venc/i; const pagtoRegex = /pag/i; const statusRegex = /status|situação/i; const dueListDescRegex = /descri[cç][aã]o|item|fornecedor|nome/i;
@@ -73,9 +75,49 @@
       const formatDateISO = date => { if (!date || isNaN(date.getTime())) return null; return `${date.getUTCFullYear()}-${padZero(date.getUTCMonth() + 1)}-${padZero(date.getUTCDate())}`; };
       const formatMonthYearLabel = date => { if (!date || isNaN(date.getTime())) return 'Inválido'; const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]; return `${monthNames[date.getUTCMonth()]}/${date.getUTCFullYear()}`; };
       function parseDateValue(value) { if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const utcDays = Math.floor(value - 25569); const date = new Date(0); date.setUTCDate(date.getUTCDate() + utcDays); return date; } if (typeof value !== 'string') return null; let match; match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (match) return new Date(Date.UTC(+match[1], +match[2], +match[3])); match = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (match) return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3])); match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (match) { let year = +match[3]; if (year < 100) year += 2000; return new Date(Date.UTC(year, +match[2] - 1, +match[1])); } const parsed = new Date(value); if (!isNaN(parsed.getTime())) { return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())); } return null; }
-      const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
-      const formatCurrencyShort = value => { if (typeof value !== 'number' || isNaN(value)) return '–'; if (value === 0) return 'R$0'; if (Math.abs(value) < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0}); if (Math.abs(value) < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k'; return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M'; }
-      function getNumericValue(cellValue) { if (typeof cellValue === 'number') return cellValue; if (typeof cellValue === 'string') { const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); const num = parseFloat(cleanedString); return isNaN(num) ? 0 : num; } return 0; }
+
+      // --- UPDATED: Formatação de Moeda (espera valor em centavos) ---
+      const formatCurrency = valueInCents => {
+          // Verifica se é um número válido (representando centavos)
+          if (typeof valueInCents !== 'number' || isNaN(valueInCents)) return '–';
+          const valueInReal = valueInCents / 100; // Converte centavos para Reais
+          return valueInReal.toLocaleString('pt-BR', CURRENCY_FORMAT);
+      };
+
+      // --- UPDATED: Formatação Curta de Moeda (espera valor em centavos) ---
+      const formatCurrencyShort = valueInCents => {
+          if (typeof valueInCents !== 'number' || isNaN(valueInCents)) return '–';
+          if (valueInCents === 0) return 'R$0';
+
+          const valueInReal = valueInCents / 100; // Converte centavos para Reais
+
+          // Usa valueInReal para checar a magnitude
+          if (Math.abs(valueInReal) < 1000) return valueInReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }); // Sem centavos para valores < 1k
+          if (Math.abs(valueInReal) < 1000000) return (valueInReal / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k';
+          return (valueInReal / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M';
+      };
+
+       // --- UPDATED: Obtém valor numérico e retorna como INTEIRO (centavos) ---
+      function getNumericValue(cellValue) {
+          let num = 0;
+          if (typeof cellValue === 'number') {
+              num = cellValue;
+          } else if (typeof cellValue === 'string') {
+              // Remove símbolos de moeda (R$), separadores de milhar (.) e espaços
+              const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.').trim();
+              // Verifica se a string ficou vazia após a limpeza
+              if (cleanedString === '') {
+                  num = 0;
+              } else {
+                  const parsed = parseFloat(cleanedString);
+                  num = isNaN(parsed) ? 0 : parsed;
+              }
+          }
+          // Converte para centavos e arredonda para o inteiro mais próximo
+          // Isso evita problemas de ponto flutuante na conversão inicial e garante um inteiro
+          return Math.round(num * 100);
+      }
+
       function getMondayOfWeek(d) { const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = date.getUTCDay(); const diff = date.getUTCDate() - day + (day === 0 ? -6 : 1); const monday = new Date(date.setUTCDate(diff)); monday.setUTCHours(0, 0, 0, 0); return monday; }
       const MONTH_NAMES_SHORT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
@@ -92,7 +134,7 @@
               const [jsonDataReports, jsonDataTable] = await Promise.all([ fetchSheetData(baseURLReports).catch(e => { console.error("Erro Fonte 1:", e); return null; }), fetchSheetData(baseURLTable).catch(e => { console.error("Erro Fonte 2:", e); return null; }) ]);
               if (jsonDataReports?.table?.cols && jsonDataReports.table.rows) { headersReports = jsonDataReports.table.cols.map(col => col.label || `Col${col.id}`); sheetRowsReports = jsonDataReports.table.rows.map(row => { const cells = Array(headersReports.length).fill(null); if (row?.c) { row.c.forEach((cell, index) => { if (index < headersReports.length) { cells[index] = cell?.v ?? null; } }); } return cells; }); prepareAndRenderForecastChart(); updateHeaderInfo(); reportDataSuccess = true; } else { console.error("Dados Fonte 1 incompletos."); headersReports = []; sheetRowsReports = []; if (forecastChartInstance) forecastChartInstance.destroy(); forecastChartInstance = null; $chartErrorMsg.textContent = 'Erro ao carregar dados p/ previsão.'; $chartErrorMsg.classList.remove('hidden'); $grandTotalHeader.textContent = 'Total Geral: Erro'; }
               if (jsonDataTable?.table?.cols && jsonDataTable.table.rows) { headersTable = jsonDataTable.table.cols.map(col => col.label || `Col${col.id}`); sheetRowsTable = jsonDataTable.table.rows.map(row => { const cells = Array(headersTable.length).fill(null); if (row?.c) { row.c.forEach((cell, index) => { if (index < headersTable.length) { cells[index] = cell?.v ?? null; } }); } return cells; }); tableDataSuccess = true; } else { console.error("Dados Fonte 2 incompletos."); headersTable = []; sheetRowsTable = []; }
-              buildReportCards();
+              buildReportCards(); // Renderiza os cards com os dados (agora calculados em centavos internamente)
               if (tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) { renderDueListView(); } else if (!tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) { renderDueListError("Erro ao carregar dados p/ lista."); }
               if (reportDataSuccess || tableDataSuccess) { $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`; isLoaded = true; }
           } catch (error) { console.error("Erro geral:", error); buildReportCards(); if (!reportDataSuccess) { $chartErrorMsg.textContent = 'Erro geral previsão.'; $chartErrorMsg.classList.remove('hidden'); $grandTotalHeader.textContent = 'Total Geral: Erro'; } if (!tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) { renderDueListError("Erro geral lista."); } }
@@ -101,10 +143,16 @@
 
       // --- Rendering Functions ---
 
-      // buildReportCards() (No changes)
-      function buildReportCards() { $reportCardsWrapper.innerHTML = ''; const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); const vencIndex = findIndex(vencRegex, headersReports); const pagtoIndex = findIndex(pagtoRegex, headersReports); const statusIndex = findIndex(statusRegex, headersReports); let hasSource1Error = false; if (valorIndex === -1 && headersReports.length > 0) { console.error("Erro: Coluna de Valor não encontrada (Fonte 1)."); hasSource1Error = true; } else if (headersReports.length > 0) { if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Fonte 1).'); if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Fonte 1).'); if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Fonte 1).');} let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0; let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0; const today = new Date(); today.setUTCHours(0, 0, 0, 0); if (valorIndex !== -1) { sheetRowsReports.forEach(row => { const valor = getNumericValue(row[valorIndex]); if (isNaN(valor)) return; totalGeral += valor; countTotal++; const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null; const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null; const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : ''; let isPago = false, isPendente = false, isVencido = false; if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; } else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; } else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; } else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; } else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; } else { isPendente = true; } if (isPago) { totalPago += valor; countPago++; } else if (isVencido) { totalVencido += valor; countVencido++; } else { totalPendente += valor; countPendente++; } }); } else if (headersReports.length > 0){ countTotal = sheetRowsReports.length; } let totalDueListSheet2 = 0; let countDueListSheet2 = 0; let hasSource2Error = false; const dueListValorIndex = findIndex(valorRegex, headersTable); const dueListVencIndex = findIndex(vencRegex, headersTable); if (dueListValorIndex !== -1 && dueListVencIndex !== -1 && sheetRowsTable && sheetRowsTable.length > 0) { sheetRowsTable.forEach(row => { const vencValueRaw = row[dueListVencIndex]; const vencDate = parseDateValue(vencValueRaw); if (vencDate && !isNaN(vencDate.getTime())) { const valor = getNumericValue(row[dueListValorIndex]); if (!isNaN(valor)) { totalDueListSheet2 += valor; countDueListSheet2++; } } }); } else { if (!sheetRowsTable || sheetRowsTable.length === 0) { console.log("Fonte 2 vazia."); } else if (dueListValorIndex === -1 || dueListVencIndex === -1) { console.warn("Coluna Valor/Vencimento não encontrada (Fonte 2)."); hasSource2Error = true; }} const currentDateFormatted = formatDateBR(new Date()); const reportData = [ { type: 'due-total-highlight', title: "Total Vencimentos", value: totalDueListSheet2, detail: `${countDueListSheet2} lançamentos • Ref: ${currentDateFormatted}`, valueClass: '', iconId: 'icon-list-bullet' }, { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' }, { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' }, { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' }, ]; reportData.forEach(data => { if (hasSource1Error && ['total', 'paid', 'pending', 'overdue'].includes(data.type) && !data.valueClass.includes('count') && data.type !== 'due-total-highlight') { return; } if (hasSource1Error && data.valueClass.includes('count') && data.type !== 'due-total-highlight') { return; } if (hasSource2Error && data.type === 'due-total-highlight') { return; } const card = document.createElement('div'); card.className = 'report-card'; if (data.type === 'due-total-highlight') { card.classList.add('highlighted-card'); } const formattedValue = data.valueClass.includes('count') ? data.value.toLocaleString('pt-BR') : formatCurrency(data.value); const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); iconSVG.classList.add('icon', data.type); const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use'); iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`); iconSVG.appendChild(iconUse); card.appendChild(iconSVG); const contentDiv = document.createElement('div'); contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`; card.appendChild(contentDiv); $reportCardsWrapper.appendChild(card); }); if ($reportCardsWrapper.children.length === 0) { let errorMsg = "Não foi possível carregar dados."; if(hasSource1Error && hasSource2Error) errorMsg = "Erro Fontes 1 e 2."; else if (hasSource1Error) errorMsg = "Erro Fonte 1."; else if (hasSource2Error) errorMsg = "Erro Fonte 2."; $reportCardsWrapper.innerHTML = `<p class="text-center text-red-500 col-span-full font-medium p-4">${errorMsg}</p>`; } }
+      // buildReportCards() (Sem alterações lógicas, mas agora usa valores em centavos internamente)
+      function buildReportCards() { $reportCardsWrapper.innerHTML = ''; const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); const vencIndex = findIndex(vencRegex, headersReports); const pagtoIndex = findIndex(pagtoRegex, headersReports); const statusIndex = findIndex(statusRegex, headersReports); let hasSource1Error = false; if (valorIndex === -1 && headersReports.length > 0) { console.error("Erro: Coluna de Valor não encontrada (Fonte 1)."); hasSource1Error = true; } else if (headersReports.length > 0) { if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Fonte 1).'); if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Fonte 1).'); if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Fonte 1).');} let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0; // Valores agora são centavos
+      let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0; const today = new Date(); today.setUTCHours(0, 0, 0, 0); if (valorIndex !== -1) { sheetRowsReports.forEach(row => { const valorEmCentavos = getNumericValue(row[valorIndex]); // Obtém valor em centavos
+      if (isNaN(valorEmCentavos)) return; totalGeral += valorEmCentavos; countTotal++; const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null; const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null; const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : ''; let isPago = false, isPendente = false, isVencido = false; if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; } else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; } else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; } else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; } else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; } else { isPendente = true; } if (isPago) { totalPago += valorEmCentavos; countPago++; } else if (isVencido) { totalVencido += valorEmCentavos; countVencido++; } else { totalPendente += valorEmCentavos; countPendente++; } }); } else if (headersReports.length > 0){ countTotal = sheetRowsReports.length; } let totalDueListSheet2 = 0; // Em centavos
+      let countDueListSheet2 = 0; let hasSource2Error = false; const dueListValorIndex = findIndex(valorRegex, headersTable); const dueListVencIndex = findIndex(vencRegex, headersTable); if (dueListValorIndex !== -1 && dueListVencIndex !== -1 && sheetRowsTable && sheetRowsTable.length > 0) { sheetRowsTable.forEach(row => { const vencValueRaw = row[dueListVencIndex]; const vencDate = parseDateValue(vencValueRaw); if (vencDate && !isNaN(vencDate.getTime())) { const valorEmCentavos = getNumericValue(row[dueListValorIndex]); // Obtém valor em centavos
+      if (!isNaN(valorEmCentavos)) { totalDueListSheet2 += valorEmCentavos; countDueListSheet2++; } } }); } else { if (!sheetRowsTable || sheetRowsTable.length === 0) { console.log("Fonte 2 vazia."); } else if (dueListValorIndex === -1 || dueListVencIndex === -1) { console.warn("Coluna Valor/Vencimento não encontrada (Fonte 2)."); hasSource2Error = true; }} const currentDateFormatted = formatDateBR(new Date()); const reportData = [ { type: 'due-total-highlight', title: "Total Vencimentos", value: totalDueListSheet2, detail: `${countDueListSheet2} lançamentos • Ref: ${currentDateFormatted}`, valueClass: '', iconId: 'icon-list-bullet' }, { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' }, { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' }, { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' }, ]; reportData.forEach(data => { if (hasSource1Error && ['total', 'paid', 'pending', 'overdue'].includes(data.type) && !data.valueClass.includes('count') && data.type !== 'due-total-highlight') { return; } if (hasSource1Error && data.valueClass.includes('count') && data.type !== 'due-total-highlight') { return; } if (hasSource2Error && data.type === 'due-total-highlight') { return; } const card = document.createElement('div'); card.className = 'report-card'; if (data.type === 'due-total-highlight') { card.classList.add('highlighted-card'); } // A formatação agora recebe centavos e converte internamente
+      const formattedValue = data.valueClass.includes('count') ? data.value.toLocaleString('pt-BR') : formatCurrency(data.value); // data.value está em centavos
+      const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); iconSVG.classList.add('icon', data.type); const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use'); iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`); iconSVG.appendChild(iconUse); card.appendChild(iconSVG); const contentDiv = document.createElement('div'); contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`; card.appendChild(contentDiv); $reportCardsWrapper.appendChild(card); }); if ($reportCardsWrapper.children.length === 0) { let errorMsg = "Não foi possível carregar dados."; if(hasSource1Error && hasSource2Error) errorMsg = "Erro Fontes 1 e 2."; else if (hasSource1Error) errorMsg = "Erro Fonte 1."; else if (hasSource2Error) errorMsg = "Erro Fonte 2."; $reportCardsWrapper.innerHTML = `<p class="text-center text-red-500 col-span-full font-medium p-4">${errorMsg}</p>`; } }
 
-      // --- UPDATED: Forecast Chart Preparation (Current Month Only) ---
+      // --- UPDATED: Forecast Chart Preparation (Current Month Only, uses cents) ---
       function prepareAndRenderForecastChart() {
           $chartErrorMsg.classList.add('hidden');
           const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
@@ -112,7 +160,7 @@
 
           if (valorIndex === -1 || vencIndex === -1) { $chartErrorMsg.textContent = 'Coluna Valor/Vencimento não encontrada (Fonte 1) p/ previsão.'; $chartErrorMsg.classList.remove('hidden'); if (forecastChartInstance) { forecastChartInstance.destroy(); forecastChartInstance = null; } const ctx = $chartCanvas.getContext('2d'); if(ctx) ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height); return; }
 
-          const forecastTotals = {}; // Key: 'YYYY-MM-DD' (Monday), Value: total Mon-Fri
+          const forecastTotals = {}; // Key: 'YYYY-MM-DD' (Monday), Value: total Mon-Fri em CENTAVOS
           const now = new Date();
           const currentYear = now.getUTCFullYear();
           const currentMonth = now.getUTCMonth(); // 0-11
@@ -132,65 +180,66 @@
 
               // 4. Check if Adjusted Date is in the CURRENT MONTH
               if (dataVencAjustada.getUTCFullYear() === currentYear && dataVencAjustada.getUTCMonth() === currentMonth) {
-                   // 5. Check if Adjusted date is Mon-Fri
-                   const dayOfWeekAdjusted = dataVencAjustada.getUTCDay();
-                   if (dayOfWeekAdjusted >= 1 && dayOfWeekAdjusted <= 5) {
-                       // 6. Find Monday & Aggregate
-                       const weekMonday = getMondayOfWeek(dataVencAjustada); const weekKey = formatDateISO(weekMonday);
-                       const valor = getNumericValue(row[valorIndex]);
-                       if (!isNaN(valor)) { if (!forecastTotals[weekKey]) { forecastTotals[weekKey] = 0; } forecastTotals[weekKey] += valor; }
-                   }
-               }
+                  // 5. Check if Adjusted date is Mon-Fri
+                  const dayOfWeekAdjusted = dataVencAjustada.getUTCDay();
+                  if (dayOfWeekAdjusted >= 1 && dayOfWeekAdjusted <= 5) {
+                      // 6. Find Monday & Aggregate (in cents)
+                      const weekMonday = getMondayOfWeek(dataVencAjustada); const weekKey = formatDateISO(weekMonday);
+                      const valorEmCentavos = getNumericValue(row[valorIndex]); // Obtém valor em centavos
+                      if (!isNaN(valorEmCentavos)) { if (!forecastTotals[weekKey]) { forecastTotals[weekKey] = 0; } forecastTotals[weekKey] += valorEmCentavos; // Soma centavos
+                      }
+                  }
+              }
           });
 
           // 7. Prepare Data for Chart (Only weeks with data relevant to current month)
-          const chartLabels = []; const chartData = []; const weekDates = {};
-          const sortedMondays = Object.keys(forecastTotals).sort(); // Sort the Mondays we found totals for
+          const chartLabels = []; const chartData = []; // Contém totais em CENTAVOS
+          const weekDates = {};
+          const sortedMondays = Object.keys(forecastTotals).sort();
 
-          // If no Mondays found for the current month, display empty chart or message
            if (sortedMondays.length === 0) {
-                $chartErrorMsg.textContent = `Nenhuma previsão encontrada para ${MONTH_NAMES_SHORT[currentMonth]}/${currentYear} (Seg-Sex).`;
-                $chartErrorMsg.classList.remove('hidden');
-                if (forecastChartInstance) { forecastChartInstance.destroy(); forecastChartInstance = null; }
-                const ctx = $chartCanvas.getContext('2d'); if(ctx) ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height);
-                return; // Stop here
-            }
-
+               $chartErrorMsg.textContent = `Nenhuma previsão encontrada para ${MONTH_NAMES_SHORT[currentMonth]}/${currentYear} (Seg-Sex).`;
+               $chartErrorMsg.classList.remove('hidden');
+               if (forecastChartInstance) { forecastChartInstance.destroy(); forecastChartInstance = null; }
+               const ctx = $chartCanvas.getContext('2d'); if(ctx) ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height);
+               return;
+           }
 
           sortedMondays.forEach((weekKey, index) => {
-              const mondayDate = parseDateValue(weekKey); // Convert 'YYYY-MM-DD' back to Date
+              const mondayDate = parseDateValue(weekKey);
               const fridayDate = new Date(mondayDate); fridayDate.setUTCDate(fridayDate.getUTCDate() + 4);
 
               chartLabels.push(`Sem ${padZero(mondayDate.getUTCDate())}/${padZero(mondayDate.getUTCMonth() + 1)}`);
-              chartData.push(forecastTotals[weekKey] || 0);
+              chartData.push(forecastTotals[weekKey] || 0); // Adiciona o total em CENTAVOS
               weekDates[index] = { start: formatDateBR(mondayDate), end: formatDateBR(fridayDate), month: mondayDate.getUTCMonth(), year: mondayDate.getUTCFullYear() };
           });
 
 
           // 8. Render Chart (Using single color scheme)
-           const barColor = tailwind.config.theme.extend.colors.primary[400]+'B3'; // 70% opacity Blue
-           const borderColor = tailwind.config.theme.extend.colors.primary[600];
+          const barColor = tailwind.config.theme.extend.colors.primary[400]+'B3'; // 70% opacity Blue
+          const borderColor = tailwind.config.theme.extend.colors.primary[600];
 
-          renderForecastChart(chartLabels, chartData, weekDates, [barColor], [borderColor]); // Pass colors as arrays
+          // Passa os dados em CENTAVOS para a função de renderização
+          renderForecastChart(chartLabels, chartData, weekDates, [barColor], [borderColor]);
       }
 
-      // --- UPDATED: Forecast Chart Rendering (Simplified color handling) ---
+      // --- UPDATED: Forecast Chart Rendering (Simplified color handling, expects data in cents) ---
       function renderForecastChart(labels, data, weekDates, backgroundColors, borderColors) {
+          // data está em CENTAVOS
           const ctx = $chartCanvas?.getContext('2d'); if (!ctx) return;
           if (forecastChartInstance) { forecastChartInstance.destroy(); }
 
-          // Use the passed colors, provide defaults if needed (expecting single color arrays now)
           const bgColor = backgroundColors?.[0] || tailwind.config.theme.extend.colors.primary[400]+'B3';
           const bdColor = borderColors?.[0] || tailwind.config.theme.extend.colors.primary[600];
 
           forecastChartInstance = new Chart(ctx, {
               type: 'bar',
-              data: { labels: labels, datasets: [{ label: 'Previsão Seg-Sex', data: data, backgroundColor: bgColor, borderColor: bdColor, borderWidth: 1, hoverBackgroundColor: bgColor.replace('B3', 'E6'), hoverBorderColor: bdColor, borderRadius: 4, borderSkipped: false, barPercentage: 0.7, /* Adjusted for potentially fewer bars */ categoryPercentage: 0.8 }] },
+              data: { labels: labels, datasets: [{ label: 'Previsão Seg-Sex', data: data, /* Passa dados em CENTAVOS */ backgroundColor: bgColor, borderColor: bdColor, borderWidth: 1, hoverBackgroundColor: bgColor.replace('B3', 'E6'), hoverBorderColor: bdColor, borderRadius: 4, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] },
               options: {
                   responsive: true, maintainAspectRatio: false,
                   layout: { padding: { top: 25 } },
                   scales: {
-                      y: { beginAtZero: true, ticks: { color: tailwind.config.theme.extend.colors.slate[600], font: { size: 10 }, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: tailwind.config.theme.extend.colors.slate[200], drawTicks: false }, border: { display: false } },
+                      y: { beginAtZero: true, ticks: { color: tailwind.config.theme.extend.colors.slate[600], font: { size: 10 }, callback: function(value) { return formatCurrencyShort(value); /* formatCurrencyShort espera CENTAVOS */ } }, grid: { color: tailwind.config.theme.extend.colors.slate[200], drawTicks: false }, border: { display: false } },
                       x: { ticks: { color: tailwind.config.theme.extend.colors.slate[600], font: { size: 9 } }, grid: { display: false }, border: { display: false } }
                   },
                   plugins: {
@@ -206,38 +255,60 @@
                                   }
                                   return tooltipItems[0]?.label || '';
                               },
-                              label: function(context) { if (context.parsed.y !== null) { return formatCurrency(context.parsed.y); } return ''; }
+                              label: function(context) {
+                                  // context.parsed.y contém o valor em CENTAVOS
+                                  if (context.parsed.y !== null) { return formatCurrency(context.parsed.y); /* formatCurrency espera CENTAVOS */ } return '';
+                              }
                           }
                       },
-                      datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: tailwind.config.theme.extend.colors.slate[700], font: { size: 8, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } }
+                      datalabels: {
+                           display: context => context.dataset.data[context.dataIndex] > 0, // context.dataset.data está em CENTAVOS
+                           anchor: 'end', align: 'top', offset: 4, color: tailwind.config.theme.extend.colors.slate[700], font: { size: 8, weight: '500' },
+                           formatter: (value, context) => { return formatCurrencyShort(value); /* value aqui está em CENTAVOS, formatCurrencyShort espera centavos */ }
+                      }
                   },
                   interaction: { mode: 'index', intersect: false },
               }
           });
       }
 
-      // renderDueListView() (No changes needed)
-      function renderDueListView() { $dueListItems.innerHTML = ''; $dueListErrorMsg.classList.add('hidden'); $dueListItems.querySelector('#due-list-loading-message')?.remove(); $dueListChartError?.classList.add('hidden'); $dueListCurrentDate.textContent = `Data de Hoje: ${formatDateBR(new Date())}`; $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(0)}`; if (!headersTable || headersTable.length === 0 || !sheetRowsTable) { renderDueListError("Dados da Lista de Vencimentos não carregados."); $dueListChartWrapper?.classList.add('hidden'); return; } const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const vencIndex = findIndex(vencRegex, headersTable); const valorIndex = findIndex(valorRegex, headersTable); const descIndex = findIndex(dueListDescRegex, headersTable); if (vencIndex === -1 || valorIndex === -1) { renderDueListError("Erro: Colunas Vencimento/Valor não encontradas (Fonte 2)."); $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } return; } if (descIndex === -1) { console.warn("Coluna Descrição não encontrada (Fonte 2)."); } let totalAllDueValue = 0; const allDueItems = []; sheetRowsTable.forEach((row, rowIndex) => { const vencValueRaw = row[vencIndex]; const vencDate = parseDateValue(vencValueRaw); if (vencDate && !isNaN(vencDate.getTime())) { const valor = getNumericValue(row[valorIndex]); if (isNaN(valor)) return; const description = descIndex !== -1 ? (row[descIndex] || 'Item s/ desc.') : `Item ${rowIndex + 1}`; allDueItems.push({ description: description, value: valor, dueDate: vencDate }); totalAllDueValue += valor; } else if (vencValueRaw && typeof vencValueRaw === 'string' && vencValueRaw.trim() !== '') { console.warn(`Não foi possível parsear data na linha ${rowIndex + 1} (Fonte 2):`, vencValueRaw); } }); allDueItems.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime()); $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(totalAllDueValue)}`; if (allDueItems.length === 0) { $dueListItems.innerHTML = '<p class="no-items-message">Nenhum lançamento com data de vencimento válido encontrado.</p>'; $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } } else { $dueListItems.querySelector('#due-list-loading-message')?.remove(); $dueListErrorMsg.classList.add('hidden'); const ul = document.createElement('ul'); allDueItems.forEach(item => { const li = document.createElement('li'); const formattedDueDate = formatDateBR(item.dueDate); li.innerHTML = `<div class="item-info"><span class="item-description" title="${item.description}">${item.description}</span><span class="item-due-date">Venc: ${formattedDueDate}</span></div><span class="item-value">${formatCurrency(item.value)}</span>`; ul.appendChild(li); }); $dueListItems.appendChild(ul); prepareAndRenderDueListChart(allDueItems); } }
+      // renderDueListView() (Sem alterações lógicas, mas usa valores em centavos internamente)
+      function renderDueListView() { $dueListItems.innerHTML = ''; $dueListErrorMsg.classList.add('hidden'); $dueListItems.querySelector('#due-list-loading-message')?.remove(); $dueListChartError?.classList.add('hidden'); $dueListCurrentDate.textContent = `Data de Hoje: ${formatDateBR(new Date())}`; $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(0)}`; if (!headersTable || headersTable.length === 0 || !sheetRowsTable) { renderDueListError("Dados da Lista de Vencimentos não carregados."); $dueListChartWrapper?.classList.add('hidden'); return; } const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const vencIndex = findIndex(vencRegex, headersTable); const valorIndex = findIndex(valorRegex, headersTable); const descIndex = findIndex(dueListDescRegex, headersTable); if (vencIndex === -1 || valorIndex === -1) { renderDueListError("Erro: Colunas Vencimento/Valor não encontradas (Fonte 2)."); $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } return; } if (descIndex === -1) { console.warn("Coluna Descrição não encontrada (Fonte 2)."); } let totalAllDueValue = 0; // Em centavos
+      const allDueItems = []; // Armazena objetos com { description, value (em centavos), dueDate }
+      sheetRowsTable.forEach((row, rowIndex) => { const vencValueRaw = row[vencIndex]; const vencDate = parseDateValue(vencValueRaw); if (vencDate && !isNaN(vencDate.getTime())) { const valorEmCentavos = getNumericValue(row[valorIndex]); // Obtém valor em centavos
+      if (isNaN(valorEmCentavos)) return; const description = descIndex !== -1 ? (row[descIndex] || 'Item s/ desc.') : `Item ${rowIndex + 1}`; allDueItems.push({ description: description, value: valorEmCentavos, dueDate: vencDate }); totalAllDueValue += valorEmCentavos; } else if (vencValueRaw && typeof vencValueRaw === 'string' && vencValueRaw.trim() !== '') { console.warn(`Não foi possível parsear data na linha ${rowIndex + 1} (Fonte 2):`, vencValueRaw); } }); allDueItems.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime()); $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(totalAllDueValue)}`; // formatCurrency espera centavos
+      if (allDueItems.length === 0) { $dueListItems.innerHTML = '<p class="no-items-message">Nenhum lançamento com data de vencimento válido encontrado.</p>'; $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } } else { $dueListItems.querySelector('#due-list-loading-message')?.remove(); $dueListErrorMsg.classList.add('hidden'); const ul = document.createElement('ul'); allDueItems.forEach(item => { const li = document.createElement('li'); const formattedDueDate = formatDateBR(item.dueDate); // formatCurrency espera centavos
+      li.innerHTML = `<div class="item-info"><span class="item-description" title="${item.description}">${item.description}</span><span class="item-due-date">Venc: ${formattedDueDate}</span></div><span class="item-value">${formatCurrency(item.value)}</span>`; ul.appendChild(li); }); $dueListItems.appendChild(ul); prepareAndRenderDueListChart(allDueItems); // Passa itens com valores em centavos
+      } }
 
-      // prepareAndRenderDueListChart() (No changes needed)
-      function prepareAndRenderDueListChart(items) { if (!items || items.length === 0) { $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } return; } try { const monthlyTotals = {}; items.forEach(item => { if (!item.dueDate || isNaN(item.dueDate.getTime())) return; const year = item.dueDate.getUTCFullYear(); const month = item.dueDate.getUTCMonth(); const monthYearKey = `${year}-${padZero(month)}`; if (!monthlyTotals[monthYearKey]) { monthlyTotals[monthYearKey] = 0; } monthlyTotals[monthYearKey] += item.value; }); const sortedKeys = Object.keys(monthlyTotals).sort(); const chartLabels = sortedKeys.map(key => { const [year, month] = key.split('-'); const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1)); return formatMonthYearLabel(tempDate); }); const chartData = sortedKeys.map(key => monthlyTotals[key]); renderDueListChart(chartLabels, chartData); $dueListChartWrapper?.classList.remove('hidden'); $dueListChartError?.classList.add('hidden'); } catch (error) { console.error("Erro ao preparar dados para o gráfico mensal:", error); $dueListChartWrapper?.classList.add('hidden'); $dueListChartError.textContent = 'Erro ao processar dados do gráfico mensal.'; $dueListChartError?.classList.remove('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } } }
+      // prepareAndRenderDueListChart() (Sem alterações lógicas, mas usa valores em centavos internamente)
+      function prepareAndRenderDueListChart(items) { // items contém { value: em centavos, dueDate: Date }
+          if (!items || items.length === 0) { $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } return; } try { const monthlyTotals = {}; // Armazena totais mensais em CENTAVOS
+      items.forEach(item => { if (!item.dueDate || isNaN(item.dueDate.getTime())) return; const year = item.dueDate.getUTCFullYear(); const month = item.dueDate.getUTCMonth(); const monthYearKey = `${year}-${padZero(month)}`; if (!monthlyTotals[monthYearKey]) { monthlyTotals[monthYearKey] = 0; } monthlyTotals[monthYearKey] += item.value; // Soma centavos
+      }); const sortedKeys = Object.keys(monthlyTotals).sort(); const chartLabels = sortedKeys.map(key => { const [year, month] = key.split('-'); const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1)); return formatMonthYearLabel(tempDate); }); const chartData = sortedKeys.map(key => monthlyTotals[key]); // Dados em CENTAVOS
+      renderDueListChart(chartLabels, chartData); // Passa dados em CENTAVOS
+      $dueListChartWrapper?.classList.remove('hidden'); $dueListChartError?.classList.add('hidden'); } catch (error) { console.error("Erro ao preparar dados para o gráfico mensal:", error); $dueListChartWrapper?.classList.add('hidden'); $dueListChartError.textContent = 'Erro ao processar dados do gráfico mensal.'; $dueListChartError?.classList.remove('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } } }
 
-      // renderDueListChart() (No changes needed)
-      function renderDueListChart(labels, data) { const ctx = $dueListChartCanvas?.getContext('2d'); if (!ctx) return; if (dueListChartInstance) { dueListChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' }; dueListChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Vencimento', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 4, borderSkipped: false, barPercentage: 0.6, categoryPercentage: 0.7 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 25 } }, scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, font: { size: 10 }, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 9 } }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 8, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 8, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } } , interaction: { mode: 'index', intersect: false }, } }); }
+      // renderDueListChart() (Sem alterações lógicas, mas espera dados em centavos)
+      function renderDueListChart(labels, data) { // data está em CENTAVOS
+          const ctx = $dueListChartCanvas?.getContext('2d'); if (!ctx) return; if (dueListChartInstance) { dueListChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' }; dueListChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Vencimento', data: data, /* Passa dados em CENTAVOS */ backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 4, borderSkipped: false, barPercentage: 0.6, categoryPercentage: 0.7 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 25 } }, scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, font: { size: 10 }, callback: function(value) { return formatCurrencyShort(value); /* value aqui é centavos, formatCurrencyShort espera centavos */ } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 9 } }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 8, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); /* context.parsed.y é centavos, formatCurrency espera centavos */ } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, // data está em centavos
+      anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 8, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); /* value é centavos, formatCurrencyShort espera centavos */ } } } , interaction: { mode: 'index', intersect: false }, } }); }
 
-      // renderDueListError() (No changes needed)
-       function renderDueListError(message) { const ul = $dueListItems.querySelector('ul'); if(ul) ul.remove(); $dueListItems.querySelector('#due-list-loading-message')?.remove(); $dueListErrorMsg.textContent = message; $dueListErrorMsg.classList.remove('hidden'); $dueListTotalAll.textContent = 'Erro ao calcular total'; $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } }
+      // renderDueListError() (Sem alterações)
+        function renderDueListError(message) { const ul = $dueListItems.querySelector('ul'); if(ul) ul.remove(); $dueListItems.querySelector('#due-list-loading-message')?.remove(); $dueListErrorMsg.textContent = message; $dueListErrorMsg.classList.remove('hidden'); $dueListTotalAll.textContent = 'Erro ao calcular total'; $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } }
 
-      // updateHeaderInfo() (No changes needed)
-      function updateHeaderInfo() { const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); if (valorIndex === -1 || !sheetRowsReports || headersReports.length === 0) { $grandTotalHeader.textContent = 'Total Geral: Erro'; return; } if (sheetRowsReports.length > 0) { const grandTotal = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0); $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`; } else { $grandTotalHeader.textContent = 'Total Geral: R$ 0,00'; } }
+      // updateHeaderInfo() (Sem alterações lógicas, mas usa valor em centavos internamente)
+      function updateHeaderInfo() { const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); if (valorIndex === -1 || !sheetRowsReports || headersReports.length === 0) { $grandTotalHeader.textContent = 'Total Geral: Erro'; return; } if (sheetRowsReports.length > 0) { const grandTotalInCents = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0); // Soma centavos
+      $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotalInCents)}`; // formatCurrency espera centavos
+      } else { $grandTotalHeader.textContent = 'Total Geral: R$ 0,00'; } }
 
-      // --- View Switching Logic ---
+      // --- View Switching Logic --- (Sem alterações)
       function switchView(viewToShow) { $reportCardsWrapper.classList.add('hidden'); $chartContainer.classList.add('hidden'); $dueListContainer.classList.add('hidden'); $viewToggleReportsBtn.classList.remove('active'); $viewToggleChartBtn.classList.remove('active'); $viewToggleDueListBtn.classList.remove('active'); if (viewToShow === 'reports') { $reportCardsWrapper.classList.remove('hidden'); $viewToggleReportsBtn.classList.add('active'); if(isLoaded) buildReportCards(); } else if (viewToShow === 'chart') { $chartContainer.classList.remove('hidden'); $viewToggleChartBtn.classList.add('active'); if (isLoaded) prepareAndRenderForecastChart(); requestAnimationFrame(() => { forecastChartInstance?.resize(); }); } else if (viewToShow === 'dueList') { $dueListContainer.classList.remove('hidden'); $viewToggleDueListBtn.classList.add('active'); if (isLoaded && headersTable.length > 0) { renderDueListView(); } else if(isLoaded) { renderDueListError("Dados para a lista de vencimentos não disponíveis."); } requestAnimationFrame(() => { dueListChartInstance?.resize(); }); } }
 
-      // --- Event Listeners ---
+      // --- Event Listeners --- (Sem alterações)
       $manualRefreshBtn.onclick = loadData; $viewToggleReportsBtn.onclick = () => switchView('reports'); $viewToggleChartBtn.onclick = () => switchView('chart'); $viewToggleDueListBtn.onclick = () => switchView('dueList');
 
-      // --- Initialization ---
+      // --- Initialization --- (Sem alterações)
       switchView('reports'); loadData(); setInterval(loadData, REFRESH_INTERVAL);
 
     </script>
