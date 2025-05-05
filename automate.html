@@ -1,25 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard • Google Sheets</title>
+  <title>Dashboard • Google Sheets (Light)</title>
 
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
         extend: {
           colors: {
-            surface: '#212529',
-            primary: { 300: '#99d2fa', 500: '#4dabf7' },
-            slate: { 300: '#cbd5e1', 400: '#94a3b8', 600: '#475569' }
+            surface: '#ffffff',
+            primary: {
+              300: '#6b9eff',
+              500: '#0d6efd',
+              600: '#0a58ca'
+            },
+            slate: {
+              300: '#dee2e6', 400: '#ced4da', 500: '#adb5bd',
+              600: '#6c757d', 700: '#495057', 800: '#343a40', 900: '#212529'
+            },
+             gray: { 50: '#f8f9fa', 100: '#f1f3f5', 200: '#e9ecef' }
           },
-          boxShadow: { glow: '0 0 8px rgba(77,171,247,.35)' },
+          boxShadow: { glow: '0 0 8px rgba(13, 110, 253, 0.25)' },
           backdropBlur: { xs: '2px' }
         }
       }
@@ -32,181 +39,123 @@
     @keyframes spin { to { transform: rotate(360deg) } }
     .animate-spin { animation: spin 1s linear infinite }
     html, body { height: 100%; }
-    body { background: #1a1d21; display: flex; flex-direction: column; }
-
+    body { background: #f8f9fa; display: flex; flex-direction: column; }
     main { flex-grow: 1; display: flex; flex-direction: column; }
-
-    #table-wrapper {
-        flex-grow: 1;
-        overflow: auto;
-        max-width: 100%;
-        -webkit-overflow-scrolling: touch;
-    }
-    #charts-wrapper {
-        flex-grow: 1;
-        overflow-y: auto; /* Allow vertical scroll for charts if needed */
-    }
+    #table-wrapper { flex-grow: 1; overflow: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+    #charts-wrapper { flex-grow: 1; overflow-y: auto; }
     #sheetTable { width: 100%; }
-
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px }
-    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px }
-
-    /* Table Header Filter */
+    ::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 3px }
+    ::-webkit-scrollbar-track { background: #e9ecef; }
     th select {
-      background: #212529; border: 1px solid #4dabf7; border-radius: 4px;
+      background: #ffffff; border: 1px solid #ced4da; border-radius: 4px;
       font-size: 12px; padding: 6px 8px; width: 100%; margin-top: 4px;
-      color: #cbd5e1;
-      appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234dabf7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-      background-repeat: no-repeat;
-      background-position: right 0.5rem center;
-      background-size: 0.65em auto;
-      padding-right: 2rem;
+      color: #495057; appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230d6efd%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+      background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 0.65em auto; padding-right: 2rem;
     }
-    th select:focus { outline: none; border-color: #4dabf7; box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.3); }
-
-    /* Active Tab */
-    .tab-btn.active-tab {
-      background: #4dabf7; color: #fff !important;
-      box-shadow: 0 0 5px rgba(77, 171, 247, .55)
-    }
-    .chart-card { transition: background-color 0.3s ease; }
-
-    button:focus-visible, select:focus-visible {
-      outline: 2px solid #4dabf7; outline-offset: 2px;
-    }
-
-    /* --- Full-Screen Table Styles --- */
-    main.table-full-screen {
-        max-width: none; padding: 0; gap: 0;
-    }
-     main.table-full-screen > div:nth-of-type(1) { /* Tab buttons container */
-         padding: 0.5rem 0.75rem; flex-shrink: 0;
-         border-bottom: 1px solid #475569; background-color: #1a1d21;
-     }
-     main.table-full-screen > #filters-bar {
-         padding: 0.5rem 0.75rem; flex-shrink: 0;
-         border-bottom: 1px solid #475569; background-color: #1a1d21;
-     }
+    th select:focus { outline: none; border-color: #86b7fe; box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25); }
+    .tab-btn.active-tab { background: #0d6efd; color: #fff !important; box-shadow: 0 0 5px rgba(13, 110, 253, .4) }
+    .chart-card { transition: background-color 0.3s ease; background-color: var(--tw-color-surface); }
+    button:focus-visible, select:focus-visible { outline: 2px solid #0d6efd; outline-offset: 2px; }
+    main.table-full-screen { max-width: none; padding: 0; gap: 0; }
+    main.table-full-screen > div:nth-of-type(1) { padding: 0.5rem 0.75rem; flex-shrink: 0; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
+    main.table-full-screen > #filters-bar { padding: 0.5rem 0.75rem; flex-shrink: 0; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
     main.table-full-screen > #table-wrapper { border-radius: 0; }
-     main.table-full-screen #sheetTable thead th {
-         position: sticky; top: 0; z-index: 10;
-     }
-     /* --- End Full-Screen Table Styles --- */
-
-     /* Mobile specific table cell padding */
-     #sheetTable th, #sheetTable td { padding: 0.5rem 0.5rem; }
-     @media (min-width: 640px) { /* sm breakpoint */
-         #sheetTable th, #sheetTable td { padding: 0.75rem 1rem; }
-     }
-
-     /* ApexCharts Tooltip Dark */
-    .apexcharts-tooltip.apexcharts-theme-dark {
-        background: #374151; /* Cor de fundo mais escura */
-        border: 1px solid #4b5563;
-        color: #cbd5e1;
-    }
-    .apexcharts-tooltip.apexcharts-theme-dark .apexcharts-tooltip-title {
-        background: #4b5563;
-        border-bottom: 1px solid #6b7280;
-        font-weight: 600;
-    }
-     /* .apexcharts-tooltip-marker { margin-right: 5px; }  -- Linha removida ou comentada se preferir não ter o espaço */
-     /* Donut center label */
-     .apexcharts-pie-label { fill: #cbd5e1 !important; }
-
+    main.table-full-screen #sheetTable thead th { position: sticky; top: 0; z-index: 10; }
+    #sheetTable th, #sheetTable td { padding: 0.5rem 0.5rem; }
+    @media (min-width: 640px) { #sheetTable th, #sheetTable td { padding: 0.75rem 1rem; } }
+    .refresh-icon { display: inline-block; }
   </style>
 </head>
-<body class="text-slate-300 min-h-screen flex flex-col antialiased">
+<body class="text-slate-700 min-h-screen flex flex-col antialiased">
 
-  <header class="w-full backdrop-blur-sm bg-surface/80 border-b border-primary-500/40 sticky top-0 z-40 flex-shrink-0">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" />
+    </symbol>
+  </svg>
+
+  <header class="w-full backdrop-blur-sm bg-surface/90 border-b border-primary-500/20 sticky top-0 z-40 flex-shrink-0">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col">
         <div class="flex justify-between items-center w-full">
-            <h1 class="text-base sm:text-lg font-bold text-primary-500 truncate pr-2">Dashboard Sheets</h1>
+            <h1 class="text-base sm:text-lg font-bold text-primary-500 truncate pr-2">Dados e Previsões</h1>
             <button id="manual-refresh"
-                    class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
-                           text-primary-300 text-xs font-medium shadow-glow flex-shrink-0">
-              Atualizar
+                    class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border border-primary-500 bg-primary-500/15 hover:bg-primary-500/25
+                           text-primary-600 text-xs sm:text-sm font-medium shadow-glow flex-shrink-0 disabled:opacity-70 disabled:cursor-not-allowed">
+                <svg class="refresh-icon w-4 h-4" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg>
+                <span>Atualizar</span>
             </button>
         </div>
         <div class="flex justify-between items-center w-full mt-1">
-            <span id="month-total" class="text-primary-300 font-medium text-xs truncate pr-2">Carregando total...</span>
-            <span id="last-update" class="text-slate-400 text-xs flex-shrink-0">Carregando...</span>
+            <span id="month-total" class="text-primary-500 font-medium text-xs truncate pr-2">Carregando total...</span>
+            <span id="last-update" class="text-slate-500 text-xs flex-shrink-0">Carregando...</span>
         </div>
     </div>
   </header>
-  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-md">
+  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-100/80 backdrop-blur-sm">
     <div class="h-10 w-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <p class="text-primary-300 text-base font-medium">Carregando…</p>
+    <p class="text-primary-500 text-base font-medium">Carregando…</p>
   </div>
 
   <main id="main-content" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-4 sm:gap-6 flex-grow">
     <div class="flex justify-center space-x-2 sm:space-x-4 flex-shrink-0">
-      <button id="tab-table" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-primary-500/10 transition-colors duration-200">Tabela</button>
-      <button id="tab-charts" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-primary-500/10 transition-colors duration-200">Gráficos</button>
+      <button id="tab-table" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-primary-500/10 hover:text-primary-500 transition-colors duration-200">Tabela</button>
+      <button id="tab-charts" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-primary-500/10 hover:text-primary-500 transition-colors duration-200">Gráficos</button>
     </div>
 
     <div id="filters-bar" class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 flex-shrink-0">
-      <span id="filters-active" class="text-primary-300 text-xs text-center w-full sm:w-auto">Nenhum filtro ativo</span>
+      <span id="filters-active" class="text-primary-500 text-xs text-center w-full sm:w-auto">Nenhum filtro ativo</span>
       <button id="clear-filters"
               class="px-3 py-1 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
-                     text-primary-300 text-xs font-medium shadow-glow" style="display: none;">
+                     text-primary-500 text-xs font-medium shadow-glow" style="display: none;">
         Limpar Filtros
       </button>
     </div>
 
     <div id="error-message"
-         class="hidden w-full p-3 text-center text-red-300 bg-red-800/40 border border-red-600 rounded-lg text-sm flex-shrink-0"></div>
+         class="hidden w-full p-3 text-center text-red-700 bg-red-100 border border-red-300 rounded-lg text-sm flex-shrink-0"></div>
 
     <section id="table-wrapper"
-             class="hidden w-full backdrop-blur-xs bg-surface/70 rounded-lg sm:rounded-2xl
-                    shadow-lg ring-1 ring-primary-500/20 p-0">
-      <table id="sheetTable" class="min-w-full text-sm divide-y divide-slate-600/60">
+             class="hidden w-full backdrop-blur-xs bg-surface/95 rounded-lg sm:rounded-2xl
+                    shadow-lg ring-1 ring-primary-500/10 p-0">
+      <table id="sheetTable" class="min-w-full text-sm divide-y divide-gray-200">
         </table>
     </section>
 
     <section id="charts-wrapper"
              class="hidden w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-      <div class="chart-card bg-surface/80 rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4 md:col-span-2">
+      <div class="chart-card bg-surface rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/10 p-4 md:col-span-2">
         <h2 class="text-base font-semibold mb-3 text-primary-500">Total por Data de Vencimento</h2>
         <div id="chart-overview"></div>
       </div>
-
-      <div class="chart-card bg-surface/80 rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4">
+      <div class="chart-card bg-surface rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/10 p-4">
         <h2 class="text-base font-semibold mb-3 text-primary-500">Total por Data de Pagamento</h2>
         <div id="chart-payment"></div>
       </div>
-
-      <div class="chart-card bg-surface/80 rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/20 p-4">
+      <div class="chart-card bg-surface rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/10 p-4">
         <h2 class="text-base font-semibold mb-3 text-primary-500">Total por Mês (Vencimento)</h2>
         <div id="chart-monthly"></div>
       </div>
     </section>
-    <br>
-    <br>
-    <br>
-    <br>
+    <br><br><br><br>
   </main>
 
   <script>
-    // --- CONSTANTS AND VARIABLES ---
     const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
     const gid     = '0';
     const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL = 60000; // 1 minute
+    const REFRESH_INTERVAL = 60000;
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const CHART_COLORS = ['#4dabf7', '#4ade80', '#fb7185', '#facc15', '#a78bfa', '#2dd4bf', '#ff922b', '#f06595']; // Added more colors
+    const CHART_COLORS = ['#0d6efd', '#198754', '#dc3545', '#ffc107', '#6f42c1', '#0dcaf0', '#fd7e14', '#d63384'];
 
     let headersFull = [], sheetRows = [];
     let headersDisplay = [];
     let chartOverview, chartPayment, chartMonthly;
     let isLoaded = false, isFetching = false;
     const activeFilters = {};
-
     let prevOverviewData = null, prevPaymentData = null, prevMonthlyData = null;
 
-    // --- DOM ELEMENTS ---
     const $loader = document.getElementById('loader');
     const $errorMsg = document.getElementById('error-message');
     const $tableTab = document.getElementById('tab-table');
@@ -220,917 +169,85 @@
     const $clearFiltersBtn = document.getElementById('clear-filters');
     const $mainContent = document.getElementById('main-content');
     const $manualRefreshBtn = document.getElementById('manual-refresh');
+    const $refreshIcon = $manualRefreshBtn?.querySelector('.refresh-icon');
+    const $refreshBtnText = $manualRefreshBtn?.querySelector('span');
 
-    // --- EVENT LISTENERS ---
     $manualRefreshBtn.onclick = loadData;
     $tableTab.onclick = () => switchTab('table');
     $chartTab.onclick = () => switchTab('charts');
     $clearFiltersBtn.onclick = clearFilters;
 
-    // --- CORE FUNCTIONS ---
-    function switchTab(tabId) {
-      [$tableTab, $chartTab].forEach(btn => btn.classList.remove('active-tab'));
-      if (tabId === 'table') {
-        $tableWrapper.classList.remove('hidden');
-        $chartWrapper.classList.add('hidden');
-        $tableTab.classList.add('active-tab');
-        $mainContent.classList.add('table-full-screen');
-      } else {
-        $chartWrapper.classList.remove('hidden');
-        $tableWrapper.classList.add('hidden');
-        $chartTab.classList.add('active-tab');
-        $mainContent.classList.remove('table-full-screen');
-        // Redraw charts slightly delayed to ensure container dimensions are final
-        setTimeout(() => [chartOverview, chartPayment, chartMonthly].forEach(chart => {
-            // Check if chart exists and is an ApexCharts instance
-            if (chart && typeof chart.updateOptions === 'function') {
-                 chart.updateOptions({}, false, false, false); // Trigger redraw without animation
-            }
-        }), 100); // Increased delay slightly
-      }
-    }
-
-    async function fetchSheetData() {
-      // Append timestamp to prevent caching
-      const response = await fetch(`${baseURL}&_=${Date.now()}`);
-      if (!response.ok) throw new Error(`Erro ao buscar dados (HTTP ${response.status})`);
-      const text = await response.text();
-      // Basic check for the Google Sheets JSONP wrapper
-      if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) {
-        console.error("Invalid response text:", text.substring(0, 500)); // Log beginning of response
-        throw new Error('Formato de resposta inválido do Google Sheets.');
-      }
-      try {
-        // Extract JSON string and parse
-        return JSON.parse(text.substring(47, text.length - 2));
-      } catch (e) {
-        console.error("Falha ao analisar JSON:", e);
-        console.error("Texto recebido:", text.substring(0, 1000)); // Log more of the text if parse fails
-        throw new Error('Falha ao processar os dados recebidos.');
-      }
-    }
-
-    // --- FORMATTING HELPERS ---
+    function switchTab(tabId) { [$tableTab, $chartTab].forEach(btn => btn.classList.remove('active-tab')); if (tabId === 'table') { $tableWrapper.classList.remove('hidden'); $chartWrapper.classList.add('hidden'); $tableTab.classList.add('active-tab'); $mainContent.classList.add('table-full-screen'); } else { $chartWrapper.classList.remove('hidden'); $tableWrapper.classList.add('hidden'); $chartTab.classList.add('active-tab'); $mainContent.classList.remove('table-full-screen'); setTimeout(() => [chartOverview, chartPayment, chartMonthly].forEach(chart => { if (chart && typeof chart.updateOptions === 'function') { chart.updateOptions({}, false, false, false); } }), 100); } }
+    async function fetchSheetData() { const response = await fetch(`${baseURL}&_=${Date.now()}`); if (!response.ok) throw new Error(`Erro HTTP ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { console.error("Invalid response text:", text.substring(0, 500)); throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao analisar JSON:", e); console.error("Texto recebido:", text.substring(0, 1000)); throw new Error('Falha ao processar os dados recebidos.'); } }
     const padZero = num => num.toString().padStart(2, '0');
     const formatDateBR = date => !date || isNaN(date.getTime()) ? '–' : `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
-    const formatMonthYear = date => {
-        if (!date || isNaN(date.getTime())) return '–';
-        // Use 'short' for month abbreviation (e.g., 'jan.')
-        const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' });
-        // Remove the period added by some browsers for abbreviations (like 'fev.')
-        const cleanMonth = month.replace('.', '');
-        return `${cleanMonth}/${date.getUTCFullYear()}`;
-    };
-    function parseDateValue(value) {
-        if (value instanceof Date) return value;
-        if (value == null) return null;
-        // Handle Google Sheet's date serial number format (Excel-like)
-        if (typeof value === 'number' && value > 1 && value < 60000) { // Heuristic range for dates
-            const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Excel epoch starts Dec 30, 1899 for UTC
-            const date = new Date(excelEpoch.getTime() + value * 24 * 60 * 60 * 1000);
-             // Adjust for potential timezone offset if needed, but UTC preferred
-            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-        }
-        if (typeof value !== 'string') return null;
-        let m;
-        // Google Sheet's `Date(YYYY,MM,DD)` format (MM is 0-indexed)
-        m = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)/);
-        if (m) return new Date(Date.UTC(+m[1], +m[2], +m[3])); // Month is already 0-indexed
-        // ISO 8601 format `YYYY-MM-DD`
-        m = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
-        if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); // Month needs -1
-        // Common BR format `DD/MM/YYYY` or `DD-MM-YYYY`
-        m = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
-        if (m) {
-            let y = +m[3];
-            if (y < 100) y += 2000; // Handle 2-digit years
-            return new Date(Date.UTC(y, +m[2] - 1, +m[1])); // Month needs -1
-        }
-        // Try generic parsing (less reliable for specific formats)
-        const p = new Date(value);
-        if (!isNaN(p.getTime())) {
-            // Return as UTC date to avoid timezone issues during formatting
-            return new Date(Date.UTC(p.getFullYear(), p.getMonth(), p.getDate()));
-        }
-        return null; // Could not parse
-    }
+    const formatMonthYear = date => { if (!date || isNaN(date.getTime())) return '–'; const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' }); const cleanMonth = month.replace('.', ''); return `${cleanMonth}/${date.getUTCFullYear()}`; };
+    function parseDateValue(value) { if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const excelEpoch = new Date(Date.UTC(1899, 11, 30)); const date = new Date(excelEpoch.getTime() + value * 24 * 60 * 60 * 1000); return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())); } if (typeof value !== 'string') return null; let m; m = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)/); if (m) return new Date(Date.UTC(+m[1], +m[2], +m[3])); m = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); m = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(Date.UTC(y, +m[2] - 1, +m[1])); } const p = new Date(value); if (!isNaN(p.getTime())) { return new Date(Date.UTC(p.getFullYear(), p.getMonth(), p.getDate())); } return null; }
     const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
     const formatCompact = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }) : 'N/A';
-    // Tooltip formatter remains the same, uses formatCurrency
     const formatTooltip = value => typeof value === 'number' ? formatCurrency(value) : 'N/A';
 
-
-    // --- DATA LOADING & UI ---
     async function loadData() {
       if (isFetching) return;
       isFetching = true;
       $errorMsg.classList.add('hidden');
-      $manualRefreshBtn.disabled = true;
-      $manualRefreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      if ($manualRefreshBtn) $manualRefreshBtn.disabled = true;
+      if ($refreshIcon) $refreshIcon.classList.add('animate-spin');
+      if ($refreshBtnText) $refreshBtnText.textContent = 'Atualizando...';
       if (!isLoaded) $loader.classList.remove('hidden');
-
       try {
         const jsonData = await fetchSheetData();
-        // Verify essential data structure
-        if (!jsonData?.table?.cols || !jsonData?.table?.rows) {
-            throw new Error("Estrutura de dados recebida é inválida.");
-        }
-
-        // Process Headers - Ensure 'Observação' logic is robust
+        if (!jsonData?.table?.cols || !jsonData?.table?.rows) { throw new Error("Estrutura de dados recebida é inválida."); }
         headersFull = jsonData.table.cols.map(col => col.label || `Col${col.id}`);
         const obsIndex = headersFull.findIndex(h => typeof h === 'string' && h.toLowerCase().trim() === 'observação');
         headersDisplay = obsIndex === -1 ? [...headersFull] : headersFull.slice(0, obsIndex + 1);
-
-        // Process Rows - Handle potentially sparse rows safely
-        sheetRows = jsonData.table.rows.map(row => {
-          const cells = Array(headersFull.length).fill(null);
-          row?.c?.forEach((cell, i) => {
-            if (i < headersFull.length) {
-              // Extract value, handle null/undefined cells
-              cells[i] = cell?.v ?? null;
-            }
-          });
-          return cells;
-        });
-
-        if (!isLoaded) {
-          buildInitialUI();
-          isLoaded = true;
-          // Default to table tab on first load
-          switchTab('table');
-        } else {
-          updateUI();
-        }
-        updateGrandTotalHeader(); // Update total after data processing
+        sheetRows = jsonData.table.rows.map(row => { const cells = Array(headersFull.length).fill(null); row?.c?.forEach((cell, i) => { if (i < headersFull.length) { cells[i] = cell?.v ?? null; } }); return cells; });
+        if (!isLoaded) { buildInitialUI(); isLoaded = true; switchTab('table'); }
+        else { updateUI(); }
+        updateGrandTotalHeader();
         $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
         $errorMsg.textContent = `Erro ao carregar: ${error.message}. Verifique a planilha ou a conexão.`;
         $errorMsg.classList.remove('hidden');
-        if (!isLoaded) {
-          $tableWrapper.classList.add('hidden');
-          $chartWrapper.classList.add('hidden');
-        } // Hide sections if first load failed
+        if (!isLoaded) { $tableWrapper.classList.add('hidden'); $chartWrapper.classList.add('hidden'); }
       } finally {
         isFetching = false;
         $loader.classList.add('hidden');
-        $manualRefreshBtn.disabled = false;
-        $manualRefreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        if ($manualRefreshBtn) $manualRefreshBtn.disabled = false;
+        if ($refreshIcon) $refreshIcon.classList.remove('animate-spin');
+        if ($refreshBtnText) $refreshBtnText.textContent = 'Atualizar';
       }
     }
-    // Initial load
     loadData();
-    // Setup refresh interval
     setInterval(loadData, REFRESH_INTERVAL);
 
-
-    // --- TABLE BUILDING ---
-    function buildTable() {
-      $sheetTable.innerHTML = ''; // Clear previous table content
-      const thead = createTableHead();
-      const tbody = createTableBody(); // Create body *before* filtering
-      if (thead) $sheetTable.appendChild(thead);
-      if (tbody) $sheetTable.appendChild(tbody);
-      applyFilters(); // Apply filters which will hide/show rows in the existing tbody
-    }
-
-    function createTableHead() {
-        const thead = document.createElement('thead');
-        thead.className = 'bg-surface/90 sticky top-0 z-10'; // Make header sticky
-        const tr = document.createElement('tr');
-        tr.className = 'divide-x divide-primary-500/30';
-
-        headersDisplay.forEach((header, index) => {
-            const th = document.createElement('th');
-            // Added vertical padding for filter space
-            th.className = 'text-left text-xs font-semibold text-primary-500 uppercase bg-surface/95 whitespace-nowrap px-2 sm:px-4 py-2';
-
-            const headerText = document.createElement('span');
-            headerText.textContent = header || `Coluna ${index + 1}`; // Fallback for empty header
-            th.appendChild(headerText);
-
-            // Create select filter
-            const select = document.createElement('select');
-            select.dataset.colIndex = index; // Store index for filtering
-            select.className = 'mt-1 block w-full filter-select'; // Added class for easier selection later
-            select.innerHTML = '<option value="">Todos</option>'; // Default option
-
-            // Populate filter options (use raw values before formatting for consistency)
-             const uniqueValues = [...new Set(sheetRows.map(row => row[index]))]
-                .map(value => formatCellValue(value, header)) // Format *after* getting unique raw values
-                .filter(value => value !== '–' && value != null && value !== '') // Filter out blanks/placeholders
-                .sort((a, b) => {
-                    // Attempt locale-sensitive numeric sort, fallback to string compare
-                    try { return String(a).localeCompare(String(b), 'pt-BR', { numeric: true }); }
-                    catch (e) { return String(a) < String(b) ? -1 : (String(a) > String(b) ? 1 : 0); }
-                });
-
-            uniqueValues.forEach(value => {
-                const opt = document.createElement('option');
-                opt.value = value; // Use the formatted value for filtering comparison
-                opt.textContent = value; // Show formatted value
-                select.appendChild(opt);
-            });
-
-            // Restore filter selection if active
-            if (activeFilters[index]) {
-                select.value = activeFilters[index];
-            }
-
-            select.onchange = handleFilterChange; // Attach event listener
-            th.appendChild(select);
-            tr.appendChild(th);
-        });
-
-        thead.appendChild(tr);
-        return thead;
-    }
-
-    function handleFilterChange(event) {
-        const colIndex = event.target.dataset.colIndex;
-        const value = event.target.value;
-
-        if (value) {
-            activeFilters[colIndex] = value; // Set filter
-        } else {
-            delete activeFilters[colIndex]; // Clear filter
-        }
-        applyFilters(); // Re-apply all filters
-    }
-
-
-     function createTableBody() {
-        const tbody = document.createElement('tbody');
-        tbody.className = 'divide-y divide-slate-600/60';
-
-        if (sheetRows.length === 0) {
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            td.colSpan = headersDisplay.length || 1; // Span across all columns
-            td.textContent = 'Nenhum dado encontrado.';
-            td.className = 'px-4 py-8 text-center text-slate-400 text-sm';
-            tr.appendChild(td);
-            tbody.appendChild(tr);
-            return tbody;
-        }
-
-        sheetRows.forEach((row, rowIndex) => {
-            const tr = document.createElement('tr');
-            // Alternating row colors
-            tr.className = `${rowIndex % 2 ? 'bg-surface/70' : 'bg-surface/60'} hover:bg-primary-500/10 transition-colors duration-150`;
-            tr.dataset.rowIndex = rowIndex; // Keep track of original row index if needed
-
-            headersDisplay.forEach((header, colIndex) => {
-                const td = document.createElement('td');
-                // Ensure padding matches header, handle wrapping for longer content if needed
-                td.className = 'whitespace-nowrap px-2 sm:px-4 py-2 align-top'; // Align top for consistency
-                td.textContent = formatCellValue(row[colIndex], header);
-                // Optionally add title attribute for long content
-                if (td.textContent.length > 50) { // Example length check
-                    td.title = td.textContent;
-                }
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-
-        // Add a hidden row for "No results" message during filtering
-        const trNoResults = document.createElement('tr');
-        trNoResults.className = 'hidden no-results-row'; // Class to easily select and hide/show
-        const tdNoResults = document.createElement('td');
-        tdNoResults.colSpan = headersDisplay.length || 1;
-        tdNoResults.textContent = 'Nenhum resultado corresponde aos filtros selecionados.';
-        tdNoResults.className = 'px-4 py-8 text-center text-slate-400 text-sm';
-        trNoResults.appendChild(tdNoResults);
-        tbody.appendChild(trNoResults);
-
-
-        return tbody;
-    }
-
-     function formatCellValue(cellValue, headerLabel) {
-        if (cellValue == null || cellValue === '') return '–'; // Consistent placeholder
-
-        const headerLower = (headerLabel || '').toLowerCase().trim();
-
-        // Prioritize NF formatting if header matches exactly
-        if (headerLower === 'nf') return String(cellValue);
-
-        // Handle currency columns (avoiding 'NF')
-        if (/valor|total|preço/i.test(headerLower)) {
-            let n = NaN;
-            if (typeof cellValue === 'number') {
-                n = cellValue;
-            } else if (typeof cellValue === 'string') {
-                // Robust parsing for pt-BR currency format
-                const cleaned = cellValue.replace(/[R$\s.]/g, '').replace(',', '.');
-                n = parseFloat(cleaned);
-            }
-            return !isNaN(n) ? formatCurrency(n) : String(cellValue); // Fallback to string if parsing fails
-        }
-
-        // Handle date columns
-         const d = parseDateValue(cellValue);
-         if (d && !isNaN(d.getTime())) {
-             // Check common date-related keywords in header
-             if (/data|venc|pag|emissao/i.test(headerLower)) {
-                 return formatDateBR(d);
-             }
-         }
-
-        // Handle numbers that might be strings (e.g., IDs)
-        if (typeof cellValue === 'number') return cellValue.toLocaleString('pt-BR');
-        if (typeof cellValue === 'string' && /^-?\d+(\.\d+)?$/.test(cellValue)) {
-            const num = parseFloat(cellValue);
-            if (!isNaN(num)) return num.toLocaleString('pt-BR');
-        }
-
-        // Default: return as string
-        return String(cellValue);
-    }
-
-    // --- FILTERING ---
-    function applyFilters() {
-        const tbody = $sheetTable.querySelector('tbody');
-        if (!tbody) return;
-
-        let visibleRowCount = 0;
-        const filterKeys = Object.keys(activeFilters);
-        const noResultsRow = tbody.querySelector('.no-results-row'); // Get the dedicated 'no results' row
-
-
-         Array.from(tbody.rows).forEach(tr => {
-            // Skip the special 'no results' row from filtering logic
-            if (tr.classList.contains('no-results-row')) return;
-            // Skip header row if somehow included (shouldn't happen with querySelector('tbody'))
-            if (tr.parentElement.tagName === 'THEAD') return;
-
-
-            let show = true;
-            if (filterKeys.length > 0) {
-                 // Check if the row matches *all* active filters
-                 show = filterKeys.every(colIndex => {
-                     const filterValue = activeFilters[colIndex];
-                     const cellContent = tr.cells[colIndex]?.textContent?.trim() || '';
-                     // Exact match comparison
-                     return cellContent === filterValue;
-                 });
-            }
-
-
-            tr.style.display = show ? '' : 'none'; // Show or hide row
-            if (show) visibleRowCount++;
-        });
-
-
-        // Show/hide the 'no results' row
-        if (noResultsRow) {
-             noResultsRow.style.display = (visibleRowCount === 0 && sheetRows.length > 0 && filterKeys.length > 0) ? '' : 'none';
-        }
-
-        updateFilterDisplay(); // Update the text showing active filters
-        updateCharts();        // Update charts based on filtered data
-        updateGrandTotalHeader(); // Update the header total based on filtered data
-    }
-
-
-    function updateFilterDisplay() {
-        const keys = Object.keys(activeFilters);
-        if (keys.length === 0) {
-            $filtersActive.textContent = 'Nenhum filtro ativo';
-            $clearFiltersBtn.style.display = 'none';
-            $filtersActive.classList.add('w-full', 'sm:w-auto'); // Adjust layout classes
-             $filtersActive.classList.remove('sm:mr-auto'); // Remove specific margin if needed
-        } else {
-             // Create more readable filter display
-            const parts = keys.map(i => `${headersDisplay[i] || `Col ${i+1}`}: "${activeFilters[i]}"`);
-             $filtersActive.textContent = `Filtros Ativos: ${parts.join('; ')}`;
-            $clearFiltersBtn.style.display = 'inline-block';
-            $filtersActive.classList.remove('w-full'); // Allow button to be beside it on larger screens
-             $filtersActive.classList.add('sm:w-auto', 'sm:mr-auto'); // Auto width on small+, push button right
-        }
-    }
-
-
-    function clearFilters() {
-        Object.keys(activeFilters).forEach(key => delete activeFilters[key]); // Clear internal state
-        // Reset all select elements in the table header
-        $sheetTable.querySelectorAll('thead .filter-select').forEach(sel => sel.value = '');
-        applyFilters(); // Re-apply (which now means showing all rows)
-    }
-
-
-    // --- CHART DATA AGGREGATION ---
-    // Helper to check if relevant chart data has changed significantly
-    function hasDataChanged(newData, prevData) {
-        if (!prevData) return true; // If no previous data, it has changed
-        // Compare labels and totals arrays using JSON stringify (simple deep comparison)
-        return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) ||
-               JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals);
-    }
-
-
-    // Aggregates data by a specific date column (finds first match for regex)
-    function aggregateByDate(dateColRegex) {
-        // Find column indices case-insensitively
-        const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase()));
-        const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-
-        // Return empty if essential columns not found
-        if (dateIdx === -1 || valIdx === -1) {
-            console.warn(`Colunas para agregação por data (${dateColRegex}) não encontradas.`);
-            return { labels: [], totals: [] };
-        }
-
-        const map = new Map();
-        getFilteredRows().forEach(row => {
-            const dateValue = row[dateIdx];
-            const rawValue = row[valIdx];
-
-            const d = parseDateValue(dateValue);
-            // Skip if date is invalid
-            if (!d || isNaN(d.getTime())) return;
-
-            // Use ISO date string (YYYY-MM-DD) as key for consistent sorting
-            const key = d.toISOString().split('T')[0];
-
-             // Parse the value robustly
-            let v = NaN;
-            if (rawValue == null) return; // Skip null/undefined values
-            if (typeof rawValue === 'number') {
-                v = rawValue;
-            } else if (typeof rawValue === 'string') {
-                const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.');
-                v = parseFloat(cleaned);
-            }
-
-            // Add to map if value is a valid number
-            if (!isNaN(v)) {
-                map.set(key, (map.get(key) || 0) + v);
-            }
-        });
-
-        // Sort entries by date key and format for chart
-        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-        return {
-            // Format date keys back to BR format for labels
-            labels: entries.map(([key]) => formatDateBR(new Date(key + 'T00:00:00Z'))), // Add time part for UTC date object
-            totals: entries.map(([_, value]) => parseFloat(value.toFixed(2))) // Ensure totals are numbers
-        };
-    }
-
-
-    // Aggregates data by month from a specific date column
-    function aggregateByMonth(dateColRegex) {
-        const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase()));
-        const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
-
-        if (dateIdx === -1 || valIdx === -1) {
-            console.warn(`Colunas para agregação por mês (${dateColRegex}) não encontradas.`);
-            return { labels: [], totals: [] };
-        }
-
-        const map = new Map();
-        getFilteredRows().forEach(row => {
-            const dateValue = row[dateIdx];
-            const rawValue = row[valIdx];
-
-            const d = parseDateValue(dateValue);
-            if (!d || isNaN(d.getTime())) return;
-
-            // Use YYYY-MM as key for chronological sorting
-            const key = `${d.getUTCFullYear()}-${padZero(d.getUTCMonth())}`; // Month is 0-indexed
-
-            let v = NaN;
-            if (rawValue == null) return;
-             if (typeof rawValue === 'number') {
-                v = rawValue;
-            } else if (typeof rawValue === 'string') {
-                const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.');
-                v = parseFloat(cleaned);
-            }
-
-
-            if (!isNaN(v)) {
-                map.set(key, (map.get(key) || 0) + v);
-            }
-        });
-
-        // Sort entries by YYYY-MM key
-        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-
-        return {
-            // Format keys to Month/Year for labels
-            labels: entries.map(([key]) => {
-                const [y, m] = key.split('-');
-                // Create date object for formatting (use UTC day 1)
-                return formatMonthYear(new Date(Date.UTC(+y, +m, 1)));
-            }),
-            totals: entries.map(([_, value]) => parseFloat(value.toFixed(2))) // Ensure totals are numbers
-        };
-    }
-
-    // Gets rows respecting active filters
-    function getFilteredRows() {
-        const filterKeys = Object.keys(activeFilters);
-        if (filterKeys.length === 0) {
-            return sheetRows; // Return all if no filters
-        }
-
-        return sheetRows.filter(row => {
-            // Check if the row matches *all* active filters
-             return filterKeys.every(colIndex => {
-                const filterValue = activeFilters[colIndex];
-                // Format cell value *exactly* as it appears in the table/filter dropdown
-                 const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
-                // Compare formatted values
-                 return cellFormattedValue.trim() === filterValue;
-            });
-        });
-    }
-
-
-    // --- CHART RENDERING (Improved Options) ---
-
-    // Base options shared by all charts
-    const baseChartOptions = {
-      chart: {
-        foreColor: '#cbd5e1', // Text color for labels, etc.
-        toolbar: {
-          show: false, // Default to false, enable per chart type if needed
-           tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false }, // Customize default tools
-           export: { csv: { /* CSV export options */ }, svg: { /* SVG options */ }, png: { /* PNG options */ } }
-        },
-        zoom: { enabled: false }, // Default zoom state
-        animations: {
-          enabled: true,
-          easing: 'easeinout', // Smoother animation
-          speed: 600, // Slightly faster animation
-          animateGradually: { enabled: true, delay: 150 },
-          dynamicAnimation: { enabled: true, speed: 400 }
-        },
-        background: 'transparent' // Match card background
-      },
-      tooltip: {
-        theme: 'dark', // Use dark theme tooltip
-        style: { fontSize: '11px' },
-        x: { show: false }, // Default x-axis tooltip (customize per chart)
-        y: {
-          formatter: formatCurrency, // Default y-axis formatter (use full currency)
-          title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' }
-        },
-        marker: { show: false }, // <<<--- REMOVIDO O MARCADOR DA TOOLTIP
-      },
-      dataLabels: { enabled: false }, // Keep data labels off by default
-      grid: {
-        borderColor: '#404a59', // Slightly darker grid lines
-        strokeDashArray: 4, // Dashed lines
-        padding: { left: 5, right: 15, top: 0, bottom: 0 } // Adjust padding
-      },
-      legend: {
-        show: false, // Hide legend by default (donut chart enables it)
-        fontSize: '11px',
-        offsetY: 5,
-        itemMargin: { horizontal: 5, vertical: 2 },
-      },
-      markers: {
-          size: 0, // No markers by default
-          strokeWidth: 0,
-          hover: { size: 5 } // Show marker on hover
-      },
-      noData: {
-        text: 'Sem dados para exibir',
-        align: 'center', verticalAlign: 'middle',
-        style: { color: '#94a3b8', fontSize: '12px' }
-      }
-    };
-
-    // --- Specific Chart Options ---
-
-    // Area Chart (Overview & Payment) Options
-    const areaBaseOptions = {
-        ...baseChartOptions, // Inherit base options
-        chart: {
-            ...baseChartOptions.chart,
-            type: 'area',
-            height: 250, // Slightly taller
-            toolbar: { // Enable toolbar for area charts
-                show: true,
-                tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true },
-                autoSelected: 'zoom' // Default tool selection
-            },
-             zoom: { enabled: true } // Allow zooming
-        },
-        xaxis: {
-            categories: [], // To be populated with data labels (dates)
-             type: 'category', // Treat labels as distinct categories
-            tickAmount: 6, // Approximate number of ticks
-            labels: {
-                show: true,
-                rotate: -45, // Rotate labels for better fit
-                rotateAlways: false,
-                hideOverlappingLabels: true,
-                style: { fontSize: '10px', colors: '#94a3b8' }, // Lighter color for axis labels
-                format: undefined // Use category labels directly
-            },
-            tooltip: { enabled: false }, // Disable default x-axis tooltip, handled in main tooltip
-            title: { // Add X-axis title
-                text: 'Data',
-                style: { color: '#94a3b8', fontSize: '10px', fontWeight: 'normal' }
-            },
-             axisBorder: { show: true, color: '#404a59' }, // Show axis line
-            axisTicks: { show: true, color: '#404a59' }, // Show axis ticks
-        },
-        yaxis: {
-            labels: {
-                show: true,
-                style: { fontSize: '10px', colors: '#94a3b8' },
-                formatter: formatCompact // Use compact format (e.g., 1k, 1.5M) for axis
-            },
-            title: { // Add Y-axis title
-                text: 'Valor (R$)',
-                style: { color: '#94a3b8', fontSize: '10px', fontWeight: 'normal' }
-            },
-             axisBorder: { show: false },
-            axisTicks: { show: false },
-        },
-         tooltip: { // Customize tooltip specifically for area charts
-            ...baseChartOptions.tooltip, // Inherit base tooltip settings (including marker: false)
-             theme: 'dark',
-            shared: false, // Show tooltip for individual points
-             intersect: true,
-            x: {
-                 // Show the category label (date) in the tooltip title
-                 formatter: function(val, { seriesIndex, dataPointIndex, w }) {
-                    // Ensure w.globals.categoryLabels exists and has the index
-                    return w.globals.categoryLabels?.[dataPointIndex] ?? '';
-                 }
-            },
-            y: {
-                 formatter: formatCurrency, // Use full currency format in tooltip body
-                 title: {
-                     formatter: (seriesName) => seriesName ? seriesName + ':' : '' // Show series name
-                 }
-            }
-        },
-         markers: { // Add subtle markers ON THE CHART LINE ITSELF (not tooltip)
-            size: 3,
-            strokeWidth: 0, // No border on marker
-            hover: { size: 6 }
-        },
-        stroke: {
-            curve: 'smooth', // Smooth line curve
-            width: 2
-        },
-        fill: { // Gradient fill
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.6,
-                opacityTo: 0.1,
-                stops: [0, 95, 100]
-            }
-        }
-    };
-
-    // Overview chart specific options (inherits from areaBaseOptions)
-    const overviewOptions = {
-        ...areaBaseOptions,
-         colors: [CHART_COLORS[0]], // Use first color
-    };
-
-    // Payment chart specific options (inherits from areaBaseOptions)
-    const paymentOptions = {
-        ...areaBaseOptions,
-        colors: [CHART_COLORS[1]], // Use second color
-    };
-
-
-    // Donut Chart (Monthly) Options
-    const monthlyOptions = {
-      ...baseChartOptions, // Inherit base options (including tooltip.marker: false)
-      chart: {
-        ...baseChartOptions.chart, // Inherit chart settings from base
-        type: 'donut',
-        height: 280, // Slightly taller donut chart
-      },
-      labels: [], // Populated with Month/Year labels
-      colors: CHART_COLORS, // Use the defined color palette
-      legend: { // Enable and configure legend for donut
-        show: true,
-        position: 'bottom', // Position below chart
-        horizontalAlign: 'center',
-        fontSize: '10px',
-        itemMargin: { horizontal: 6, vertical: 2 },
-        offsetY: 0, // Adjust vertical position if needed
-        formatter: function(seriesName, opts) {
-            // Show series name and its value in the legend
-            const value = opts.w.globals.series[opts.seriesIndex];
-            return `${seriesName}: ${formatCurrency(value)}`;
-        }
-      },
-       tooltip: { // Customize tooltip for donut chart
-         ...baseChartOptions.tooltip, // Inherit base tooltip settings (including marker: false)
-         theme: 'dark',
-         y: {
-             formatter: function(value, { seriesIndex, dataPointIndex, w }) {
-                 // Calculate percentage for the tooltip
-                 const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                 const percentage = total === 0 ? 0 : (value / total * 100);
-                 // Return formatted currency and percentage
-                 return `${formatCurrency(value)} (${percentage.toFixed(1)}%)`;
-             },
-             title: {
-                 // Use the label (Month/Year) as the title in the tooltip
-                 formatter: (seriesName) => seriesName // seriesName here is the label from `labels` array
-             }
-         }
-       },
-      plotOptions: {
-        pie: {
-          donut: {
-            size: '65%', // Make donut hole slightly smaller
-            labels: {
-              show: true, // Show labels in the center
-              total: {
-                show: true,
-                label: 'Total (Filtro)', // Label for the total value
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#cbd5e1',
-                 // Formatter dynamically calculates sum of *visible* series (respects legend clicks)
-                formatter: (w) => {
-                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                    return formatCurrency(total);
-                }
-              },
-              value: {
-                show: true, // Show value when hovering a slice
-                fontSize: '16px',
-                fontWeight: 500,
-                color: '#cbd5e1', // Color for the individual value
-                formatter: (val) => formatCurrency(parseFloat(val)) // Format individual slice value
-              }
-            }
-          }
-        }
-      },
-       // Responsive adjustments for smaller screens
-      responsive: [{
-        breakpoint: 480, // Apply below 480px width
-        options: {
-          chart: { height: 240 }, // Smaller chart height
-          legend: {
-             fontSize: '9px',
-             itemMargin: { horizontal: 4, vertical: 1 },
-          },
-          plotOptions: {
-            pie: {
-              donut: {
-                 size: '70%', // Slightly larger hole on mobile might look better
-                labels: {
-                  total: { fontSize: '12px' },
-                  value: { fontSize: '14px' }
-                }
-              }
-            }
-          }
-        }
-      }]
-    };
-
-
-    // --- Chart Rendering Functions ---
-
-    // Destroys existing chart instance safely
-    function destroyChart(chartInstance) {
-        if (chartInstance && typeof chartInstance.destroy === 'function') {
-            chartInstance.destroy();
-        }
-        return null; // Return null to clear the variable
-    }
-
-    // Build all charts initially
-    function buildCharts() {
-        prevOverviewData = aggregateByDate(/venc/i);
-        prevPaymentData = aggregateByDate(/pag/i);
-        prevMonthlyData = aggregateByMonth(/venc/i);
-
-        // Destroy existing charts before creating new ones
-        chartOverview = destroyChart(chartOverview);
-        chartPayment = destroyChart(chartPayment);
-        chartMonthly = destroyChart(chartMonthly);
-
-
-        renderOverviewChart(false, prevOverviewData);
-        renderPaymentChart(false, prevPaymentData);
-        renderMonthlyChart(false, prevMonthlyData);
-    }
-
-    // Update charts with potentially new data (after filter or refresh)
-    function updateCharts() {
-        const newDataOverview = aggregateByDate(/venc/i);
-        const newDataPayment = aggregateByDate(/pag/i);
-        const newDataMonthly = aggregateByMonth(/venc/i);
-
-
-        renderOverviewChart(true, newDataOverview);
-        renderPaymentChart(true, newDataPayment);
-        renderMonthlyChart(true, newDataMonthly);
-    }
-
-    // Render/Update Overview Chart
-    function renderOverviewChart(isUpdate = false, data) {
-         // Only update if data has actually changed
-        if (isUpdate && !hasDataChanged(data, prevOverviewData)) return;
-
-        const opts = {
-            series: [{ name: 'Total Venc.', data: data.totals }],
-            xaxis: { ...overviewOptions.xaxis, categories: data.labels }
-        };
-
-        if (isUpdate && chartOverview) {
-             chartOverview.updateOptions(opts, true, true); // Animate update
-        } else {
-             chartOverview = destroyChart(chartOverview); // Ensure clean state
-            chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...overviewOptions, ...opts });
-            chartOverview.render();
-        }
-        prevOverviewData = data; // Store current data as previous for next comparison
-    }
-
-    // Render/Update Payment Chart
-    function renderPaymentChart(isUpdate = false, data) {
-        if (isUpdate && !hasDataChanged(data, prevPaymentData)) return;
-
-        const opts = {
-            series: [{ name: 'Total Pago', data: data.totals }],
-            xaxis: { ...paymentOptions.xaxis, categories: data.labels }
-        };
-
-        if (isUpdate && chartPayment) {
-            chartPayment.updateOptions(opts, true, true);
-        } else {
-             chartPayment = destroyChart(chartPayment);
-            chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...paymentOptions, ...opts });
-            chartPayment.render();
-        }
-        prevPaymentData = data;
-    }
-
-    // Render/Update Monthly Donut Chart
-    function renderMonthlyChart(isUpdate = false, data) {
-        // Donut charts often rely on legend clicks to filter, so we might need to update more often
-        // Let's use hasDataChanged for consistency, but be mindful it compares totals/labels
-         if (isUpdate && !hasDataChanged(data, prevMonthlyData)) return;
-
-
-         const opts = {
-             series: data.totals,
-             labels: data.labels,
-             // No need to update plotOptions dynamically here unless total formatter logic changes drastically
-         };
-
-        if (isUpdate && chartMonthly) {
-             // For donut, update series and labels seems sufficient usually
-             chartMonthly.updateOptions(opts, true, true);
-        } else {
-             chartMonthly = destroyChart(chartMonthly);
-             // Merge base, monthly specific, and dynamic opts
-            chartMonthly = new ApexCharts(document.querySelector('#chart-monthly'), { ...monthlyOptions, ...opts });
-            chartMonthly.render();
-        }
-        prevMonthlyData = data;
-    }
-
-
-    // --- HEADER UPDATE ---
-    function updateGrandTotalHeader() {
-      // Calculate total based on currently *filtered* rows using the same aggregation logic
-      const { totals } = aggregateByMonth(/venc/i); // Uses getFilteredRows() inside
-      const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
-
-      // Determine if filters are active
-      const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
-
-      // Update the text content
-      $monthTotal.textContent = `Total (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
-    }
-
-    // --- INIT & UPDATES ---
-    function buildInitialUI() {
-      buildTable();
-      buildCharts();
-      // updateGrandTotalHeader(); // Called within build/applyFilters now
-    }
-    function updateUI() {
-      // Rebuild table to update filter options and content
-      buildTable();
-      // updateCharts(); // Called within applyFilters after table rebuild
-       // updateGrandTotalHeader(); // Called within applyFilters
-    }
-
+    function buildTable() { $sheetTable.innerHTML = ''; const thead = createTableHead(); const tbody = createTableBody(); if (thead) $sheetTable.appendChild(thead); if (tbody) $sheetTable.appendChild(tbody); applyFilters(); }
+    function createTableHead() { const thead = document.createElement('thead'); thead.className = 'bg-gray-100 sticky top-0 z-10'; const tr = document.createElement('tr'); tr.className = 'divide-x divide-gray-300'; headersDisplay.forEach((header, index) => { const th = document.createElement('th'); th.className = 'text-left text-xs font-semibold text-slate-600 uppercase bg-gray-100 whitespace-nowrap px-2 sm:px-4 py-2'; const headerText = document.createElement('span'); headerText.textContent = header || `Coluna ${index + 1}`; th.appendChild(headerText); const select = document.createElement('select'); select.dataset.colIndex = index; select.className = 'mt-1 block w-full filter-select'; select.innerHTML = '<option value="">Todos</option>'; const uniqueValues = [...new Set(sheetRows.map(row => row[index]))].map(value => formatCellValue(value, header)).filter(value => value !== '–' && value != null && value !== '').sort((a, b) => { try { return String(a).localeCompare(String(b), 'pt-BR', { numeric: true }); } catch (e) { return String(a) < String(b) ? -1 : (String(a) > String(b) ? 1 : 0); } }); uniqueValues.forEach(value => { const opt = document.createElement('option'); opt.value = value; opt.textContent = value; select.appendChild(opt); }); if (activeFilters[index]) { select.value = activeFilters[index]; } select.onchange = handleFilterChange; th.appendChild(select); tr.appendChild(th); }); thead.appendChild(tr); return thead; }
+    function handleFilterChange(event) { const colIndex = event.target.dataset.colIndex; const value = event.target.value; if (value) { activeFilters[colIndex] = value; } else { delete activeFilters[colIndex]; } applyFilters(); }
+    function createTableBody() { const tbody = document.createElement('tbody'); tbody.className = 'divide-y divide-gray-200'; if (sheetRows.length === 0) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = headersDisplay.length || 1; td.textContent = 'Nenhum dado encontrado.'; td.className = 'px-4 py-8 text-center text-slate-500 text-sm'; tr.appendChild(td); tbody.appendChild(tr); return tbody; } sheetRows.forEach((row, rowIndex) => { const tr = document.createElement('tr'); tr.className = `${rowIndex % 2 ? 'bg-gray-50' : 'bg-white'} hover:bg-primary-500/10 transition-colors duration-150`; tr.dataset.rowIndex = rowIndex; headersDisplay.forEach((header, colIndex) => { const td = document.createElement('td'); td.className = 'whitespace-nowrap px-2 sm:px-4 py-2 align-top text-slate-700'; td.textContent = formatCellValue(row[colIndex], header); if (td.textContent.length > 50) { td.title = td.textContent; } tr.appendChild(td); }); tbody.appendChild(tr); }); const trNoResults = document.createElement('tr'); trNoResults.className = 'hidden no-results-row'; const tdNoResults = document.createElement('td'); tdNoResults.colSpan = headersDisplay.length || 1; tdNoResults.textContent = 'Nenhum resultado corresponde aos filtros selecionados.'; tdNoResults.className = 'px-4 py-8 text-center text-slate-500 text-sm'; trNoResults.appendChild(tdNoResults); tbody.appendChild(trNoResults); return tbody; }
+    function formatCellValue(cellValue, headerLabel) { if (cellValue == null || cellValue === '') return '–'; const headerLower = (headerLabel || '').toLowerCase().trim(); if (headerLower === 'nf') return String(cellValue); if (/valor|total|preço/i.test(headerLower)) { let n = NaN; if (typeof cellValue === 'number') { n = cellValue; } else if (typeof cellValue === 'string') { const cleaned = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); n = parseFloat(cleaned); } return !isNaN(n) ? formatCurrency(n) : String(cellValue); } const d = parseDateValue(cellValue); if (d && !isNaN(d.getTime())) { if (/data|venc|pag|emissao/i.test(headerLower)) { return formatDateBR(d); } } if (typeof cellValue === 'number') return cellValue.toLocaleString('pt-BR'); if (typeof cellValue === 'string' && /^-?\d+(\.\d+)?$/.test(cellValue)) { const num = parseFloat(cellValue); if (!isNaN(num)) return num.toLocaleString('pt-BR'); } return String(cellValue); }
+    function applyFilters() { const tbody = $sheetTable.querySelector('tbody'); if (!tbody) return; let visibleRowCount = 0; const filterKeys = Object.keys(activeFilters); const noResultsRow = tbody.querySelector('.no-results-row'); Array.from(tbody.rows).forEach(tr => { if (tr.classList.contains('no-results-row')) return; if (tr.parentElement.tagName === 'THEAD') return; let show = true; if (filterKeys.length > 0) { show = filterKeys.every(colIndex => { const filterValue = activeFilters[colIndex]; const cellContent = tr.cells[colIndex]?.textContent?.trim() || ''; return cellContent === filterValue; }); } tr.style.display = show ? '' : 'none'; if (show) visibleRowCount++; }); if (noResultsRow) { noResultsRow.style.display = (visibleRowCount === 0 && sheetRows.length > 0 && filterKeys.length > 0) ? '' : 'none'; } updateFilterDisplay(); updateCharts(); updateGrandTotalHeader(); }
+    function updateFilterDisplay() { const keys = Object.keys(activeFilters); if (keys.length === 0) { $filtersActive.textContent = 'Nenhum filtro ativo'; $clearFiltersBtn.style.display = 'none'; $filtersActive.classList.add('w-full', 'sm:w-auto'); $filtersActive.classList.remove('sm:mr-auto'); } else { const parts = keys.map(i => `${headersDisplay[i] || `Col ${i+1}`}: "${activeFilters[i]}"`); $filtersActive.textContent = `Filtros Ativos: ${parts.join('; ')}`; $clearFiltersBtn.style.display = 'inline-block'; $filtersActive.classList.remove('w-full'); $filtersActive.classList.add('sm:w-auto', 'sm:mr-auto'); } }
+    function clearFilters() { Object.keys(activeFilters).forEach(key => delete activeFilters[key]); $sheetTable.querySelectorAll('thead .filter-select').forEach(sel => sel.value = ''); applyFilters(); }
+    function hasDataChanged(newData, prevData) { if (!prevData) return true; return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) || JSON.stringify(newData.totals) !== JSON.stringify(prevData.totals); }
+    function aggregateByDate(dateColRegex) { const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase())); const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase())); if (dateIdx === -1 || valIdx === -1) { console.warn(`Colunas para agregação por data (${dateColRegex}) não encontradas.`); return { labels: [], totals: [] }; } const map = new Map(); getFilteredRows().forEach(row => { const dateValue = row[dateIdx]; const rawValue = row[valIdx]; const d = parseDateValue(dateValue); if (!d || isNaN(d.getTime())) return; const key = d.toISOString().split('T')[0]; let v = NaN; if (rawValue == null) return; if (typeof rawValue === 'number') { v = rawValue; } else if (typeof rawValue === 'string') { const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.'); v = parseFloat(cleaned); } if (!isNaN(v)) { map.set(key, (map.get(key) || 0) + v); } }); const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])); return { labels: entries.map(([key]) => formatDateBR(new Date(key + 'T00:00:00Z'))), totals: entries.map(([_, value]) => parseFloat(value.toFixed(2))) }; }
+    function aggregateByMonth(dateColRegex) { const dateIdx = headersFull.findIndex(h => h && dateColRegex.test(h.toLowerCase())); const valIdx = headersFull.findIndex(h => h && /valor/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase())); if (dateIdx === -1 || valIdx === -1) { console.warn(`Colunas para agregação por mês (${dateColRegex}) não encontradas.`); return { labels: [], totals: [] }; } const map = new Map(); getFilteredRows().forEach(row => { const dateValue = row[dateIdx]; const rawValue = row[valIdx]; const d = parseDateValue(dateValue); if (!d || isNaN(d.getTime())) return; const key = `${d.getUTCFullYear()}-${padZero(d.getUTCMonth())}`; let v = NaN; if (rawValue == null) return; if (typeof rawValue === 'number') { v = rawValue; } else if (typeof rawValue === 'string') { const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.'); v = parseFloat(cleaned); } if (!isNaN(v)) { map.set(key, (map.get(key) || 0) + v); } }); const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])); return { labels: entries.map(([key]) => { const [y, m] = key.split('-'); return formatMonthYear(new Date(Date.UTC(+y, +m, 1))); }), totals: entries.map(([_, value]) => parseFloat(value.toFixed(2))) }; }
+    function getFilteredRows() { const filterKeys = Object.keys(activeFilters); if (filterKeys.length === 0) { return sheetRows; } return sheetRows.filter(row => { return filterKeys.every(colIndex => { const filterValue = activeFilters[colIndex]; const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]); return cellFormattedValue.trim() === filterValue; }); }); }
+    const baseChartOptions = { chart: { foreColor: '#495057', toolbar: { show: false, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false }, export: { csv: {}, svg: {}, png: {} } }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 400 } }, background: 'transparent' }, tooltip: { theme: 'light', style: { fontSize: '11px' }, x: { show: false }, y: { formatter: formatCurrency, title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' } }, marker: { show: false }, }, dataLabels: { enabled: false }, grid: { borderColor: '#e9ecef', strokeDashArray: 4, padding: { left: 5, right: 15, top: 0, bottom: 0 } }, legend: { show: false, fontSize: '11px', offsetY: 5, itemMargin: { horizontal: 5, vertical: 2 }, labels: { colors: '#495057' } }, markers: { size: 0, strokeWidth: 0, hover: { size: 5 } }, noData: { text: 'Sem dados para exibir', align: 'center', verticalAlign: 'middle', style: { color: '#6c757d', fontSize: '12px' } } };
+    const areaBaseOptions = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 250, toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }, autoSelected: 'zoom' }, zoom: { enabled: true } }, xaxis: { categories: [], type: 'category', tickAmount: 6, labels: { show: true, rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px', colors: ['#6c757d'] }, format: undefined }, tooltip: { enabled: false }, title: { text: 'Data', style: { color: '#6c757d', fontSize: '10px', fontWeight: 'normal' } }, axisBorder: { show: true, color: '#ced4da' }, axisTicks: { show: true, color: '#ced4da' }, }, yaxis: { labels: { show: true, style: { fontSize: '10px', colors: ['#6c757d'] }, formatter: formatCompact }, title: { text: 'Valor (R$)', style: { color: '#6c757d', fontSize: '10px', fontWeight: 'normal' } }, axisBorder: { show: false }, axisTicks: { show: false }, }, tooltip: { ...baseChartOptions.tooltip, theme: 'light', shared: false, intersect: true, x: { formatter: function(val, { dataPointIndex, w }) { return w.globals.categoryLabels?.[dataPointIndex] ?? ''; } }, y: { formatter: formatCurrency, title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' } } }, markers: { size: 3, strokeWidth: 0, hover: { size: 6 } }, stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 0.3, opacityFrom: 0.6, opacityTo: 0.1, stops: [0, 95, 100] } } };
+    const overviewOptions = { ...areaBaseOptions, colors: [CHART_COLORS[0]], };
+    const paymentOptions = { ...areaBaseOptions, colors: [CHART_COLORS[1]], };
+    const monthlyOptions = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'donut', height: 280, }, labels: [], colors: CHART_COLORS, legend: { ...baseChartOptions.legend, show: true, position: 'bottom', horizontalAlign: 'center', offsetY: 0, formatter: function(seriesName, opts) { const value = opts.w.globals.series[opts.seriesIndex]; return `${seriesName}: ${formatCurrency(value)}`; } }, tooltip: { ...baseChartOptions.tooltip, theme: 'light', y: { formatter: function(value, { seriesIndex, dataPointIndex, w }) { const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0); const percentage = total === 0 ? 0 : (value / total * 100); return `${formatCurrency(value)} (${percentage.toFixed(1)}%)`; }, title: { formatter: (seriesName) => seriesName } } }, plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total (Filtro)', fontSize: '13px', fontWeight: 600, color: '#495057', formatter: (w) => { const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0); return formatCurrency(total); } }, value: { show: true, fontSize: '16px', fontWeight: 500, color: '#495057', formatter: (val) => formatCurrency(parseFloat(val)) } } } } }, responsive: [{ breakpoint: 480, options: { chart: { height: 240 }, legend: { fontSize: '9px', itemMargin: { horizontal: 4, vertical: 1 }, }, plotOptions: { pie: { donut: { size: '70%', labels: { total: { fontSize: '12px' }, value: { fontSize: '14px' } } } } } } }] };
+    function destroyChart(chartInstance) { if (chartInstance && typeof chartInstance.destroy === 'function') { chartInstance.destroy(); } return null; }
+    function buildCharts() { prevOverviewData = aggregateByDate(/venc/i); prevPaymentData = aggregateByDate(/pag/i); prevMonthlyData = aggregateByMonth(/venc/i); chartOverview = destroyChart(chartOverview); chartPayment = destroyChart(chartPayment); chartMonthly = destroyChart(chartMonthly); renderOverviewChart(false, prevOverviewData); renderPaymentChart(false, prevPaymentData); renderMonthlyChart(false, prevMonthlyData); }
+    function updateCharts() { const newDataOverview = aggregateByDate(/venc/i); const newDataPayment = aggregateByDate(/pag/i); const newDataMonthly = aggregateByMonth(/venc/i); renderOverviewChart(true, newDataOverview); renderPaymentChart(true, newDataPayment); renderMonthlyChart(true, newDataMonthly); }
+    function renderOverviewChart(isUpdate = false, data) { if (isUpdate && !hasDataChanged(data, prevOverviewData)) return; const opts = { series: [{ name: 'Total Venc.', data: data.totals }], xaxis: { ...overviewOptions.xaxis, categories: data.labels } }; if (isUpdate && chartOverview) { chartOverview.updateOptions(opts, true, true); } else { chartOverview = destroyChart(chartOverview); chartOverview = new ApexCharts(document.querySelector('#chart-overview'), { ...overviewOptions, ...opts }); chartOverview.render(); } prevOverviewData = data; }
+    function renderPaymentChart(isUpdate = false, data) { if (isUpdate && !hasDataChanged(data, prevPaymentData)) return; const opts = { series: [{ name: 'Total Pago', data: data.totals }], xaxis: { ...paymentOptions.xaxis, categories: data.labels } }; if (isUpdate && chartPayment) { chartPayment.updateOptions(opts, true, true); } else { chartPayment = destroyChart(chartPayment); chartPayment = new ApexCharts(document.querySelector('#chart-payment'), { ...paymentOptions, ...opts }); chartPayment.render(); } prevPaymentData = data; }
+    function renderMonthlyChart(isUpdate = false, data) { if (isUpdate && !hasDataChanged(data, prevMonthlyData)) return; const opts = { series: data.totals, labels: data.labels, }; if (isUpdate && chartMonthly) { chartMonthly.updateOptions(opts, true, true); } else { chartMonthly = destroyChart(chartMonthly); chartMonthly = new ApexCharts(document.querySelector('#chart-monthly'), { ...monthlyOptions, ...opts }); chartMonthly.render(); } prevMonthlyData = data; }
+    function updateGrandTotalHeader() { const { totals } = aggregateByMonth(/venc/i); const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0); const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : ''; $monthTotal.textContent = `Total (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`; }
+    function buildInitialUI() { buildTable(); buildCharts(); }
+    function updateUI() { buildTable(); }
   </script>
 </body>
 </html>
