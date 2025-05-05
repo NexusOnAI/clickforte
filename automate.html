@@ -15,10 +15,12 @@
         extend: {
           colors: {
             surface: '#ffffff',
-            primary: {
-              300: '#6b9eff',
-              500: '#0d6efd',
-              600: '#0a58ca'
+            primary: { // Paleta de Azul da "Tela Home"
+              300: '#6abff9',
+              400: '#4dabf7',
+              500: '#339af0',
+              600: '#1b85db',
+              700: '#1971c2'
             },
             slate: {
               300: '#dee2e6', 400: '#ced4da', 500: '#adb5bd',
@@ -26,7 +28,7 @@
             },
              gray: { 50: '#f8f9fa', 100: '#f1f3f5', 200: '#e9ecef' }
           },
-          boxShadow: { glow: '0 0 8px rgba(13, 110, 253, 0.25)' },
+          boxShadow: { glow: '0 0 8px rgba(51, 154, 240, 0.35)' }, // Ajuste leve na sombra para o novo azul
           backdropBlur: { xs: '2px' }
         }
       }
@@ -51,13 +53,16 @@
       background: #ffffff; border: 1px solid #ced4da; border-radius: 4px;
       font-size: 12px; padding: 6px 8px; width: 100%; margin-top: 4px;
       color: #495057; appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230d6efd%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+      /* Seta SVG com novo azul primário (#339af0) */
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23339af0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
       background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 0.65em auto; padding-right: 2rem;
     }
-    th select:focus { outline: none; border-color: #86b7fe; box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25); }
-    .tab-btn.active-tab { background: #0d6efd; color: #fff !important; box-shadow: 0 0 5px rgba(13, 110, 253, .4) }
+    /* Foco com novo azul primário */
+    th select:focus { outline: none; border-color: #86b7fe; box-shadow: 0 0 0 2px rgba(51, 154, 240, 0.25); }
+    .tab-btn.active-tab { background: #339af0; color: #fff !important; box-shadow: 0 0 5px rgba(51, 154, 240, .4) }
     .chart-card { transition: background-color 0.3s ease; background-color: var(--tw-color-surface); }
-    button:focus-visible, select:focus-visible { outline: 2px solid #0d6efd; outline-offset: 2px; }
+    /* Foco com novo azul primário */
+    button:focus-visible, select:focus-visible { outline: 2px solid #339af0; outline-offset: 2px; }
     main.table-full-screen { max-width: none; padding: 0; gap: 0; }
     main.table-full-screen > div:nth-of-type(1) { padding: 0.5rem 0.75rem; flex-shrink: 0; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
     main.table-full-screen > #filters-bar { padding: 0.5rem 0.75rem; flex-shrink: 0; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
@@ -147,7 +152,7 @@
     const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
     const REFRESH_INTERVAL = 60000;
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const CHART_COLORS = ['#0d6efd', '#198754', '#dc3545', '#ffc107', '#6f42c1', '#0dcaf0', '#fd7e14', '#d63384'];
+    const CHART_COLORS = ['#339af0', '#198754', '#dc3545', '#ffc107', '#6f42c1', '#0dcaf0', '#fd7e14', '#d63384']; // Cor primária atualizada
 
     let headersFull = [], sheetRows = [];
     let headersDisplay = [];
@@ -236,7 +241,7 @@
     function getFilteredRows() { const filterKeys = Object.keys(activeFilters); if (filterKeys.length === 0) { return sheetRows; } return sheetRows.filter(row => { return filterKeys.every(colIndex => { const filterValue = activeFilters[colIndex]; const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]); return cellFormattedValue.trim() === filterValue; }); }); }
     const baseChartOptions = { chart: { foreColor: '#495057', toolbar: { show: false, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false }, export: { csv: {}, svg: {}, png: {} } }, zoom: { enabled: false }, animations: { enabled: true, easing: 'easeinout', speed: 600, animateGradually: { enabled: true, delay: 150 }, dynamicAnimation: { enabled: true, speed: 400 } }, background: 'transparent' }, tooltip: { theme: 'light', style: { fontSize: '11px' }, x: { show: false }, y: { formatter: formatCurrency, title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' } }, marker: { show: false }, }, dataLabels: { enabled: false }, grid: { borderColor: '#e9ecef', strokeDashArray: 4, padding: { left: 5, right: 15, top: 0, bottom: 0 } }, legend: { show: false, fontSize: '11px', offsetY: 5, itemMargin: { horizontal: 5, vertical: 2 }, labels: { colors: '#495057' } }, markers: { size: 0, strokeWidth: 0, hover: { size: 5 } }, noData: { text: 'Sem dados para exibir', align: 'center', verticalAlign: 'middle', style: { color: '#6c757d', fontSize: '12px' } } };
     const areaBaseOptions = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 250, toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }, autoSelected: 'zoom' }, zoom: { enabled: true } }, xaxis: { categories: [], type: 'category', tickAmount: 6, labels: { show: true, rotate: -45, rotateAlways: false, hideOverlappingLabels: true, style: { fontSize: '10px', colors: ['#6c757d'] }, format: undefined }, tooltip: { enabled: false }, title: { text: 'Data', style: { color: '#6c757d', fontSize: '10px', fontWeight: 'normal' } }, axisBorder: { show: true, color: '#ced4da' }, axisTicks: { show: true, color: '#ced4da' }, }, yaxis: { labels: { show: true, style: { fontSize: '10px', colors: ['#6c757d'] }, formatter: formatCompact }, title: { text: 'Valor (R$)', style: { color: '#6c757d', fontSize: '10px', fontWeight: 'normal' } }, axisBorder: { show: false }, axisTicks: { show: false }, }, tooltip: { ...baseChartOptions.tooltip, theme: 'light', shared: false, intersect: true, x: { formatter: function(val, { dataPointIndex, w }) { return w.globals.categoryLabels?.[dataPointIndex] ?? ''; } }, y: { formatter: formatCurrency, title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' } } }, markers: { size: 3, strokeWidth: 0, hover: { size: 6 } }, stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 0.3, opacityFrom: 0.6, opacityTo: 0.1, stops: [0, 95, 100] } } };
-    const overviewOptions = { ...areaBaseOptions, colors: [CHART_COLORS[0]], };
+    const overviewOptions = { ...areaBaseOptions, colors: [CHART_COLORS[0]], }; // Usa a nova cor primária
     const paymentOptions = { ...areaBaseOptions, colors: [CHART_COLORS[1]], };
     const monthlyOptions = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'donut', height: 280, }, labels: [], colors: CHART_COLORS, legend: { ...baseChartOptions.legend, show: true, position: 'bottom', horizontalAlign: 'center', offsetY: 0, formatter: function(seriesName, opts) { const value = opts.w.globals.series[opts.seriesIndex]; return `${seriesName}: ${formatCurrency(value)}`; } }, tooltip: { ...baseChartOptions.tooltip, theme: 'light', y: { formatter: function(value, { seriesIndex, dataPointIndex, w }) { const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0); const percentage = total === 0 ? 0 : (value / total * 100); return `${formatCurrency(value)} (${percentage.toFixed(1)}%)`; }, title: { formatter: (seriesName) => seriesName } } }, plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total (Filtro)', fontSize: '13px', fontWeight: 600, color: '#495057', formatter: (w) => { const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0); return formatCurrency(total); } }, value: { show: true, fontSize: '16px', fontWeight: 500, color: '#495057', formatter: (val) => formatCurrency(parseFloat(val)) } } } } }, responsive: [{ breakpoint: 480, options: { chart: { height: 240 }, legend: { fontSize: '9px', itemMargin: { horizontal: 4, vertical: 1 }, }, plotOptions: { pie: { donut: { size: '70%', labels: { total: { fontSize: '12px' }, value: { fontSize: '14px' } } } } } } }] };
     function destroyChart(chartInstance) { if (chartInstance && typeof chartInstance.destroy === 'function') { chartInstance.destroy(); } return null; }
