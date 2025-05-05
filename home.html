@@ -1,556 +1,777 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Relatórios • Google Sheets</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Relatórios • Google Sheets</title>
 
-  <link rel="preconnect" href="https://fonts.gstatic.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
-        extend: {
-          colors: {
-            surface: '#ffffff',
-            primary: { 300: '#6abff9', 400: '#4dabf7', 500: '#339af0', 600: '#1b85db', 700: '#1971c2' },
-            slate: { 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b' },
-            gray: { 100: '#f8f9fa', 200: '#e9ecef', 300: '#dee2e6', 800: '#343a40' },
-            green: { 400: '#4ade80', 500: '#22c55e'},
-            yellow: { 400: '#facc15', 500: '#eab308'},
-            red: { 400: '#fb7185', 500: '#f43f5e'}
-          },
-          boxShadow: {
-            glow: '0 0 10px rgba(77,171,247,.4)',
-            card: '0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04)',
-            'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.05)'
-          },
-          backdropBlur: { xs: '3px' },
-          borderRadius: {
-            'xl': '0.75rem',
-            '2xl': '1rem'
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+          extend: {
+            colors: {
+              surface: '#ffffff',
+              primary: { 300: '#6abff9', 400: '#4dabf7', 500: '#339af0', 600: '#1b85db', 700: '#1971c2' },
+              slate: { 50: '#f8fafc', 100: '#f1f5f9', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b' }, // Added slate-50, slate-100
+              gray: { 100: '#f8f9fa', 200: '#e9ecef', 300: '#dee2e6', 800: '#343a40' },
+              green: { 400: '#4ade80', 500: '#22c55e'},
+              yellow: { 400: '#facc15', 500: '#eab308'},
+              red: { 400: '#fb7185', 500: '#f43f5e'}
+            },
+            boxShadow: {
+              glow: '0 0 10px rgba(77,171,247,.4)',
+              card: '0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04)',
+              'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.05)',
+              'highlight-glow': '0 0 15px rgba(51, 154, 240, 0.5)' // Highlight glow
+            },
+            backdropBlur: { xs: '3px' },
+            borderRadius: {
+              'xl': '0.75rem',
+              '2xl': '1rem'
+            }
           }
         }
+      };
+    </script>
+    <style>
+      @keyframes spin { to { transform: rotate(360deg) } }
+      .animate-spin { animation: spin 1s linear infinite }
+      html, body { height: 100%; }
+      body { background: #f0f2f5; display: flex; flex-direction: column; }
+
+      main { flex-grow: 1; display: flex; flex-direction: column; }
+
+      /* Adjust flex behavior for sections */
+      #report-cards-wrapper, #chart-container, #due-list-container {
+          flex-grow: 1; /* Allow sections to grow */
+          overflow-y: auto; /* Add scroll if content overflows vertically */
       }
-    };
-  </script>
-  <style>
-    @keyframes spin { to { transform: rotate(360deg) } }
-    .animate-spin { animation: spin 1s linear infinite }
-    html, body { height: 100%; }
-    body { background: #f0f2f5; display: flex; flex-direction: column; }
 
-    main { flex-grow: 1; display: flex; flex-direction: column; }
+      ::-webkit-scrollbar { width: 8px; height: 8px }
+      ::-webkit-scrollbar-track { background: #e9ecef; }
+      ::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px }
+      ::-webkit-scrollbar-thumb:hover { background: #868e96; }
 
-    /* Adjust flex behavior for sections */
-    #report-cards-wrapper, #chart-container, #due-list-container {
-        flex-grow: 1; /* Allow sections to grow */
-        overflow-y: auto; /* Add scroll if content overflows vertically */
-    }
+      button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid theme('colors.primary.400'); outline-offset: 2px; }
 
-    ::-webkit-scrollbar { width: 8px; height: 8px }
-    ::-webkit-scrollbar-track { background: #e9ecef; }
-    ::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px }
-    ::-webkit-scrollbar-thumb:hover { background: #868e96; }
+      .report-card {
+        background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease-in-out; box-shadow: theme('boxShadow.card'); min-height: 130px; position: relative; overflow: hidden;
+      }
+      .report-card:hover {
+        border-color: theme('colors.primary.300'); box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.glow'); transform: translateY(-4px);
+      }
+      .report-card .icon {
+        position: absolute; top: 1rem; right: 1rem; opacity: 0.15; width: 2.5rem; height: 2.5rem; color: theme('colors.slate.400'); transition: opacity 0.3s ease;
+      }
+       .report-card:hover .icon { opacity: 0.3; }
+      .report-card .title { font-size: 0.875rem; font-weight: 500; color: theme('colors.slate.600'); margin-bottom: 0.5rem; }
+      .report-card .value { font-size: 1.75rem; font-weight: 700; color: theme('colors.primary.500'); margin-bottom: 0.25rem; line-height: 1.2; }
+      .report-card .value.count { color: theme('colors.slate.700'); font-size: 2rem; }
+      .report-card .detail { font-size: 0.8rem; color: theme('colors.slate.500'); margin-top: auto; }
+      .report-card .value.paid { color: theme('colors.green.500') !important; }
+      .report-card .value.pending { color: theme('colors.yellow.500') !important; }
+      .report-card .value.overdue { color: theme('colors.red.500') !important; }
+      .report-card .icon.paid { color: theme('colors.green.500'); }
+      .report-card .icon.pending { color: theme('colors.yellow.500'); }
+      .report-card .icon.overdue { color: theme('colors.red.500'); }
+      .report-card .icon.total { color: theme('colors.primary.500'); }
 
-    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid theme('colors.primary.400'); outline-offset: 2px; }
+      /* --- Highlighted Card Styles --- */
+      .report-card.highlighted-card {
+          border-color: theme('colors.primary.400'); /* Static highlight border */
+          background-color: theme('colors.slate.50'); /* Subtle background tint */
+          /* You could add order: -1; here if you want it to appear first visually on larger screens, independent of its position in the grid generation */
+      }
+      .report-card.highlighted-card:hover {
+          border-color: theme('colors.primary.500'); /* Stronger border on hover */
+          box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.highlight-glow'); /* Enhanced glow on hover */
+          transform: translateY(-6px); /* Slightly more lift */
+      }
+      .report-card .icon.due-total-highlight {
+          color: theme('colors.primary.600'); /* Make icon match primary highlight */
+          opacity: 0.25; /* Slightly more visible icon */
+      }
+       .report-card.highlighted-card:hover .icon.due-total-highlight {
+          opacity: 0.4;
+      }
+      /* --- End Highlighted Card Styles --- */
 
-    .report-card {
-      background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease-in-out; box-shadow: theme('boxShadow.card'); min-height: 130px; position: relative; overflow: hidden;
-    }
-    .report-card:hover {
-      border-color: theme('colors.primary.300'); box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.glow'); transform: translateY(-4px);
-    }
-    .report-card .icon {
-      position: absolute; top: 1rem; right: 1rem; opacity: 0.15; width: 2.5rem; height: 2.5rem; color: theme('colors.slate.400'); transition: opacity 0.3s ease;
-    }
-     .report-card:hover .icon { opacity: 0.3; }
-    .report-card .title { font-size: 0.875rem; font-weight: 500; color: theme('colors.slate.600'); margin-bottom: 0.5rem; }
-    .report-card .value { font-size: 1.75rem; font-weight: 700; color: theme('colors.primary.500'); margin-bottom: 0.25rem; line-height: 1.2; }
-    .report-card .value.count { color: theme('colors.slate.700'); font-size: 2rem; }
-    .report-card .detail { font-size: 0.8rem; color: theme('colors.slate.500'); margin-top: auto; }
-    .report-card .value.paid { color: theme('colors.green.500') !important; }
-    .report-card .value.pending { color: theme('colors.yellow.500') !important; }
-    .report-card .value.overdue { color: theme('colors.red.500') !important; }
-    .report-card .icon.paid { color: theme('colors.green.500'); }
-    .report-card .icon.pending { color: theme('colors.yellow.500'); }
-    .report-card .icon.overdue { color: theme('colors.red.500'); }
-    .report-card .icon.total { color: theme('colors.primary.500'); }
 
-    .view-toggle-button {
-      padding: 0.6rem 1.2rem; border-radius: theme('borderRadius.lg'); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
-    }
-    .view-toggle-button.active {
-      background-color: theme('colors.primary.500/20'); color: theme('colors.primary.600'); border-color: theme('colors.primary.500/40'); box-shadow: 0 1px 3px rgba(77,171,247,.1);
-    }
-    .view-toggle-button:not(.active) { color: theme('colors.slate.600'); background-color: transparent; }
-    .view-toggle-button:not(.active):hover { background-color: theme('colors.primary.500/10'); color: theme('colors.primary.700'); }
+      .view-toggle-button {
+        padding: 0.6rem 1.2rem; border-radius: theme('borderRadius.lg'); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
+      }
+      .view-toggle-button.active {
+        background-color: theme('colors.primary.500/20'); color: theme('colors.primary.600'); border-color: theme('colors.primary.500/40'); box-shadow: 0 1px 3px rgba(77,171,247,.1);
+      }
+      .view-toggle-button:not(.active) { color: theme('colors.slate.600'); background-color: transparent; }
+      .view-toggle-button:not(.active):hover { background-color: theme('colors.primary.500/10'); color: theme('colors.primary.700'); }
 
-    header { box-shadow: 0 2px 4px rgba(0,0,0,.05); background-color: #ffffff; border-bottom: 1px solid #e9ecef; }
+      header { box-shadow: 0 2px 4px rgba(0,0,0,.05); background-color: #ffffff; border-bottom: 1px solid #e9ecef; }
 
-    #manual-refresh { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; border-color: theme('colors.primary.500'); background-color: theme('colors.primary.500/15'); color: theme('colors.primary.600'); }
-    #manual-refresh:hover { background-color: theme('colors.primary.500/25'); }
-    #manual-refresh:disabled { opacity: 0.7; cursor: not-allowed; }
-    .refresh-icon { width: 1em; height: 1em; display: inline-block; }
-    .refresh-icon.spinning { animation: spin 1s linear infinite; }
+      #manual-refresh { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; border-color: theme('colors.primary.500'); background-color: theme('colors.primary.500/15'); color: theme('colors.primary.600'); }
+      #manual-refresh:hover { background-color: theme('colors.primary.500/25'); }
+      #manual-refresh:disabled { opacity: 0.7; cursor: not-allowed; }
+      .refresh-icon { width: 1em; height: 1em; display: inline-block; }
+      .refresh-icon.spinning { animation: spin 1s linear infinite; }
 
-    #chart-container, #due-list-container { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; box-shadow: theme('boxShadow.card'); }
+      #chart-container, #due-list-container { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; box-shadow: theme('boxShadow.card'); }
 
-     /* Styling for Due List View */
-    #due-list-total-all { font-size: 1.5rem; font-weight: 600; color: theme('colors.slate.700'); text-align: center; margin-bottom: 0; /* Adjusted margin */ padding: 1rem; background-color: theme('colors.slate.500/10'); border-radius: theme('borderRadius.lg'); border: 1px solid theme('colors.slate.500/20'); }
-    #due-list-items ul { list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
-    #due-list-items li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 0.75rem 0.5rem; border-bottom: 1px solid theme('colors.gray.200'); font-size: 0.9rem; }
-    #due-list-items li:last-child { border-bottom: none; }
-    #due-list-items .item-info { flex-grow: 1; display: flex; flex-direction: column; margin-right: 1rem; overflow: hidden; }
-    #due-list-items .item-description { color: theme('colors.slate.700'); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-    #due-list-items .item-due-date { font-size: 0.75rem; color: theme('colors.slate.500'); margin-top: 0.1rem; }
-    #due-list-items .item-value { color: theme('colors.primary.700'); font-weight: 600; white-space: nowrap; margin-left: auto; }
-    #due-list-items .no-items-message { text-align: center; color: theme('colors.slate.500'); padding: 2rem 1rem; font-style: italic; }
+       /* Styling for Due List View */
+      #due-list-total-all { font-size: 1.5rem; font-weight: 600; color: theme('colors.slate.700'); text-align: center; margin-bottom: 0; /* Adjusted margin */ padding: 1rem; background-color: theme('colors.slate.100'); border-radius: theme('borderRadius.lg'); border: 1px solid theme('colors.slate.300'); }
+      #due-list-items ul { list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
+      #due-list-items li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 0.75rem 0.5rem; border-bottom: 1px solid theme('colors.gray.200'); font-size: 0.9rem; }
+      #due-list-items li:last-child { border-bottom: none; }
+      #due-list-items .item-info { flex-grow: 1; display: flex; flex-direction: column; margin-right: 1rem; overflow: hidden; }
+      #due-list-items .item-description { color: theme('colors.slate.700'); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+      #due-list-items .item-due-date { font-size: 0.75rem; color: theme('colors.slate.500'); margin-top: 0.1rem; }
+      #due-list-items .item-value { color: theme('colors.primary.700'); font-weight: 600; white-space: nowrap; margin-left: auto; }
+      #due-list-items .no-items-message { text-align: center; color: theme('colors.slate.500'); padding: 2rem 1rem; font-style: italic; }
 
-    /* Styling for Due List Chart */
-    #due-list-chart-wrapper { /* Basic styling for chart container */
-        border: 1px solid theme('colors.gray.200');
-        background-color: theme('colors.gray.100/50');
-    }
+      /* Styling for Due List Chart */
+      #due-list-chart-wrapper { /* Basic styling for chart container */
+          border: 1px solid theme('colors.gray.200');
+          background-color: theme('colors.gray.100/50');
+      }
 
-  </style>
+    </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col antialiased">
 
-  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-chart-bar" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" /><path fill-rule="evenodd" d="M1 14.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H1.75a.75.75 0 01-.75-.75zm6-10a.75.75 0 01.75-.75h8.5a.75.75 0 010 1.5h-8.5a.75.75 0 01-.75-.75zM4 6a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014 6z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-currency-dollar" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 10.818v2.43a.75.75 0 01-1.5 0v-2.43c-1.092-.115-2.11-.6-2.818-1.215C5.62 8.98 5.002 8.106 5 7.182 5 5.64 6.17 4.448 7.682 4.08c.43-.108.878-.157 1.318-.157h.01a6.32 6.32 0 011.318.157C11.83 4.448 13 5.64 13 7.182c-.002.924-.62 1.798-1.42 2.421-.706.615-1.726 1.1-2.83 1.215z" /><path fill-rule="evenodd" d="M8.894 3.067A.75.75 0 019.75 2.25h.5a.75.75 0 01.75.75v.859a4.834 4.834 0 015.217 4.311c.002.97-.35 1.887-.986 2.606-.66.746-1.52 1.328-2.512 1.663V15a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-1.486c-.99-.335-1.85-.917-2.51-1.663C5.35 11.103 5 10.186 5 9.216a4.834 4.834 0 015.217-4.311V4.75a.75.75 0 01-.75.75h-.5a.75.75 0 01-.856-.817l.012-.116.02-.115.026-.115.033-.114.038-.115.045-.114.05-.114c.017-.038.033-.076.05-.114l.058-.13a.75.75 0 01.56-.44zM10 8.682c.545 0 1.048-.12 1.48-.322.449-.21.799-.512 1.02-.858.22-.346.3-.738.3-1.139 0-.816-.566-1.49-1.318-1.657a4.824 4.824 0 00-1.482-.206 4.843 4.843 0 00-1.482.206C7.766 4.861 7.2 5.535 7.2 6.353c0 .401.08.793.3 1.139.22.346.57.647 1.02.858.432.201.935.321 1.48.332z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-check-circle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-clock" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-exclamation-triangle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-list-bullet" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></symbol>
-  </svg>
-  <header class="w-full sticky top-0 z-40 flex-shrink-0"> <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-3 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2"> <div class="flex items-center gap-2 order-1"> <svg class="h-6 w-6 sm:h-7 sm:w-7 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2z"></path></svg> <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500">Painel</h1> </div> <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap"> <span id="grand-total-header" class="text-primary-600 font-semibold text-xs sm:text-sm text-center"></span> <span id="last-update" class="text-slate-500 text-xs sm:text-sm text-center"></span> </div> <button id="manual-refresh" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border shadow-glow order-2 sm:order-3 ml-auto sm:ml-0 text-xs sm:text-sm font-medium"> <svg class="refresh-icon" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg> <span>Atualizar</span> </button> </div> </header>
-  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"> <div class="h-14 w-14 border-8 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div> <p class="text-primary-600 text-xl font-semibold">Carregando dados…</p> </div>
-  <main id="main-content" class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8 flex-grow">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" /></symbol>
+      <symbol id="icon-chart-bar" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" /><path fill-rule="evenodd" d="M1 14.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H1.75a.75.75 0 01-.75-.75zm6-10a.75.75 0 01.75-.75h8.5a.75.75 0 010 1.5h-8.5a.75.75 0 01-.75-.75zM4 6a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014 6z" clip-rule="evenodd" /></symbol>
+      <symbol id="icon-currency-dollar" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 10.818v2.43a.75.75 0 01-1.5 0v-2.43c-1.092-.115-2.11-.6-2.818-1.215C5.62 8.98 5.002 8.106 5 7.182 5 5.64 6.17 4.448 7.682 4.08c.43-.108.878-.157 1.318-.157h.01a6.32 6.32 0 011.318.157C11.83 4.448 13 5.64 13 7.182c-.002.924-.62 1.798-1.42 2.421-.706.615-1.726 1.1-2.83 1.215z" /><path fill-rule="evenodd" d="M8.894 3.067A.75.75 0 019.75 2.25h.5a.75.75 0 01.75.75v.859a4.834 4.834 0 015.217 4.311c.002.97-.35 1.887-.986 2.606-.66.746-1.52 1.328-2.512 1.663V15a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-1.486c-.99-.335-1.85-.917-2.51-1.663C5.35 11.103 5 10.186 5 9.216a4.834 4.834 0 015.217-4.311V4.75a.75.75 0 01-.75.75h-.5a.75.75 0 01-.856-.817l.012-.116.02-.115.026-.115.033-.114.038-.115.045-.114.05-.114c.017-.038.033-.076.05-.114l.058-.13a.75.75 0 01.56-.44zM10 8.682c.545 0 1.048-.12 1.48-.322.449-.21.799-.512 1.02-.858.22-.346.3-.738.3-1.139 0-.816-.566-1.49-1.318-1.657a4.824 4.824 0 00-1.482-.206 4.843 4.843 0 00-1.482.206C7.766 4.861 7.2 5.535 7.2 6.353c0 .401.08.793.3 1.139.22.346.57.647 1.02.858.432.201.935.321 1.48.332z" clip-rule="evenodd" /></symbol>
+      <symbol id="icon-check-circle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></symbol>
+      <symbol id="icon-clock" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" /></symbol>
+      <symbol id="icon-exclamation-triangle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></symbol>
+      <symbol id="icon-list-bullet" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></symbol>
+    </svg>
+    <header class="w-full sticky top-0 z-40 flex-shrink-0"> <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-3 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2"> <div class="flex items-center gap-2 order-1"> <svg class="h-6 w-6 sm:h-7 sm:w-7 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2z"></path></svg> <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500">Painel</h1> </div> <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap"> <span id="grand-total-header" class="text-primary-600 font-semibold text-xs sm:text-sm text-center"></span> <span id="last-update" class="text-slate-500 text-xs sm:text-sm text-center"></span> </div> <button id="manual-refresh" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border shadow-glow order-2 sm:order-3 ml-auto sm:ml-0 text-xs sm:text-sm font-medium"> <svg class="refresh-icon" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg> <span>Atualizar</span> </button> </div> </header>
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"> <div class="h-14 w-14 border-8 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div> <p class="text-primary-600 text-xl font-semibold">Carregando dados…</p> </div>
+    <main id="main-content" class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8 flex-grow">
 
-    <div class="flex justify-center gap-2 bg-white/80 p-1.5 rounded-xl flex-shrink-0 self-center shadow-md border border-gray-200">
-      <button id="view-toggle-reports" class="view-toggle-button active">Relatórios</button>
-      <button id="view-toggle-chart" class="view-toggle-button">Gráfico Semanal</button>
-      <button id="view-toggle-due-list" class="view-toggle-button">Lista Vencimentos</button>
-    </div>
-    <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6"> </section>
-    <section id="chart-container" class="hidden w-full flex flex-col items-center"> <h2 class="text-xl font-semibold text-primary-600 mb-6">Pagamentos por Semana (Mês Atual)</h2> <div class="w-full max-w-4xl h-[450px] sm:h-[550px]"> <canvas id="weeklyPaymentsChart"></canvas> </div> <p id="chart-error-message" class="hidden mt-4 text-yellow-500 text-sm font-medium"></p> </section>
-    <section id="due-list-container" class="hidden w-full flex flex-col gap-6"> <div class="text-center">
-            <h2 class="text-xl font-semibold text-primary-600 mb-1">Pagamentos para Hoje</h2>
+      <div class="flex justify-center gap-2 bg-white/80 p-1.5 rounded-xl flex-shrink-0 self-center shadow-md border border-gray-200">
+        <button id="view-toggle-reports" class="view-toggle-button active">Relatórios</button>
+        <button id="view-toggle-chart" class="view-toggle-button">Gráfico Semanal</button>
+        <button id="view-toggle-due-list" class="view-toggle-button">Lista Vencimentos</button>
+      </div>
+      <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6"> </section>
+      <section id="chart-container" class="hidden w-full flex flex-col items-center"> <h2 class="text-xl font-semibold text-primary-600 mb-6">Pagamentos por Semana (Mês Atual)</h2> <div class="w-full max-w-4xl h-[450px] sm:h-[550px]"> <canvas id="weeklyPaymentsChart"></canvas> </div> <p id="chart-error-message" class="hidden mt-4 text-yellow-500 text-sm font-medium"></p> </section>
+      <section id="due-list-container" class="hidden w-full flex flex-col gap-6"> <div class="text-center">
+            <h2 class="text-xl font-semibold text-primary-600 mb-1">Lista de Vencimentos</h2>
             <span id="due-list-current-date" class="text-sm text-slate-500"></span> </div>
-        <div id="due-list-total-all" class="text-center">Calculando Total Geral...</div>
-        <div id="due-list-chart-wrapper" class="w-full max-w-3xl mx-auto h-[300px] sm:h-[400px] bg-white p-4 rounded-lg shadow border border-gray-200">
-            <canvas id="dueListChart"></canvas>
-            <p id="due-list-chart-error" class="hidden text-center text-red-500 pt-4">Erro ao gerar gráfico de vencimentos mensais.</p>
-        </div>
-        <div id="due-list-items" class="mt-0"> <p id="due-list-error-message" class="hidden mt-4 text-red-500 text-sm font-medium text-center"></p>
-            <p id="due-list-loading-message" class="mt-4 text-slate-500 text-sm font-medium text-center">Carregando lançamentos...</p>
-            </div>
-    </section>
-    <br><br><br><br>
-  </main>
-  <script>
-    // --- Configuration (No changes) ---
-    const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
-    const gidReports = '0'; const gidTable = '446722751';
-    const baseURLReports = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidReports}`;
-    const baseURLTable = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidTable}`;
-    const REFRESH_INTERVAL = 60000;
-    const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const valorRegex = /valor|total/i; const vencRegex = /venc/i; const pagtoRegex = /pag/i; const statusRegex = /status|situação/i;
-    const dueListVencRegex = /venc/i; const dueListValorRegex = /valor|total/i; const dueListDescRegex = /descri[cç][aã]o|item|fornecedor|nome/i;
-    const statusPago = ['pago', 'liquidado', 'quitado']; const statusPendente = ['a vencer', 'pendente', 'aberto', 'em aberto']; const statusVencido = ['vencido', 'em atraso'];
+          <div id="due-list-total-all" class="text-center">Calculando Total Geral...</div>
+          <div id="due-list-chart-wrapper" class="w-full max-w-3xl mx-auto h-[300px] sm:h-[400px] bg-white p-4 rounded-lg shadow border border-gray-200">
+              <canvas id="dueListChart"></canvas>
+              <p id="due-list-chart-error" class="hidden text-center text-red-500 pt-4">Erro ao gerar gráfico de vencimentos mensais.</p>
+          </div>
+          <div id="due-list-items" class="mt-0"> <p id="due-list-error-message" class="hidden mt-4 text-red-500 text-sm font-medium text-center"></p>
+              <p id="due-list-loading-message" class="mt-4 text-slate-500 text-sm font-medium text-center">Carregando lançamentos...</p>
+              </div>
+      </section>
+      <br><br><br><br>
+    </main>
+    <script>
+      // --- Configuration ---
+      const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
+      const gidReports = '0'; // GID for reports and weekly chart (Planilha 1)
+      const gidTable = '446722751'; // GID for due list (Planilha 2)
+      const baseURLReports = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidReports}`;
+      const baseURLTable = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidTable}`;
+      const REFRESH_INTERVAL = 60000; // 1 minute
+      const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
 
-    // --- State Variables ---
-    let headersReports = [], sheetRowsReports = []; let headersTable = [], sheetRowsTable = [];
-    let isLoaded = false, isFetching = false;
-    let weeklyChartInstance = null;
-    let dueListChartInstance = null; // *** ADDED: Chart instance for due list ***
+      // Regex for Reports/Weekly Chart (Sheet 1 data source)
+      const valorRegex = /valor|total/i;
+      const vencRegex = /venc/i;
+      const pagtoRegex = /pag/i;
+      const statusRegex = /status|situação/i;
 
-    // --- DOM Elements ---
-    const $loader = document.getElementById('loader');
-    const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
-    const $lastUpdate = document.getElementById('last-update');
-    const $grandTotalHeader = document.getElementById('grand-total-header');
-    const $manualRefreshBtn = document.getElementById('manual-refresh');
-    const $refreshIcon = $manualRefreshBtn.querySelector('.refresh-icon');
-    const $refreshBtnText = $manualRefreshBtn.querySelector('span');
-    const $chartContainer = document.getElementById('chart-container');
-    const $chartCanvas = document.getElementById('weeklyPaymentsChart');
-    const $chartErrorMsg = document.getElementById('chart-error-message');
-    const $dueListContainer = document.getElementById('due-list-container');
-    const $dueListTotalAll = document.getElementById('due-list-total-all');
-    const $dueListItems = document.getElementById('due-list-items');
-    const $dueListErrorMsg = document.getElementById('due-list-error-message');
-    const $dueListLoadingMsg = document.getElementById('due-list-loading-message');
-    const $viewToggleReportsBtn = document.getElementById('view-toggle-reports');
-    const $viewToggleChartBtn = document.getElementById('view-toggle-chart');
-    const $viewToggleDueListBtn = document.getElementById('view-toggle-due-list');
-    // *** ADDED: DOM Elements for Due List Date and Chart ***
-    const $dueListCurrentDate = document.getElementById('due-list-current-date');
-    const $dueListChartWrapper = document.getElementById('due-list-chart-wrapper');
-    const $dueListChartCanvas = document.getElementById('dueListChart');
-    const $dueListChartError = document.getElementById('due-list-chart-error');
+      // Regex for Due List (Sheet 2 data source)
+      const dueListVencRegex = /venc/i;
+      const dueListValorRegex = /valor|total/i;
+      const dueListDescRegex = /descri[cç][aã]o|item|fornecedor|nome/i;
 
-    Chart.register(ChartDataLabels);
+      const statusPago = ['pago', 'liquidado', 'quitado'];
+      const statusPendente = ['a vencer', 'pendente', 'aberto', 'em aberto'];
+      const statusVencido = ['vencido', 'em atraso'];
 
-    // --- Utility Functions ---
-    const padZero = num => num.toString().padStart(2, '0');
-    const formatDateBR = date => { if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`; };
-    // *** ADDED: Utility to format Month/Year Label ***
-    const formatMonthYearLabel = date => {
-        if (!date || isNaN(date.getTime())) return 'Inválido';
-        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        return `${monthNames[date.getUTCMonth()]}/${date.getUTCFullYear()}`;
-    }
-    function parseDateValue(value) { if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const utcDays = Math.floor(value - 25569); const date = new Date(0); date.setUTCDate(date.getUTCDate() + utcDays); return date; } if (typeof value !== 'string') return null; let match; match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (match) return new Date(Date.UTC(+match[1], +match[2], +match[3])); match = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (match) return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3])); match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (match) { let year = +match[3]; if (year < 100) year += 2000; return new Date(Date.UTC(year, +match[2] - 1, +match[1])); } const parsed = new Date(value); if (!isNaN(parsed.getTime())) { return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())); } return null; }
-    const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
-    const formatCurrencyShort = value => { if (typeof value !== 'number' || isNaN(value)) return '–'; if (value === 0) return 'R$0'; if (Math.abs(value) < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0}); if (Math.abs(value) < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k'; return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M'; }
-    function getNumericValue(cellValue) { if (typeof cellValue === 'number') return cellValue; if (typeof cellValue === 'string') { const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); const num = parseFloat(cleanedString); return isNaN(num) ? 0 : num; } return 0; }
-    function getWeekOfMonth(date) { if (!date || isNaN(date.getTime())) return null; const dayOfMonth = date.getUTCDate(); if (dayOfMonth <= 7) return 1; if (dayOfMonth <= 14) return 2; if (dayOfMonth <= 21) return 3; if (dayOfMonth <= 28) return 4; return 5; }
-    // --- End Utility Functions ---
+      // --- State Variables ---
+      let headersReports = [], sheetRowsReports = [];
+      let headersTable = [], sheetRowsTable = [];
+      let isLoaded = false, isFetching = false;
+      let weeklyChartInstance = null;
+      let dueListChartInstance = null;
 
-    // --- Data Fetching Function ---
-    async function fetchSheetData(baseUrl) { try { const response = await fetch(`${baseUrl}&_=${Date.now()}`); if (!response.ok) { throw new Error(`Erro HTTP ${response.status} ao buscar dados de ${baseUrl}`); } const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { console.error("Texto recebido inesperado:", text); throw new Error('Formato de resposta inválido da API do Google Sheets.'); } return JSON.parse(text.substring(47, text.length - 2)); } catch (error) { console.error(`Falha ao buscar ou processar dados de ${baseUrl}:`, error); throw error; } }
-    // --- End Data Fetching Function ---
+      // --- DOM Elements ---
+      const $loader = document.getElementById('loader');
+      const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
+      const $lastUpdate = document.getElementById('last-update');
+      const $grandTotalHeader = document.getElementById('grand-total-header');
+      const $manualRefreshBtn = document.getElementById('manual-refresh');
+      const $refreshIcon = $manualRefreshBtn.querySelector('.refresh-icon');
+      const $refreshBtnText = $manualRefreshBtn.querySelector('span');
+      const $chartContainer = document.getElementById('chart-container');
+      const $chartCanvas = document.getElementById('weeklyPaymentsChart');
+      const $chartErrorMsg = document.getElementById('chart-error-message');
+      const $dueListContainer = document.getElementById('due-list-container');
+      const $dueListTotalAll = document.getElementById('due-list-total-all');
+      const $dueListItems = document.getElementById('due-list-items');
+      const $dueListErrorMsg = document.getElementById('due-list-error-message');
+      const $dueListLoadingMsg = document.getElementById('due-list-loading-message');
+      const $viewToggleReportsBtn = document.getElementById('view-toggle-reports');
+      const $viewToggleChartBtn = document.getElementById('view-toggle-chart');
+      const $viewToggleDueListBtn = document.getElementById('view-toggle-due-list');
+      const $dueListCurrentDate = document.getElementById('due-list-current-date');
+      const $dueListChartWrapper = document.getElementById('due-list-chart-wrapper');
+      const $dueListChartCanvas = document.getElementById('dueListChart');
+      const $dueListChartError = document.getElementById('due-list-chart-error');
 
-    // --- Main Data Loading and Processing Function ---
-    async function loadData() {
-        if (isFetching) return;
-        isFetching = true;
-        if (!isLoaded) $loader.classList.remove('hidden');
-        $manualRefreshBtn.disabled = true;
-        $refreshIcon.classList.add('spinning');
-        $refreshBtnText.textContent = 'Atualizando...';
-        $dueListLoadingMsg?.classList.remove('hidden');
-        $dueListErrorMsg?.classList.add('hidden');
-        $chartErrorMsg.classList.add('hidden');
-        $dueListChartError?.classList.add('hidden'); // *** ADDED: Hide chart error ***
+      Chart.register(ChartDataLabels);
 
-        let reportDataSuccess = false;
-        let tableDataSuccess = false;
+      // --- Utility Functions ---
+      const padZero = num => num.toString().padStart(2, '0');
+      const formatDateBR = date => { if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`; };
+      const formatMonthYearLabel = date => {
+          if (!date || isNaN(date.getTime())) return 'Inválido';
+          const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+          return `${monthNames[date.getUTCMonth()]}/${date.getUTCFullYear()}`;
+      }
+      function parseDateValue(value) { if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const utcDays = Math.floor(value - 25569); const date = new Date(0); date.setUTCDate(date.getUTCDate() + utcDays); return date; } if (typeof value !== 'string') return null; let match; match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (match) return new Date(Date.UTC(+match[1], +match[2], +match[3])); match = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (match) return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3])); match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (match) { let year = +match[3]; if (year < 100) year += 2000; return new Date(Date.UTC(year, +match[2] - 1, +match[1])); } const parsed = new Date(value); if (!isNaN(parsed.getTime())) { return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())); } return null; }
+      const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
+      const formatCurrencyShort = value => { if (typeof value !== 'number' || isNaN(value)) return '–'; if (value === 0) return 'R$0'; if (Math.abs(value) < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0}); if (Math.abs(value) < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k'; return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M'; }
+      function getNumericValue(cellValue) { if (typeof cellValue === 'number') return cellValue; if (typeof cellValue === 'string') { const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); const num = parseFloat(cleanedString); return isNaN(num) ? 0 : num; } return 0; }
+      function getWeekOfMonth(date) { if (!date || isNaN(date.getTime())) return null; const dayOfMonth = date.getUTCDate(); if (dayOfMonth <= 7) return 1; if (dayOfMonth <= 14) return 2; if (dayOfMonth <= 21) return 3; if (dayOfMonth <= 28) return 4; return 5; }
+      // --- End Utility Functions ---
 
-        try {
-            const [jsonDataReports, jsonDataTable] = await Promise.all([
-                fetchSheetData(baseURLReports).catch(e => { console.error("Erro ao buscar dados dos relatórios (Planilha 1):", e); return null; }),
-                fetchSheetData(baseURLTable).catch(e => { console.error("Erro ao buscar dados da lista de vencimentos (Planilha 2):", e); return null; })
-            ]);
+      // --- Data Fetching Function ---
+      async function fetchSheetData(baseUrl) { try { const response = await fetch(`${baseUrl}&_=${Date.now()}`); if (!response.ok) { throw new Error(`Erro HTTP ${response.status} ao buscar dados de ${baseUrl}`); } const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { console.error("Texto recebido inesperado:", text); throw new Error('Formato de resposta inválido da API do Google Sheets.'); } return JSON.parse(text.substring(47, text.length - 2)); } catch (error) { console.error(`Falha ao buscar ou processar dados de ${baseUrl}:`, error); throw error; } }
+      // --- End Data Fetching Function ---
 
-            // Process Report/Chart Data (Sheet 1) - No changes
-            if (jsonDataReports && jsonDataReports.table && jsonDataReports.table.cols && jsonDataReports.table.rows) {
-                headersReports = jsonDataReports.table.cols.map(col => col.label || `Col${col.id}`);
-                sheetRowsReports = jsonDataReports.table.rows.map(row => { const cells = Array(headersReports.length).fill(null); if (row && row.c) { row.c.forEach((cell, index) => { if (index < headersReports.length) { cells[index] = cell?.v ?? null; } }); } return cells; });
-                buildReportCards();
-                prepareAndRenderWeeklyChart();
-                updateHeaderInfo();
-                reportDataSuccess = true;
-            } else {
-                console.error("Dados dos relatórios (Planilha 1) incompletos ou mal formatados.");
-                $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro ao carregar os dados dos relatórios.</p>';
-                if (weeklyChartInstance) weeklyChartInstance.destroy(); weeklyChartInstance = null;
-                $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico semanal.'; $chartErrorMsg.classList.remove('hidden');
-                $grandTotalHeader.textContent = 'Total Geral: Erro';
-            }
+      // --- Main Data Loading and Processing Function ---
+      async function loadData() {
+          if (isFetching) return;
+          isFetching = true;
+          if (!isLoaded) $loader.classList.remove('hidden');
+          $manualRefreshBtn.disabled = true;
+          $refreshIcon.classList.add('spinning');
+          $refreshBtnText.textContent = 'Atualizando...';
+          $dueListLoadingMsg?.classList.remove('hidden');
+          $dueListErrorMsg?.classList.add('hidden');
+          $chartErrorMsg.classList.add('hidden');
+          $dueListChartError?.classList.add('hidden');
 
-            // Process Data for Due List View (Sheet 2) - No changes
-            if (jsonDataTable && jsonDataTable.table && jsonDataTable.table.cols && jsonDataTable.table.rows) {
-                headersTable = jsonDataTable.table.cols.map(col => col.label || `Col${col.id}`);
-                sheetRowsTable = jsonDataTable.table.rows.map(row => { const cells = Array(headersTable.length).fill(null); if (row && row.c) { row.c.forEach((cell, index) => { if (index < headersTable.length) { cells[index] = cell?.v ?? null; } }); } return cells; });
-                renderDueListView(); // This will now also trigger chart rendering for this view
-                tableDataSuccess = true;
-            } else {
-                console.error("Dados da Lista de Vencimentos (Planilha 2) incompletos ou mal formatados.");
-                renderDueListError("Erro ao carregar os dados para a lista de vencimentos.");
-                // *** ADDED: Hide chart wrapper on error ***
-                $dueListChartWrapper.classList.add('hidden');
-                $dueListChartError.textContent = 'Dados da Planilha 2 não puderam ser carregados para gerar o gráfico.';
-                $dueListChartError.classList.remove('hidden');
-                 if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+          let reportDataSuccess = false;
+          let tableDataSuccess = false;
 
-            }
+          try {
+              const [jsonDataReports, jsonDataTable] = await Promise.all([
+                  fetchSheetData(baseURLReports).catch(e => { console.error("Erro ao buscar dados dos relatórios (Fonte 1):", e); return null; }),
+                  fetchSheetData(baseURLTable).catch(e => { console.error("Erro ao buscar dados da lista de vencimentos (Fonte 2):", e); return null; })
+              ]);
 
-            // Update timestamp
-            if (reportDataSuccess || tableDataSuccess) { $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`; isLoaded = true; }
+              // Process Report/Chart Data (Source 1)
+              if (jsonDataReports && jsonDataReports.table && jsonDataReports.table.cols && jsonDataReports.table.rows) {
+                  headersReports = jsonDataReports.table.cols.map(col => col.label || `Col${col.id}`);
+                  sheetRowsReports = jsonDataReports.table.rows.map(row => { const cells = Array(headersReports.length).fill(null); if (row && row.c) { row.c.forEach((cell, index) => { if (index < headersReports.length) { cells[index] = cell?.v ?? null; } }); } return cells; });
+                  prepareAndRenderWeeklyChart(); // Prepare chart data from source 1
+                  updateHeaderInfo(); // Update header total from source 1
+                  reportDataSuccess = true;
+              } else {
+                  console.error("Dados da Fonte 1 incompletos ou mal formatados.");
+                  // Don't immediately wipe cards, wait until after source 2 is processed
+                  headersReports = [];
+                  sheetRowsReports = [];
+                  if (weeklyChartInstance) weeklyChartInstance.destroy(); weeklyChartInstance = null;
+                  $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico semanal.'; $chartErrorMsg.classList.remove('hidden');
+                  $grandTotalHeader.textContent = 'Total Geral: Erro';
+              }
 
-        } catch (error) {
-            console.error("Erro geral ao carregar dados:", error);
-            if (!reportDataSuccess) { $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro geral ao carregar relatórios.</p>'; $chartErrorMsg.textContent = 'Erro geral ao carregar gráfico semanal.'; $chartErrorMsg.classList.remove('hidden'); $grandTotalHeader.textContent = 'Total Geral: Erro'; }
-            if (!tableDataSuccess) {
-                 renderDueListError("Erro geral ao carregar lista de vencimentos.");
-                 // *** ADDED: Hide chart wrapper on general error ***
-                 $dueListChartWrapper?.classList.add('hidden');
-                 $dueListChartError.textContent = 'Erro geral ao carregar dados para o gráfico mensal.';
-                 $dueListChartError?.classList.remove('hidden');
-                 if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-            }
-        } finally {
-            isFetching = false; $loader.classList.add('hidden'); $manualRefreshBtn.disabled = false; $refreshIcon.classList.remove('spinning'); $refreshBtnText.textContent = 'Atualizar'; $dueListLoadingMsg?.classList.add('hidden');
-        }
-    }
-    // --- End Data Loading ---
+              // Process Data for Due List View (Source 2)
+              if (jsonDataTable && jsonDataTable.table && jsonDataTable.table.cols && jsonDataTable.table.rows) {
+                  headersTable = jsonDataTable.table.cols.map(col => col.label || `Col${col.id}`);
+                  sheetRowsTable = jsonDataTable.table.rows.map(row => { const cells = Array(headersTable.length).fill(null); if (row && row.c) { row.c.forEach((cell, index) => { if (index < headersTable.length) { cells[index] = cell?.v ?? null; } }); } return cells; });
+                  tableDataSuccess = true;
+              } else {
+                  console.error("Dados da Lista de Vencimentos (Fonte 2) incompletos ou mal formatados.");
+                  headersTable = [];
+                  sheetRowsTable = [];
+                  // Error handling for the Due List view itself happens later if needed
+              }
 
-    // --- Rendering Functions ---
+               // *** Now build the report cards using available data ***
+               buildReportCards(); // Builds cards using whatever data loaded successfully
 
-    // buildReportCards() - No changes
-    function buildReportCards() { $reportCardsWrapper.innerHTML = ''; const findIndex = (regex) => headersReports.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex); const vencIndex = findIndex(vencRegex); const pagtoIndex = findIndex(pagtoRegex); const statusIndex = findIndex(statusRegex); if (valorIndex === -1) { $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro: Coluna de Valor não encontrada (Planilha 1).</p>'; return; } if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Planilha 1).'); if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Planilha 1).'); if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Planilha 1).'); let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0; let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0; const today = new Date(); today.setUTCHours(0, 0, 0, 0); sheetRowsReports.forEach(row => { const valor = getNumericValue(row[valorIndex]); if (isNaN(valor)) return; totalGeral += valor; countTotal++; const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null; const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null; const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : ''; let isPago = false, isPendente = false, isVencido = false; if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; } else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; } else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; } else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; } else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; } else { isPendente = true; } if (isPago) { totalPago += valor; countPago++; } else if (isVencido) { totalVencido += valor; countVencido++; } else { totalPendente += valor; countPendente++; } }); const reportData = [ { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' }, { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' }, { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' }, { type: 'total', title: "Total de Lançamentos", value: countTotal, detail: ` `, valueClass: 'count', iconId: 'icon-list-bullet'} ]; reportData.forEach(data => { const card = document.createElement('div'); card.className = 'report-card'; const formattedValue = data.valueClass.includes('count') ? data.value.toLocaleString('pt-BR') : formatCurrency(data.value); const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); iconSVG.classList.add('icon', data.type); const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use'); iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`); iconSVG.appendChild(iconUse); card.appendChild(iconSVG); const contentDiv = document.createElement('div'); contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`; card.appendChild(contentDiv); $reportCardsWrapper.appendChild(card); }); }
 
-    // prepareAndRenderWeeklyChart() - No changes
-    function prepareAndRenderWeeklyChart() { $chartErrorMsg.classList.add('hidden'); const findIndex = (regex) => headersReports.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex); const pagtoIndex = findIndex(pagtoRegex); if (valorIndex === -1 || pagtoIndex === -1) { $chartErrorMsg.textContent = 'Coluna de Valor e/ou Data de Pagamento não encontrada(s) na Planilha 1.'; $chartErrorMsg.classList.remove('hidden'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); weeklyChartInstance = null; } const ctx = $chartCanvas.getContext('2d'); ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height); return; } const now = new Date(); const currentMonth = now.getUTCMonth(); const currentYear = now.getUTCFullYear(); const weeklyTotals = [0, 0, 0, 0, 0]; const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"]; sheetRowsReports.forEach(row => { const dataPagtoRaw = row[pagtoIndex]; const dataPagto = parseDateValue(dataPagtoRaw); if (dataPagto && !isNaN(dataPagto.getTime()) && dataPagto.getUTCMonth() === currentMonth && dataPagto.getUTCFullYear() === currentYear) { const valor = getNumericValue(row[valorIndex]); if(isNaN(valor)) return; const weekNumber = getWeekOfMonth(dataPagto); if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; } } }); renderWeeklyChart(weekLabels, weeklyTotals); }
+               // Render the due list view IF it's the active view AND source 2 data loaded
+               if (tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) {
+                   renderDueListView();
+               } else if (!tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) {
+                   // Handle error display for due list view if it's active but data failed
+                   renderDueListError("Erro ao carregar os dados para a lista de vencimentos.");
+                   $dueListChartWrapper?.classList.add('hidden');
+                   if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+               }
 
-    // renderWeeklyChart() - No changes
-    function renderWeeklyChart(labels, data) { const ctx = $chartCanvas.getContext('2d'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' }; weeklyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Valor Pago', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 6, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30 } }, scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 11 } }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 10, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } }, interaction: { mode: 'index', intersect: false, }, } }); }
 
-    // *** MODIFIED: Function to render the Due List view (now includes current date and calls chart prep) ***
-    function renderDueListView() {
-        $dueListItems.innerHTML = ''; // Clear previous list/messages
-        $dueListErrorMsg.classList.add('hidden');
-        $dueListLoadingMsg.classList.add('hidden'); // Hide loading message now
-        $dueListChartError?.classList.add('hidden'); // Hide chart error
+              // Update timestamp
+              if (reportDataSuccess || tableDataSuccess) { $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`; isLoaded = true; }
 
-        // *** ADDED: Display current date ***
-        $dueListCurrentDate.textContent = `Data de Hoje: ${formatDateBR(new Date())}`;
+          } catch (error) {
+              console.error("Erro geral ao carregar dados:", error);
+              // Attempt to build cards even on error, might show partial data or errors
+              buildReportCards();
+              if (!reportDataSuccess) { $chartErrorMsg.textContent = 'Erro geral ao carregar gráfico semanal.'; $chartErrorMsg.classList.remove('hidden'); $grandTotalHeader.textContent = 'Total Geral: Erro'; }
+              if (!tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) {
+                   renderDueListError("Erro geral ao carregar lista de vencimentos.");
+                   $dueListChartWrapper?.classList.add('hidden');
+                   if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+              }
+          } finally {
+              isFetching = false; $loader.classList.add('hidden'); $manualRefreshBtn.disabled = false; $refreshIcon.classList.remove('spinning'); $refreshBtnText.textContent = 'Atualizar'; $dueListLoadingMsg?.classList.add('hidden');
+          }
+      }
+      // --- End Data Loading ---
 
-        // Initialize total display
-        $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(0)}`;
+      // --- Rendering Functions ---
 
-        // Validate that Sheet 2 data is loaded
-        if (!headersTable || headersTable.length === 0 || !sheetRowsTable) {
-            renderDueListError("Dados da Planilha 2 (Lista Vencimentos) não carregados ou inválidos.");
-            $dueListChartWrapper?.classList.add('hidden'); // Hide chart area if list data fails
-            return;
-        }
+      // *** MODIFIED: buildReportCards() with updated titles, detail, and highlight class logic ***
+      function buildReportCards() {
+          $reportCardsWrapper.innerHTML = ''; // Clear existing cards
 
-        // Find required columns
-        const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
-        const vencIndex = findIndex(dueListVencRegex, headersTable);
-        const valorIndex = findIndex(dueListValorRegex, headersTable);
-        const descIndex = findIndex(dueListDescRegex, headersTable);
+          // --- Calculation from Source 1 (Reports Data) ---
+          const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
+          const valorIndex = findIndex(valorRegex, headersReports);
+          const vencIndex = findIndex(vencRegex, headersReports);
+          const pagtoIndex = findIndex(pagtoRegex, headersReports);
+          const statusIndex = findIndex(statusRegex, headersReports);
 
-        // Validate required columns
-        if (vencIndex === -1 || valorIndex === -1) {
-            renderDueListError("Erro: Colunas 'Vencimento' ou 'Valor' não encontradas na Planilha 2.");
-            // *** ADDED: Hide chart if columns missing ***
-            $dueListChartWrapper?.classList.add('hidden');
-            $dueListChartError.textContent = 'Não foi possível gerar gráfico: Colunas Vencimento/Valor não encontradas.';
-            $dueListChartError.classList.remove('hidden');
-            if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-            return;
-        }
-         if (descIndex === -1) { console.warn("Coluna de Descrição não encontrada na Planilha 2."); }
+          let hasSource1Error = false;
+          if (valorIndex === -1 && headersReports.length > 0) {
+             console.error("Erro: Coluna de Valor não encontrada (Fonte 1).");
+             hasSource1Error = true;
+          } else if (headersReports.length > 0) {
+             if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Fonte 1).');
+             if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Fonte 1).');
+             if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Fonte 1).');
+          }
 
-        // Process items
-        let totalAllDueValue = 0;
-        const allDueItems = [];
+          let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0;
+          let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0;
+          const today = new Date(); today.setUTCHours(0, 0, 0, 0);
 
-        sheetRowsTable.forEach((row, rowIndex) => {
-            const vencValueRaw = row[vencIndex];
-            const vencDate = parseDateValue(vencValueRaw);
+          if (valorIndex !== -1) {
+              sheetRowsReports.forEach(row => {
+                  const valor = getNumericValue(row[valorIndex]);
+                  if (isNaN(valor)) return;
+                  totalGeral += valor; countTotal++;
+                  const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null;
+                  const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null;
+                  const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
+                  let isPago = false, isPendente = false, isVencido = false;
+                  if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; }
+                  else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; }
+                  else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; }
+                  else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; }
+                  else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; }
+                  else { isPendente = true; }
 
-            if (vencDate && !isNaN(vencDate.getTime())) {
-                const valor = getNumericValue(row[valorIndex]);
-                if (isNaN(valor)) return;
+                  if (isPago) { totalPago += valor; countPago++; }
+                  else if (isVencido) { totalVencido += valor; countVencido++; }
+                  else { totalPendente += valor; countPendente++; }
+              });
+          } else if (headersReports.length > 0){
+              countTotal = sheetRowsReports.length;
+          }
 
-                const description = descIndex !== -1 ? (row[descIndex] || 'Item sem descrição') : `Item Linha ${rowIndex + 1}`;
 
-                allDueItems.push({ description: description, value: valor, dueDate: vencDate });
-                totalAllDueValue += valor; // Summing all valid items
+          // --- Calculation from Source 2 (Due List Data) ---
+          let totalDueListSheet2 = 0;
+          let countDueListSheet2 = 0;
+          let hasSource2Error = false;
+          const dueListValorIndex = findIndex(dueListValorRegex, headersTable);
+          const dueListVencIndex = findIndex(dueListVencRegex, headersTable);
 
-            } else if (vencValueRaw) {
-                 console.warn(`Não foi possível parsear a data na linha ${rowIndex + 1} da Planilha 2:`, vencValueRaw);
-            }
-        });
+          if (dueListValorIndex !== -1 && dueListVencIndex !== -1 && sheetRowsTable && sheetRowsTable.length > 0) {
+              sheetRowsTable.forEach(row => {
+                  const vencValueRaw = row[dueListVencIndex];
+                  const vencDate = parseDateValue(vencValueRaw);
+                  if (vencDate && !isNaN(vencDate.getTime())) {
+                      const valor = getNumericValue(row[dueListValorIndex]);
+                      if (!isNaN(valor)) {
+                          totalDueListSheet2 += valor;
+                          countDueListSheet2++;
+                      }
+                  }
+              });
+          } else {
+              if (!sheetRowsTable || sheetRowsTable.length === 0) {
+                  console.log("Fonte 2 (Lista Vencimentos) vazia ou não carregada para cálculo do card.");
+                   // Don't set error flag if it's just empty
+              } else if (dueListValorIndex === -1 || dueListVencIndex === -1) {
+                  console.warn("Coluna de Valor ou Vencimento não encontrada na Fonte 2 para cálculo do card.");
+                  hasSource2Error = true; // Error if columns missing but rows exist
+              }
+          }
 
-        // Sort the list by due date
-        allDueItems.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
+          // --- Get Current Date for Highlighted Card Detail ---
+          const currentDateFormatted = formatDateBR(new Date());
 
-        // Display the total for ALL listed items
-        $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(totalAllDueValue)}`;
 
-        // Display the list
-        if (allDueItems.length === 0) {
-            $dueListItems.innerHTML = '<p class="no-items-message">Nenhum lançamento com data de vencimento encontrado na Planilha 2.</p>';
-             // *** ADDED: Hide chart if no items ***
-            $dueListChartWrapper?.classList.add('hidden');
-            if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-        } else {
-            const ul = document.createElement('ul');
-            allDueItems.forEach(item => {
-                const li = document.createElement('li');
-                const formattedDueDate = formatDateBR(item.dueDate);
-                li.innerHTML = `
-                    <div class="item-info">
-                       <span class="item-description" title="${item.description}">${item.description}</span>
-                       <span class="item-due-date">Venc: ${formattedDueDate}</span>
-                    </div>
-                    <span class="item-value">${formatCurrency(item.value)}</span>
-                `;
-                ul.appendChild(li);
-            });
-            $dueListItems.appendChild(ul);
+          // --- Prepare Card Data (Revised Titles and Detail) ---
+          const reportData = [
+              // Highlighted Card First (using type for styling and class below)
+              {
+                  type: 'due-total-highlight', // Specific type for CSS targeting
+                  title: "Total Vencimentos",
+                  value: totalDueListSheet2,
+                  // UPDATED detail: Include count and current date
+                  detail: `${countDueListSheet2} lançamentos • Ref: ${currentDateFormatted}`,
+                  valueClass: '', // Standard value class
+                  iconId: 'icon-list-bullet' // Or icon-calendar-days if you add it
+              },
 
-            // *** ADDED: Prepare and render the monthly chart ***
-            prepareAndRenderDueListChart(allDueItems);
-        }
-    }
+              // Cards from Source 1
+              { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' },
+              { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' },
+              { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' },
+              { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' },
 
-    // *** NEW: Function to prepare data for the Due List's monthly chart ***
-    function prepareAndRenderDueListChart(items) {
-        if (!items || items.length === 0) {
-             $dueListChartWrapper?.classList.add('hidden'); // Hide if no data
-             if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-             return;
-        }
 
-        try {
-            const monthlyTotals = {}; // { 'YYYY-MM': totalValue }
+              // Count Cards from Source 1
+              { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' },
+              { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' },
+              { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' },
+          ];
 
-            items.forEach(item => {
-                if (!item.dueDate || isNaN(item.dueDate.getTime())) return;
-
-                const year = item.dueDate.getUTCFullYear();
-                const month = item.dueDate.getUTCMonth(); // 0-indexed
-                const monthYearKey = `${year}-${padZero(month)}`; // Key like '2025-04'
-
-                if (!monthlyTotals[monthYearKey]) {
-                    monthlyTotals[monthYearKey] = 0;
+          // --- Build HTML Cards (Adding highlight class conditionally) ---
+          reportData.forEach(data => {
+              // Skip rendering cards from source 1 if its value column was missing
+               if (hasSource1Error && ['total', 'paid', 'pending', 'overdue'].includes(data.type) && !data.valueClass.includes('count') && data.type !== 'due-total-highlight') {
+                  return; // Don't render value cards if source 1 value is missing
+               }
+               // Skip rendering count cards if source 1 value column was missing (counts would be unreliable)
+               if (hasSource1Error && data.valueClass.includes('count') && data.type !== 'due-total-highlight') {
+                  return;
+               }
+                // Skip rendering the highlighted card if source 2 had errors
+                if (hasSource2Error && data.type === 'due-total-highlight') {
+                    return;
                 }
-                monthlyTotals[monthYearKey] += item.value;
-            });
 
-            // Sort keys chronologically (e.g., '2025-04', '2025-05')
-            const sortedKeys = Object.keys(monthlyTotals).sort();
 
-            // Create arrays for chart labels and data
-            const chartLabels = sortedKeys.map(key => {
-                const [year, month] = key.split('-');
-                // Create a temporary date just for formatting the label
-                const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1));
-                return formatMonthYearLabel(tempDate); // e.g., "Mai/2025"
-            });
-            const chartData = sortedKeys.map(key => monthlyTotals[key]);
+              const card = document.createElement('div');
+              card.className = 'report-card'; // Base class
 
-            // Render the chart
-            renderDueListChart(chartLabels, chartData);
-            $dueListChartWrapper?.classList.remove('hidden'); // Show chart wrapper
-            $dueListChartError?.classList.add('hidden'); // Ensure error is hidden
+              // Add highlight class if it's the special card type
+              if (data.type === 'due-total-highlight') {
+                  card.classList.add('highlighted-card');
+              }
 
-        } catch (error) {
-             console.error("Erro ao preparar dados para o gráfico mensal:", error);
-             $dueListChartWrapper?.classList.add('hidden');
-             $dueListChartError.textContent = 'Erro interno ao processar dados para o gráfico mensal.';
-             $dueListChartError?.classList.remove('hidden');
-             if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-        }
-    }
+              const formattedValue = data.valueClass.includes('count') ? data.value.toLocaleString('pt-BR') : formatCurrency(data.value);
 
-    // *** NEW: Function to render the Due List's monthly chart ***
-    function renderDueListChart(labels, data) {
-        const ctx = $dueListChartCanvas?.getContext('2d');
-        if (!ctx) return; // Exit if canvas context not available
+              const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+              // Use type class (e.g., 'paid', 'pending', 'total', 'due-total-highlight') for potential icon styling
+              iconSVG.classList.add('icon', data.type);
+              const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+              iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`);
+              iconSVG.appendChild(iconUse);
+              card.appendChild(iconSVG);
 
-        if (dueListChartInstance) {
-            dueListChartInstance.destroy(); // Destroy previous instance
-        }
+              const contentDiv = document.createElement('div');
+              contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`;
+              card.appendChild(contentDiv);
+              $reportCardsWrapper.appendChild(card);
+          });
 
-        const chartColors = { /* Reusing same colors as weekly chart */
-            backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0'
-        };
+           // Display general error if no cards were rendered at all
+           if ($reportCardsWrapper.children.length === 0) {
+                let errorMsg = "Não foi possível carregar dados para os relatórios.";
+                if(hasSource1Error && hasSource2Error) errorMsg = "Erro ao carregar dados das Fontes 1 e 2.";
+                else if (hasSource1Error) errorMsg = "Erro ao carregar dados da Fonte 1.";
+                else if (hasSource2Error) errorMsg = "Erro ao carregar dados da Fonte 2.";
+                $reportCardsWrapper.innerHTML = `<p class="text-center text-red-500 col-span-full font-medium p-4">${errorMsg}</p>`;
+           }
+      }
 
-        dueListChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Total Vencimento',
-                    data: data,
-                    backgroundColor: chartColors.backgroundColor,
-                    borderColor: chartColors.borderColor,
-                    borderWidth: 1,
-                    hoverBackgroundColor: chartColors.hoverBackgroundColor,
-                    hoverBorderColor: chartColors.hoverBorderColor,
-                    borderRadius: 4, // Slightly smaller radius maybe
-                    borderSkipped: false,
-                    barPercentage: 0.6,
-                    categoryPercentage: 0.7
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: { top: 30 } },
-                scales: {
-                    y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } },
-                    x: { ticks: { color: chartColors.textColor, font: { size: 10 } }, grid: { display: false }, border: { display: false } } // Smaller font for x-axis
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } },
-                    datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 9, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } // Smaller font for labels
-                },
-                interaction: { mode: 'index', intersect: false },
-            }
-        });
-    }
 
-    // Function to display errors specifically in the Due List view
-     function renderDueListError(message) {
-         $dueListItems.innerHTML = '';
-         $dueListErrorMsg.textContent = message;
-         $dueListErrorMsg.classList.remove('hidden');
-         $dueListTotalAll.textContent = 'Erro ao calcular total geral'; // Use updated ID
-         // *** ADDED: Hide chart on list error ***
-         $dueListChartWrapper?.classList.add('hidden');
-         if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-     }
+      // prepareAndRenderWeeklyChart() - No changes
+      function prepareAndRenderWeeklyChart() { $chartErrorMsg.classList.add('hidden'); const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); const pagtoIndex = findIndex(pagtoRegex, headersReports); if (valorIndex === -1 || pagtoIndex === -1 || !sheetRowsReports || sheetRowsReports.length === 0) { $chartErrorMsg.textContent = 'Dados insuficientes ou colunas não encontradas para gerar o gráfico semanal.'; $chartErrorMsg.classList.remove('hidden'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); weeklyChartInstance = null; } const ctx = $chartCanvas.getContext('2d'); if(ctx) ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height); return; } const now = new Date(); const currentMonth = now.getUTCMonth(); const currentYear = now.getUTCFullYear(); const weeklyTotals = [0, 0, 0, 0, 0]; const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"]; sheetRowsReports.forEach(row => { const dataPagtoRaw = row[pagtoIndex]; const dataPagto = parseDateValue(dataPagtoRaw); if (dataPagto && !isNaN(dataPagto.getTime()) && dataPagto.getUTCMonth() === currentMonth && dataPagto.getUTCFullYear() === currentYear) { const valor = getNumericValue(row[valorIndex]); if(isNaN(valor)) return; const weekNumber = getWeekOfMonth(dataPagto); if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; } } }); renderWeeklyChart(weekLabels, weeklyTotals); }
 
-    // updateHeaderInfo() - No changes
-    function updateHeaderInfo() { const findIndex = (regex) => headersReports.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex); if (valorIndex === -1 || !sheetRowsReports) { $grandTotalHeader.textContent = 'Total Geral: Erro'; return; } if (sheetRowsReports.length > 0) { const grandTotal = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0); $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`; } else { $grandTotalHeader.textContent = 'Total Geral: R$ 0,00'; } }
-    // --- End Rendering Functions ---
+      // renderWeeklyChart() - No changes
+      function renderWeeklyChart(labels, data) { const ctx = $chartCanvas.getContext('2d'); if(!ctx) return; if (weeklyChartInstance) { weeklyChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' }; weeklyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Valor Pago', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 6, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30 } }, scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 11 } }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 10, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } }, interaction: { mode: 'index', intersect: false, }, } }); }
 
-    // --- View Switching Logic ---
-    function switchView(viewToShow) {
-        $reportCardsWrapper.classList.add('hidden');
-        $chartContainer.classList.add('hidden');
-        $dueListContainer.classList.add('hidden');
-        $viewToggleReportsBtn.classList.remove('active');
-        $viewToggleChartBtn.classList.remove('active');
-        $viewToggleDueListBtn.classList.remove('active');
+      // renderDueListView() - No changes
+      function renderDueListView() {
+          $dueListItems.innerHTML = ''; // Clear previous list/messages
+          $dueListErrorMsg.classList.add('hidden');
+          $dueListLoadingMsg.classList.add('hidden'); // Hide loading message now
+          $dueListChartError?.classList.add('hidden'); // Hide chart error
 
-        if (viewToShow === 'reports') {
-            $reportCardsWrapper.classList.remove('hidden');
-            $viewToggleReportsBtn.classList.add('active');
-        } else if (viewToShow === 'chart') {
-            $chartContainer.classList.remove('hidden');
-            $viewToggleChartBtn.classList.add('active');
-            if (weeklyChartInstance) { setTimeout(() => weeklyChartInstance.resize(), 50); }
-        } else if (viewToShow === 'dueList') {
-            $dueListContainer.classList.remove('hidden');
-            $viewToggleDueListBtn.classList.add('active');
-            // *** ADDED: Resize due list chart on view switch ***
-            if (dueListChartInstance) { setTimeout(() => dueListChartInstance.resize(), 50); }
-        }
-    }
-    // --- End View Switching ---
+          // Display current date
+          $dueListCurrentDate.textContent = `Data de Hoje: ${formatDateBR(new Date())}`;
 
-    // --- Event Listeners (No changes) ---
-    $manualRefreshBtn.onclick = loadData;
-    $viewToggleReportsBtn.onclick = () => switchView('reports');
-    $viewToggleChartBtn.onclick = () => switchView('chart');
-    $viewToggleDueListBtn.onclick = () => switchView('dueList');
-    // --- End Event Listeners ---
+          // Initialize total display
+          $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(0)}`;
 
-    // --- Initialization (No changes) ---
-    switchView('reports');
-    loadData();
-    setInterval(loadData, REFRESH_INTERVAL);
-    // --- End Initialization ---
+          // Validate that Source 2 data is loaded
+          if (!headersTable || headersTable.length === 0 || !sheetRowsTable) {
+              renderDueListError("Dados da Lista de Vencimentos (Fonte 2) não carregados ou inválidos.");
+              $dueListChartWrapper?.classList.add('hidden'); // Hide chart area if list data fails
+              return;
+          }
 
-  </script>
-  </body>
+          // Find required columns
+          const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
+          const vencIndex = findIndex(dueListVencRegex, headersTable);
+          const valorIndex = findIndex(dueListValorRegex, headersTable);
+          const descIndex = findIndex(dueListDescRegex, headersTable);
+
+          // Validate required columns
+          if (vencIndex === -1 || valorIndex === -1) {
+              renderDueListError("Erro: Colunas 'Vencimento' ou 'Valor' não encontradas na Fonte 2.");
+              $dueListChartWrapper?.classList.add('hidden');
+              $dueListChartError.textContent = 'Não foi possível gerar gráfico: Colunas Vencimento/Valor não encontradas.';
+              $dueListChartError.classList.remove('hidden');
+              if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+              return;
+          }
+           if (descIndex === -1) { console.warn("Coluna de Descrição não encontrada na Fonte 2."); }
+
+          // Process items
+          let totalAllDueValue = 0;
+          const allDueItems = [];
+
+          sheetRowsTable.forEach((row, rowIndex) => {
+              const vencValueRaw = row[vencIndex];
+              const vencDate = parseDateValue(vencValueRaw);
+
+              if (vencDate && !isNaN(vencDate.getTime())) {
+                  const valor = getNumericValue(row[valorIndex]);
+                  if (isNaN(valor)) return;
+
+                  const description = descIndex !== -1 ? (row[descIndex] || 'Item sem descrição') : `Item Linha ${rowIndex + 1}`;
+
+                  allDueItems.push({ description: description, value: valor, dueDate: vencDate });
+                  totalAllDueValue += valor; // Summing all valid items
+
+              } else if (vencValueRaw && typeof vencValueRaw === 'string' && vencValueRaw.trim() !== '') { // Log only if there was non-empty, non-parsable data
+                   console.warn(`Não foi possível parsear a data na linha ${rowIndex + 1} da Fonte 2:`, vencValueRaw);
+              }
+          });
+
+          // Sort the list by due date
+          allDueItems.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
+
+          // Display the total for ALL listed items
+          $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(totalAllDueValue)}`;
+
+          // Display the list
+          if (allDueItems.length === 0) {
+              $dueListItems.innerHTML = '<p class="no-items-message">Nenhum lançamento com data de vencimento válido encontrado na Fonte 2.</p>';
+              $dueListChartWrapper?.classList.add('hidden');
+              if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+          } else {
+              const ul = document.createElement('ul');
+              allDueItems.forEach(item => {
+                  const li = document.createElement('li');
+                  const formattedDueDate = formatDateBR(item.dueDate);
+                  li.innerHTML = `
+                      <div class="item-info">
+                           <span class="item-description" title="${item.description}">${item.description}</span>
+                           <span class="item-due-date">Venc: ${formattedDueDate}</span>
+                      </div>
+                      <span class="item-value">${formatCurrency(item.value)}</span>
+                  `;
+                  ul.appendChild(li);
+              });
+              $dueListItems.appendChild(ul);
+
+              // Prepare and render the monthly chart
+              prepareAndRenderDueListChart(allDueItems);
+          }
+      }
+
+      // prepareAndRenderDueListChart() - No changes
+      function prepareAndRenderDueListChart(items) {
+          if (!items || items.length === 0) {
+               $dueListChartWrapper?.classList.add('hidden'); // Hide if no data
+               if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+               return;
+          }
+
+          try {
+              const monthlyTotals = {}; // { 'YYYY-MM': totalValue }
+
+              items.forEach(item => {
+                  if (!item.dueDate || isNaN(item.dueDate.getTime())) return;
+
+                  const year = item.dueDate.getUTCFullYear();
+                  const month = item.dueDate.getUTCMonth(); // 0-indexed
+                  const monthYearKey = `${year}-${padZero(month)}`; // Key like '2025-04'
+
+                  if (!monthlyTotals[monthYearKey]) {
+                      monthlyTotals[monthYearKey] = 0;
+                  }
+                  monthlyTotals[monthYearKey] += item.value;
+              });
+
+              // Sort keys chronologically (e.g., '2025-04', '2025-05')
+              const sortedKeys = Object.keys(monthlyTotals).sort();
+
+              // Create arrays for chart labels and data
+              const chartLabels = sortedKeys.map(key => {
+                  const [year, month] = key.split('-');
+                  // Create a temporary date just for formatting the label
+                  const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1));
+                  return formatMonthYearLabel(tempDate); // e.g., "Mai/2025"
+              });
+              const chartData = sortedKeys.map(key => monthlyTotals[key]);
+
+              // Render the chart
+              renderDueListChart(chartLabels, chartData);
+              $dueListChartWrapper?.classList.remove('hidden'); // Show chart wrapper
+              $dueListChartError?.classList.add('hidden'); // Ensure error is hidden
+
+          } catch (error) {
+               console.error("Erro ao preparar dados para o gráfico mensal:", error);
+               $dueListChartWrapper?.classList.add('hidden');
+               $dueListChartError.textContent = 'Erro interno ao processar dados para o gráfico mensal.';
+               $dueListChartError?.classList.remove('hidden');
+               if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+          }
+      }
+
+      // renderDueListChart() - No changes
+      function renderDueListChart(labels, data) {
+          const ctx = $dueListChartCanvas?.getContext('2d');
+          if (!ctx) return; // Exit if canvas context not available
+
+          if (dueListChartInstance) {
+              dueListChartInstance.destroy(); // Destroy previous instance
+          }
+
+          const chartColors = { /* Reusing same colors as weekly chart */
+              backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0'
+          };
+
+          dueListChartInstance = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: 'Total Vencimento',
+                      data: data,
+                      backgroundColor: chartColors.backgroundColor,
+                      borderColor: chartColors.borderColor,
+                      borderWidth: 1,
+                      hoverBackgroundColor: chartColors.hoverBackgroundColor,
+                      hoverBorderColor: chartColors.hoverBorderColor,
+                      borderRadius: 4, // Slightly smaller radius maybe
+                      borderSkipped: false,
+                      barPercentage: 0.6,
+                      categoryPercentage: 0.7
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: { padding: { top: 30 } },
+                  scales: {
+                      y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } },
+                      x: { ticks: { color: chartColors.textColor, font: { size: 10 } }, grid: { display: false }, border: { display: false } } // Smaller font for x-axis
+                  },
+                  plugins: {
+                      legend: { display: false },
+                      tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } },
+                      datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 9, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } // Smaller font for labels
+                  },
+                  interaction: { mode: 'index', intersect: false },
+              }
+          });
+      }
+
+      // renderDueListError() - No changes
+       function renderDueListError(message) {
+          $dueListItems.innerHTML = '';
+          $dueListErrorMsg.textContent = message;
+          $dueListErrorMsg.classList.remove('hidden');
+          $dueListTotalAll.textContent = 'Erro ao calcular total';
+          $dueListChartWrapper?.classList.add('hidden');
+          if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+       }
+
+      // updateHeaderInfo() - Uses Source 1 data, title updated
+      function updateHeaderInfo() {
+         const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
+         const valorIndex = findIndex(valorRegex, headersReports);
+         // Check if source 1 data is available and value column exists
+         if (valorIndex === -1 || !sheetRowsReports || headersReports.length === 0) {
+             $grandTotalHeader.textContent = 'Total Geral: Erro';
+             return;
+         }
+         if (sheetRowsReports.length > 0) {
+             const grandTotal = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0);
+             $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`; // Simplified title
+         } else {
+             $grandTotalHeader.textContent = 'Total Geral: R$ 0,00';
+         }
+      }
+      // --- End Rendering Functions ---
+
+      // --- View Switching Logic ---
+      function switchView(viewToShow) {
+          $reportCardsWrapper.classList.add('hidden');
+          $chartContainer.classList.add('hidden');
+          $dueListContainer.classList.add('hidden');
+          $viewToggleReportsBtn.classList.remove('active');
+          $viewToggleChartBtn.classList.remove('active');
+          $viewToggleDueListBtn.classList.remove('active');
+
+          if (viewToShow === 'reports') {
+              $reportCardsWrapper.classList.remove('hidden');
+              $viewToggleReportsBtn.classList.add('active');
+              // Ensure report cards are up-to-date if data has been loaded
+              if(isLoaded) buildReportCards();
+          } else if (viewToShow === 'chart') {
+              $chartContainer.classList.remove('hidden');
+              $viewToggleChartBtn.classList.add('active');
+              // Ensure chart is rendered and resized correctly
+              if (isLoaded) prepareAndRenderWeeklyChart(); // Re-render in case data changed
+              if (weeklyChartInstance) { setTimeout(() => weeklyChartInstance?.resize(), 50); }
+          } else if (viewToShow === 'dueList') {
+              $dueListContainer.classList.remove('hidden');
+              $viewToggleDueListBtn.classList.add('active');
+              // Ensure due list view is rendered correctly if data available
+               if (isLoaded && headersTable.length > 0) { // Only render if source 2 data seems available
+                    renderDueListView();
+               } else if(isLoaded) { // If loaded but source 2 data is missing/failed
+                    renderDueListError("Dados para a lista de vencimentos não disponíveis.");
+               }
+              if (dueListChartInstance) { setTimeout(() => dueListChartInstance?.resize(), 50); }
+          }
+      }
+      // --- End View Switching ---
+
+      // --- Event Listeners ---
+      $manualRefreshBtn.onclick = loadData;
+      $viewToggleReportsBtn.onclick = () => switchView('reports');
+      $viewToggleChartBtn.onclick = () => switchView('chart');
+      $viewToggleDueListBtn.onclick = () => switchView('dueList');
+      // --- End Event Listeners ---
+
+      // --- Initialization ---
+      switchView('reports'); // Start on the reports view
+      loadData(); // Initial data load
+      setInterval(loadData, REFRESH_INTERVAL); // Set up auto-refresh
+      // --- End Initialization ---
+
+    </script>
+    </body>
 </html>
