@@ -15,6 +15,7 @@
       theme: {
         fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
         extend: {
+          // --- Configuração de Cores e Estilos Tailwind (mantida) ---
           colors: {
             surface: '#ffffff',
             primary: { 300: '#6abff9', 400: '#4dabf7', 500: '#339af0', 600: '#1b85db', 700: '#1971c2' },
@@ -34,11 +35,13 @@
             'xl': '0.75rem',
             '2xl': '1rem'
           }
+          // --- Fim Configuração Tailwind ---
         }
       }
     };
   </script>
   <style>
+    /* --- Estilos CSS Globais e Específicos (incluindo ajustes da Tela 3) --- */
     @keyframes spin { to { transform: rotate(360deg) } }
     .animate-spin { animation: spin 1s linear infinite }
     html, body { height: 100%; }
@@ -46,54 +49,36 @@
 
     main { flex-grow: 1; display: flex; flex-direction: column; }
 
-    #report-cards-wrapper, #chart-container { flex-grow: 1; overflow-y: auto; }
-    #chart-container { min-height: 450px; }
+    /* Ajuste flex/overflow para seções de conteúdo */
+    #report-cards-wrapper, #chart-container { /* Telas 1 e 2 */
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+     #today-container { /* Tela 3 (wrapper principal) */
+         display: flex;
+         flex-direction: column;
+         gap: 1.5rem; /* Espaçamento entre título/total e grid */
+         flex-grow: 1;
+     }
 
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px }
     ::-webkit-scrollbar-track { background: #e9ecef; }
     ::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px }
     ::-webkit-scrollbar-thumb:hover { background: #868e96; }
 
+    /* Focus visible */
     button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid theme('colors.primary.400'); outline-offset: 2px; }
 
-    .report-card {
-      background-color: #ffffff;
-      border: 1px solid #dee2e6;
-      border-radius: theme('borderRadius.xl');
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.3s ease-in-out;
-      box-shadow: theme('boxShadow.card');
-      min-height: 130px;
-      position: relative;
-      overflow: hidden;
-    }
-    .report-card:hover {
-      border-color: theme('colors.primary.300');
-      box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.glow');
-      transform: translateY(-4px);
-    }
-    .report-card .icon {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      opacity: 0.15;
-      width: 2.5rem;
-      height: 2.5rem;
-      color: theme('colors.slate.400');
-      transition: opacity 0.3s ease;
-    }
-     .report-card:hover .icon {
-       opacity: 0.3;
-     }
-
+    /* Report Cards (Tela 1) */
+    .report-card { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease-in-out; box-shadow: theme('boxShadow.card'); min-height: 130px; position: relative; overflow: hidden; }
+    .report-card:hover { border-color: theme('colors.primary.300'); box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.glow'); transform: translateY(-4px); }
+    .report-card .icon { position: absolute; top: 1rem; right: 1rem; opacity: 0.15; width: 2.5rem; height: 2.5rem; color: theme('colors.slate.400'); transition: opacity 0.3s ease; }
+    .report-card:hover .icon { opacity: 0.3; }
     .report-card .title { font-size: 0.875rem; font-weight: 500; color: theme('colors.slate.600'); margin-bottom: 0.5rem; }
     .report-card .value { font-size: 1.75rem; font-weight: 700; color: theme('colors.primary.500'); margin-bottom: 0.25rem; line-height: 1.2; }
     .report-card .value.count { color: theme('colors.slate.700'); font-size: 2rem; }
     .report-card .detail { font-size: 0.8rem; color: theme('colors.slate.500'); margin-top: auto; }
-
     .report-card .value.paid { color: theme('colors.green.500') !important; }
     .report-card .value.pending { color: theme('colors.yellow.500') !important; }
     .report-card .value.overdue { color: theme('colors.red.500') !important; }
@@ -102,99 +87,67 @@
     .report-card .icon.overdue { color: theme('colors.red.500'); }
     .report-card .icon.total { color: theme('colors.primary.500'); }
 
+    /* Botões de Navegação */
+    .view-toggle-button { padding: 0.6rem 1.2rem; border-radius: theme('borderRadius.lg'); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; }
+    .view-toggle-button.active { background-color: theme('colors.primary.500/20'); color: theme('colors.primary.600'); border-color: theme('colors.primary.500/40'); box-shadow: 0 1px 3px rgba(77,171,247,.1); }
+    .view-toggle-button:not(.active) { color: theme('colors.slate.600'); background-color: transparent; }
+    .view-toggle-button:not(.active):hover { background-color: theme('colors.primary.500/10'); color: theme('colors.primary.700'); }
 
-    .view-toggle-button {
-      padding: 0.6rem 1.2rem;
-      border-radius: theme('borderRadius.lg');
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1px solid transparent;
-    }
-    .view-toggle-button.active {
-      background-color: theme('colors.primary.500/20');
-      color: theme('colors.primary.600');
-      border-color: theme('colors.primary.500/40');
-      box-shadow: 0 1px 3px rgba(77,171,247,.1);
-    }
-    .view-toggle-button:not(.active) {
-      color: theme('colors.slate.600');
-      background-color: transparent;
-    }
-      .view-toggle-button:not(.active):hover {
-        background-color: theme('colors.primary.500/10');
-        color: theme('colors.primary.700');
-      }
+    /* Header */
+    header { box-shadow: 0 2px 4px rgba(0,0,0,.05); background-color: #ffffff; border-bottom: 1px solid #e9ecef; }
 
-    header {
-       box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    /* Botão Atualizar */
+    #manual-refresh { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; border-color: theme('colors.primary.500'); background-color: theme('colors.primary.500/15'); color: theme('colors.primary.600'); }
+    #manual-refresh:hover { background-color: theme('colors.primary.500/25'); }
+    #manual-refresh:disabled { opacity: 0.7; cursor: not-allowed; }
+    .refresh-icon { width: 1em; height: 1em; display: inline-block; }
+    .refresh-icon.spinning { animation: spin 1s linear infinite; }
+
+    /* Container Gráfico Semanal (Tela 2) */
+    #chart-container { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; box-shadow: theme('boxShadow.card'); }
+
+     /* Estilos da Tela 3 (Pagamentos Hoje - REFORMULADA) */
+    #today-container { background-color: transparent; border: none; box-shadow: none; padding: 0; } /* Remove estilos do wrapper principal */
+
+    #today-chart-wrapper, #today-list-wrapper { /* Wrappers do gráfico e lista */
        background-color: #ffffff;
-       border-bottom: 1px solid #e9ecef;
+       border: 1px solid #dee2e6;
+       border-radius: theme('borderRadius.xl');
+       padding: 1.5rem;
+       box-shadow: theme('boxShadow.card');
+       min-height: 400px; /* Altura mínima */
+       display: flex;
+       flex-direction: column;
+       overflow: hidden; /* Evita estouro de conteúdo */
     }
+     #today-list-wrapper { flex-grow: 1; } /* Permite que a lista cresça */
+     #today-payments-list { overflow-y: auto; flex-grow: 1; } /* Scroll interno e crescimento */
 
-    #manual-refresh {
-       transition: all 0.2s ease;
-       display: inline-flex;
-       align-items: center;
-       gap: 0.5rem;
-       border-color: theme('colors.primary.500');
-       background-color: theme('colors.primary.500/15');
-       color: theme('colors.primary.600');
-    }
-    #manual-refresh:hover {
-       background-color: theme('colors.primary.500/25');
-    }
-    #manual-refresh:disabled {
-       opacity: 0.7;
-       cursor: not-allowed;
-    }
-    .refresh-icon {
-       width: 1em;
-       height: 1em;
-       display: inline-block;
-    }
-    .refresh-icon.spinning {
-       animation: spin 1s linear infinite;
-    }
+    #today-payments-list ul { list-style: none; padding: 0; margin: 0; }
+    #today-payments-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0.5rem; border-bottom: 1px solid theme('colors.gray.200'); font-size: 0.9rem; }
+    #today-payments-list li:last-child { border-bottom: none; }
+    #today-payments-list .item-description { color: theme('colors.slate.700'); flex-grow: 1; margin-right: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #today-payments-list .item-description.saldo { font-weight: 600; color: theme('colors.primary.600'); } /* Estilo Descrição Saldo */
+    #today-payments-list .item-value { color: theme('colors.primary.700'); font-weight: 600; white-space: nowrap; min-width: 80px; text-align: right; }
+    #today-payments-list .item-value.saldo { color: theme('colors.green.500'); font-weight: 700; } /* Estilo Valor Saldo */
+    #today-payments-list .no-items-message { text-align: center; color: theme('colors.slate.500'); padding: 2rem 1rem; font-style: italic; }
 
-    #chart-container {
-        background-color: #ffffff;
-        border: 1px solid #dee2e6;
-        border-radius: theme('borderRadius.xl');
-        padding: 1.5rem;
-        box-shadow: theme('boxShadow.card');
-    }
-
+    /* Mensagem de carregamento inicial da Tela 3 */
+     #today-container > div:first-child > #today-loading-message:not(.hidden) { display: block; text-align: center; width: 100%; }
+    /* --- Fim Estilos CSS --- */
   </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col antialiased">
 
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" />
-    </symbol>
-    <symbol id="icon-chart-bar" viewBox="0 0 20 20" fill="currentColor">
-      <path d="M2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" />
-      <path fill-rule="evenodd" d="M1 14.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H1.75a.75.75 0 01-.75-.75zm6-10a.75.75 0 01.75-.75h8.5a.75.75 0 010 1.5h-8.5a.75.75 0 01-.75-.75zM4 6a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014 6z" clip-rule="evenodd" />
-    </symbol>
-    <symbol id="icon-currency-dollar" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M10.75 10.818v2.43a.75.75 0 01-1.5 0v-2.43c-1.092-.115-2.11-.6-2.818-1.215C5.62 8.98 5.002 8.106 5 7.182 5 5.64 6.17 4.448 7.682 4.08c.43-.108.878-.157 1.318-.157h.01a6.32 6.32 0 011.318.157C11.83 4.448 13 5.64 13 7.182c-.002.924-.62 1.798-1.42 2.421-.706.615-1.726 1.1-2.83 1.215z" />
-        <path fill-rule="evenodd" d="M8.894 3.067A.75.75 0 019.75 2.25h.5a.75.75 0 01.75.75v.859a4.834 4.834 0 015.217 4.311c.002.97-.35 1.887-.986 2.606-.66.746-1.52 1.328-2.512 1.663V15a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-1.486c-.99-.335-1.85-.917-2.51-1.663C5.35 11.103 5 10.186 5 9.216a4.834 4.834 0 015.217-4.311V4.75a.75.75 0 01-.75.75h-.5a.75.75 0 01-.856-.817l.012-.116.02-.115.026-.115.033-.114.038-.115.045-.114.05-.114c.017-.038.033-.076.05-.114l.058-.13a.75.75 0 01.56-.44zM10 8.682c.545 0 1.048-.12 1.48-.322.449-.21.799-.512 1.02-.858.22-.346.3-.738.3-1.139 0-.816-.566-1.49-1.318-1.657a4.824 4.824 0 00-1.482-.206 4.843 4.843 0 00-1.482.206C7.766 4.861 7.2 5.535 7.2 6.353c0 .401.08.793.3 1.139.22.346.57.647 1.02.858.432.201.935.321 1.48.332z" clip-rule="evenodd" />
-    </symbol>
-    <symbol id="icon-check-circle" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-    </symbol>
-    <symbol id="icon-clock" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
-    </symbol>
-    <symbol id="icon-exclamation-triangle" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-    </symbol>
-    <symbol id="icon-list-bullet" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-    </symbol>
-  </svg>
+    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-chart-bar" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" /><path fill-rule="evenodd" d="M1 14.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H1.75a.75.75 0 01-.75-.75zm6-10a.75.75 0 01.75-.75h8.5a.75.75 0 010 1.5h-8.5a.75.75 0 01-.75-.75zM4 6a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014 6z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-currency-dollar" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 10.818v2.43a.75.75 0 01-1.5 0v-2.43c-1.092-.115-2.11-.6-2.818-1.215C5.62 8.98 5.002 8.106 5 7.182 5 5.64 6.17 4.448 7.682 4.08c.43-.108.878-.157 1.318-.157h.01a6.32 6.32 0 011.318.157C11.83 4.448 13 5.64 13 7.182c-.002.924-.62 1.798-1.42 2.421-.706.615-1.726 1.1-2.83 1.215z" /><path fill-rule="evenodd" d="M8.894 3.067A.75.75 0 019.75 2.25h.5a.75.75 0 01.75.75v.859a4.834 4.834 0 015.217 4.311c.002.97-.35 1.887-.986 2.606-.66.746-1.52 1.328-2.512 1.663V15a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-1.486c-.99-.335-1.85-.917-2.51-1.663C5.35 11.103 5 10.186 5 9.216a4.834 4.834 0 015.217-4.311V4.75a.75.75 0 01-.75.75h-.5a.75.75 0 01-.856-.817l.012-.116.02-.115.026-.115.033-.114.038-.115.045-.114.05-.114c.017-.038.033-.076.05-.114l.058-.13a.75.75 0 01.56-.44zM10 8.682c.545 0 1.048-.12 1.48-.322.449-.21.799-.512 1.02-.858.22-.346.3-.738.3-1.139 0-.816-.566-1.49-1.318-1.657a4.824 4.824 0 00-1.482-.206 4.843 4.843 0 00-1.482.206C7.766 4.861 7.2 5.535 7.2 6.353c0 .401.08.793.3 1.139.22.346.57.647 1.02.858.432.201.935.321 1.48.332z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-check-circle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-clock" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-exclamation-triangle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-list-bullet" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></symbol>
+    </svg>
 
   <header class="w-full sticky top-0 z-40 flex-shrink-0">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-3 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
@@ -223,10 +176,11 @@
     <div class="flex justify-center gap-2 bg-white/80 p-1.5 rounded-xl flex-shrink-0 self-center shadow-md border border-gray-200">
       <button id="view-toggle-reports" class="view-toggle-button active">Relatórios</button>
       <button id="view-toggle-chart" class="view-toggle-button">Gráfico Semanal</button>
+      <button id="view-toggle-today" class="view-toggle-button">Pagamentos Hoje</button>
     </div>
 
     <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
-    </section>
+      </section>
 
     <section id="chart-container" class="hidden w-full flex flex-col items-center">
         <h2 class="text-xl font-semibold text-primary-600 mb-6">Pagamentos por Semana (Mês Atual)</h2>
@@ -235,29 +189,68 @@
         </div>
         <p id="chart-error-message" class="hidden mt-4 text-yellow-500 text-sm font-medium"></p>
     </section>
-    <br><br><br><br>
-  </main>
+
+    <section id="today-container" class="hidden w-full flex flex-col gap-6">
+        <div class="text-center">
+            <h2 class="text-xl font-semibold text-primary-600 mb-2">Previsão de Pagamentos (<span id="today-date">Data</span>)</h2>
+            <div id="today-total-value" class="text-3xl font-bold text-primary-700 bg-primary-500/10 py-3 px-5 rounded-xl inline-block border border-primary-500/20 shadow-sm">
+                Calculando...
+            </div>
+             <p id="today-error-message" class="hidden mt-4 text-red-500 text-sm font-medium"></p>
+             <p id="today-loading-message" class="mt-2 text-slate-500 text-sm font-medium">Carregando...</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
+            <div id="today-chart-wrapper" class="bg-white border border-gray-200 rounded-xl shadow-md p-4 min-h-[400px] flex flex-col items-center justify-center">
+                <h3 class="text-lg font-semibold text-slate-700 mb-3 text-center">Distribuição por Item (Top 5)</h3>
+                <div id="today-chart-container" class="w-full h-64 md:h-72 relative">
+                  <canvas id="todayPaymentsChart"></canvas> </div>
+                 <p id="today-chart-message" class="text-slate-500 text-center mt-4 hidden">Sem dados suficientes para o gráfico.</p>
+            </div>
+
+            <div id="today-list-wrapper" class="bg-white border border-gray-200 rounded-xl shadow-md p-4 min-h-[400px] flex flex-col">
+                 <h3 class="text-lg font-semibold text-slate-700 mb-3 text-center">Lista de Itens Previstos</h3>
+                <div id="today-payments-list" class="overflow-y-auto pr-2 flex-grow">
+                    <p class="no-items-message text-center text-slate-500 py-4">Nenhum pagamento previsto.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br><br><br><br> </main>
 
   <script>
+    // --- Constantes e Variáveis Globais ---
     const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
-    const gid     = '0';
-    const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
-    const REFRESH_INTERVAL = 60000;
+    const gidReports = '0'; // GID Planilha 1 (Relatórios)
+    const gidTable = '446722751'; // GID Planilha 2 (Pagamentos Hoje)
+    const baseURLReports = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidReports}`;
+    const baseURLTable = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidTable}`;
+    const REFRESH_INTERVAL = 60000; // 1 min
     const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
 
+    // --- Regex para encontrar colunas ---
+    // Planilha 1
     const valorRegex = /valor|total/i;
     const vencRegex = /venc/i;
     const pagtoRegex = /pag/i;
     const statusRegex = /status|situação/i;
+    // Planilha 2 (IMPORTANTE: Ajuste se os nomes das suas colunas forem diferentes!)
+    const todayValorRegex = /valor|total/i; // Coluna com os valores
+    const todayDescRegex = /descri[cç][aã]o|item|fornecedor|nome/i; // Coluna com as descrições
 
+    // Status (Planilha 1)
     const statusPago = ['pago', 'liquidado', 'quitado'];
     const statusPendente = ['a vencer', 'pendente', 'aberto', 'em aberto'];
     const statusVencido = ['vencido', 'em atraso'];
 
-    let headersFull = [], sheetRows = [];
+    // --- Variáveis de Estado ---
+    let headersReports = [], sheetRowsReports = []; // Dados Planilha 1
+    let headersTable = [], sheetRowsTable = [];   // Dados Planilha 2
     let isLoaded = false, isFetching = false;
-    let weeklyChartInstance = null;
+    let weeklyChartInstance = null; // Gráfico Tela 2
+    let todayChartInstance = null;  // Gráfico Tela 3
 
+    // --- Elementos DOM (Principais) ---
     const $loader = document.getElementById('loader');
     const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
     const $lastUpdate = document.getElementById('last-update');
@@ -265,42 +258,61 @@
     const $manualRefreshBtn = document.getElementById('manual-refresh');
     const $refreshIcon = $manualRefreshBtn.querySelector('.refresh-icon');
     const $refreshBtnText = $manualRefreshBtn.querySelector('span');
-    const $chartContainer = document.getElementById('chart-container');
-    const $chartCanvas = document.getElementById('weeklyPaymentsChart');
-    const $chartErrorMsg = document.getElementById('chart-error-message');
+    const $chartContainer = document.getElementById('chart-container'); // Tela 2
+    const $chartCanvas = document.getElementById('weeklyPaymentsChart'); // Tela 2
+    const $chartErrorMsg = document.getElementById('chart-error-message'); // Tela 2
+    const $todayContainer = document.getElementById('today-container'); // Tela 3
+    const $todayDate = document.getElementById('today-date'); // Tela 3
+    const $todayTotalValue = document.getElementById('today-total-value'); // Tela 3
+    const $todayPaymentsList = document.getElementById('today-payments-list'); // Tela 3
+    const $todayErrorMsg = document.getElementById('today-error-message'); // Tela 3
+    const $todayLoadingMsg = document.getElementById('today-loading-message'); // Tela 3
     const $viewToggleReportsBtn = document.getElementById('view-toggle-reports');
     const $viewToggleChartBtn = document.getElementById('view-toggle-chart');
+    const $viewToggleTodayBtn = document.getElementById('view-toggle-today');
 
-    Chart.register(ChartDataLabels);
+    Chart.register(ChartDataLabels); // Registrar plugin Chart.js
 
+    // --- Funções Utilitárias ---
     const padZero = num => num.toString().padStart(2, '0');
-    const formatDateBR = date => {
-        if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
-    };
-    function parseDateValue(value) {
+    const formatDateBR = date => { if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`; };
+    function parseDateValue(value) { /* ...código mantido como antes... */
         if (value instanceof Date) return value; if (value == null) return null; if (typeof value === 'number' && value > 1 && value < 60000) { const utcDays = Math.floor(value - 25569); const date = new Date(0); date.setUTCDate(date.getUTCDate() + utcDays); return date; } if (typeof value !== 'string') return null; let match; match = value.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/); if (match) return new Date(Date.UTC(+match[1], +match[2], +match[3])); match = value.match(/^(\d{4})-(\d{2})-(\d{2})/); if (match) return new Date(Date.UTC(+match[1], +match[2] - 1, +match[3])); match = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/); if (match) { let year = +match[3]; if (year < 100) year += 2000; return new Date(Date.UTC(year, +match[2] - 1, +match[1])); } const parsed = new Date(value); if (!isNaN(parsed.getTime())) return new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())); return null;
     }
     const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
-    const formatCurrencyShort = value => {
+    const formatCurrencyShort = value => { /* ...código mantido como antes... */
         if (typeof value !== 'number' || isNaN(value)) return '–';
         if (value === 0) return 'R$0';
         if (value < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0});
         if (value < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k';
         return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M';
-    }
-
+    };
+    // --- Função Utilitária APRIMORADA e Simplificada para obter valor numérico ---
     function getNumericValue(cellValue) {
-        if (typeof cellValue === 'number') return cellValue; if (typeof cellValue === 'string') { const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); const num = parseFloat(cleanedString); return isNaN(num) ? 0 : num; } return 0;
+        if (typeof cellValue === 'number') { return cellValue; }
+        if (typeof cellValue === 'string') {
+            let potentialNumberString = cellValue.replace(/R\$/gi, '').trim(); // Tira R$ e espaços
+            // Simplificação: Remove TODOS os pontos (seguro se separador decimal for vírgula)
+            potentialNumberString = potentialNumberString.replace(/\./g, '');
+            potentialNumberString = potentialNumberString.replace(',', '.'); // Troca vírgula decimal
+            potentialNumberString = potentialNumberString.replace(/[^\d.-]/g, ''); // Remove não-dígitos (exceto ponto decimal e menos)
+            const num = parseFloat(potentialNumberString);
+            return isNaN(num) ? 0 : num;
+        }
+        return 0;
     }
-    function getWeekOfMonth(date) {
+    // --- Fim da função getNumericValue ---
+    function getWeekOfMonth(date) { /* ...código mantido como antes... */
         if (!date || isNaN(date.getTime())) return null; const dayOfMonth = date.getUTCDate(); if (dayOfMonth <= 7) return 1; if (dayOfMonth <= 14) return 2; if (dayOfMonth <= 21) return 3; if (dayOfMonth <= 28) return 4; return 5;
     }
+    // --- Fim Funções Utilitárias ---
 
-    async function fetchSheetData() {
-        const response = await fetch(`${baseURL}&_=${Date.now()}`); if (!response.ok) throw new Error(`Erro HTTP ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao parsear JSONP:", e); console.error("Texto recebido:", text); throw new Error('Falha ao parsear dados JSON da API do Google Sheets.'); }
+    // --- Funções de Busca de Dados ---
+    async function fetchSheetData(baseUrl) { /* ...código mantido como antes... */
+        const response = await fetch(`${baseUrl}&_=${Date.now()}`); if (!response.ok) throw new Error(`Erro HTTP ${response.status}`); const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { throw new Error('Formato de resposta inválido da API do Google Sheets.'); } try { return JSON.parse(text.substring(47, text.length - 2)); } catch (e) { console.error("Falha ao parsear JSONP:", e); console.error("Texto recebido:", text); throw new Error('Falha ao parsear dados JSON da API do Google Sheets.'); }
     }
 
-    async function loadData() {
+    async function loadData() { // Função principal de carregamento
         if (isFetching) return;
         isFetching = true;
         if (!isLoaded) $loader.classList.remove('hidden');
@@ -309,330 +321,409 @@
         $refreshIcon.classList.add('spinning');
         $refreshBtnText.textContent = 'Atualizando...';
 
+        // Limpa/Prepara a tela 3 se ela estiver ativa
+        if ($viewToggleTodayBtn.classList.contains('active')) {
+             $todayLoadingMsg?.classList.remove('hidden');
+             $todayErrorMsg?.classList.add('hidden');
+             $todayPaymentsList.innerHTML = '<p class="no-items-message text-center text-slate-500 py-4">Carregando...</p>';
+             $todayTotalValue.textContent = 'Calculando...';
+             // Limpa gráfico anterior da tela 3
+             if (todayChartInstance) { todayChartInstance.destroy(); todayChartInstance = null; }
+             const chartMessageEl = document.getElementById('today-chart-message');
+             const chartContainerEl = document.getElementById('today-chart-container');
+             if (chartMessageEl) chartMessageEl.classList.add('hidden');
+             if (chartContainerEl) chartContainerEl.style.display = 'block'; // Garante visibilidade inicial
+        }
+        $chartErrorMsg.classList.add('hidden'); // Reset erro tela 2
+
+        let reportDataSuccess = false;
+        let tableDataSuccess = false;
+
         try {
-            const jsonData = await fetchSheetData();
-            if (!jsonData || !jsonData.table || !jsonData.table.cols) {
-                throw new Error("Dados recebidos da planilha estão incompletos ou mal formatados.");
+            const [jsonDataReports, jsonDataTable] = await Promise.all([
+                fetchSheetData(baseURLReports).catch(e => { console.error("Erro Planilha 1:", e); return null; }),
+                fetchSheetData(baseURLTable).catch(e => { console.error("Erro Planilha 2:", e); return null; })
+            ]);
+
+            // Processa Planilha 1 (Relatórios)
+            if (jsonDataReports?.table?.cols) {
+                headersReports = jsonDataReports.table.cols.map(col => col.label || `Col${col.id}`);
+                sheetRowsReports = jsonDataReports.table.rows.map(row => { const cells = Array(headersReports.length).fill(null); if(row?.c){ row.c.forEach((cell, index) => { if (index < headersReports.length) cells[index] = cell?.v ?? null; }); } return cells; });
+                buildReportCards();
+                prepareAndRenderWeeklyChart();
+                updateHeaderInfo();
+                reportDataSuccess = true;
+            } else { /* ...tratamento de erro Planilha 1... */
+                console.error("Dados Planilha 1 incompletos.");
+                $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro ao carregar relatórios.</p>';
+                if (weeklyChartInstance) weeklyChartInstance.destroy(); weeklyChartInstance = null;
+                $chartErrorMsg.textContent = 'Erro ao carregar dados do gráfico semanal.';
+                $chartErrorMsg.classList.remove('hidden');
+                $grandTotalHeader.textContent = 'Total Geral: Erro';
             }
 
-            headersFull = jsonData.table.cols.map(col => col.label || `Col${col.id}`);
-            sheetRows = jsonData.table.rows.map(row => {
-                const cells = Array(headersFull.length).fill(null);
-                if (row && row.c) {
-                    row.c.forEach((cell, index) => {
-                        if (index < headersFull.length) {
-                            cells[index] = cell?.v ?? null;
-                        }
-                    });
+            // Processa Planilha 2 (Pagamentos Hoje)
+            if (jsonDataTable?.table?.cols) {
+                headersTable = jsonDataTable.table.cols.map(col => col.label || `Col${col.id}`);
+                sheetRowsTable = jsonDataTable.table.rows.map(row => { const cells = Array(headersTable.length).fill(null); if(row?.c){ row.c.forEach((cell, index) => { if (index < headersTable.length) cells[index] = cell?.v ?? null; }); } return cells; });
+                tableDataSuccess = true; // Marcar sucesso ANTES de renderizar
+                 // Renderiza a Tela 3 APENAS se ela estiver ativa
+                if ($viewToggleTodayBtn.classList.contains('active')) {
+                    renderTodayPaymentsView();
                 }
-                return cells;
-             });
+            } else { /* ...tratamento de erro Planilha 2... */
+                console.error("Dados Planilha 2 incompletos.");
+                // Só mostra erro na tela 3 se ela estiver ativa
+                 if ($viewToggleTodayBtn.classList.contains('active')) {
+                    renderTodayPaymentsError("Erro ao carregar dados para a visão de hoje.");
+                 }
+            }
 
-            buildReportCards();
-            prepareAndRenderWeeklyChart();
-            updateHeaderInfo();
-            $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`;
-            isLoaded = true;
+            if (reportDataSuccess || tableDataSuccess) {
+                $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`;
+                isLoaded = true;
+            }
 
         } catch (error) {
-            console.error("Erro ao carregar dados:", error);
-            $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro ao carregar os dados dos relatórios.</p>';
-             if (weeklyChartInstance) {
-                 weeklyChartInstance.destroy();
-                 weeklyChartInstance = null;
-             }
-             $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico.';
-             $chartErrorMsg.classList.remove('hidden');
-             $grandTotalHeader.textContent = 'Total Geral: Erro';
-
+            console.error("Erro geral:", error);
+            if (!reportDataSuccess) { $grandTotalHeader.textContent = 'Total Geral: Erro'; /* ... mais tratamento ... */ }
+            if (!tableDataSuccess && $viewToggleTodayBtn.classList.contains('active')) { renderTodayPaymentsError("Erro geral ao carregar dados para a visão de hoje."); }
         } finally {
             isFetching = false;
             $loader.classList.add('hidden');
             $manualRefreshBtn.disabled = false;
             $refreshIcon.classList.remove('spinning');
             $refreshBtnText.textContent = 'Atualizar';
+             $todayLoadingMsg?.classList.add('hidden');
         }
     }
+    // --- Fim Funções de Busca de Dados ---
 
-    function buildReportCards() {
+    // --- Funções de Renderização ---
+
+    // buildReportCards() - Tela 1
+    function buildReportCards() { /* ...código mantido como antes... */
         $reportCardsWrapper.innerHTML = '';
-
-        const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
-        const valorIndex = findIndex(valorRegex);
-        const vencIndex = findIndex(vencRegex);
-        const pagtoIndex = findIndex(pagtoRegex);
-        const statusIndex = findIndex(statusRegex);
-
-        if (valorIndex === -1) {
-            console.error('Erro: Coluna de "Valor" não encontrada. Os cards não podem ser gerados.');
-            console.error('Coluna de Valor não encontrada. Regex:', valorRegex);
-            $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro: Coluna de Valor não encontrada.</p>';
-            return;
-        }
-        if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada. Regex:', vencRegex);
-        if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada. Regex:', pagtoRegex, 'Gráfico semanal pode não funcionar.');
-        if (statusIndex === -1) console.warn('Coluna de Status não encontrada. Regex:', statusRegex);
-
-        let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0;
-        let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0;
-        const today = new Date(); today.setUTCHours(0, 0, 0, 0);
-
-        sheetRows.forEach(row => {
-            const valor = getNumericValue(row[valorIndex]);
-            totalGeral += valor;
-            countTotal++;
-
-            const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null;
-            const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null;
-            const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
-
-            let isPago = false, isPendente = false, isVencido = false;
-
-            if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; }
-            else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; }
-            else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; }
-            else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; }
-            else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; }
-            else { isPendente = true; }
-
-            if (isPago) { totalPago += valor; countPago++; }
-            else if (isVencido) { totalVencido += valor; countVencido++; }
-            else { totalPendente += valor; countPendente++; }
+        const findIndex = (regex) => headersReports.findIndex(h => h && regex.test(h.toLowerCase()));
+        const valorIndex = findIndex(valorRegex); const vencIndex = findIndex(vencRegex); const pagtoIndex = findIndex(pagtoRegex); const statusIndex = findIndex(statusRegex);
+        if (valorIndex === -1) { $reportCardsWrapper.innerHTML = '<p class="text-center text-slate-500 col-span-full">Erro: Coluna de Valor não encontrada (Planilha 1).</p>'; return; }
+        if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Planilha 1).'); if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Planilha 1).'); if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Planilha 1).');
+        let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0; let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0; const today = new Date(); today.setUTCHours(0, 0, 0, 0);
+        sheetRowsReports.forEach(row => {
+            const valor = getNumericValue(row[valorIndex]); totalGeral += valor; countTotal++; const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null; const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null; const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : ''; let isPago = false, isPendente = false, isVencido = false;
+            if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; } else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; } else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; } else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; } else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; } else { isPendente = true; }
+            if (isPago) { totalPago += valor; countPago++; } else if (isVencido) { totalVencido += valor; countVencido++; } else { totalPendente += valor; countPendente++; }
         });
-
-        const reportData = [
-             { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' },
-             { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' },
-             { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' },
-             { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' },
-             { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' },
-             { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' },
-             { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' },
-             { type: 'total', title: "Total de Lançamentos", value: countTotal, detail: ` `, valueClass: 'count', iconId: 'icon-list-bullet'}
-         ];
-
+        const reportData = [ { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' }, { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' }, { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' }, { type: 'total', title: "Total de Lançamentos", value: countTotal, detail: ` `, valueClass: 'count', iconId: 'icon-list-bullet'} ];
         reportData.forEach(data => {
-            const card = document.createElement('div');
-            card.className = 'report-card';
-            const formattedValue = data.valueClass.includes('count')
-                ? data.value.toLocaleString('pt-BR')
-                : formatCurrency(data.value);
-
-            const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            iconSVG.classList.add('icon', data.type);
-            const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-            iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`);
-            iconSVG.appendChild(iconUse);
-            card.appendChild(iconSVG);
-
-            const contentDiv = document.createElement('div');
-            contentDiv.innerHTML = `
-                <div>
-                    <h3 class="title">${data.title}</h3>
-                    <p class="value ${data.valueClass}">${formattedValue}</p>
-                </div>
-                <p class="detail">${data.detail}</p>`;
-            card.appendChild(contentDiv);
-
-            $reportCardsWrapper.appendChild(card);
+            const card = document.createElement('div'); card.className = 'report-card'; const formattedValue = data.valueClass.includes('count') ? data.value.toLocaleString('pt-BR') : formatCurrency(data.value); const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); iconSVG.classList.add('icon', data.type); const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use'); iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`); iconSVG.appendChild(iconUse); card.appendChild(iconSVG); const contentDiv = document.createElement('div'); contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`; card.appendChild(contentDiv); $reportCardsWrapper.appendChild(card);
         });
-    }
+     }
 
-    function prepareAndRenderWeeklyChart() {
+    // prepareAndRenderWeeklyChart() - Tela 2
+    function prepareAndRenderWeeklyChart() { /* ...código mantido como antes... */
         $chartErrorMsg.classList.add('hidden');
-        const findIndex = (regex) => headersFull.findIndex(h => h && regex.test(h.toLowerCase()));
-        const valorIndex = findIndex(valorRegex);
-        const pagtoIndex = findIndex(pagtoRegex);
-
-        if (valorIndex === -1 || pagtoIndex === -1) {
-            console.warn('Coluna de Valor ou Pagamento não encontrada. Gráfico semanal não será gerado.');
-            $chartErrorMsg.textContent = 'Coluna de Valor e/ou Data de Pagamento não encontrada(s) na planilha.';
-            $chartErrorMsg.classList.remove('hidden');
-            if (weeklyChartInstance) {
-                weeklyChartInstance.destroy(); weeklyChartInstance = null;
-            }
-            const ctx = $chartCanvas.getContext('2d');
-            ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height);
-            return;
-        }
-
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-
-        const weeklyTotals = [0, 0, 0, 0, 0];
-        const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"];
-
-        sheetRows.forEach(row => {
-            const dataPagtoRaw = row[pagtoIndex];
-            const dataPagto = parseDateValue(dataPagtoRaw);
-
-            if (dataPagto && !isNaN(dataPagto.getTime()) &&
-                dataPagto.getUTCMonth() === currentMonth &&
-                dataPagto.getUTCFullYear() === currentYear) {
-                const valor = getNumericValue(row[valorIndex]);
-                const weekNumber = getWeekOfMonth(dataPagto);
-                if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; }
-            }
+        const findIndex = (regex) => headersReports.findIndex(h => h && regex.test(h.toLowerCase()));
+        const valorIndex = findIndex(valorRegex); const pagtoIndex = findIndex(pagtoRegex);
+        if (valorIndex === -1 || pagtoIndex === -1) { $chartErrorMsg.textContent = 'Colunas Valor/Pagamento não encontradas (Planilha 1).'; $chartErrorMsg.classList.remove('hidden'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); weeklyChartInstance = null; } const canvas = $chartCanvas; if(canvas){ const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); } return; }
+        const now = new Date(); const currentMonth = now.getMonth(); const currentYear = now.getFullYear(); const weeklyTotals = [0, 0, 0, 0, 0]; const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"];
+        sheetRowsReports.forEach(row => {
+            const dataPagtoRaw = row[pagtoIndex]; const dataPagto = parseDateValue(dataPagtoRaw);
+            if (dataPagto && !isNaN(dataPagto.getTime()) && dataPagto.getUTCMonth() === currentMonth && dataPagto.getUTCFullYear() === currentYear) { const valor = getNumericValue(row[valorIndex]); const weekNumber = getWeekOfMonth(dataPagto); if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; } }
         });
-
         renderWeeklyChart(weekLabels, weeklyTotals);
     }
 
-    function renderWeeklyChart(labels, data) {
-        const ctx = $chartCanvas.getContext('2d');
-
-        if (weeklyChartInstance) { weeklyChartInstance.destroy(); }
-
-        const chartColors = {
-            backgroundColor: 'rgba(77, 171, 247, 0.6)',
-            borderColor: 'rgba(51, 154, 240, 1)',
-            hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)',
-            hoverBorderColor: tailwind.config.theme.extend.colors.primary[500],
-            textColor: tailwind.config.theme.extend.colors.slate[700],
-            gridColor: 'rgba(203, 213, 225, 0.5)',
-            tooltipBg: 'rgba(51, 65, 85, 0.95)',
-            tooltipTitleColor: '#e2e8f0',
-            tooltipBodyColor: '#e2e8f0'
-        };
-
-        weeklyChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Valor Pago',
-                    data: data,
-                    backgroundColor: chartColors.backgroundColor,
-                    borderColor: chartColors.borderColor,
-                    borderWidth: 1,
-                    hoverBackgroundColor: chartColors.hoverBackgroundColor,
-                    hoverBorderColor: chartColors.hoverBorderColor,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                    barPercentage: 0.7,
-                    categoryPercentage: 0.8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        top: 30
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: chartColors.textColor,
-                            callback: function(value) { return formatCurrencyShort(value); }
-                        },
-                        grid: {
-                            color: chartColors.gridColor,
-                            drawTicks: false
-                        },
-                        border: {
-                            display: false
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: chartColors.textColor,
-                            font: { size: 11 }
-                         },
-                        grid: {
-                            display: false
-                        },
-                         border: {
-                            display: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        enabled: true,
-                        backgroundColor: chartColors.tooltipBg,
-                        titleColor: chartColors.tooltipTitleColor,
-                        bodyColor: chartColors.tooltipBodyColor,
-                        borderColor: chartColors.borderColor,
-                        borderWidth: 1,
-                        padding: 10,
-                        cornerRadius: 4,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) { label += ': '; }
-                                if (context.parsed.y !== null) {
-                                    label += formatCurrency(context.parsed.y);
-                                }
-                                return label;
-                            }
-                        }
-                    },
-                    datalabels: {
-                        display: context => context.dataset.data[context.dataIndex] > 0,
-                        anchor: 'end',
-                        align: 'top',
-                        offset: 4,
-                        color: chartColors.textColor,
-                        font: {
-                            size: 10,
-                            weight: '500'
-                        },
-                        formatter: (value, context) => {
-                            return formatCurrencyShort(value);
-                        }
-                    }
-                },
-                 interaction: {
-                    mode: 'index',
-                    intersect: false,
-                 },
-            }
-        });
+    // renderWeeklyChart() - Tela 2
+    function renderWeeklyChart(labels, data) { /* ...código mantido como antes... */
+        const ctx = $chartCanvas.getContext('2d'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' };
+        weeklyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Valor Pago', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 6, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30 } }, scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 11 } }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 10, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } }, interaction: { mode: 'index', intersect: false, }, } });
     }
 
-    function switchView(viewToShow) {
-        if (viewToShow === 'reports') {
-            $reportCardsWrapper.classList.remove('hidden');
-            $chartContainer.classList.add('hidden');
-            $viewToggleReportsBtn.classList.add('active');
-            $viewToggleChartBtn.classList.remove('active');
-        } else if (viewToShow === 'chart') {
-            $reportCardsWrapper.classList.add('hidden');
-            $chartContainer.classList.remove('hidden');
-            $viewToggleReportsBtn.classList.remove('active');
-            $viewToggleChartBtn.classList.add('active');
+    // --- Função de Renderização para Visão de Hoje REFORMULADA ---
+    function renderTodayPaymentsView() {
+        // Limpezas Iniciais
+        $todayPaymentsList.innerHTML = '<p class="no-items-message text-center text-slate-500 py-4">Processando...</p>';
+        $todayErrorMsg.classList.add('hidden');
+        $todayLoadingMsg.classList.add('hidden');
+        $todayTotalValue.textContent = formatCurrency(0);
+        const chartMessageEl = document.getElementById('today-chart-message');
+        const chartContainerEl = document.getElementById('today-chart-container');
+        if(chartMessageEl) chartMessageEl.classList.add('hidden');
+        if(chartContainerEl) chartContainerEl.style.display = 'block'; // Garante visibilidade
+
+        if (todayChartInstance) {
+            todayChartInstance.destroy();
+            todayChartInstance = null;
         }
-    }
 
-    function updateHeaderInfo() {
-        const valorIndex = headersFull.findIndex(h => h && valorRegex.test(h.toLowerCase()));
-        if (valorIndex === -1) {
-            $grandTotalHeader.textContent = 'Total Geral: Erro (Coluna Valor?)';
+        const todayFull = new Date();
+        $todayDate.textContent = formatDateBR(todayFull);
+
+        if (!headersTable || headersTable.length === 0 || !sheetRowsTable) {
+            renderTodayPaymentsError("Dados da Planilha 2 não disponíveis.");
             return;
         }
-        if (sheetRows.length > 0) {
-            const grandTotal = sheetRows.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0);
-            $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`;
-        } else {
-             $grandTotalHeader.textContent = 'Total Geral: Erro';
+
+        // IMPORTANTE: Verifique se estes regex correspondem aos seus cabeçalhos!
+        const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
+        const valorIndex = findIndex(todayValorRegex, headersTable);
+        const descIndex = findIndex(todayDescRegex, headersTable);
+
+        if (valorIndex === -1 || descIndex === -1) {
+            renderTodayPaymentsError(`Erro: Coluna ${valorIndex === -1 ? 'Valor' : 'Descrição'} não encontrada na Planilha 2.`);
+            console.error("Cabeçalhos encontrados:", headersTable);
+            return;
         }
+
+        // --- Lógica de Exclusão e Cálculo ---
+        // IMPORTANTE: Verifique se estes textos correspondem EXATAMENTE aos da sua planilha!
+        const excludedDescriptionsPatterns = [
+            /^cc\s*click/i, /^lets/i, /^voight/i, /^disponibilidades$/i, // Adicionado $ para fim de linha
+            /previsão\s+gp\s+(kevin|momezzo|anderson|felipe)/i,
+            /^previsão\s+de\s+disponibilidades$/i, // Adicionado $
+            /^a\s+pagar$/i // Adicionado $
+        ];
+        const saldoDescRegex = /^saldo$/i; // Procura EXATAMENTE "Saldo" (case-insensitive)
+
+        let calculatedTotal = 0;
+        const itemsForList = [];
+        const itemsForChart = [];
+        const saldoRowsData = [];
+
+        sheetRowsTable.forEach((row, rowIndex) => {
+            const descriptionRaw = row[descIndex];
+            // Pula linha se não houver descrição ou valor na coluna de descrição
+            if (descriptionRaw === null || descriptionRaw === undefined) return;
+
+            const descriptionStr = String(descriptionRaw).trim();
+            if (!descriptionStr) return; // Pula se descrição for vazia após trim
+
+            const isExcluded = excludedDescriptionsPatterns.some(pattern => pattern.test(descriptionStr));
+            if (isExcluded) return;
+
+            const isSaldo = saldoDescRegex.test(descriptionStr);
+            const valor = getNumericValue(row[valorIndex]); // Pega o valor ANTES de decidir
+
+            if (isSaldo) {
+                saldoRowsData.push({ description: descriptionStr, originalValue: valor });
+                return; // Guarda e pula
+            }
+
+            // Se chegou aqui, não é excluído e não é saldo
+            calculatedTotal += valor;
+            itemsForList.push({ description: descriptionStr, value: valor, isSaldo: false });
+            if (valor > 0) { // Apenas valores positivos no gráfico
+                 itemsForChart.push({ label: descriptionStr, value: valor });
+            }
+        });
+        // --- Fim da Lógica ---
+
+        // --- Processamento Pós-Loop ---
+        saldoRowsData.forEach(saldoData => {
+            itemsForList.push({
+                description: saldoData.description, // Descrição original ("Saldo")
+                value: calculatedTotal, // Valor calculado!
+                isSaldo: true
+            });
+        });
+
+        itemsForList.sort((a, b) => {
+             if (a.isSaldo && !b.isSaldo) return 1; // Saldo por último
+             if (!a.isSaldo && b.isSaldo) return -1;
+             if (a.isSaldo && b.isSaldo) return a.description.localeCompare(b.description); // Caso haja mais de um saldo
+             return b.value - a.value; // Outros por valor desc.
+        });
+        // --- Fim Processamento Pós-Loop ---
+
+        // --- Renderização ---
+        $todayTotalValue.textContent = formatCurrency(calculatedTotal);
+
+        // Lista
+        $todayPaymentsList.innerHTML = '';
+        if (itemsForList.length === 0) {
+            $todayPaymentsList.innerHTML = '<p class="no-items-message">Nenhum item previsto após filtros.</p>';
+        } else {
+            const ul = document.createElement('ul');
+            itemsForList.forEach(item => {
+                const li = document.createElement('li');
+                const descClass = item.isSaldo ? 'item-description saldo' : 'item-description';
+                const valueClass = item.isSaldo ? 'item-value saldo' : 'item-value';
+                li.innerHTML = `<span class="${descClass}" title="${item.description}">${item.description}</span><span class="${valueClass}">${formatCurrency(item.value)}</span>`;
+                ul.appendChild(li);
+            });
+            $todayPaymentsList.appendChild(ul);
+        }
+
+        // Gráfico
+        renderTodayPieChart(itemsForChart);
+
+    } // --- Fim da função renderTodayPaymentsView ---
+
+    // --- Função para Renderizar o Gráfico de Pizza (Tela 3) ---
+    function renderTodayPieChart(items) {
+        const chartMessageEl = document.getElementById('today-chart-message');
+        const chartContainerEl = document.getElementById('today-chart-container');
+        const canvas = document.getElementById('todayPaymentsChart');
+
+        // Verificações de elementos
+        if (!chartMessageEl || !chartContainerEl || !canvas) {
+             console.error("Elementos do gráfico da Tela 3 não encontrados no DOM.");
+             return;
+        }
+
+        chartMessageEl.classList.add('hidden');
+        chartContainerEl.style.display = 'block'; // Garante visibilidade
+
+        // Limpa canvas anterior (importante)
+         try {
+             const ctx = canvas.getContext('2d');
+             ctx.clearRect(0, 0, canvas.width, canvas.height);
+         } catch (e) { console.error("Erro ao limpar canvas:", e); }
+
+
+        const validItems = items.filter(item => item.value > 0);
+
+        if (validItems.length === 0) {
+            chartMessageEl.textContent = 'Nenhum valor positivo para exibir no gráfico.';
+            chartMessageEl.classList.remove('hidden');
+            chartContainerEl.style.display = 'none';
+            return;
+        }
+
+        validItems.sort((a, b) => b.value - a.value);
+
+        const topN = 5;
+        const chartLabels = [];
+        const chartData = [];
+        const chartBackgroundColors = ['#339af0', '#4ade80', '#facc15', '#6abff9', '#fb7185', '#94a3b8']; // Paleta
+        const chartBorderColors = '#ffffff'; // Borda branca
+
+        let othersValue = 0;
+        validItems.forEach((item, index) => {
+            if (index < topN) {
+                chartLabels.push(item.label);
+                chartData.push(item.value);
+            } else { othersValue += item.value; }
+        });
+        if (othersValue > 0) { chartLabels.push('Outros'); chartData.push(othersValue); }
+
+        // Cria o gráfico
+         try {
+            const ctx = canvas.getContext('2d');
+            todayChartInstance = new Chart(ctx, { /* ... Configuração do gráfico como na versão anterior ... */
+                type: 'pie',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Valor Previsto',
+                        data: chartData,
+                        backgroundColor: chartBackgroundColors.slice(0, chartData.length),
+                        borderColor: chartBorderColors,
+                        borderWidth: 1.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, padding: 15 } },
+                        tooltip: { callbacks: { label: function(context) { let label = context.label || ''; if (label) { label += ': '; } if (context.parsed !== null) { label += formatCurrency(context.parsed); } return label; } } },
+                        datalabels: {
+                             display: context => { const v = context.dataset.data[context.dataIndex]; const t = context.dataset.data.reduce((s, c) => s + c, 0); return t > 0 ? (v / t) * 100 > 5 : false; },
+                             formatter: (v, c) => { const t = c.chart.data.datasets[0].data.reduce((s, i) => s + i, 0); return t > 0 ? ((v / t) * 100).toFixed(0) + '%' : '0%'; },
+                             color: '#ffffff', font: { weight: 'bold', size: 10 }, textShadowBlur: 2, textShadowColor: 'rgba(0, 0, 0, 0.5)'
+                         }
+                    }
+                }
+            });
+         } catch (e) { /* ... tratamento de erro como antes ... */
+             console.error("Erro ao renderizar gráfico hoje:", e);
+             chartMessageEl.textContent = 'Erro ao exibir o gráfico.';
+             chartMessageEl.classList.remove('hidden');
+             chartContainerEl.style.display = 'none';
+         }
+    }
+    // --- Fim Renderização Gráfico Tela 3 ---
+
+    // --- Função de Erro Tela 3 (Atualizada) ---
+     function renderTodayPaymentsError(message) {
+         $todayPaymentsList.innerHTML = ''; // Limpa lista
+         $todayErrorMsg.textContent = message;
+         $todayErrorMsg.classList.remove('hidden');
+         $todayLoadingMsg.classList.add('hidden');
+         $todayTotalValue.textContent = 'Erro';
+
+         const chartMessageEl = document.getElementById('today-chart-message');
+         const chartContainerEl = document.getElementById('today-chart-container');
+         const canvas = document.getElementById('todayPaymentsChart');
+
+         if (chartMessageEl) { chartMessageEl.textContent = 'Erro ao carregar dados para o gráfico.'; chartMessageEl.classList.remove('hidden'); }
+         if (chartContainerEl) { chartContainerEl.style.display = 'none'; }
+         if (todayChartInstance) { todayChartInstance.destroy(); todayChartInstance = null;} // Destroi instância se existir
+         try { // Limpa canvas
+             if (canvas) { const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); }
+         } catch(e) { console.error("Erro ao limpar canvas:", e); }
+     }
+    // --- Fim Função de Erro Tela 3 ---
+
+    // updateHeaderInfo() - Tela 1
+    function updateHeaderInfo() { /* ...código mantido como antes... */
+        const valorIndex = headersReports.findIndex(h => h && valorRegex.test(h.toLowerCase()));
+        if (valorIndex === -1) { $grandTotalHeader.textContent = 'Total Geral: Erro'; return; }
+        if (sheetRowsReports.length > 0) {
+            const grandTotal = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0);
+            $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`;
+        } else { $grandTotalHeader.textContent = 'Total Geral: R$ 0,00'; }
     }
 
+    // --- Troca de Visualização ---
+    function switchView(viewToShow) {
+        $reportCardsWrapper.classList.add('hidden');
+        $chartContainer.classList.add('hidden'); // Tela 2
+        $todayContainer.classList.add('hidden'); // Tela 3
+
+        $viewToggleReportsBtn.classList.remove('active');
+        $viewToggleChartBtn.classList.remove('active');
+        $viewToggleTodayBtn.classList.remove('active');
+
+        // Limpa gráfico da tela 3 ao sair dela
+        if (!$viewToggleTodayBtn.classList.contains('active') && todayChartInstance) {
+            todayChartInstance.destroy();
+            todayChartInstance = null;
+        }
+
+        if (viewToShow === 'reports') { /* ... */ $reportCardsWrapper.classList.remove('hidden'); $viewToggleReportsBtn.classList.add('active'); }
+        else if (viewToShow === 'chart') { /* ... */ $chartContainer.classList.remove('hidden'); $viewToggleChartBtn.classList.add('active'); if (weeklyChartInstance) { setTimeout(() => weeklyChartInstance.resize(), 50); } }
+        else if (viewToShow === 'today') {
+            $todayContainer.classList.remove('hidden');
+            $viewToggleTodayBtn.classList.add('active');
+             // Renderiza/Atualiza Tela 3 apenas se os dados estiverem carregados
+             if (isLoaded && headersTable.length > 0 && sheetRowsTable.length > 0) {
+                 renderTodayPaymentsView();
+             } else if (isLoaded) {
+                 // Se já carregou mas Planilha 2 falhou ou está vazia
+                 renderTodayPaymentsError("Não foi possível carregar ou processar os dados para esta visão.");
+             }
+             // Se !isLoaded, loadData() cuidará da renderização inicial.
+        }
+    }
+    // --- Fim Troca de Visualização ---
+
+    // --- Event Listeners ---
     $manualRefreshBtn.onclick = loadData;
     $viewToggleReportsBtn.onclick = () => switchView('reports');
     $viewToggleChartBtn.onclick = () => switchView('chart');
+    $viewToggleTodayBtn.onclick = () => switchView('today');
+    // --- Fim Event Listeners ---
 
-    switchView('reports');
-    loadData();
-    setInterval(loadData, REFRESH_INTERVAL);
+    // --- Inicialização ---
+    document.addEventListener('DOMContentLoaded', () => { // Garante que o DOM está pronto
+        switchView('reports'); // Começa na tela 1
+        loadData(); // Carga inicial
+        setInterval(loadData, REFRESH_INTERVAL); // Auto-refresh
+    });
+    // --- Fim Inicialização ---
 
   </script>
 </body>
