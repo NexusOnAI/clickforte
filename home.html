@@ -18,7 +18,7 @@
             colors: {
               surface: '#ffffff',
               primary: { 300: '#6abff9', 400: '#4dabf7', 500: '#339af0', 600: '#1b85db', 700: '#1971c2' },
-              slate: { 50: '#f8fafc', 100: '#f1f5f9', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b' }, // Added slate-50, slate-100
+              slate: { 50: '#f8fafc', 100: '#f1f5f9', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b' },
               gray: { 100: '#f8f9fa', 200: '#e9ecef', 300: '#dee2e6', 800: '#343a40' },
               green: { 400: '#4ade80', 500: '#22c55e'},
               yellow: { 400: '#facc15', 500: '#eab308'},
@@ -42,38 +42,77 @@
     <style>
       @keyframes spin { to { transform: rotate(360deg) } }
       .animate-spin { animation: spin 1s linear infinite }
+
+      /* Ensure HTML and Body take full height for flex layout */
       html, body { height: 100%; }
-      body { background: #f0f2f5; display: flex; flex-direction: column; }
 
-      main { flex-grow: 1; display: flex; flex-direction: column; }
-
-      /* Adjust flex behavior for sections */
-      #report-cards-wrapper, #chart-container, #due-list-container {
-          flex-grow: 1; /* Allow sections to grow */
-          overflow-y: auto; /* Add scroll if content overflows vertically */
+      /* Prevent body horizontal scroll */
+      body {
+        background: #f0f2f5;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden; /* Prevent accidental horizontal scroll */
       }
 
+      main {
+        flex-grow: 1; /* Allows main content to fill available space */
+        display: flex;
+        flex-direction: column;
+        width: 100%; /* Ensure main takes full width */
+      }
+
+      /* Ensure sections don't cause overflow and allow internal scroll if needed */
+      #report-cards-wrapper, #chart-container, #due-list-container {
+          width: 100%;
+          /* Removed flex-grow: 1; as main handles overall growth */
+          /* overflow-y: auto; */ /* Allow vertical scroll within sections if content exceeds height */
+      }
+
+      /* Scrollbar Styling (no changes) */
       ::-webkit-scrollbar { width: 8px; height: 8px }
       ::-webkit-scrollbar-track { background: #e9ecef; }
       ::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px }
       ::-webkit-scrollbar-thumb:hover { background: #868e96; }
 
+      /* Focus Styles (no changes) */
       button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid theme('colors.primary.400'); outline-offset: 2px; }
 
+      /* Report Card Base Styles (no functional changes needed for responsiveness) */
       .report-card {
-        background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease-in-out; box-shadow: theme('boxShadow.card'); min-height: 130px; position: relative; overflow: hidden;
+        background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1rem; /* Adjusted padding slightly */ display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease-in-out; box-shadow: theme('boxShadow.card'); min-height: 120px; /* Adjusted min-height */ position: relative; overflow: hidden;
       }
+       @media (min-width: 640px) { /* sm breakpoint */
+          .report-card { padding: 1.25rem; }
+       }
+       @media (min-width: 1024px) { /* lg breakpoint */
+          .report-card { padding: 1.5rem; }
+       }
       .report-card:hover {
         border-color: theme('colors.primary.300'); box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.glow'); transform: translateY(-4px);
       }
       .report-card .icon {
-        position: absolute; top: 1rem; right: 1rem; opacity: 0.15; width: 2.5rem; height: 2.5rem; color: theme('colors.slate.400'); transition: opacity 0.3s ease;
+        position: absolute; top: 0.75rem; right: 0.75rem; opacity: 0.15; width: 2.25rem; height: 2.25rem; color: theme('colors.slate.400'); transition: opacity 0.3s ease;
       }
+       @media (min-width: 640px) { /* sm breakpoint */
+          .report-card .icon { top: 1rem; right: 1rem; width: 2.5rem; height: 2.5rem;}
+       }
        .report-card:hover .icon { opacity: 0.3; }
-      .report-card .title { font-size: 0.875rem; font-weight: 500; color: theme('colors.slate.600'); margin-bottom: 0.5rem; }
-      .report-card .value { font-size: 1.75rem; font-weight: 700; color: theme('colors.primary.500'); margin-bottom: 0.25rem; line-height: 1.2; }
-      .report-card .value.count { color: theme('colors.slate.700'); font-size: 2rem; }
-      .report-card .detail { font-size: 0.8rem; color: theme('colors.slate.500'); margin-top: auto; }
+      .report-card .title { font-size: 0.8rem; font-weight: 500; color: theme('colors.slate.600'); margin-bottom: 0.5rem; }
+       @media (min-width: 640px) { /* sm breakpoint */
+          .report-card .title { font-size: 0.875rem; }
+       }
+      .report-card .value { font-size: 1.5rem; font-weight: 700; color: theme('colors.primary.500'); margin-bottom: 0.25rem; line-height: 1.2; }
+       @media (min-width: 640px) { /* sm breakpoint */
+          .report-card .value { font-size: 1.75rem; }
+       }
+      .report-card .value.count { color: theme('colors.slate.700'); font-size: 1.75rem; }
+       @media (min-width: 640px) { /* sm breakpoint */
+          .report-card .value.count { font-size: 2rem; }
+       }
+      .report-card .detail { font-size: 0.75rem; color: theme('colors.slate.500'); margin-top: auto; }
+        @media (min-width: 640px) { /* sm breakpoint */
+          .report-card .detail { font-size: 0.8rem; }
+       }
       .report-card .value.paid { color: theme('colors.green.500') !important; }
       .report-card .value.pending { color: theme('colors.yellow.500') !important; }
       .report-card .value.overdue { color: theme('colors.red.500') !important; }
@@ -82,62 +121,126 @@
       .report-card .icon.overdue { color: theme('colors.red.500'); }
       .report-card .icon.total { color: theme('colors.primary.500'); }
 
-      /* --- Highlighted Card Styles --- */
+      /* Highlighted Card Styles (no changes) */
       .report-card.highlighted-card {
-          border-color: theme('colors.primary.400'); /* Static highlight border */
-          background-color: theme('colors.slate.50'); /* Subtle background tint */
-          /* You could add order: -1; here if you want it to appear first visually on larger screens, independent of its position in the grid generation */
+          border-color: theme('colors.primary.400');
+          background-color: theme('colors.slate.50');
       }
       .report-card.highlighted-card:hover {
-          border-color: theme('colors.primary.500'); /* Stronger border on hover */
-          box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.highlight-glow'); /* Enhanced glow on hover */
-          transform: translateY(-6px); /* Slightly more lift */
+          border-color: theme('colors.primary.500');
+          box-shadow: theme('boxShadow.card-hover'), theme('boxShadow.highlight-glow');
+          transform: translateY(-6px);
       }
       .report-card .icon.due-total-highlight {
-          color: theme('colors.primary.600'); /* Make icon match primary highlight */
-          opacity: 0.25; /* Slightly more visible icon */
+          color: theme('colors.primary.600');
+          opacity: 0.25;
       }
        .report-card.highlighted-card:hover .icon.due-total-highlight {
           opacity: 0.4;
       }
-      /* --- End Highlighted Card Styles --- */
 
-
+      /* View Toggle Button Styles (Adjust padding for mobile) */
       .view-toggle-button {
-        padding: 0.6rem 1.2rem; border-radius: theme('borderRadius.lg'); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
+        padding: 0.5rem 0.8rem; /* Reduced padding for smaller screens */
+        border-radius: theme('borderRadius.lg'); font-size: 0.8rem; /* Slightly smaller font */ font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; white-space: nowrap; /* Prevent text breaking */
       }
+       @media (min-width: 640px) { /* sm breakpoint */
+           .view-toggle-button { padding: 0.6rem 1.2rem; font-size: 0.875rem; }
+       }
       .view-toggle-button.active {
         background-color: theme('colors.primary.500/20'); color: theme('colors.primary.600'); border-color: theme('colors.primary.500/40'); box-shadow: 0 1px 3px rgba(77,171,247,.1);
       }
       .view-toggle-button:not(.active) { color: theme('colors.slate.600'); background-color: transparent; }
       .view-toggle-button:not(.active):hover { background-color: theme('colors.primary.500/10'); color: theme('colors.primary.700'); }
 
-      header { box-shadow: 0 2px 4px rgba(0,0,0,.05); background-color: #ffffff; border-bottom: 1px solid #e9ecef; }
+      /* Header Styles (no changes needed, flex-wrap handles responsiveness) */
+      header { box-shadow: 0 2px 4px rgba(0,0,0,.05); background-color: #ffffff; border-bottom: 1px solid #e9ecef; width: 100%; }
 
-      #manual-refresh { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; border-color: theme('colors.primary.500'); background-color: theme('colors.primary.500/15'); color: theme('colors.primary.600'); }
+      /* Refresh Button (Adjust padding for mobile) */
+      #manual-refresh {
+        padding: 0.3rem 0.6rem; /* Reduced padding */
+        border-radius: theme('borderRadius.lg'); border-width: 1px;
+        transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.3rem; /* Reduced gap */
+        border-color: theme('colors.primary.500'); background-color: theme('colors.primary.500/15'); color: theme('colors.primary.600');
+        font-size: 0.75rem; /* Smaller font */ font-weight: 500; /* Adjusted weight */
+      }
+       @media (min-width: 640px) { /* sm breakpoint */
+           #manual-refresh { padding: 0.375rem 1rem; gap: 0.5rem; font-size: 0.875rem; }
+       }
       #manual-refresh:hover { background-color: theme('colors.primary.500/25'); }
       #manual-refresh:disabled { opacity: 0.7; cursor: not-allowed; }
       .refresh-icon { width: 1em; height: 1em; display: inline-block; }
       .refresh-icon.spinning { animation: spin 1s linear infinite; }
 
-      #chart-container, #due-list-container { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1.5rem; box-shadow: theme('boxShadow.card'); }
-
-       /* Styling for Due List View */
-      #due-list-total-all { font-size: 1.5rem; font-weight: 600; color: theme('colors.slate.700'); text-align: center; margin-bottom: 0; /* Adjusted margin */ padding: 1rem; background-color: theme('colors.slate.100'); border-radius: theme('borderRadius.lg'); border: 1px solid theme('colors.slate.300'); }
-      #due-list-items ul { list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
-      #due-list-items li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 0.75rem 0.5rem; border-bottom: 1px solid theme('colors.gray.200'); font-size: 0.9rem; }
-      #due-list-items li:last-child { border-bottom: none; }
-      #due-list-items .item-info { flex-grow: 1; display: flex; flex-direction: column; margin-right: 1rem; overflow: hidden; }
-      #due-list-items .item-description { color: theme('colors.slate.700'); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-      #due-list-items .item-due-date { font-size: 0.75rem; color: theme('colors.slate.500'); margin-top: 0.1rem; }
-      #due-list-items .item-value { color: theme('colors.primary.700'); font-weight: 600; white-space: nowrap; margin-left: auto; }
-      #due-list-items .no-items-message { text-align: center; color: theme('colors.slate.500'); padding: 2rem 1rem; font-style: italic; }
-
-      /* Styling for Due List Chart */
-      #due-list-chart-wrapper { /* Basic styling for chart container */
-          border: 1px solid theme('colors.gray.200');
-          background-color: theme('colors.gray.100/50');
+      /* Chart and List Containers */
+      #chart-container, #due-list-container {
+        background-color: #ffffff; border: 1px solid #dee2e6; border-radius: theme('borderRadius.xl'); padding: 1rem; /* Reduced padding for mobile */ box-shadow: theme('boxShadow.card'); width: 100%;
       }
+        @media (min-width: 640px) { /* sm breakpoint */
+            #chart-container, #due-list-container { padding: 1.5rem; }
+        }
+
+       /* Due List View Styles */
+      #due-list-total-all {
+        font-size: 1.1rem; /* Adjusted font size */ font-weight: 600; color: theme('colors.slate.700'); text-align: center; margin-bottom: 0; padding: 0.75rem; /* Adjusted padding */ background-color: theme('colors.slate.100'); border-radius: theme('borderRadius.lg'); border: 1px solid theme('colors.slate.300');
+      }
+       @media (min-width: 640px) { /* sm breakpoint */
+           #due-list-total-all { font-size: 1.25rem; padding: 1rem; }
+       }
+      #due-list-items ul { list-style: none; padding: 0; margin: 0; max-height: 350px; /* Adjusted max-height */ overflow-y: auto; }
+       @media (min-width: 640px) { /* sm breakpoint */
+           #due-list-items ul { max-height: 400px; }
+       }
+      #due-list-items li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 0.6rem 0.25rem; /* Adjusted padding */ border-bottom: 1px solid theme('colors.gray.200'); font-size: 0.85rem; /* Adjusted font size */ }
+       @media (min-width: 640px) { /* sm breakpoint */
+           #due-list-items li { padding: 0.75rem 0.5rem; font-size: 0.9rem; }
+       }
+      #due-list-items li:last-child { border-bottom: none; }
+      #due-list-items .item-info { flex-grow: 1; display: flex; flex-direction: column; margin-right: 0.5rem; /* Reduced margin */ overflow: hidden; min-width: 100px; /* Prevent excessive shrinking */ }
+       @media (min-width: 640px) { /* sm breakpoint */
+            #due-list-items .item-info { margin-right: 1rem; }
+       }
+      #due-list-items .item-description { color: theme('colors.slate.700'); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+      #due-list-items .item-due-date { font-size: 0.7rem; color: theme('colors.slate.500'); margin-top: 0.1rem; }
+       @media (min-width: 640px) { /* sm breakpoint */
+           #due-list-items .item-due-date { font-size: 0.75rem; }
+       }
+      #due-list-items .item-value { color: theme('colors.primary.700'); font-weight: 600; white-space: nowrap; margin-left: auto; padding-left: 0.5rem; /* Add some space */ }
+      #due-list-items .no-items-message { text-align: center; color: theme('colors.slate.500'); padding: 1.5rem 1rem; /* Adjusted padding */ font-style: italic; font-size: 0.9rem; }
+       @media (min-width: 640px) { /* sm breakpoint */
+           #due-list-items .no-items-message { padding: 2rem 1rem; }
+       }
+
+      /* Due List Chart Wrapper */
+      #due-list-chart-wrapper {
+        border: 1px solid theme('colors.gray.200');
+        background-color: theme('colors.gray.100/50');
+        width: 100%; /* Ensure it takes full width within its container */
+        /* max-w-3xl removed in HTML */
+        /* Adjusted height for different screens */
+        height: 280px;
+      }
+        @media (min-width: 640px) { /* sm breakpoint */
+           #due-list-chart-wrapper { height: 350px; }
+        }
+         @media (min-width: 1024px) { /* lg breakpoint */
+           #due-list-chart-wrapper { height: 400px; }
+        }
+
+      /* Weekly Chart Container */
+       #weekly-chart-div {
+         width: 100%;
+         /* max-w-4xl removed in HTML */
+         /* Adjusted height for different screens */
+         height: 300px;
+       }
+        @media (min-width: 640px) { /* sm breakpoint */
+           #weekly-chart-div { height: 450px; }
+        }
+         @media (min-width: 1024px) { /* lg breakpoint */
+           #weekly-chart-div { height: 550px; }
+        }
+
 
     </style>
 </head>
@@ -152,64 +255,83 @@
       <symbol id="icon-exclamation-triangle" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></symbol>
       <symbol id="icon-list-bullet" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></symbol>
     </svg>
-    <header class="w-full sticky top-0 z-40 flex-shrink-0"> <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[4rem] py-3 sm:py-0 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2"> <div class="flex items-center gap-2 order-1"> <svg class="h-6 w-6 sm:h-7 sm:w-7 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2z"></path></svg> <h1 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-primary-500">Painel</h1> </div> <div class="flex items-center gap-3 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap"> <span id="grand-total-header" class="text-primary-600 font-semibold text-xs sm:text-sm text-center"></span> <span id="last-update" class="text-slate-500 text-xs sm:text-sm text-center"></span> </div> <button id="manual-refresh" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border shadow-glow order-2 sm:order-3 ml-auto sm:ml-0 text-xs sm:text-sm font-medium"> <svg class="refresh-icon" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg> <span>Atualizar</span> </button> </div> </header>
-    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"> <div class="h-14 w-14 border-8 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div> <p class="text-primary-600 text-xl font-semibold">Carregando dados…</p> </div>
-    <main id="main-content" class="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8 flex-grow">
 
-      <div class="flex justify-center gap-2 bg-white/80 p-1.5 rounded-xl flex-shrink-0 self-center shadow-md border border-gray-200">
+    <header class="w-full sticky top-0 z-40 flex-shrink-0">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto min-h-[3.5rem] py-2 sm:h-16 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <div class="flex items-center gap-2 order-1">
+                <svg class="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2z"></path></svg>
+                <h1 class="text-base sm:text-lg lg:text-xl font-extrabold text-primary-500">Painel</h1>
+            </div>
+             <div class="flex items-center gap-2 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center sm:justify-end flex-wrap">
+                <span id="grand-total-header" class="text-primary-600 font-semibold text-xs text-center"></span>
+                <span id="last-update" class="text-slate-500 text-xs text-center"></span>
+            </div>
+            <button id="manual-refresh" class="order-2 sm:order-3 ml-auto sm:ml-0 shadow-glow">
+                <svg class="refresh-icon" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg>
+                <span>Atualizar</span>
+            </button>
+        </div>
+    </header>
+
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"> <div class="h-14 w-14 border-8 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div> <p class="text-primary-600 text-xl font-semibold">Carregando dados…</p> </div>
+
+    <main id="main-content" class="w-full max-w-screen-xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col gap-4 sm:gap-6">
+
+      <div class="flex justify-center flex-wrap gap-1 sm:gap-2 bg-white/80 p-1 rounded-xl flex-shrink-0 self-center shadow-md border border-gray-200">
         <button id="view-toggle-reports" class="view-toggle-button active">Relatórios</button>
-        <button id="view-toggle-chart" class="view-toggle-button">Gráfico Semanal</button>
-        <button id="view-toggle-due-list" class="view-toggle-button">Lista Vencimentos</button>
-      </div>
-      <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6"> </section>
-      <section id="chart-container" class="hidden w-full flex flex-col items-center"> <h2 class="text-xl font-semibold text-primary-600 mb-6">Pagamentos por Semana (Mês Atual)</h2> <div class="w-full max-w-4xl h-[450px] sm:h-[550px]"> <canvas id="weeklyPaymentsChart"></canvas> </div> <p id="chart-error-message" class="hidden mt-4 text-yellow-500 text-sm font-medium"></p> </section>
-      <section id="due-list-container" class="hidden w-full flex flex-col gap-6"> <div class="text-center">
-            <h2 class="text-xl font-semibold text-primary-600 mb-1">Lista de Vencimentos</h2>
-            <span id="due-list-current-date" class="text-sm text-slate-500"></span> </div>
-          <div id="due-list-total-all" class="text-center">Calculando Total Geral...</div>
-          <div id="due-list-chart-wrapper" class="w-full max-w-3xl mx-auto h-[300px] sm:h-[400px] bg-white p-4 rounded-lg shadow border border-gray-200">
-              <canvas id="dueListChart"></canvas>
-              <p id="due-list-chart-error" class="hidden text-center text-red-500 pt-4">Erro ao gerar gráfico de vencimentos mensais.</p>
+        <button id="view-toggle-chart" class="view-toggle-button">Gráfico</button> <button id="view-toggle-due-list" class="view-toggle-button">Vencimentos</button> </div>
+
+      <section id="report-cards-wrapper" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+          </section>
+
+      <section id="chart-container" class="hidden w-full flex flex-col items-center">
+          <h2 class="text-lg sm:text-xl font-semibold text-primary-600 mb-4">Pagamentos por Semana</h2>
+          <div id="weekly-chart-div">
+              <canvas id="weeklyPaymentsChart"></canvas>
           </div>
-          <div id="due-list-items" class="mt-0"> <p id="due-list-error-message" class="hidden mt-4 text-red-500 text-sm font-medium text-center"></p>
-              <p id="due-list-loading-message" class="mt-4 text-slate-500 text-sm font-medium text-center">Carregando lançamentos...</p>
+          <p id="chart-error-message" class="hidden mt-4 text-yellow-500 text-sm font-medium"></p>
+      </section>
+
+      <section id="due-list-container" class="hidden w-full flex flex-col gap-4 sm:gap-6">
+          <div class="text-center">
+              <h2 class="text-lg sm:text-xl font-semibold text-primary-600 mb-1">Lista de Vencimentos</h2>
+              <span id="due-list-current-date" class="text-xs sm:text-sm text-slate-500"></span>
+          </div>
+          <div id="due-list-total-all" class="text-center w-full max-w-md mx-auto">Calculando Total Geral...</div>
+          <div id="due-list-chart-wrapper" class="w-full mx-auto bg-white p-2 sm:p-4 rounded-lg shadow border border-gray-200">
+              <canvas id="dueListChart"></canvas>
+              <p id="due-list-chart-error" class="hidden text-center text-red-500 pt-4 text-sm">Erro ao gerar gráfico mensal.</p>
+          </div>
+          <div id="due-list-items" class="mt-0 bg-white rounded-lg border border-gray-200 shadow p-2 sm:p-4">
+              <p id="due-list-error-message" class="hidden text-center text-red-500 text-sm font-medium p-4"></p>
+              <p id="due-list-loading-message" class="text-center text-slate-500 text-sm font-medium p-4">Carregando lançamentos...</p>
               </div>
       </section>
-      <br><br><br><br>
+
+      <div class="flex-shrink-0 h-4"></div>
+
     </main>
+
     <script>
-      // --- Configuration ---
+      // --- Configuration (No changes) ---
       const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
-      const gidReports = '0'; // GID for reports and weekly chart (Planilha 1)
-      const gidTable = '446722751'; // GID for due list (Planilha 2)
+      const gidReports = '0';
+      const gidTable = '446722751';
       const baseURLReports = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidReports}`;
       const baseURLTable = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gidTable}`;
-      const REFRESH_INTERVAL = 60000; // 1 minute
+      const REFRESH_INTERVAL = 60000;
       const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
+      const valorRegex = /valor|total/i; const vencRegex = /venc/i; const pagtoRegex = /pag/i; const statusRegex = /status|situação/i;
+      const dueListVencRegex = /venc/i; const dueListValorRegex = /valor|total/i; const dueListDescRegex = /descri[cç][aã]o|item|fornecedor|nome/i;
+      const statusPago = ['pago', 'liquidado', 'quitado']; const statusPendente = ['a vencer', 'pendente', 'aberto', 'em aberto']; const statusVencido = ['vencido', 'em atraso'];
 
-      // Regex for Reports/Weekly Chart (Sheet 1 data source)
-      const valorRegex = /valor|total/i;
-      const vencRegex = /venc/i;
-      const pagtoRegex = /pag/i;
-      const statusRegex = /status|situação/i;
-
-      // Regex for Due List (Sheet 2 data source)
-      const dueListVencRegex = /venc/i;
-      const dueListValorRegex = /valor|total/i;
-      const dueListDescRegex = /descri[cç][aã]o|item|fornecedor|nome/i;
-
-      const statusPago = ['pago', 'liquidado', 'quitado'];
-      const statusPendente = ['a vencer', 'pendente', 'aberto', 'em aberto'];
-      const statusVencido = ['vencido', 'em atraso'];
-
-      // --- State Variables ---
-      let headersReports = [], sheetRowsReports = [];
-      let headersTable = [], sheetRowsTable = [];
+      // --- State Variables (No changes) ---
+      let headersReports = [], sheetRowsReports = []; let headersTable = [], sheetRowsTable = [];
       let isLoaded = false, isFetching = false;
       let weeklyChartInstance = null;
       let dueListChartInstance = null;
 
-      // --- DOM Elements ---
+      // --- DOM Elements (No changes) ---
       const $loader = document.getElementById('loader');
       const $reportCardsWrapper = document.getElementById('report-cards-wrapper');
       const $lastUpdate = document.getElementById('last-update');
@@ -235,7 +357,7 @@
 
       Chart.register(ChartDataLabels);
 
-      // --- Utility Functions ---
+      // --- Utility Functions (No changes) ---
       const padZero = num => num.toString().padStart(2, '0');
       const formatDateBR = date => { if (!date || isNaN(date.getTime())) return '–'; return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`; };
       const formatMonthYearLabel = date => {
@@ -248,13 +370,11 @@
       const formatCurrencyShort = value => { if (typeof value !== 'number' || isNaN(value)) return '–'; if (value === 0) return 'R$0'; if (Math.abs(value) < 1000) return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0}); if (Math.abs(value) < 1000000) return (value / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k'; return (value / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'M'; }
       function getNumericValue(cellValue) { if (typeof cellValue === 'number') return cellValue; if (typeof cellValue === 'string') { const cleanedString = cellValue.replace(/[R$\s.]/g, '').replace(',', '.'); const num = parseFloat(cleanedString); return isNaN(num) ? 0 : num; } return 0; }
       function getWeekOfMonth(date) { if (!date || isNaN(date.getTime())) return null; const dayOfMonth = date.getUTCDate(); if (dayOfMonth <= 7) return 1; if (dayOfMonth <= 14) return 2; if (dayOfMonth <= 21) return 3; if (dayOfMonth <= 28) return 4; return 5; }
-      // --- End Utility Functions ---
 
-      // --- Data Fetching Function ---
+      // --- Data Fetching Function (No changes) ---
       async function fetchSheetData(baseUrl) { try { const response = await fetch(`${baseUrl}&_=${Date.now()}`); if (!response.ok) { throw new Error(`Erro HTTP ${response.status} ao buscar dados de ${baseUrl}`); } const text = await response.text(); if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) { console.error("Texto recebido inesperado:", text); throw new Error('Formato de resposta inválido da API do Google Sheets.'); } return JSON.parse(text.substring(47, text.length - 2)); } catch (error) { console.error(`Falha ao buscar ou processar dados de ${baseUrl}:`, error); throw error; } }
-      // --- End Data Fetching Function ---
 
-      // --- Main Data Loading and Processing Function ---
+      // --- Main Data Loading and Processing Function (No changes) ---
       async function loadData() {
           if (isFetching) return;
           isFetching = true;
@@ -280,14 +400,12 @@
               if (jsonDataReports && jsonDataReports.table && jsonDataReports.table.cols && jsonDataReports.table.rows) {
                   headersReports = jsonDataReports.table.cols.map(col => col.label || `Col${col.id}`);
                   sheetRowsReports = jsonDataReports.table.rows.map(row => { const cells = Array(headersReports.length).fill(null); if (row && row.c) { row.c.forEach((cell, index) => { if (index < headersReports.length) { cells[index] = cell?.v ?? null; } }); } return cells; });
-                  prepareAndRenderWeeklyChart(); // Prepare chart data from source 1
-                  updateHeaderInfo(); // Update header total from source 1
+                  prepareAndRenderWeeklyChart();
+                  updateHeaderInfo();
                   reportDataSuccess = true;
               } else {
                   console.error("Dados da Fonte 1 incompletos ou mal formatados.");
-                  // Don't immediately wipe cards, wait until after source 2 is processed
-                  headersReports = [];
-                  sheetRowsReports = [];
+                  headersReports = []; sheetRowsReports = [];
                   if (weeklyChartInstance) weeklyChartInstance.destroy(); weeklyChartInstance = null;
                   $chartErrorMsg.textContent = 'Não foi possível carregar os dados para o gráfico semanal.'; $chartErrorMsg.classList.remove('hidden');
                   $grandTotalHeader.textContent = 'Total Geral: Erro';
@@ -300,33 +418,27 @@
                   tableDataSuccess = true;
               } else {
                   console.error("Dados da Lista de Vencimentos (Fonte 2) incompletos ou mal formatados.");
-                  headersTable = [];
-                  sheetRowsTable = [];
-                  // Error handling for the Due List view itself happens later if needed
+                  headersTable = []; sheetRowsTable = [];
               }
 
-               // *** Now build the report cards using available data ***
-               buildReportCards(); // Builds cards using whatever data loaded successfully
-
+               // Build report cards using available data
+               buildReportCards();
 
                // Render the due list view IF it's the active view AND source 2 data loaded
                if (tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) {
                    renderDueListView();
                } else if (!tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) {
-                   // Handle error display for due list view if it's active but data failed
                    renderDueListError("Erro ao carregar os dados para a lista de vencimentos.");
                    $dueListChartWrapper?.classList.add('hidden');
                    if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
                }
-
 
               // Update timestamp
               if (reportDataSuccess || tableDataSuccess) { $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit'})}`; isLoaded = true; }
 
           } catch (error) {
               console.error("Erro geral ao carregar dados:", error);
-              // Attempt to build cards even on error, might show partial data or errors
-              buildReportCards();
+              buildReportCards(); // Attempt to build cards even on error
               if (!reportDataSuccess) { $chartErrorMsg.textContent = 'Erro geral ao carregar gráfico semanal.'; $chartErrorMsg.classList.remove('hidden'); $grandTotalHeader.textContent = 'Total Geral: Erro'; }
               if (!tableDataSuccess && $viewToggleDueListBtn.classList.contains('active')) {
                    renderDueListError("Erro geral ao carregar lista de vencimentos.");
@@ -337,440 +449,189 @@
               isFetching = false; $loader.classList.add('hidden'); $manualRefreshBtn.disabled = false; $refreshIcon.classList.remove('spinning'); $refreshBtnText.textContent = 'Atualizar'; $dueListLoadingMsg?.classList.add('hidden');
           }
       }
-      // --- End Data Loading ---
 
       // --- Rendering Functions ---
 
-      // *** MODIFIED: buildReportCards() with updated titles, detail, and highlight class logic ***
+      // buildReportCards() (No functional changes from previous step)
       function buildReportCards() {
-          $reportCardsWrapper.innerHTML = ''; // Clear existing cards
-
-          // --- Calculation from Source 1 (Reports Data) ---
+          $reportCardsWrapper.innerHTML = '';
           const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
           const valorIndex = findIndex(valorRegex, headersReports);
           const vencIndex = findIndex(vencRegex, headersReports);
           const pagtoIndex = findIndex(pagtoRegex, headersReports);
           const statusIndex = findIndex(statusRegex, headersReports);
-
           let hasSource1Error = false;
-          if (valorIndex === -1 && headersReports.length > 0) {
-             console.error("Erro: Coluna de Valor não encontrada (Fonte 1).");
-             hasSource1Error = true;
-          } else if (headersReports.length > 0) {
-             if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Fonte 1).');
-             if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Fonte 1).');
-             if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Fonte 1).');
-          }
-
+          if (valorIndex === -1 && headersReports.length > 0) { console.error("Erro: Coluna de Valor não encontrada (Fonte 1)."); hasSource1Error = true; }
+          else if (headersReports.length > 0) { if (vencIndex === -1) console.warn('Coluna de Vencimento não encontrada (Fonte 1).'); if (pagtoIndex === -1) console.warn('Coluna de Pagamento não encontrada (Fonte 1).'); if (statusIndex === -1) console.warn('Coluna de Status não encontrada (Fonte 1).');}
           let totalGeral = 0, totalPago = 0, totalPendente = 0, totalVencido = 0;
           let countTotal = 0, countPago = 0, countPendente = 0, countVencido = 0;
           const today = new Date(); today.setUTCHours(0, 0, 0, 0);
-
           if (valorIndex !== -1) {
               sheetRowsReports.forEach(row => {
-                  const valor = getNumericValue(row[valorIndex]);
-                  if (isNaN(valor)) return;
-                  totalGeral += valor; countTotal++;
-                  const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null;
-                  const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null;
-                  const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
+                  const valor = getNumericValue(row[valorIndex]); if (isNaN(valor)) return; totalGeral += valor; countTotal++;
+                  const dataPagto = pagtoIndex !== -1 ? parseDateValue(row[pagtoIndex]) : null; const dataVenc = vencIndex !== -1 ? parseDateValue(row[vencIndex]) : null; const statusRaw = statusIndex !== -1 ? (row[statusIndex] || '').toString().toLowerCase().trim() : '';
                   let isPago = false, isPendente = false, isVencido = false;
-                  if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; }
-                  else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; }
-                  else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; }
-                  else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; }
-                  else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; }
-                  else { isPendente = true; }
-
-                  if (isPago) { totalPago += valor; countPago++; }
-                  else if (isVencido) { totalVencido += valor; countVencido++; }
-                  else { totalPendente += valor; countPendente++; }
+                  if (dataPagto && !isNaN(dataPagto.getTime())) { isPago = true; } else if (statusIndex !== -1 && statusPago.some(s => statusRaw.includes(s))) { isPago = true; } else if (statusIndex !== -1 && statusVencido.some(s => statusRaw.includes(s))) { isVencido = true; } else if (statusIndex !== -1 && statusPendente.some(s => statusRaw.includes(s))) { isPendente = true; } else if (dataVenc && !isNaN(dataVenc.getTime())) { isVencido = dataVenc < today; isPendente = !isVencido; } else { isPendente = true; }
+                  if (isPago) { totalPago += valor; countPago++; } else if (isVencido) { totalVencido += valor; countVencido++; } else { totalPendente += valor; countPendente++; }
               });
-          } else if (headersReports.length > 0){
-              countTotal = sheetRowsReports.length;
-          }
-
-
-          // --- Calculation from Source 2 (Due List Data) ---
-          let totalDueListSheet2 = 0;
-          let countDueListSheet2 = 0;
-          let hasSource2Error = false;
-          const dueListValorIndex = findIndex(dueListValorRegex, headersTable);
-          const dueListVencIndex = findIndex(dueListVencRegex, headersTable);
-
+          } else if (headersReports.length > 0){ countTotal = sheetRowsReports.length; }
+          let totalDueListSheet2 = 0; let countDueListSheet2 = 0; let hasSource2Error = false;
+          const dueListValorIndex = findIndex(dueListValorRegex, headersTable); const dueListVencIndex = findIndex(dueListVencRegex, headersTable);
           if (dueListValorIndex !== -1 && dueListVencIndex !== -1 && sheetRowsTable && sheetRowsTable.length > 0) {
               sheetRowsTable.forEach(row => {
-                  const vencValueRaw = row[dueListVencIndex];
-                  const vencDate = parseDateValue(vencValueRaw);
+                  const vencValueRaw = row[dueListVencIndex]; const vencDate = parseDateValue(vencValueRaw);
                   if (vencDate && !isNaN(vencDate.getTime())) {
-                      const valor = getNumericValue(row[dueListValorIndex]);
-                      if (!isNaN(valor)) {
-                          totalDueListSheet2 += valor;
-                          countDueListSheet2++;
-                      }
+                      const valor = getNumericValue(row[dueListValorIndex]); if (!isNaN(valor)) { totalDueListSheet2 += valor; countDueListSheet2++; }
                   }
               });
-          } else {
-              if (!sheetRowsTable || sheetRowsTable.length === 0) {
-                  console.log("Fonte 2 (Lista Vencimentos) vazia ou não carregada para cálculo do card.");
-                   // Don't set error flag if it's just empty
-              } else if (dueListValorIndex === -1 || dueListVencIndex === -1) {
-                  console.warn("Coluna de Valor ou Vencimento não encontrada na Fonte 2 para cálculo do card.");
-                  hasSource2Error = true; // Error if columns missing but rows exist
-              }
-          }
-
-          // --- Get Current Date for Highlighted Card Detail ---
+          } else { if (!sheetRowsTable || sheetRowsTable.length === 0) { console.log("Fonte 2 (Lista Vencimentos) vazia ou não carregada."); } else if (dueListValorIndex === -1 || dueListVencIndex === -1) { console.warn("Coluna de Valor ou Vencimento não encontrada na Fonte 2."); hasSource2Error = true; }}
           const currentDateFormatted = formatDateBR(new Date());
-
-
-          // --- Prepare Card Data (Revised Titles and Detail) ---
-          const reportData = [
-              // Highlighted Card First (using type for styling and class below)
-              {
-                  type: 'due-total-highlight', // Specific type for CSS targeting
-                  title: "Total Vencimentos",
-                  value: totalDueListSheet2,
-                  // UPDATED detail: Include count and current date
-                  detail: `${countDueListSheet2} lançamentos • Ref: ${currentDateFormatted}`,
-                  valueClass: '', // Standard value class
-                  iconId: 'icon-list-bullet' // Or icon-calendar-days if you add it
-              },
-
-              // Cards from Source 1
-              { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' },
-              { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' },
-              { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' },
-              { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' },
-
-
-              // Count Cards from Source 1
-              { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' },
-              { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' },
-              { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' },
-          ];
-
-          // --- Build HTML Cards (Adding highlight class conditionally) ---
+          const reportData = [ { type: 'due-total-highlight', title: "Total Vencimentos", value: totalDueListSheet2, detail: `${countDueListSheet2} lançamentos • Ref: ${currentDateFormatted}`, valueClass: '', iconId: 'icon-list-bullet' }, { type: 'total', title: "Valor Total Geral", value: totalGeral, detail: `${countTotal} lançamento(s)`, valueClass: '', iconId: 'icon-currency-dollar' }, { type: 'paid', title: "Total Pago", value: totalPago, detail: `${countPago} lançamento(s)`, valueClass: 'paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Total Pendente", value: totalPendente, detail: `${countPendente} lançamento(s)`, valueClass: 'pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Total Vencido", value: totalVencido, detail: `${countVencido} lançamento(s)`, valueClass: 'overdue', iconId: 'icon-exclamation-triangle' }, { type: 'paid', title: "Lançamentos Pagos", value: countPago, detail: `de ${countTotal} no total`, valueClass: 'count paid', iconId: 'icon-check-circle' }, { type: 'pending', title: "Lançamentos Pendentes", value: countPendente, detail: `de ${countTotal} no total`, valueClass: 'count pending', iconId: 'icon-clock' }, { type: 'overdue', title: "Lançamentos Vencidos", value: countVencido, detail: `de ${countTotal} no total`, valueClass: 'count overdue', iconId: 'icon-exclamation-triangle' }, ];
           reportData.forEach(data => {
-              // Skip rendering cards from source 1 if its value column was missing
-               if (hasSource1Error && ['total', 'paid', 'pending', 'overdue'].includes(data.type) && !data.valueClass.includes('count') && data.type !== 'due-total-highlight') {
-                  return; // Don't render value cards if source 1 value is missing
-               }
-               // Skip rendering count cards if source 1 value column was missing (counts would be unreliable)
-               if (hasSource1Error && data.valueClass.includes('count') && data.type !== 'due-total-highlight') {
-                  return;
-               }
-                // Skip rendering the highlighted card if source 2 had errors
-                if (hasSource2Error && data.type === 'due-total-highlight') {
-                    return;
-                }
-
-
-              const card = document.createElement('div');
-              card.className = 'report-card'; // Base class
-
-              // Add highlight class if it's the special card type
-              if (data.type === 'due-total-highlight') {
-                  card.classList.add('highlighted-card');
-              }
-
+              if (hasSource1Error && ['total', 'paid', 'pending', 'overdue'].includes(data.type) && !data.valueClass.includes('count') && data.type !== 'due-total-highlight') { return; }
+              if (hasSource1Error && data.valueClass.includes('count') && data.type !== 'due-total-highlight') { return; }
+              if (hasSource2Error && data.type === 'due-total-highlight') { return; }
+              const card = document.createElement('div'); card.className = 'report-card';
+              if (data.type === 'due-total-highlight') { card.classList.add('highlighted-card'); }
               const formattedValue = data.valueClass.includes('count') ? data.value.toLocaleString('pt-BR') : formatCurrency(data.value);
-
-              const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-              // Use type class (e.g., 'paid', 'pending', 'total', 'due-total-highlight') for potential icon styling
-              iconSVG.classList.add('icon', data.type);
-              const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-              iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`);
-              iconSVG.appendChild(iconUse);
-              card.appendChild(iconSVG);
-
-              const contentDiv = document.createElement('div');
-              contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`;
-              card.appendChild(contentDiv);
-              $reportCardsWrapper.appendChild(card);
+              const iconSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); iconSVG.classList.add('icon', data.type);
+              const iconUse = document.createElementNS('http://www.w3.org/2000/svg', 'use'); iconUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${data.iconId}`); iconSVG.appendChild(iconUse); card.appendChild(iconSVG);
+              const contentDiv = document.createElement('div'); contentDiv.innerHTML = `<div><h3 class="title">${data.title}</h3><p class="value ${data.valueClass}">${formattedValue}</p></div><p class="detail">${data.detail}</p>`; card.appendChild(contentDiv); $reportCardsWrapper.appendChild(card);
           });
-
-           // Display general error if no cards were rendered at all
-           if ($reportCardsWrapper.children.length === 0) {
-                let errorMsg = "Não foi possível carregar dados para os relatórios.";
-                if(hasSource1Error && hasSource2Error) errorMsg = "Erro ao carregar dados das Fontes 1 e 2.";
-                else if (hasSource1Error) errorMsg = "Erro ao carregar dados da Fonte 1.";
-                else if (hasSource2Error) errorMsg = "Erro ao carregar dados da Fonte 2.";
-                $reportCardsWrapper.innerHTML = `<p class="text-center text-red-500 col-span-full font-medium p-4">${errorMsg}</p>`;
-           }
+           if ($reportCardsWrapper.children.length === 0) { let errorMsg = "Não foi possível carregar dados."; if(hasSource1Error && hasSource2Error) errorMsg = "Erro ao carregar dados das Fontes 1 e 2."; else if (hasSource1Error) errorMsg = "Erro ao carregar dados da Fonte 1."; else if (hasSource2Error) errorMsg = "Erro ao carregar dados da Fonte 2."; $reportCardsWrapper.innerHTML = `<p class="text-center text-red-500 col-span-full font-medium p-4">${errorMsg}</p>`; }
       }
 
+      // prepareAndRenderWeeklyChart() (No changes)
+      function prepareAndRenderWeeklyChart() { $chartErrorMsg.classList.add('hidden'); const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); const pagtoIndex = findIndex(pagtoRegex, headersReports); if (valorIndex === -1 || pagtoIndex === -1 || !sheetRowsReports || sheetRowsReports.length === 0) { $chartErrorMsg.textContent = 'Dados insuficientes para gerar o gráfico semanal.'; $chartErrorMsg.classList.remove('hidden'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); weeklyChartInstance = null; } const ctx = $chartCanvas.getContext('2d'); if(ctx) ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height); return; } const now = new Date(); const currentMonth = now.getUTCMonth(); const currentYear = now.getUTCFullYear(); const weeklyTotals = [0, 0, 0, 0, 0]; const weekLabels = ["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5+"]; /* Shortened labels */ sheetRowsReports.forEach(row => { const dataPagtoRaw = row[pagtoIndex]; const dataPagto = parseDateValue(dataPagtoRaw); if (dataPagto && !isNaN(dataPagto.getTime()) && dataPagto.getUTCMonth() === currentMonth && dataPagto.getUTCFullYear() === currentYear) { const valor = getNumericValue(row[valorIndex]); if(isNaN(valor)) return; const weekNumber = getWeekOfMonth(dataPagto); if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; } } }); renderWeeklyChart(weekLabels, weeklyTotals); }
 
-      // prepareAndRenderWeeklyChart() - No changes
-      function prepareAndRenderWeeklyChart() { $chartErrorMsg.classList.add('hidden'); const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports); const pagtoIndex = findIndex(pagtoRegex, headersReports); if (valorIndex === -1 || pagtoIndex === -1 || !sheetRowsReports || sheetRowsReports.length === 0) { $chartErrorMsg.textContent = 'Dados insuficientes ou colunas não encontradas para gerar o gráfico semanal.'; $chartErrorMsg.classList.remove('hidden'); if (weeklyChartInstance) { weeklyChartInstance.destroy(); weeklyChartInstance = null; } const ctx = $chartCanvas.getContext('2d'); if(ctx) ctx.clearRect(0, 0, $chartCanvas.width, $chartCanvas.height); return; } const now = new Date(); const currentMonth = now.getUTCMonth(); const currentYear = now.getUTCFullYear(); const weeklyTotals = [0, 0, 0, 0, 0]; const weekLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5+"]; sheetRowsReports.forEach(row => { const dataPagtoRaw = row[pagtoIndex]; const dataPagto = parseDateValue(dataPagtoRaw); if (dataPagto && !isNaN(dataPagto.getTime()) && dataPagto.getUTCMonth() === currentMonth && dataPagto.getUTCFullYear() === currentYear) { const valor = getNumericValue(row[valorIndex]); if(isNaN(valor)) return; const weekNumber = getWeekOfMonth(dataPagto); if (weekNumber) { weeklyTotals[weekNumber - 1] += valor; } } }); renderWeeklyChart(weekLabels, weeklyTotals); }
+      // renderWeeklyChart() (Adjusted font sizes for mobile)
+      function renderWeeklyChart(labels, data) { const ctx = $chartCanvas.getContext('2d'); if(!ctx) return; if (weeklyChartInstance) { weeklyChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' }; weeklyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Valor Pago', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 4, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 25 } }, /* Reduced top padding */ scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, font: { size: 10 }, /* Smaller ticks */ callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 9 } /* Smaller ticks */ }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 8, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 9, weight: '500' }, /* Smaller labels */ formatter: (value, context) => { return formatCurrencyShort(value); } } }, interaction: { mode: 'index', intersect: false, }, } }); }
 
-      // renderWeeklyChart() - No changes
-      function renderWeeklyChart(labels, data) { const ctx = $chartCanvas.getContext('2d'); if(!ctx) return; if (weeklyChartInstance) { weeklyChartInstance.destroy(); } const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' }; weeklyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Valor Pago', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 6, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30 } }, scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 11 } }, grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 10, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } }, interaction: { mode: 'index', intersect: false, }, } }); }
-
-      // renderDueListView() - No changes
+      // renderDueListView() (No functional changes)
       function renderDueListView() {
-          $dueListItems.innerHTML = ''; // Clear previous list/messages
-          $dueListErrorMsg.classList.add('hidden');
-          $dueListLoadingMsg.classList.add('hidden'); // Hide loading message now
-          $dueListChartError?.classList.add('hidden'); // Hide chart error
-
-          // Display current date
+          $dueListItems.innerHTML = ''; $dueListErrorMsg.classList.add('hidden');
+          // Hide loading msg only if it exists (it's removed from HTML initially)
+          $dueListLoadingMsg?.classList.add('hidden');
+          $dueListChartError?.classList.add('hidden');
           $dueListCurrentDate.textContent = `Data de Hoje: ${formatDateBR(new Date())}`;
-
-          // Initialize total display
           $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(0)}`;
-
-          // Validate that Source 2 data is loaded
-          if (!headersTable || headersTable.length === 0 || !sheetRowsTable) {
-              renderDueListError("Dados da Lista de Vencimentos (Fonte 2) não carregados ou inválidos.");
-              $dueListChartWrapper?.classList.add('hidden'); // Hide chart area if list data fails
-              return;
-          }
-
-          // Find required columns
+          if (!headersTable || headersTable.length === 0 || !sheetRowsTable) { renderDueListError("Dados da Lista de Vencimentos não carregados ou inválidos."); $dueListChartWrapper?.classList.add('hidden'); return; }
           const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
-          const vencIndex = findIndex(dueListVencRegex, headersTable);
-          const valorIndex = findIndex(dueListValorRegex, headersTable);
-          const descIndex = findIndex(dueListDescRegex, headersTable);
-
-          // Validate required columns
-          if (vencIndex === -1 || valorIndex === -1) {
-              renderDueListError("Erro: Colunas 'Vencimento' ou 'Valor' não encontradas na Fonte 2.");
-              $dueListChartWrapper?.classList.add('hidden');
-              $dueListChartError.textContent = 'Não foi possível gerar gráfico: Colunas Vencimento/Valor não encontradas.';
-              $dueListChartError.classList.remove('hidden');
-              if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-              return;
-          }
-           if (descIndex === -1) { console.warn("Coluna de Descrição não encontrada na Fonte 2."); }
-
-          // Process items
-          let totalAllDueValue = 0;
-          const allDueItems = [];
-
+          const vencIndex = findIndex(dueListVencRegex, headersTable); const valorIndex = findIndex(dueListValorRegex, headersTable); const descIndex = findIndex(dueListDescRegex, headersTable);
+          if (vencIndex === -1 || valorIndex === -1) { renderDueListError("Erro: Colunas 'Vencimento' ou 'Valor' não encontradas na Fonte 2."); $dueListChartWrapper?.classList.add('hidden'); $dueListChartError.textContent = 'Não foi possível gerar gráfico: Colunas Vencimento/Valor não encontradas.'; $dueListChartError.classList.remove('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } return; }
+          if (descIndex === -1) { console.warn("Coluna de Descrição não encontrada na Fonte 2."); }
+          let totalAllDueValue = 0; const allDueItems = [];
           sheetRowsTable.forEach((row, rowIndex) => {
-              const vencValueRaw = row[vencIndex];
-              const vencDate = parseDateValue(vencValueRaw);
-
+              const vencValueRaw = row[vencIndex]; const vencDate = parseDateValue(vencValueRaw);
               if (vencDate && !isNaN(vencDate.getTime())) {
-                  const valor = getNumericValue(row[valorIndex]);
-                  if (isNaN(valor)) return;
-
-                  const description = descIndex !== -1 ? (row[descIndex] || 'Item sem descrição') : `Item Linha ${rowIndex + 1}`;
-
-                  allDueItems.push({ description: description, value: valor, dueDate: vencDate });
-                  totalAllDueValue += valor; // Summing all valid items
-
-              } else if (vencValueRaw && typeof vencValueRaw === 'string' && vencValueRaw.trim() !== '') { // Log only if there was non-empty, non-parsable data
-                   console.warn(`Não foi possível parsear a data na linha ${rowIndex + 1} da Fonte 2:`, vencValueRaw);
-              }
+                  const valor = getNumericValue(row[valorIndex]); if (isNaN(valor)) return;
+                  const description = descIndex !== -1 ? (row[descIndex] || 'Item s/ desc.') : `Item ${rowIndex + 1}`; /* Shortened fallback */
+                  allDueItems.push({ description: description, value: valor, dueDate: vencDate }); totalAllDueValue += valor;
+              } else if (vencValueRaw && typeof vencValueRaw === 'string' && vencValueRaw.trim() !== '') { console.warn(`Não foi possível parsear data na linha ${rowIndex + 1} (Fonte 2):`, vencValueRaw); }
           });
-
-          // Sort the list by due date
           allDueItems.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
-
-          // Display the total for ALL listed items
           $dueListTotalAll.textContent = `Total Geral (c/ Vencimento): ${formatCurrency(totalAllDueValue)}`;
-
-          // Display the list
           if (allDueItems.length === 0) {
-              $dueListItems.innerHTML = '<p class="no-items-message">Nenhum lançamento com data de vencimento válido encontrado na Fonte 2.</p>';
-              $dueListChartWrapper?.classList.add('hidden');
-              if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
+              $dueListItems.innerHTML = '<p class="no-items-message">Nenhum lançamento com data de vencimento válido encontrado.</p>'; $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
           } else {
+              // Clear loading/error before adding list
+               $dueListLoadingMsg?.remove();
+               $dueListErrorMsg.classList.add('hidden');
+               // Create and append UL
               const ul = document.createElement('ul');
               allDueItems.forEach(item => {
-                  const li = document.createElement('li');
-                  const formattedDueDate = formatDateBR(item.dueDate);
-                  li.innerHTML = `
-                      <div class="item-info">
-                           <span class="item-description" title="${item.description}">${item.description}</span>
-                           <span class="item-due-date">Venc: ${formattedDueDate}</span>
-                      </div>
-                      <span class="item-value">${formatCurrency(item.value)}</span>
-                  `;
+                  const li = document.createElement('li'); const formattedDueDate = formatDateBR(item.dueDate);
+                  li.innerHTML = `<div class="item-info"><span class="item-description" title="${item.description}">${item.description}</span><span class="item-due-date">Venc: ${formattedDueDate}</span></div><span class="item-value">${formatCurrency(item.value)}</span>`;
                   ul.appendChild(li);
               });
-              $dueListItems.appendChild(ul);
-
-              // Prepare and render the monthly chart
-              prepareAndRenderDueListChart(allDueItems);
+              $dueListItems.appendChild(ul); // Append the populated UL
+              prepareAndRenderDueListChart(allDueItems); // Render chart now
           }
       }
 
-      // prepareAndRenderDueListChart() - No changes
+      // prepareAndRenderDueListChart() (No changes)
       function prepareAndRenderDueListChart(items) {
-          if (!items || items.length === 0) {
-               $dueListChartWrapper?.classList.add('hidden'); // Hide if no data
-               if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-               return;
-          }
-
+          if (!items || items.length === 0) { $dueListChartWrapper?.classList.add('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } return; }
           try {
-              const monthlyTotals = {}; // { 'YYYY-MM': totalValue }
-
-              items.forEach(item => {
-                  if (!item.dueDate || isNaN(item.dueDate.getTime())) return;
-
-                  const year = item.dueDate.getUTCFullYear();
-                  const month = item.dueDate.getUTCMonth(); // 0-indexed
-                  const monthYearKey = `${year}-${padZero(month)}`; // Key like '2025-04'
-
-                  if (!monthlyTotals[monthYearKey]) {
-                      monthlyTotals[monthYearKey] = 0;
-                  }
-                  monthlyTotals[monthYearKey] += item.value;
-              });
-
-              // Sort keys chronologically (e.g., '2025-04', '2025-05')
+              const monthlyTotals = {};
+              items.forEach(item => { if (!item.dueDate || isNaN(item.dueDate.getTime())) return; const year = item.dueDate.getUTCFullYear(); const month = item.dueDate.getUTCMonth(); const monthYearKey = `${year}-${padZero(month)}`; if (!monthlyTotals[monthYearKey]) { monthlyTotals[monthYearKey] = 0; } monthlyTotals[monthYearKey] += item.value; });
               const sortedKeys = Object.keys(monthlyTotals).sort();
-
-              // Create arrays for chart labels and data
-              const chartLabels = sortedKeys.map(key => {
-                  const [year, month] = key.split('-');
-                  // Create a temporary date just for formatting the label
-                  const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1));
-                  return formatMonthYearLabel(tempDate); // e.g., "Mai/2025"
-              });
+              const chartLabels = sortedKeys.map(key => { const [year, month] = key.split('-'); const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1)); return formatMonthYearLabel(tempDate); });
               const chartData = sortedKeys.map(key => monthlyTotals[key]);
-
-              // Render the chart
-              renderDueListChart(chartLabels, chartData);
-              $dueListChartWrapper?.classList.remove('hidden'); // Show chart wrapper
-              $dueListChartError?.classList.add('hidden'); // Ensure error is hidden
-
-          } catch (error) {
-               console.error("Erro ao preparar dados para o gráfico mensal:", error);
-               $dueListChartWrapper?.classList.add('hidden');
-               $dueListChartError.textContent = 'Erro interno ao processar dados para o gráfico mensal.';
-               $dueListChartError?.classList.remove('hidden');
-               if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
-          }
+              renderDueListChart(chartLabels, chartData); $dueListChartWrapper?.classList.remove('hidden'); $dueListChartError?.classList.add('hidden');
+          } catch (error) { console.error("Erro ao preparar dados para o gráfico mensal:", error); $dueListChartWrapper?.classList.add('hidden'); $dueListChartError.textContent = 'Erro ao processar dados do gráfico mensal.'; $dueListChartError?.classList.remove('hidden'); if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; } }
       }
 
-      // renderDueListChart() - No changes
+      // renderDueListChart() (Adjusted font sizes for mobile)
       function renderDueListChart(labels, data) {
-          const ctx = $dueListChartCanvas?.getContext('2d');
-          if (!ctx) return; // Exit if canvas context not available
-
-          if (dueListChartInstance) {
-              dueListChartInstance.destroy(); // Destroy previous instance
-          }
-
-          const chartColors = { /* Reusing same colors as weekly chart */
-              backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0'
-          };
-
+          const ctx = $dueListChartCanvas?.getContext('2d'); if (!ctx) return;
+          if (dueListChartInstance) { dueListChartInstance.destroy(); }
+          const chartColors = { backgroundColor: 'rgba(77, 171, 247, 0.6)', borderColor: 'rgba(51, 154, 240, 1)', hoverBackgroundColor: 'rgba(77, 171, 247, 0.8)', hoverBorderColor: tailwind.config.theme.extend.colors.primary[500], textColor: tailwind.config.theme.extend.colors.slate[700], gridColor: 'rgba(203, 213, 225, 0.5)', tooltipBg: 'rgba(51, 65, 85, 0.95)', tooltipTitleColor: '#e2e8f0', tooltipBodyColor: '#e2e8f0' };
           dueListChartInstance = new Chart(ctx, {
-              type: 'bar',
-              data: {
-                  labels: labels,
-                  datasets: [{
-                      label: 'Total Vencimento',
-                      data: data,
-                      backgroundColor: chartColors.backgroundColor,
-                      borderColor: chartColors.borderColor,
-                      borderWidth: 1,
-                      hoverBackgroundColor: chartColors.hoverBackgroundColor,
-                      hoverBorderColor: chartColors.hoverBorderColor,
-                      borderRadius: 4, // Slightly smaller radius maybe
-                      borderSkipped: false,
-                      barPercentage: 0.6,
-                      categoryPercentage: 0.7
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  layout: { padding: { top: 30 } },
-                  scales: {
-                      y: { beginAtZero: true, ticks: { color: chartColors.textColor, callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } },
-                      x: { ticks: { color: chartColors.textColor, font: { size: 10 } }, grid: { display: false }, border: { display: false } } // Smaller font for x-axis
-                  },
-                  plugins: {
-                      legend: { display: false },
-                      tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 10, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } },
-                      datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 9, weight: '500' }, formatter: (value, context) => { return formatCurrencyShort(value); } } // Smaller font for labels
-                  },
+              type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Vencimento', data: data, backgroundColor: chartColors.backgroundColor, borderColor: chartColors.borderColor, borderWidth: 1, hoverBackgroundColor: chartColors.hoverBackgroundColor, hoverBorderColor: chartColors.hoverBorderColor, borderRadius: 4, borderSkipped: false, barPercentage: 0.6, categoryPercentage: 0.7 }] },
+              options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 25 } }, /* Reduced top padding */ scales: { y: { beginAtZero: true, ticks: { color: chartColors.textColor, font: { size: 10 }, /* Smaller ticks */ callback: function(value) { return formatCurrencyShort(value); } }, grid: { color: chartColors.gridColor, drawTicks: false }, border: { display: false } }, x: { ticks: { color: chartColors.textColor, font: { size: 9 } /* Smaller ticks */ }, grid: { display: false }, border: { display: false } } },
+                  plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: chartColors.tooltipBg, titleColor: chartColors.tooltipTitleColor, bodyColor: chartColors.tooltipBodyColor, borderColor: chartColors.borderColor, borderWidth: 1, padding: 8, cornerRadius: 4, displayColors: false, callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += formatCurrency(context.parsed.y); } return label; } } }, datalabels: { display: context => context.dataset.data[context.dataIndex] > 0, anchor: 'end', align: 'top', offset: 4, color: chartColors.textColor, font: { size: 8, weight: '500' }, /* Smaller labels */ formatter: (value, context) => { return formatCurrencyShort(value); } } } ,
                   interaction: { mode: 'index', intersect: false },
               }
           });
       }
 
-      // renderDueListError() - No changes
+      // renderDueListError() (No changes)
        function renderDueListError(message) {
-          $dueListItems.innerHTML = '';
+          // Clear potential list items first
+          const ul = $dueListItems.querySelector('ul');
+          if(ul) ul.remove();
+          // Remove loading message if it exists
+          $dueListLoadingMsg?.remove();
+          // Show error message
           $dueListErrorMsg.textContent = message;
           $dueListErrorMsg.classList.remove('hidden');
+          // Update total display
           $dueListTotalAll.textContent = 'Erro ao calcular total';
+          // Hide chart
           $dueListChartWrapper?.classList.add('hidden');
           if (dueListChartInstance) { dueListChartInstance.destroy(); dueListChartInstance = null; }
        }
 
-      // updateHeaderInfo() - Uses Source 1 data, title updated
+      // updateHeaderInfo() (No changes)
       function updateHeaderInfo() {
-         const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase()));
-         const valorIndex = findIndex(valorRegex, headersReports);
-         // Check if source 1 data is available and value column exists
-         if (valorIndex === -1 || !sheetRowsReports || headersReports.length === 0) {
-             $grandTotalHeader.textContent = 'Total Geral: Erro';
-             return;
-         }
-         if (sheetRowsReports.length > 0) {
-             const grandTotal = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0);
-             $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`; // Simplified title
-         } else {
-             $grandTotalHeader.textContent = 'Total Geral: R$ 0,00';
-         }
+         const findIndex = (regex, headers) => headers.findIndex(h => h && regex.test(h.toLowerCase())); const valorIndex = findIndex(valorRegex, headersReports);
+         if (valorIndex === -1 || !sheetRowsReports || headersReports.length === 0) { $grandTotalHeader.textContent = 'Total Geral: Erro'; return; }
+         if (sheetRowsReports.length > 0) { const grandTotal = sheetRowsReports.reduce((sum, row) => sum + getNumericValue(row[valorIndex]), 0); $grandTotalHeader.textContent = `Total Geral: ${formatCurrency(grandTotal)}`; }
+         else { $grandTotalHeader.textContent = 'Total Geral: R$ 0,00'; }
       }
-      // --- End Rendering Functions ---
 
-      // --- View Switching Logic ---
+      // --- View Switching Logic (Added resize calls) ---
       function switchView(viewToShow) {
-          $reportCardsWrapper.classList.add('hidden');
-          $chartContainer.classList.add('hidden');
-          $dueListContainer.classList.add('hidden');
-          $viewToggleReportsBtn.classList.remove('active');
-          $viewToggleChartBtn.classList.remove('active');
-          $viewToggleDueListBtn.classList.remove('active');
-
+          $reportCardsWrapper.classList.add('hidden'); $chartContainer.classList.add('hidden'); $dueListContainer.classList.add('hidden');
+          $viewToggleReportsBtn.classList.remove('active'); $viewToggleChartBtn.classList.remove('active'); $viewToggleDueListBtn.classList.remove('active');
           if (viewToShow === 'reports') {
-              $reportCardsWrapper.classList.remove('hidden');
-              $viewToggleReportsBtn.classList.add('active');
-              // Ensure report cards are up-to-date if data has been loaded
+              $reportCardsWrapper.classList.remove('hidden'); $viewToggleReportsBtn.classList.add('active');
               if(isLoaded) buildReportCards();
           } else if (viewToShow === 'chart') {
-              $chartContainer.classList.remove('hidden');
-              $viewToggleChartBtn.classList.add('active');
-              // Ensure chart is rendered and resized correctly
-              if (isLoaded) prepareAndRenderWeeklyChart(); // Re-render in case data changed
-              if (weeklyChartInstance) { setTimeout(() => weeklyChartInstance?.resize(), 50); }
+              $chartContainer.classList.remove('hidden'); $viewToggleChartBtn.classList.add('active');
+               if (isLoaded) prepareAndRenderWeeklyChart();
+               // Use requestAnimationFrame for smoother resize after transition/display change
+               requestAnimationFrame(() => { weeklyChartInstance?.resize(); });
           } else if (viewToShow === 'dueList') {
-              $dueListContainer.classList.remove('hidden');
-              $viewToggleDueListBtn.classList.add('active');
-              // Ensure due list view is rendered correctly if data available
-               if (isLoaded && headersTable.length > 0) { // Only render if source 2 data seems available
-                    renderDueListView();
-               } else if(isLoaded) { // If loaded but source 2 data is missing/failed
-                    renderDueListError("Dados para a lista de vencimentos não disponíveis.");
-               }
-              if (dueListChartInstance) { setTimeout(() => dueListChartInstance?.resize(), 50); }
+              $dueListContainer.classList.remove('hidden'); $viewToggleDueListBtn.classList.add('active');
+               if (isLoaded && headersTable.length > 0) { renderDueListView(); }
+               else if(isLoaded) { renderDueListError("Dados para a lista de vencimentos não disponíveis."); }
+               requestAnimationFrame(() => { dueListChartInstance?.resize(); });
           }
       }
       // --- End View Switching ---
 
-      // --- Event Listeners ---
+      // --- Event Listeners (No changes) ---
       $manualRefreshBtn.onclick = loadData;
       $viewToggleReportsBtn.onclick = () => switchView('reports');
       $viewToggleChartBtn.onclick = () => switchView('chart');
       $viewToggleDueListBtn.onclick = () => switchView('dueList');
-      // --- End Event Listeners ---
 
-      // --- Initialization ---
-      switchView('reports'); // Start on the reports view
-      loadData(); // Initial data load
-      setInterval(loadData, REFRESH_INTERVAL); // Set up auto-refresh
-      // --- End Initialization ---
+      // --- Initialization (No changes) ---
+      switchView('reports');
+      loadData();
+      setInterval(loadData, REFRESH_INTERVAL);
 
     </script>
     </body>
