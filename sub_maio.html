@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Demonstrativo Financeiro Completo • Google Sheets</title>
+  <title>Dashboard • Google Sheets (Light)</title>
 
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -15,42 +15,21 @@
         extend: {
           colors: {
             surface: '#ffffff',
-            'surface-soft': '#f8f9fa', 
-            'surface-medium': '#f1f3f5',
-            primary: { 
-              50: '#e7f5ff', 100: '#d0ebff', 200: '#a5d8ff', 300: '#74c0fc',
-              400: '#4dabf7', 500: '#339af0', 600: '#228be6', 700: '#1c7ed6',
-              800: '#1971c2', 900: '#1864ab'
+            primary: { // Paleta de Azul da "Tela Home"
+              300: '#6abff9',
+              400: '#4dabf7',
+              500: '#339af0',
+              600: '#1b85db',
+              700: '#1971c2'
             },
-            success: { 
-              50: '#e6fcf5', 100: '#c3fae8', 200: '#96f2d7', 300: '#63e6be',
-              400: '#38d9a9', 500: '#20c997', 600: '#12b886', 700: '#0ca678',
-              800: '#099268', 900: '#087f52'
+            slate: {
+              300: '#dee2e6', 400: '#ced4da', 500: '#adb5bd',
+              600: '#6c757d', 700: '#495057', 800: '#343a40', 900: '#212529'
             },
-            danger: { 
-              50: '#fff5f5', 100: '#ffe3e3', 200: '#ffc9c9', 300: '#ffa8a8',
-              400: '#ff8787', 500: '#ff6b6b', 600: '#fa5252', 700: '#f03e3e',
-              800: '#e03131', 900: '#c92a2a'
-            },
-            warning: { 
-              50: '#fff9db', 100: '#fff3bf', 200: '#ffec99', 300: '#ffe066',
-              400: '#ffd43b', 500: '#fcc419', 600: '#fab005', 700: '#f59f00',
-              800: '#f08c00', 900: '#e67700'
-            },
-            slate: { 
-              50: '#f8f9fa', 100: '#f1f3f5', 200: '#e9ecef', 300: '#dee2e6',
-              400: '#ced4da', 500: '#adb5bd', 600: '#868e96', 700: '#495057',
-              800: '#343a40', 900: '#212529'
-            }
+            gray: { 50: '#f8f9fa', 100: '#f1f3f5', 200: '#e9ecef' }
           },
-          boxShadow: {
-            'md-subtle': '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
-            'lg-subtle': '0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025)',
-            'glow-primary': '0 0 12px rgba(77, 171, 247, 0.35)',
-            'glow-success': '0 0 12px rgba(32, 201, 151, 0.35)',
-            'glow-danger': '0 0 12px rgba(255, 107, 107, 0.35)',
-          },
-          backdropBlur: { xs: '2px', sm: '4px' }
+          boxShadow: { glow: '0 0 8px rgba(51, 154, 240, 0.35)' }, // Ajuste leve na sombra para o novo azul
+          backdropBlur: { xs: '2px' }
         }
       }
     };
@@ -61,471 +40,869 @@
   <style>
     @keyframes spin { to { transform: rotate(360deg) } }
     .animate-spin { animation: spin 1s linear infinite }
-    html, body { height: 100%; scroll-behavior: smooth; }
-    body { background-color: var(--tw-color-surface-soft); display: flex; flex-direction: column; }
+    html, body { height: 100%; }
+    body { background: #f8f9fa; display: flex; flex-direction: column; }
     main { flex-grow: 1; display: flex; flex-direction: column; }
-    ::-webkit-scrollbar { width: 8px; height: 8px }
-    ::-webkit-scrollbar-thumb { background: var(--tw-color-slate-400); border-radius: 4px }
-    ::-webkit-scrollbar-thumb:hover { background: var(--tw-color-slate-500); }
-    ::-webkit-scrollbar-track { background: var(--tw-color-slate-200); }
-    .chart-card { background-color: var(--tw-color-surface); border-radius: 0.75rem; /* rounded-xl */ box-shadow: var(--tw-shadow-lg-subtle); border: 1px solid var(--tw-color-slate-200); }
-    .kpi-card { background-color: var(--tw-color-surface); border-radius: 0.75rem; box-shadow: var(--tw-shadow-md-subtle); border: 1px solid var(--tw-color-slate-200); padding: 1rem; text-align: center; }
-    .kpi-value { font-size: 1.5rem; /* text-2xl */ font-weight: 700; /* font-bold */ }
-    .kpi-label { font-size: 0.875rem; /* text-sm */ color: var(--tw-color-slate-600); margin-top: 0.25rem; }
+    #table-wrapper { flex-grow: 1; overflow: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+    #charts-wrapper { flex-grow: 1; overflow-y: auto; }
+    #sheetTable { width: 100%; }
+    ::-webkit-scrollbar { width: 6px; height: 6px }
+    ::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 3px }
+    ::-webkit-scrollbar-track { background: #e9ecef; }
+    th select {
+      background: #ffffff; border: 1px solid #ced4da; border-radius: 4px;
+      font-size: 12px; padding: 6px 8px; width: 100%; margin-top: 4px;
+      color: #495057; appearance: none;
+      /* Seta SVG com novo azul primário (#339af0) */
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23339af0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+      background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 0.65em auto; padding-right: 2rem;
+    }
+    /* Foco com novo azul primário */
+    th select:focus { outline: none; border-color: #86b7fe; box-shadow: 0 0 0 2px rgba(51, 154, 240, 0.25); }
+    .tab-btn.active-tab { background: #339af0; color: #fff !important; box-shadow: 0 0 5px rgba(51, 154, 240, .4) }
+    .chart-card { transition: background-color 0.3s ease; background-color: var(--tw-color-surface); }
+    /* Foco com novo azul primário */
+    button:focus-visible, select:focus-visible { outline: 2px solid #339af0; outline-offset: 2px; }
+    main.table-full-screen { max-width: none; padding: 0; gap: 0; }
+    main.table-full-screen > div:nth-of-type(1) { padding: 0.5rem 0.75rem; flex-shrink: 0; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
+    main.table-full-screen > #filters-bar { padding: 0.5rem 0.75rem; flex-shrink: 0; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
+    main.table-full-screen > #table-wrapper { border-radius: 0; }
+    main.table-full-screen #sheetTable thead th { position: sticky; top: 0; z-index: 10; }
+    #sheetTable th, #sheetTable td { padding: 0.5rem 0.5rem; }
+    @media (min-width: 640px) { #sheetTable th, #sheetTable td { padding: 0.75rem 1rem; } }
     .refresh-icon { display: inline-block; }
-    .apexcharts-tooltip-title, .apexcharts-tooltip-text, .apexcharts-legend-text { font-family: 'Inter', sans-serif !important; }
-    .apexcharts-tooltip.apexcharts-theme-light { background: rgba(255,255,255,0.9) !important; backdrop-filter: blur(4px); border: 1px solid var(--tw-color-slate-200) !important; box-shadow: var(--tw-shadow-lg-subtle) !important; }
-    .apexcharts-legend-text { color: var(--tw-color-slate-700) !important; }
-    .apexcharts-xcrosshairs, .apexcharts-ycrosshairs { stroke: var(--tw-color-slate-300) !important; }
-    .apexcharts-tooltip-marker { margin-right: 6px !important; }
-    @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 480px) { .kpi-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); } .kpi-value {font-size: 1.25rem;} .kpi-label {font-size:0.75rem;} }
   </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="text-slate-700 min-h-screen flex flex-col antialiased">
 
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-dollar" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.158-.103.358-.168.567-.168h1.346c.596 0 1.061.251 1.367.753.305.502.305 1.209 0 1.711-.306.502-.771.753-1.367.753h-.823v1.745a.75.75 0 01-1.5 0V10H8c-.596 0-1.06-.251-1.367-.753-.305-.502-.305-1.209 0-1.711a2.091 2.091 0 01.202-.118zM10 2a8 8 0 100 16 8 8 0 000-16zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z" /></symbol>
-    <symbol id="icon-arrow-up" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.56l-2.47 2.47a.75.75 0 01-1.06-1.06l3.75-3.75a.75.75 0 011.06 0l3.75 3.75a.75.75 0 11-1.06 1.06L10.75 5.56v10.69a.75.75 0 01-.75.75z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-arrow-down" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.69l2.47-2.47a.75.75 0 111.06 1.06l-3.75 3.75a.75.75 0 01-1.06 0L6.72 12.97a.75.75 0 111.06-1.06l2.47 2.47V3.75A.75.75 0 0110 3z" clip-rule="evenodd" /></symbol>
-    <symbol id="icon-scale" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.5 2.75A.75.75 0 014.25 2H9a.75.75 0 010 1.5H4.25A.75.75 0 013.5 2.75zm0 4A.75.75 0 014.25 6H6a.75.75 0 010 1.5H4.25A.75.75 0 013.5 6.75zm0 4A.75.75 0 014.25 10H9a.75.75 0 010 1.5H4.25a.75.75 0 01-.75-.75zm12.5-1.5A.75.75 0 0015.25 10H11a.75.75 0 000 1.5h4.25a.75.75 0 00.75-.75zm0-4a.75.75 0 00-.75-.75H14a.75.75 0 000 1.5h1.25a.75.75 0 00.75-.75zm0-4A.75.75 0 0015.25 2H11a.75.75 0 000 1.5h4.25a.75.75 0 00.75-.75zM10 17a1 1 0 01-1-1V4a1 1 0 112 0v12a1 1 0 01-1 1z" clip-rule="evenodd" /></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 10a1 1 0 01-1-1V9.899a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1z" clip-rule="evenodd" />
+    </symbol>
   </svg>
 
-  <header class="w-full bg-surface/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-40 flex-shrink-0 shadow-sm">
-    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div class="flex flex-col sm:flex-row justify-between items-center w-full">
-            <h1 class="text-xl font-semibold text-primary-600 truncate mb-2 sm:mb-0">Demonstrativo Financeiro Completo</h1>
-            <div class="flex items-center gap-3">
-                <span id="last-update" class="text-slate-500 text-xs whitespace-nowrap">Carregando...</span>
-                <button id="manual-refresh"
-                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
-                               text-primary-600 text-xs font-medium shadow-glow-primary flex-shrink-0 disabled:opacity-70 disabled:cursor-not-allowed">
-                    <svg class="refresh-icon w-4 h-4" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg>
-                    <span>Atualizar</span>
-                </button>
-            </div>
+  <header class="w-full backdrop-blur-sm bg-surface/90 border-b border-primary-500/20 sticky top-0 z-40 flex-shrink-0">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col">
+        <div class="flex justify-between items-center w-full">
+            <h1 class="text-base sm:text-lg font-bold text-primary-500 truncate pr-2">Dados e Previsões</h1>
+            <button id="manual-refresh"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border border-primary-500 bg-primary-500/15 hover:bg-primary-500/25
+                           text-primary-600 text-xs sm:text-sm font-medium shadow-glow flex-shrink-0 disabled:opacity-70 disabled:cursor-not-allowed">
+                <svg class="refresh-icon w-4 h-4" aria-hidden="true"><use xlink:href="#icon-refresh"></use></svg>
+                <span>Atualizar</span>
+            </button>
+        </div>
+        <div class="flex justify-between items-center w-full mt-1">
+            <span id="month-total" class="text-primary-500 font-medium text-xs truncate pr-2">Carregando total...</span>
+            <span id="last-update" class="text-slate-500 text-xs flex-shrink-0">Carregando...</span>
         </div>
     </div>
   </header>
-
-  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-surface-soft/80 backdrop-blur-sm">
-    <div class="h-12 w-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <p class="text-primary-600 text-lg font-medium">Analisando seus dados financeiros...</p>
-    <p class="text-slate-500 text-sm mt-1">Isso pode levar alguns segundos.</p>
+  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-100/80 backdrop-blur-sm">
+    <div class="h-10 w-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+    <p class="text-primary-500 text-base font-medium">Carregando…</p>
   </div>
 
-  <main id="main-content" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow">
-    <div id="error-message" class="hidden w-full p-4 mb-6 text-center text-danger-700 bg-danger-100 border border-danger-300 rounded-lg text-sm"></div>
-    <div id="warning-message" class="hidden w-full p-4 mb-6 text-center text-warning-800 bg-warning-100 border border-warning-300 rounded-lg text-sm"></div>
+  <main id="main-content" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-4 sm:gap-6 flex-grow">
+    <div class="flex justify-center space-x-2 sm:space-x-4 flex-shrink-0">
+      <button id="tab-table" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-primary-500/10 hover:text-primary-500 transition-colors duration-200">Tabela</button>
+      <button id="tab-charts" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-primary-500/10 hover:text-primary-500 transition-colors duration-200">Gráficos</button>
+    </div>
 
-    <section id="kpi-section" class="mb-8">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 kpi-grid">
-        <div class="kpi-card">
-          <div class="flex items-center justify-center text-success-500 mb-2">
-            <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20"><use xlink:href="#icon-arrow-up"></use></svg>
-            <span class="kpi-label">Receita Total</span>
-          </div>
-          <div id="kpi-total-revenue" class="kpi-value text-success-600">R$ 0,00</div>
-        </div>
-        <div class="kpi-card">
-          <div class="flex items-center justify-center text-danger-500 mb-2">
-            <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20"><use xlink:href="#icon-arrow-down"></use></svg>
-            <span class="kpi-label">Despesa Total</span>
-          </div>
-          <div id="kpi-total-expense" class="kpi-value text-danger-600">R$ 0,00</div>
-        </div>
-        <div class="kpi-card">
-           <div class="flex items-center justify-center text-primary-500 mb-2">
-             <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20"><use xlink:href="#icon-scale"></use></svg>
-            <span class="kpi-label">Saldo Líquido</span>
-          </div>
-          <div id="kpi-net-balance" class="kpi-value text-primary-600">R$ 0,00</div>
-        </div>
-        <div class="kpi-card">
-           <div class="flex items-center justify-center text-slate-500 mb-2">
-            <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20"><use xlink:href="#icon-dollar"></use></svg>
-            <span class="kpi-label">Despesas / Receitas</span>
-          </div>
-          <div id="kpi-expense-ratio" class="kpi-value text-slate-700">0%</div>
-        </div>
-      </div>
+    <div id="filters-bar" class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 flex-shrink-0">
+      <span id="filters-active" class="text-primary-500 text-xs text-center w-full sm:w-auto">Nenhum filtro ativo</span>
+      <button id="clear-filters"
+              class="px-3 py-1 rounded-md border border-primary-500 bg-primary-500/10 hover:bg-primary-500/20
+                     text-primary-500 text-xs font-medium shadow-glow" style="display: none;">
+        Limpar Filtros
+      </button>
+    </div>
+
+    <div id="error-message"
+         class="hidden w-full p-3 text-center text-red-700 bg-red-100 border border-red-300 rounded-lg text-sm flex-shrink-0"></div>
+
+    <section id="table-wrapper"
+             class="hidden w-full backdrop-blur-xs bg-surface/95 rounded-lg sm:rounded-2xl
+                    shadow-lg ring-1 ring-primary-500/10 p-0">
+      <table id="sheetTable" class="min-w-full text-sm divide-y divide-gray-200">
+        </table>
     </section>
 
-    <section id="charts-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="chart-card lg:col-span-2 p-4 sm:p-6">
-        <h2 class="text-lg font-semibold mb-1 text-slate-700">Fluxo de Caixa Mensal</h2>
-        <p class="text-xs text-slate-500 mb-4">Evolução de receitas e despesas ao longo dos meses.</p>
-        <div id="chart-monthly-cashflow" class="min-h-[300px] sm:min-h-[350px]"></div>
+    <section id="charts-wrapper"
+             class="hidden w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      <div class="chart-card bg-surface rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/10 p-4 md:col-span-2">
+        <h2 class="text-base font-semibold mb-3 text-primary-500">Total por Data de Vencimento</h2>
+        <div id="chart-overview"></div>
       </div>
-      <div class="chart-card p-4 sm:p-6">
-        <h2 class="text-lg font-semibold mb-1 text-slate-700">Despesas por Categoria</h2>
-        <p class="text-xs text-slate-500 mb-4">Distribuição percentual das suas despesas.</p>
-        <div id="chart-expense-categories" class="min-h-[300px] sm:min-h-[350px]"></div>
+      <div class="chart-card bg-surface rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/10 p-4">
+        <h2 class="text-base font-semibold mb-3 text-primary-500">Total por Data de Pagamento</h2>
+        <div id="chart-payment"></div>
       </div>
-      <div class="chart-card p-4 sm:p-6">
-        <h2 class="text-lg font-semibold mb-1 text-slate-700">Receitas por Categoria/Fonte</h2>
-         <p class="text-xs text-slate-500 mb-4">De onde vêm suas receitas.</p>
-        <div id="chart-revenue-categories" class="min-h-[300px] sm:min-h-[350px]"></div>
-      </div>
-      <div class="chart-card lg:col-span-2 p-4 sm:p-6">
-        <h2 class="text-lg font-semibold mb-1 text-slate-700">Saldo Líquido Mensal</h2>
-        <p class="text-xs text-slate-500 mb-4">Resultado financeiro (lucro/prejuízo) de cada mês.</p>
-        <div id="chart-monthly-net-balance" class="min-h-[300px] sm:min-h-[350px]"></div>
+      <div class="chart-card bg-surface rounded-lg sm:rounded-2xl shadow-lg ring-1 ring-primary-500/10 p-4">
+        <h2 class="text-base font-semibold mb-3 text-primary-500">Total por Mês (Vencimento)</h2>
+        <div id="chart-monthly"></div>
       </div>
     </section>
-    <footer class="text-center text-xs text-slate-400 mt-10 py-4 border-t border-slate-200">
-      Demonstrativo Financeiro gerado em <span id="footer-date"></span>.
-    </footer>
+    <br><br><br><br>
   </main>
 
   <script>
-    const SHEET_ID = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq'; 
-    const GID = '0'; 
-    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
-    const REFRESH_INTERVAL = 180000; 
-    const CURRENCY_FORMAT_CONFIG = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
-    const MONTH_YEAR_FORMAT_CONFIG = { month: 'short', year: 'numeric', timeZone: 'UTC' };
-    const DAY_MONTH_YEAR_FORMAT_CONFIG = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' };
+    const sheetId = '1du2FRGYbmY1mQ_mbNN1HuvQc8QhY3Bqq';
+    const gid     = '0';
+    const baseURL = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+    const REFRESH_INTERVAL = 60000;
+    const CURRENCY_FORMAT = { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 };
+    const CHART_COLORS = ['#339af0', '#198754', '#dc3545', '#ffc107', '#6f42c1', '#0dcaf0', '#fd7e14', '#d63384']; // Cor primária atualizada
 
-    const COLORS_PRIMARY = tailwind.config.theme.extend.colors.primary;
-    const COLORS_SUCCESS = tailwind.config.theme.extend.colors.success;
-    const COLORS_DANGER = tailwind.config.theme.extend.colors.danger;
-    const COLORS_SLATE = tailwind.config.theme.extend.colors.slate;
-    const CATEGORY_CHART_PALETTE = [COLORS_PRIMARY[500], COLORS_SUCCESS[500], COLORS_DANGER[500], tailwind.config.theme.extend.colors.warning[500], '#845ef7', '#17a2b8', '#fd7e14', '#6f42c1', '#20c997', '#ff6384'];
+    let headersFull = [], sheetRows = [];
+    let headersDisplay = [];
+    let chartOverview, chartPayment, chartMonthly;
+    let isLoaded = false, isFetching = false;
+    const activeFilters = {};
+    let prevOverviewData = null, prevPaymentData = null, prevMonthlyData = null;
 
-    let rawSheetData = { headers: [], rows: [] };
-    let processedTransactions = [];
-    let charts = {};
-    let isFetching = false;
-    let initialLoadComplete = false;
-
-    const $ = (selector) => document.getElementById(selector);
-    const $loader = $('loader');
-    const $errorMsg = $('error-message');
-    const $warningMsg = $('warning-message');
-    const $lastUpdate = $('last-update');
-    const $manualRefreshBtn = $('manual-refresh');
+    const $loader = document.getElementById('loader');
+    const $errorMsg = document.getElementById('error-message');
+    const $tableTab = document.getElementById('tab-table');
+    const $chartTab = document.getElementById('tab-charts');
+    const $tableWrapper = document.getElementById('table-wrapper');
+    const $chartWrapper = document.getElementById('charts-wrapper');
+    const $sheetTable = document.getElementById('sheetTable');
+    const $lastUpdate = document.getElementById('last-update');
+    const $monthTotal = document.getElementById('month-total');
+    const $filtersActive = document.getElementById('filters-active');
+    const $clearFiltersBtn = document.getElementById('clear-filters');
+    const $mainContent = document.getElementById('main-content');
+    const $manualRefreshBtn = document.getElementById('manual-refresh');
     const $refreshIcon = $manualRefreshBtn?.querySelector('.refresh-icon');
-    const $kpiTotalRevenue = $('kpi-total-revenue');
-    const $kpiTotalExpense = $('kpi-total-expense');
-    const $kpiNetBalance = $('kpi-net-balance');
-    const $kpiExpenseRatio = $('kpi-expense-ratio');
-    const $chartMonthlyCashflow = $('chart-monthly-cashflow');
-    const $chartExpenseCategories = $('chart-expense-categories');
-    const $chartRevenueCategories = $('chart-revenue-categories');
-    const $chartMonthlyNetBalance = $('chart-monthly-net-balance');
+    const $refreshBtnText = $manualRefreshBtn?.querySelector('span');
 
-    const formatCurrency = (value) => (typeof value === 'number' && !isNaN(value)) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT_CONFIG) : 'R$ 0,00';
-    const formatMonthYear = (date) => date ? new Date(date.getUTCFullYear(), date.getUTCMonth(), 1).toLocaleDateString('pt-BR', MONTH_YEAR_FORMAT_CONFIG).replace(' de','').replace('.de ','/').replace('.','').replace(/\b\w/g, l => l.toUpperCase()) : 'N/A';
-    const formatDateBR = (date) => date ? date.toLocaleDateString('pt-BR', DAY_MONTH_YEAR_FORMAT_CONFIG) : 'N/A';
-    
-    const parseSheetDate = (value) => {
-        if (value instanceof Date) return value;
-        if (value == null) return null;
+    if ($manualRefreshBtn) $manualRefreshBtn.onclick = loadData; // Evita erro se o botão não existir
+    if ($tableTab) $tableTab.onclick = () => switchTab('table');
+    if ($chartTab) $chartTab.onclick = () => switchTab('charts');
+    if ($clearFiltersBtn) $clearFiltersBtn.onclick = clearFilters;
+
+    function switchTab(tabId) {
+      [$tableTab, $chartTab].forEach(btn => btn?.classList.remove('active-tab'));
+      if (tabId === 'table') {
+        $tableWrapper?.classList.remove('hidden');
+        $chartWrapper?.classList.add('hidden');
+        $tableTab?.classList.add('active-tab');
+        $mainContent?.classList.add('table-full-screen');
+      } else {
+        $chartWrapper?.classList.remove('hidden');
+        $tableWrapper?.classList.add('hidden');
+        $chartTab?.classList.add('active-tab');
+        $mainContent?.classList.remove('table-full-screen');
+        // Força redraw/reflow dos gráficos ao tornar visível
+        setTimeout(() => {
+          [chartOverview, chartPayment, chartMonthly].forEach(chart => {
+            if (chart && typeof chart.updateOptions === 'function') { // Verifica se updateOptions existe
+               // chart.updateOptions({}, false, false, false); // Não essencial, pode causar piscadas
+            }
+          });
+        }, 100);
+      }
+    }
+    async function fetchSheetData() {
+      const response = await fetch(`${baseURL}&_=${Date.now()}`); // Cache busting
+      if (!response.ok) throw new Error(`Erro HTTP ${response.status} ao buscar dados da planilha.`);
+      const text = await response.text();
+      // A resposta do Google Sheets é JSONP, precisamos extrair o JSON
+      if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) {
+        console.error("Resposta inválida do Google Sheets (não é JSONP esperado):", text.substring(0, 500));
+        throw new Error('Formato de resposta inválido da API do Google Sheets.');
+      }
+      try {
+        return JSON.parse(text.substring(47, text.length - 2));
+      } catch (e) {
+        console.error("Falha ao analisar JSON da resposta do Google Sheets:", e);
+        console.error("Texto recebido (parcial):", text.substring(0, 1000)); // Loga mais do texto para depuração
+        throw new Error('Falha ao processar os dados JSON recebidos da planilha.');
+      }
+    }
+    const padZero = num => num.toString().padStart(2, '0');
+    const formatDateBR = date => {
+        if (!date || isNaN(date.getTime())) return '–';
+        // Assegura que estamos usando UTC para evitar problemas de fuso horário com datas da planilha
+        return `${padZero(date.getUTCDate())}/${padZero(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
+    };
+    const formatMonthYear = date => {
+        if (!date || isNaN(date.getTime())) return '–';
+        const month = date.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' }).replace('.', ''); // Remove ponto de "abr." etc.
+        return `${month.charAt(0).toUpperCase() + month.slice(1)}/${date.getUTCFullYear()}`; // Primeira letra maiúscula
+    };
+
+    function parseDateValue(value) {
+        if (value instanceof Date) return value; // Já é um objeto Date
+        if (value == null) return null; // Null ou undefined
+
+        // Formato "Date(yyyy,MM,dd)" do Google Sheets (MM é 0-indexado)
         if (typeof value === 'string' && value.startsWith('Date(')) {
             try {
                 const parts = value.substring(5, value.length - 1).split(',');
+                // Ano, Mês (0-11), Dia
                 return new Date(Date.UTC(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2])));
-            } catch (e) { return null; }
+            } catch (e) {
+                return null; // Falha no parse
+            }
         }
-        if (typeof value === 'number' && value > 1 && value < 60000) {
-            const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+        // Número serial do Excel/Sheets (dias desde 30/12/1899)
+        if (typeof value === 'number' && value > 1 && value < 60000) { // Range razoável para datas Excel
+            const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Data base do Excel (UTC)
             const date = new Date(excelEpoch.getTime() + value * 24 * 60 * 60 * 1000);
-            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())); // Normaliza para UTC
         }
-        const d = new Date(value);
-        if (d && !isNaN(d.getTime())) {
-             return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getUTCDate()));
+
+        if (typeof value !== 'string') return null; // Se não for string e não caiu nos casos acima
+
+        let m;
+        // Tenta YYYY-MM-DD (comum em APIs)
+        m = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+
+        // Tenta DD/MM/YYYY ou DD-MM-YYYY
+        m = value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+        if (m) {
+            let y = +m[3];
+            if (y < 100) y += 2000; // Converte ano de 2 dígitos para 4
+            return new Date(Date.UTC(y, +m[2] - 1, +m[1]));
         }
-        return null;
-    };
-
-    const parseValue = (rawValue) => {
-        if (rawValue == null) return 0;
-        if (typeof rawValue === 'number') return rawValue;
-        if (typeof rawValue === 'string') {
-            const cleaned = rawValue.replace(/[R$\s.]/g, '').replace(',', '.');
-            const num = parseFloat(cleaned);
-            return isNaN(num) ? 0 : num;
+        
+        // Última tentativa: parse nativo do JS, mas pode ser inconsistente com fusos
+        // Melhor evitar se possível, mas como fallback. Normaliza para UTC.
+        const p = new Date(value);
+        if (p && !isNaN(p.getTime())) {
+            return new Date(Date.UTC(p.getFullYear(), p.getMonth(), p.getDate()));
         }
-        return 0;
-    };
-
-    async function fetchAndProcessData() {
-        if (isFetching) return;
-        isFetching = true;
-        if (!initialLoadComplete) $loader.classList.remove('hidden');
-        if ($manualRefreshBtn) $manualRefreshBtn.disabled = true;
-        if ($refreshIcon) $refreshIcon.classList.add('animate-spin');
-        $errorMsg.classList.add('hidden');
-        $warningMsg.classList.add('hidden');
-
-        try {
-            const response = await fetch(`${BASE_URL}&_=${Date.now()}`);
-            if (!response.ok) throw new Error(`Erro HTTP ${response.status} ao buscar dados.`);
-            const text = await response.text();
-            if (!text.startsWith('/*O_o*/\ngoogle.visualization.Query.setResponse(')) {
-                throw new Error('Formato de resposta inválido da API do Google Sheets.');
-            }
-            const jsonData = JSON.parse(text.substring(47, text.length - 2));
-
-            if (!jsonData?.table?.cols || !jsonData?.table?.rows) {
-                throw new Error("Dados da planilha estão vazios ou em formato inesperado.");
-            }
-
-            // CORRIGIDO: Mapeamento de Cabeçalhos
-            const cols = jsonData.table.cols.map(col => 
-                (col.label ? String(col.label).trim().toLowerCase() : '')
-            );
-
-            const dateIdx = cols.findIndex(c => c.includes('data'));
-            const descIdx = cols.findIndex(c => c.includes('descrição') || c.includes('descricao'));
-            const catIdx = cols.findIndex(c => c.includes('categoria'));
-            const valueIdx = cols.findIndex(c => c.includes('valor'));
-            const typeIdx = cols.findIndex(c => c.includes('tipo'));
-
-            let warnings = [];
-            if (dateIdx === -1) warnings.push("Coluna 'Data' não encontrada.");
-            if (valueIdx === -1) warnings.push("Coluna 'Valor' não encontrada.");
-            if (typeIdx === -1) warnings.push("Coluna 'Tipo' (Receita/Despesa) não encontrada. Essencial para cálculos de saldo.");
-            if (catIdx === -1) warnings.push("Coluna 'Categoria' não encontrada. Gráficos de categoria serão limitados.");
-
-            if (warnings.length > 0 && (dateIdx === -1 || valueIdx === -1 || typeIdx === -1)) {
-                throw new Error("Colunas essenciais (Data, Valor, Tipo) não encontradas. Verifique sua planilha. Detalhes: " + warnings.join(' '));
-            }
-            if (warnings.length > 0) {
-                 $warningMsg.innerHTML = "Atenção: Algumas colunas não foram encontradas ou podem estar nomeadas incorretamente, o que pode afetar a precisão do relatório: <br>• " + warnings.join('<br>• ');
-                 $warningMsg.classList.remove('hidden');
-            }
-
-            rawSheetData.headers = jsonData.table.cols.map(col => (col.label ? String(col.label).trim() : ''));
-            const sheetRows = jsonData.table.rows;
-
-            processedTransactions = sheetRows.map(row => {
-                const cells = row.c;
-                const date = dateIdx !== -1 ? parseSheetDate(cells[dateIdx]?.v) : null;
-                
-                const rawValueForSign = valueIdx !== -1 ? cells[valueIdx]?.v : null;
-                const numericValueForSign = parseValue(rawValueForSign);
-                const value = Math.abs(numericValueForSign);
-
-                // CORRIGIDO: Determinação do Tipo
-                let determinedType;
-                if (typeIdx !== -1) {
-                    const rawTypeValue = cells[typeIdx]?.v;
-                    if (rawTypeValue != null && String(rawTypeValue).trim() !== '') {
-                        determinedType = String(rawTypeValue).trim().toLowerCase();
-                    } else {
-                        determinedType = (numericValueForSign >= 0 ? 'receita' : 'despesa');
-                    }
-                } else {
-                    determinedType = (numericValueForSign >= 0 ? 'receita' : 'despesa');
-                }
-                const type = determinedType;
-
-                // CORRIGIDO: Descrição
-                const rawDesc = descIdx !== -1 ? cells[descIdx]?.v : null;
-                const description = rawDesc != null ? String(rawDesc).trim() : 'N/A';
-
-                // CORRIGIDO: Categoria
-                const rawCat = catIdx !== -1 ? cells[catIdx]?.v : null;
-                const category = rawCat != null && String(rawCat).trim() !== '' ? String(rawCat).trim() : 'Outros';
-                
-                return { date, description, category, value, type };
-            }).filter(t => t.date && t.value > 0); 
-
-            if (processedTransactions.length === 0) {
-                throw new Error("Nenhuma transação válida encontrada após processamento. Verifique os dados da planilha.");
-            }
-
-            processedTransactions.sort((a, b) => a.date - b.date); 
-
-            updateDashboard();
-            $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-            if (!initialLoadComplete) initialLoadComplete = true;
-
-        } catch (error) {
-            console.error("Erro ao carregar ou processar dados:", error);
-            $errorMsg.textContent = `Erro: ${error.message}`;
-            $errorMsg.classList.remove('hidden');
-        } finally {
-            isFetching = false;
-            $loader.classList.add('hidden');
-            if ($manualRefreshBtn) $manualRefreshBtn.disabled = false;
-            if ($refreshIcon) $refreshIcon.classList.remove('animate-spin');
-             $('footer-date').textContent = new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'});
-        }
+        return null; // Não conseguiu parsear
     }
 
-    function updateDashboard() {
-        updateKPIs();
-        renderOrUpdateAllCharts();
-    }
+    const formatCurrency = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', CURRENCY_FORMAT) : '–';
+    const formatCompact = value => typeof value === 'number' && !isNaN(value) ? value.toLocaleString('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }) : 'N/A';
 
-    function updateKPIs() {
-        const totalRevenue = processedTransactions.filter(t => t.type.includes('receita')).reduce((sum, t) => sum + t.value, 0);
-        const totalExpense = processedTransactions.filter(t => t.type.includes('despesa')).reduce((sum, t) => sum + t.value, 0);
-        const netBalance = totalRevenue - totalExpense;
-        const expenseRatio = totalRevenue > 0 ? (totalExpense / totalRevenue * 100) : 0;
+    async function loadData() {
+      if (isFetching) return;
+      isFetching = true;
+      if ($errorMsg) $errorMsg.classList.add('hidden');
+      if ($manualRefreshBtn) $manualRefreshBtn.disabled = true;
+      if ($refreshIcon) $refreshIcon.classList.add('animate-spin');
+      if ($refreshBtnText) $refreshBtnText.textContent = 'Atualizando...';
+      if (!isLoaded && $loader) $loader.classList.remove('hidden');
 
-        $kpiTotalRevenue.textContent = formatCurrency(totalRevenue);
-        $kpiTotalExpense.textContent = formatCurrency(totalExpense);
-        $kpiNetBalance.textContent = formatCurrency(netBalance);
-        $kpiNetBalance.className = `kpi-value ${netBalance >= 0 ? 'text-success-600' : 'text-danger-600'}`;
-        $kpiExpenseRatio.textContent = `${expenseRatio.toFixed(1)}%`;
-    }
+      try {
+        const jsonData = await fetchSheetData();
+        if (!jsonData?.table?.cols || !jsonData?.table?.rows) {
+          throw new Error("Estrutura de dados recebida da planilha é inválida ou vazia.");
+        }
 
-    function getMonthlyCashflowData() {
-        const monthlyData = {};
-        processedTransactions.forEach(t => {
-            const monthYear = formatMonthYear(t.date);
-            if (!monthlyData[monthYear]) {
-                monthlyData[monthYear] = { revenue: 0, expense: 0, dateSort: new Date(t.date.getUTCFullYear(), t.date.getUTCMonth(), 1) };
+        // Processa cabeçalhos, garantindo que sejam strings
+        headersFull = jsonData.table.cols.map(col => (col.label ? String(col.label).trim() : `Coluna ${col.id}`));
+        
+        const obsIndex = headersFull.findIndex(h => h.toLowerCase().trim() === 'observação');
+        headersDisplay = obsIndex === -1 ? [...headersFull] : headersFull.slice(0, obsIndex + 1);
+
+        sheetRows = jsonData.table.rows.map(row => {
+          const cells = Array(headersFull.length).fill(null);
+          row?.c?.forEach((cell, i) => {
+            if (i < headersFull.length) {
+              cells[i] = cell?.v ?? null; // Pega o valor 'v' ou null
             }
-            if (t.type.includes('receita')) monthlyData[monthYear].revenue += t.value;
-            else if (t.type.includes('despesa')) monthlyData[monthYear].expense += t.value;
+          });
+          return cells;
         });
-        const sortedMonths = Object.keys(monthlyData).sort((a,b) => monthlyData[a].dateSort - monthlyData[b].dateSort);
+
+        if (!isLoaded) {
+          buildInitialUI();
+          isLoaded = true;
+          switchTab('table'); // Ou o tab padrão que desejar
+        } else {
+          updateUI(); // Apenas atualiza os dados, não recria a UI inteira
+        }
+        updateGrandTotalHeader();
+        if ($lastUpdate) $lastUpdate.textContent = `Atualizado: ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+
+      } catch (error) {
+        console.error("Erro detalhado ao carregar dados:", error);
+        if ($errorMsg) {
+            $errorMsg.textContent = `Erro ao carregar: ${error.message}. Verifique a planilha, permissões e conexão.`;
+            $errorMsg.classList.remove('hidden');
+        }
+        if (!isLoaded) { // Se for o primeiro carregamento e falhou
+          if ($tableWrapper) $tableWrapper.classList.add('hidden');
+          if ($chartWrapper) $chartWrapper.classList.add('hidden');
+        }
+      } finally {
+        isFetching = false;
+        if ($loader) $loader.classList.add('hidden');
+        if ($manualRefreshBtn) $manualRefreshBtn.disabled = false;
+        if ($refreshIcon) $refreshIcon.classList.remove('animate-spin');
+        if ($refreshBtnText) $refreshBtnText.textContent = 'Atualizar';
+      }
+    }
+    loadData(); // Carga inicial dos dados
+    setInterval(loadData, REFRESH_INTERVAL); // Auto-refresh
+
+    function buildTable() {
+      if (!$sheetTable) return;
+      $sheetTable.innerHTML = ''; // Limpa a tabela existente
+      const thead = createTableHead();
+      const tbody = createTableBody();
+      if (thead) $sheetTable.appendChild(thead);
+      if (tbody) $sheetTable.appendChild(tbody);
+      applyFilters(); // Aplica filtros se houver algum ativo
+    }
+
+    function createTableHead() {
+      const thead = document.createElement('thead');
+      thead.className = 'bg-gray-100 sticky top-0 z-10';
+      const tr = document.createElement('tr');
+      tr.className = 'divide-x divide-gray-300';
+
+      headersDisplay.forEach((header, index) => {
+        const th = document.createElement('th');
+        th.className = 'text-left text-xs font-semibold text-slate-600 uppercase bg-gray-100 whitespace-nowrap px-2 sm:px-4 py-2';
+        
+        const headerText = document.createElement('span');
+        headerText.textContent = header || `Coluna ${index + 1}`;
+        th.appendChild(headerText);
+
+        // Adiciona select para filtro
+        const select = document.createElement('select');
+        select.dataset.colIndex = index;
+        select.className = 'mt-1 block w-full filter-select'; // Estilo definido em <style>
+        select.innerHTML = '<option value="">Todos</option>'; // Opção padrão
+
+        // Popula com valores únicos da coluna
+        const uniqueValues = [...new Set(sheetRows.map(row => row[index]))]
+            .map(value => formatCellValue(value, header)) // Formata antes de adicionar ao select
+            .filter(value => value !== '–' && value != null && String(value).trim() !== '') // Remove vazios ou nulos
+            .sort((a, b) => {
+                // Tenta ordenação numérica se possível, senão alfabética
+                const numA = parseFloat(String(a).replace(/[R$\s.]/g, '').replace(',', '.'));
+                const numB = parseFloat(String(b).replace(/[R$\s.]/g, '').replace(',', '.'));
+                if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                return String(a).localeCompare(String(b), 'pt-BR', { sensitivity: 'base' });
+            });
+
+        uniqueValues.forEach(value => {
+          const opt = document.createElement('option');
+          opt.value = value; // O valor da opção será o valor formatado
+          opt.textContent = value;
+          select.appendChild(opt);
+        });
+        
+        if (activeFilters[index]) { // Se houver filtro ativo para esta coluna
+            select.value = activeFilters[index];
+        }
+
+        select.onchange = handleFilterChange;
+        th.appendChild(select);
+        tr.appendChild(th);
+      });
+      thead.appendChild(tr);
+      return thead;
+    }
+
+    function handleFilterChange(event) {
+        const colIndex = event.target.dataset.colIndex;
+        const value = event.target.value;
+        if (value) {
+            activeFilters[colIndex] = value;
+        } else {
+            delete activeFilters[colIndex];
+        }
+        applyFilters();
+    }
+
+    function createTableBody() {
+        const tbody = document.createElement('tbody');
+        tbody.className = 'divide-y divide-gray-200';
+
+        if (sheetRows.length === 0) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = headersDisplay.length || 1;
+            td.textContent = 'Nenhum dado encontrado na planilha.';
+            td.className = 'px-4 py-8 text-center text-slate-500 text-sm';
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+            return tbody;
+        }
+
+        sheetRows.forEach((row, rowIndex) => {
+            const tr = document.createElement('tr');
+            // Alterna cor de fundo para melhor legibilidade
+            tr.className = `${rowIndex % 2 ? 'bg-gray-50' : 'bg-white'} hover:bg-primary-500/10 transition-colors duration-150`;
+            tr.dataset.rowIndex = rowIndex; // Para referência, se necessário
+
+            headersDisplay.forEach((header, colIndex) => {
+                const td = document.createElement('td');
+                td.className = 'whitespace-nowrap px-2 sm:px-4 py-2 align-top text-slate-700';
+                const cellValue = row[colIndex];
+                td.textContent = formatCellValue(cellValue, header);
+                if (td.textContent.length > 50) { // Adiciona title para valores longos
+                    td.title = td.textContent;
+                }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        
+        // Linha para feedback de "nenhum resultado" com filtros
+        const trNoResults = document.createElement('tr');
+        trNoResults.className = 'hidden no-results-row'; // Inicialmente escondida
+        const tdNoResults = document.createElement('td');
+        tdNoResults.colSpan = headersDisplay.length || 1;
+        tdNoResults.textContent = 'Nenhum resultado corresponde aos filtros selecionados.';
+        tdNoResults.className = 'px-4 py-8 text-center text-slate-500 text-sm';
+        trNoResults.appendChild(tdNoResults);
+        tbody.appendChild(trNoResults);
+
+        return tbody;
+    }
+
+    function formatCellValue(cellValue, headerLabel) {
+        if (cellValue == null || String(cellValue).trim() === '') return '–'; // Trata strings vazias também
+
+        const headerLower = String(headerLabel || '').toLowerCase().trim();
+
+        // Formatação específica para colunas que contêm "NF" (Nota Fiscal) - tratar como texto
+        if (headerLower.includes('nf')) return String(cellValue);
+        
+        // Tentativa de formatar como moeda para colunas com "valor", "total", "preço", etc.
+        if (/valor|total|preço|saldo|débito|crédito/i.test(headerLower)) {
+            let n = NaN;
+            if (typeof cellValue === 'number') {
+                n = cellValue;
+            } else if (typeof cellValue === 'string') {
+                // Tenta limpar e converter string para número (ex: "R$ 1.234,56" -> 1234.56)
+                const cleaned = String(cellValue).replace(/[R$\s.]/g, '').replace(',', '.');
+                n = parseFloat(cleaned);
+            }
+            return !isNaN(n) ? formatCurrency(n) : String(cellValue); // Se falhar, retorna como string
+        }
+
+        // Tentativa de formatar como data
+        const d = parseDateValue(cellValue);
+        if (d && !isNaN(d.getTime())) { // Se parseDateValue retornou uma data válida
+            if (/data|venc|pag|emissao|nasc/i.test(headerLower)) { // Colunas comuns de data
+                return formatDateBR(d);
+            }
+            // Poderia adicionar lógica para retornar a data mesmo se não for um header comum de data
+            // return formatDateBR(d); // Descomente se quiser que qualquer data parseada seja formatada
+        }
+
+        // Formatação numérica geral (se não for moeda ou data)
+        if (typeof cellValue === 'number') return cellValue.toLocaleString('pt-BR');
+        // Tenta converter string que parece número para número formatado
+        if (typeof cellValue === 'string' && /^-?\d+([.,]\d+)?$/.test(cellValue.trim())) {
+            const numCleaned = cellValue.trim().replace('.', '').replace(',', '.');
+            const num = parseFloat(numCleaned);
+            if (!isNaN(num)) return num.toLocaleString('pt-BR');
+        }
+        
+        return String(cellValue); // Fallback: retorna como string
+    }
+
+
+    function applyFilters() {
+        const tbody = $sheetTable?.querySelector('tbody');
+        if (!tbody) return;
+
+        let visibleRowCount = 0;
+        const filterKeys = Object.keys(activeFilters);
+        const noResultsRow = tbody.querySelector('.no-results-row');
+
+        Array.from(tbody.rows).forEach(tr => {
+            if (tr.classList.contains('no-results-row')) return; // Pula a linha de "no results"
+            if (tr.parentElement.tagName === 'THEAD') return; // Segurança extra, não deve acontecer
+
+            let show = true;
+            if (filterKeys.length > 0) {
+                show = filterKeys.every(colIndex => {
+                    const filterValue = activeFilters[colIndex];
+                    // O conteúdo da célula já está formatado, então a comparação deve ser direta
+                    const cellContent = tr.cells[colIndex]?.textContent?.trim() || '';
+                    return cellContent === filterValue;
+                });
+            }
+            tr.style.display = show ? '' : 'none';
+            if (show) visibleRowCount++;
+        });
+        
+        if(noResultsRow) {
+            noResultsRow.style.display = (visibleRowCount === 0 && sheetRows.length > 0 && filterKeys.length > 0) ? '' : 'none';
+        }
+
+        updateFilterDisplay();
+        updateCharts(); // Atualiza gráficos com base nos filtros
+        updateGrandTotalHeader(); // Atualiza o total no header
+    }
+
+    function updateFilterDisplay() {
+        if (!$filtersActive || !$clearFiltersBtn) return;
+        const keys = Object.keys(activeFilters);
+        if (keys.length === 0) {
+            $filtersActive.textContent = 'Nenhum filtro ativo';
+            $clearFiltersBtn.style.display = 'none';
+            $filtersActive.classList.add('w-full', 'sm:w-auto');
+            $filtersActive.classList.remove('sm:mr-auto');
+        } else {
+            const parts = keys.map(i => {
+                const headerName = headersDisplay[i] || `Coluna ${parseInt(i) + 1}`;
+                return `${headerName}: "${activeFilters[i]}"`;
+            });
+            $filtersActive.textContent = `Filtros Ativos: ${parts.join('; ')}`;
+            $clearFiltersBtn.style.display = 'inline-block';
+            $filtersActive.classList.remove('w-full');
+            $filtersActive.classList.add('sm:w-auto', 'sm:mr-auto');
+        }
+    }
+    function clearFilters() {
+        Object.keys(activeFilters).forEach(key => delete activeFilters[key]);
+        $sheetTable?.querySelectorAll('thead .filter-select').forEach(sel => sel.value = '');
+        applyFilters();
+    }
+    function hasDataChanged(newData, prevData) {
+        if (!prevData && newData) return true; // Se não havia dados antes e agora há
+        if (prevData && !newData) return true; // Se havia dados e agora não há
+        if (!prevData && !newData) return false; // Se ambos são nulos/vazios
+
+        // Compara labels e totais. Se forem diferentes, os dados mudaram.
+        return JSON.stringify(newData.labels) !== JSON.stringify(prevData.labels) ||
+               JSON.stringify(newData.totals || newData.series) !== JSON.stringify(prevData.totals || prevData.series); // 'series' para alguns tipos de gráfico
+    }
+
+
+    function aggregateByDate(dateColRegex) {
+        const dateIdx = headersFull.findIndex(h => typeof h === 'string' && h && dateColRegex.test(h.toLowerCase()));
+        const valIdx = headersFull.findIndex(h => typeof h === 'string' && h && /valor|total/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
+
+        if (dateIdx === -1 || valIdx === -1) {
+            console.warn(`Colunas para agregação por data (${dateColRegex.source}) não encontradas. DateIdx: ${dateIdx}, ValIdx: ${valIdx}`);
+            return { labels: [], totals: [] };
+        }
+        const map = new Map();
+        getFilteredRows().forEach(row => {
+            const dateValue = row[dateIdx];
+            const rawValue = row[valIdx];
+            const d = parseDateValue(dateValue);
+            if (!d || isNaN(d.getTime())) return;
+
+            const key = d.toISOString().split('T')[0]; // YYYY-MM-DD como chave para agrupar
+            
+            let v = NaN;
+            if (rawValue == null) return;
+            if (typeof rawValue === 'number') { v = rawValue; }
+            else if (typeof rawValue === 'string') {
+                const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.');
+                v = parseFloat(cleaned);
+            }
+            if (!isNaN(v)) {
+                map.set(key, (map.get(key) || 0) + v);
+            }
+        });
+        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])); // Ordena por data
         return {
-            labels: sortedMonths,
-            revenues: sortedMonths.map(m => parseFloat(monthlyData[m].revenue.toFixed(2))),
-            expenses: sortedMonths.map(m => parseFloat(monthlyData[m].expense.toFixed(2)))
+            labels: entries.map(([key]) => formatDateBR(new Date(key + 'T00:00:00Z'))), // Adiciona T00:00:00Z para tratar como UTC ao criar nova Date
+            totals: entries.map(([_, value]) => parseFloat(value.toFixed(2)))
         };
     }
 
-    function getCategoricalData(typeFilter) { 
-        const categoryMap = new Map();
-        processedTransactions
-            .filter(t => t.type.includes(typeFilter))
-            .forEach(t => {
-                categoryMap.set(t.category, (categoryMap.get(t.category) || 0) + t.value);
-            });
-        const sortedEntries = [...categoryMap.entries()].sort((a, b) => b[1] - a[1]); 
+    function aggregateByMonth(dateColRegex) {
+        const dateIdx = headersFull.findIndex(h => typeof h === 'string' && h && dateColRegex.test(h.toLowerCase()));
+        const valIdx = headersFull.findIndex(h => typeof h === 'string' && h && /valor|total/i.test(h.toLowerCase()) && !/nf/i.test(h.toLowerCase()));
+
+        if (dateIdx === -1 || valIdx === -1) {
+            console.warn(`Colunas para agregação por mês (${dateColRegex.source}) não encontradas. DateIdx: ${dateIdx}, ValIdx: ${valIdx}`);
+            return { labels: [], totals: [] };
+        }
+        const map = new Map();
+        getFilteredRows().forEach(row => {
+            const dateValue = row[dateIdx];
+            const rawValue = row[valIdx];
+            const d = parseDateValue(dateValue);
+            if (!d || isNaN(d.getTime())) return;
+
+            // Chave como 'YYYY-MM' para ordenação correta, depois formata para exibição
+            const key = `${d.getUTCFullYear()}-${padZero(d.getUTCMonth() + 1)}`; // Mês é 0-indexado, +1 para 1-12
+            
+            let v = NaN;
+            if (rawValue == null) return;
+            if (typeof rawValue === 'number') { v = rawValue; }
+            else if (typeof rawValue === 'string') {
+                const cleaned = String(rawValue).replace(/[R$\s.]/g, '').replace(',', '.');
+                v = parseFloat(cleaned);
+            }
+            if (!isNaN(v)) {
+                map.set(key, (map.get(key) || 0) + v);
+            }
+        });
+        const entries = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
         return {
-            labels: sortedEntries.map(e => e[0]),
-            values: sortedEntries.map(e => parseFloat(e[1].toFixed(2)))
+            labels: entries.map(([key]) => {
+                const [y, m] = key.split('-');
+                return formatMonthYear(new Date(Date.UTC(+y, +m - 1, 1))); // Mês -1 para Date constructor
+            }),
+            totals: entries.map(([_, value]) => parseFloat(value.toFixed(2)))
         };
     }
     
-    function getMonthlyNetBalanceData() {
-        const monthlyData = {};
-        processedTransactions.forEach(t => {
-            const monthYear = formatMonthYear(t.date);
-             if (!monthlyData[monthYear]) {
-                monthlyData[monthYear] = { balance: 0, dateSort: new Date(t.date.getUTCFullYear(), t.date.getUTCMonth(), 1) };
-            }
-            const value = t.type.includes('receita') ? t.value : -t.value;
-            monthlyData[monthYear].balance += value;
+    function getFilteredRows() {
+        const filterKeys = Object.keys(activeFilters);
+        if (filterKeys.length === 0) {
+            return sheetRows; // Retorna todas as linhas se não houver filtros
+        }
+        // Retorna linhas que correspondem a TODOS os filtros ativos
+        return sheetRows.filter(row => {
+            return filterKeys.every(colIndexStr => {
+                const colIndex = parseInt(colIndexStr, 10); // Chaves de activeFilters são strings
+                const filterValue = activeFilters[colIndex];
+                // Formata o valor da célula da mesma forma que foi formatado para o select de filtro
+                const cellFormattedValue = formatCellValue(row[colIndex], headersDisplay[colIndex]);
+                return String(cellFormattedValue).trim() === String(filterValue).trim();
+            });
         });
-        const sortedMonths = Object.keys(monthlyData).sort((a,b) => monthlyData[a].dateSort - monthlyData[b].dateSort);
-        return {
-            labels: sortedMonths,
-            balances: sortedMonths.map(m => parseFloat(monthlyData[m].balance.toFixed(2)))
-        };
     }
-
-    const commonChartOptions = {
-        chart: { fontFamily: 'Inter, sans-serif', foreColor: COLORS_SLATE[600], toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }, animations: { easing: 'easeinout', speed: 600 }, background: 'transparent' },
-        stroke: { width: 2.5, curve: 'smooth' },
-        markers: { size: 4, hover: { size: 6 } },
-        grid: { borderColor: COLORS_SLATE[200], strokeDashArray: 4, padding: { left: 5, right: 15, top: 5, bottom: 5 } },
-        xaxis: { type: 'category', labels: { style: { colors: COLORS_SLATE[600], fontSize: '11px' }, trim: true, rotate: -45, rotateAlways: false, hideOverlappingLabels: true, minHeight: 50, maxHeight: 70}, axisBorder: { color: COLORS_SLATE[300] }, axisTicks: { color: COLORS_SLATE[300] }, tooltip: {enabled: false} },
-        yaxis: { labels: { style: { colors: COLORS_SLATE[600], fontSize: '11px' }, formatter: (val) => { if (Math.abs(val) >= 1000) return formatCurrency(val/1000)+'k'; return formatCurrency(val).replace('R$','').trim(); } }, }, 
-        tooltip: { theme: 'light', style: { fontSize: '12px' }, y: { formatter: (val) => formatCurrency(val) } },
-        legend: { fontSize: '12px', fontWeight: 500, itemMargin: { horizontal: 10 }, markers: { radius: 12, width: 12, height: 12, offsetY: 1 } },
-        noData: { text: 'Sem dados suficientes para exibir.', style: { color: COLORS_SLATE[500], fontSize: '14px' } }
+    const baseChartOptions = {
+        chart: {
+            fontFamily: 'Inter, sans-serif',
+            foreColor: '#495057', // slate-700
+            toolbar: { show: false }, // Simplificado, pode reativar se necessário
+            zoom: { enabled: false },
+            animations: { enabled: true, easing: 'easeinout', speed: 600 },
+            background: 'transparent'
+        },
+        tooltip: {
+            theme: 'light',
+            style: { fontSize: '11px', fontFamily: 'Inter, sans-serif' },
+            x: { show: false }, // Geralmente não necessário para donuts, útil para barras/linhas
+            y: { formatter: formatCurrency, title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' } },
+            marker: { show: true },
+        },
+        dataLabels: { enabled: false }, // Geralmente desabilitado para não poluir, pode ser ativado por gráfico
+        grid: {
+            borderColor: '#e9ecef', // slate-200
+            strokeDashArray: 4,
+            padding: { left: 5, right: 15, top: 0, bottom: 0 }
+        },
+        legend: {
+            show: true, // Mostrar por padrão
+            fontSize: '11px',
+            fontFamily: 'Inter, sans-serif',
+            offsetY: 5,
+            itemMargin: { horizontal: 5, vertical: 2 },
+            labels: { colors: '#495057' } // slate-700
+        },
+        markers: { size: 0, strokeWidth: 0, hover: { size: 5 } }, // Para gráficos de linha/área
+        noData: {
+            text: 'Sem dados para exibir',
+            align: 'center', verticalAlign: 'middle',
+            style: { color: '#6c757d', fontSize: '12px', fontFamily: 'Inter, sans-serif' }
+        }
+    };
+    const areaBaseOptions = {
+        ...baseChartOptions,
+        chart: {
+            ...baseChartOptions.chart,
+            type: 'area',
+            height: 280, // Altura ajustada
+            toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }, autoSelected: 'zoom' },
+            zoom: { enabled: true }
+        },
+        xaxis: {
+            categories: [], type: 'category',
+            tickAmount: 6, // Ajusta o número de ticks
+            labels: { show: true, rotate: -45, rotateAlways: false, hideOverlappingLabels: true, trim: true, style: { fontSize: '10px', colors: ['#6c757d'] } },
+            tooltip: { enabled: false },
+            title: { text: 'Data', style: { color: '#6c757d', fontSize: '10px', fontWeight: 'normal' } },
+            axisBorder: { show: true, color: '#ced4da' },
+            axisTicks: { show: true, color: '#ced4da' },
+        },
+        yaxis: {
+            labels: { show: true, style: { fontSize: '10px', colors: ['#6c757d'] }, formatter: formatCompact },
+            title: { text: 'Valor (R$)', style: { color: '#6c757d', fontSize: '10px', fontWeight: 'normal' } },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+        },
+        tooltip: { // Tooltip personalizado para área
+            ...baseChartOptions.tooltip,
+            shared: false, // Mostrar tooltip individual por ponto
+            intersect: true,
+            x: { formatter: function(val, { dataPointIndex, w }) { return w.globals.categoryLabels?.[dataPointIndex] ?? ''; } },
+            y: { formatter: formatCurrency, title: { formatter: (seriesName) => seriesName ? seriesName + ':' : '' } }
+        },
+        markers: { size: 3, strokeWidth: 1, hover: { size: 6 } },
+        stroke: { curve: 'smooth', width: 2.5 }, // Linha mais grossa
+        fill: { type: 'gradient', gradient: { shadeIntensity: 0.4, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 95, 100] } }
     };
 
-    function renderOrUpdateChart(chartName, containerElement, options) {
-        if (!containerElement) {
-            console.warn(`Elemento container para o gráfico '${chartName}' não foi encontrado.`);
-            return;
-        }
-        if (charts[chartName] && charts[chartName].paper) { // Check if chart instance exists and is not destroyed
-            charts[chartName].updateOptions(options, true, true, true).catch(err => console.error(`Erro ao atualizar ${chartName}:`, err));
-        } else {
+    const overviewOptions = { ...areaBaseOptions, colors: [CHART_COLORS[0]], };
+    const paymentOptions  = { ...areaBaseOptions, colors: [CHART_COLORS[1]], chart: {...areaBaseOptions.chart, height: 280} }; // Altura pode ser diferente
+
+    const monthlyOptions = { // Para gráfico de Donut
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 320, }, // Altura ajustada
+        labels: [], // Será preenchido com dados
+        colors: CHART_COLORS,
+        legend: { // Legenda personalizada para Donut
+            ...baseChartOptions.legend,
+            show: true, position: 'bottom', horizontalAlign: 'center', offsetY: 0,
+            formatter: function(seriesName, opts) {
+                const value = opts.w.globals.series[opts.seriesIndex];
+                return `${seriesName}: ${formatCurrency(value)}`;
+            }
+        },
+        tooltip: { // Tooltip para Donut
+            ...baseChartOptions.tooltip,
+            y: {
+                formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                    const percentage = total === 0 ? 0 : (value / total * 100);
+                    return `${formatCurrency(value)} (${percentage.toFixed(1)}%)`;
+                },
+                title: { formatter: (seriesName) => seriesName } // Usa o label da fatia como título
+            }
+        },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '65%', // Tamanho do buraco do donut
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true, showAlways: true,
+                            label: 'Total (Filtro)', fontSize: '13px', fontWeight: 600, color: '#495057',
+                            formatter: (w) => {
+                                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                return formatCurrency(total);
+                            }
+                        },
+                        value: { show: true, fontSize: '16px', fontWeight: 500, color: '#495057', formatter: (val) => formatCurrency(parseFloat(val)) }
+                    }
+                }
+            }
+        },
+        responsive: [{ // Ajustes responsivos para o Donut
+            breakpoint: 480,
+            options: {
+                chart: { height: 280 }, // Menor altura em telas pequenas
+                legend: { fontSize: '10px', itemMargin: { horizontal: 4, vertical: 1 }, },
+                plotOptions: { pie: { donut: { size: '70%', labels: { total: { fontSize: '12px' }, value: { fontSize: '14px' } } } } }
+            }
+        }]
+    };
+    function destroyChart(chartInstance) {
+        if (chartInstance && typeof chartInstance.destroy === 'function' && chartInstance.paper) { // Adiciona check por .paper
             try {
-                if(charts[chartName] && charts[chartName].destroy) charts[chartName].destroy(); // Destroy previous if any
-                charts[chartName] = new ApexCharts(containerElement, options);
-                charts[chartName].render().catch(err => console.error(`Erro ao renderizar ${chartName}:`, err));
-            } catch (err) {
-                console.error(`Erro ao criar instância de ${chartName}:`, err);
-                containerElement.innerHTML = `<p class="text-center text-danger-500 p-4">Erro ao criar gráfico ${chartName}.</p>`;
+                chartInstance.destroy();
+            } catch (e) {
+                console.warn("Erro menor ao destruir gráfico (pode já ter sido removido):", e);
             }
         }
+        return null;
+    }
+    function buildCharts() {
+        // Limpa instâncias antigas se existirem
+        chartOverview = destroyChart(chartOverview);
+        chartPayment  = destroyChart(chartPayment);
+        chartMonthly  = destroyChart(chartMonthly);
+
+        // Pega os dados agregados (baseado nos filtros atuais via getFilteredRows)
+        const overviewData = aggregateByDate(/venc/i); // Regex para encontrar coluna de vencimento
+        const paymentData  = aggregateByDate(/pag/i);  // Regex para coluna de pagamento
+        const monthlyData  = aggregateByMonth(/venc/i); // Regex para coluna de vencimento para agregação mensal
+
+        // Renderiza os gráficos
+        renderOverviewChart(false, overviewData);
+        renderPaymentChart(false, paymentData);
+        renderMonthlyChart(false, monthlyData);
     }
 
-    function renderOrUpdateAllCharts() {
-        const cashflowData = getMonthlyCashflowData();
-        renderOrUpdateChart('monthlyCashflow', $chartMonthlyCashflow, {
-            ...commonChartOptions,
-            series: [
-                { name: 'Receitas', data: cashflowData.revenues, color: COLORS_SUCCESS[500] },
-                { name: 'Despesas', data: cashflowData.expenses, color: COLORS_DANGER[500] }
-            ],
-            chart: { ...commonChartOptions.chart, type: 'bar', height: 350, stacked: false },
-            plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 4, dataLabels: { position: 'top' } } },
-            xaxis: { ...commonChartOptions.xaxis, categories: cashflowData.labels },
-            dataLabels: { enabled: false },
-            legend: { ...commonChartOptions.legend, position: 'top', horizontalAlign: 'right', offsetY: -5 },
-            tooltip: { ...commonChartOptions.tooltip, shared: true, intersect: false },
-        });
+    function updateCharts() {
+        const overviewData = aggregateByDate(/venc/i);
+        const paymentData  = aggregateByDate(/pag/i);
+        const monthlyData  = aggregateByMonth(/venc/i);
 
-        const expenseCatData = getCategoricalData('despesa');
-         renderOrUpdateChart('expenseCategories', $chartExpenseCategories, {
-            ...commonChartOptions,
-            series: expenseCatData.values,
-            labels: expenseCatData.labels,
-            chart: { ...commonChartOptions.chart, type: 'donut', height: 380 },
-            colors: CATEGORY_CHART_PALETTE,
-            plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total Despesas', color: COLORS_SLATE[700], fontSize: '14px', fontWeight: 600, formatter: (w) => formatCurrency(w.globals.seriesTotals.reduce((a,b) => a+b, 0)) }, value: {offsetY: 4, color: COLORS_SLATE[800], fontSize:'18px', fontWeight:700} } } } },
-            dataLabels: { enabled: true, formatter: (val, opts) => `${opts.w.globals.labels[opts.seriesIndex]}: ${val.toFixed(1)}%` , style: {fontSize: '10px', colors: ['#fff'], fontWeight:500}, dropShadow: {enabled: true, top:1, left:1, blur:1, opacity: 0.7, color:'#000'}},
-            legend: { ...commonChartOptions.legend, position: 'bottom', offsetY: 0, height: 60,
-                formatter: (seriesName, opts) => `${seriesName} - ${formatCurrency(opts.w.globals.series[opts.seriesIndex])}`
-            },
-        });
-
-        const revenueCatData = getCategoricalData('receita');
-         renderOrUpdateChart('revenueCategories', $chartRevenueCategories, {
-            ...commonChartOptions,
-            series: revenueCatData.values,
-            labels: revenueCatData.labels,
-            chart: { ...commonChartOptions.chart, type: 'donut', height: 380 },
-            colors: CATEGORY_CHART_PALETTE.slice().reverse(), 
-            plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total Receitas', color: COLORS_SLATE[700], fontSize: '14px', fontWeight: 600, formatter: (w) => formatCurrency(w.globals.seriesTotals.reduce((a,b) => a+b, 0)) }, value: {offsetY: 4, color: COLORS_SLATE[800], fontSize:'18px', fontWeight:700} } } } },
-            dataLabels: { enabled: true, formatter: (val, opts) => `${opts.w.globals.labels[opts.seriesIndex]}: ${val.toFixed(1)}%`, style: {fontSize: '10px', colors: ['#fff'], fontWeight:500}, dropShadow: {enabled: true, top:1, left:1, blur:1, opacity: 0.7, color:'#000'}},
-            legend: { ...commonChartOptions.legend, position: 'bottom', offsetY: 0, height: 60,
-                formatter: (seriesName, opts) => `${seriesName} - ${formatCurrency(opts.w.globals.series[opts.seriesIndex])}`
-            },
-        });
-        
-        const netBalanceData = getMonthlyNetBalanceData();
-        renderOrUpdateChart('monthlyNetBalance', $chartMonthlyNetBalance, {
-            ...commonChartOptions,
-            series: [{ name: 'Saldo Líquido', data: netBalanceData.balances }],
-            chart: { ...commonChartOptions.chart, type: 'bar', height: 350 },
-            colors: netBalanceData.balances.map(val => val >= 0 ? COLORS_SUCCESS[500] : COLORS_DANGER[500]),
-             plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 4, dataLabels: { position: 'top' } } },
-            dataLabels: {
-                enabled: true,
-                formatter: (val) => formatCurrency(val),
-                offsetY: -20,
-                style: { fontSize: '10px', colors: [COLORS_SLATE[700]] },
-                background: { enabled: true, foreColor: COLORS_SLATE[800], padding:4, borderRadius:2, borderWidth:1, borderColor:COLORS_SLATE[200], opacity:0.8}
-            },
-            xaxis: { ...commonChartOptions.xaxis, categories: netBalanceData.labels },
-            yaxis: { ...commonChartOptions.yaxis, title: { text: 'Saldo (R$)', style: { color: COLORS_SLATE[500], fontSize:'11px', fontWeight: 400 } } },
-            legend: { show: false },
-            tooltip: { ...commonChartOptions.tooltip, y: { title: { formatter: () => "Saldo:" } } },
-        });
+        renderOverviewChart(true, overviewData);
+        renderPaymentChart(true, paymentData);
+        renderMonthlyChart(true, monthlyData);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchAndProcessData(); 
-        if ($manualRefreshBtn) $manualRefreshBtn.onclick = fetchAndProcessData;
-        // setInterval(fetchAndProcessData, REFRESH_INTERVAL); // Descomente para auto-refresh
-    });
+    function renderOverviewChart(isUpdate = false, data) {
+        const chartEl = document.querySelector('#chart-overview');
+        if (!chartEl) return;
+        if (isUpdate && !hasDataChanged(data, prevOverviewData) && chartOverview) return; // Sem mudanças, não renderiza
+
+        const opts = {
+            series: [{ name: 'Total Venc.', data: data.totals }],
+            xaxis: { ...overviewOptions.xaxis, categories: data.labels }
+        };
+        if (isUpdate && chartOverview && chartOverview.paper) { chartOverview.updateOptions(opts, true, true); }
+        else {
+            chartOverview = destroyChart(chartOverview); // Garante limpeza
+            chartOverview = new ApexCharts(chartEl, { ...overviewOptions, ...opts });
+            chartOverview.render().catch(e => console.error("Erro ao renderizar chart-overview:", e));
+        }
+        prevOverviewData = data;
+    }
+
+    function renderPaymentChart(isUpdate = false, data) {
+        const chartEl = document.querySelector('#chart-payment');
+        if (!chartEl) return;
+        if (isUpdate && !hasDataChanged(data, prevPaymentData) && chartPayment) return;
+
+        const opts = {
+            series: [{ name: 'Total Pago', data: data.totals }],
+            xaxis: { ...paymentOptions.xaxis, categories: data.labels }
+        };
+        if (isUpdate && chartPayment && chartPayment.paper) { chartPayment.updateOptions(opts, true, true); }
+        else {
+            chartPayment = destroyChart(chartPayment);
+            chartPayment = new ApexCharts(chartEl, { ...paymentOptions, ...opts });
+            chartPayment.render().catch(e => console.error("Erro ao renderizar chart-payment:", e));
+        }
+        prevPaymentData = data;
+    }
+
+    function renderMonthlyChart(isUpdate = false, data) {
+        const chartEl = document.querySelector('#chart-monthly');
+        if (!chartEl) return;
+        if (isUpdate && !hasDataChanged(data, prevMonthlyData) && chartMonthly) return;
+
+        const opts = {
+            series: data.totals, // Para donut, series é um array de valores
+            labels: data.labels, // Labels para cada fatia
+        };
+        if (isUpdate && chartMonthly && chartMonthly.paper) { chartMonthly.updateOptions(opts, true, true); }
+        else {
+            chartMonthly = destroyChart(chartMonthly);
+            chartMonthly = new ApexCharts(chartEl, { ...monthlyOptions, ...opts });
+            chartMonthly.render().catch(e => console.error("Erro ao renderizar chart-monthly:", e));
+        }
+        prevMonthlyData = data;
+    }
+
+    function updateGrandTotalHeader() {
+        if (!$monthTotal) return;
+        const { totals } = aggregateByMonth(/venc/i); // Baseado na coluna de vencimento
+        const grandTotal = totals.reduce((sum, monthTotal) => sum + monthTotal, 0);
+        const filterSuffix = Object.keys(activeFilters).length > 0 ? ' (Filtrado)' : '';
+        $monthTotal.textContent = `Total Mês (Venc.)${filterSuffix}: ${formatCurrency(grandTotal)}`;
+    }
+    function buildInitialUI() {
+      buildTable();
+      buildCharts();
+    }
+    function updateUI() { // Chamado após um refresh de dados, não no primeiro load
+      buildTable(); // Recria a tabela com novos dados (inclusive filtros)
+      // buildCharts(); // Recria os gráficos. Alternativamente, apenas updateCharts() se a estrutura não muda.
+      // Para garantir que os gráficos reflitam os dados mais recentes, incluindo filtros,
+      // é melhor recriar ou garantir que `updateCharts` use os dados filtrados.
+      // As funções aggregateBy* já usam getFilteredRows(), então updateCharts() deve ser suficiente.
+      updateCharts();
+    }
   </script>
 </body>
 </html>
