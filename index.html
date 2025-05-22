@@ -13,47 +13,60 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-        --bg-primary: #1a1d21;
-        --bg-secondary: #212529;
-        --bg-tertiary: #343a40;
-        --bg-overlay: rgba(26, 29, 33, 0.85);
-        --bg-overlay-login: rgba(26, 29, 33, 0.8);
-        --bg-overlay-iframe: rgba(26, 29, 33, 0.6);
-        --text-primary: #e9ecef;
-        --text-secondary: #adb5bd;
-        --text-tertiary: #495057;
-        --border-color: #495057;
-        --border-color-light: #343a40;
-        --scrollbar-track: #343a40;
-        --scrollbar-thumb: #495057;
-        --accent-color: #4dabf7;
-        --accent-color-hover: #369aea;
-        --accent-text-on-dark: #1a1d21;
-        --accent-text-on-light: #ffffff;
-        --accent-bg-subtle: rgba(77, 171, 247, 0.15);
-        --accent-bg-subtle-hover: rgba(77, 171, 247, 0.25);
-        --accent-border-left: #4dabf7;
-        --focus-ring-color: rgba(77, 171, 247, 0.5);
-        --profile-ring-color: #4dabf7;
-        --profile-ring-hover-color: #63bfff;
-        --danger-text: #f06565;
-        --danger-bg-subtle: rgba(240, 101, 101, 0.2);
-        --danger-bg-subtle-hover: rgba(240, 101, 101, 0.4);
-        --warning-text: #ffd43b;
-        --warning-bg-subtle: rgba(255, 212, 59, 0.2);
-        --warning-border: rgba(255, 212, 59, 0.4);
-        --error-text: #ff8787;
-        --error-bg-subtle: rgba(255, 135, 135, 0.2);
-        --error-border: rgba(255, 135, 135, 0.4);
-        --color-scheme: dark;
+        /* Corporate Light Theme */
+        --bg-primary: #f8f9fa; /* Main page background, content areas */
+        --bg-secondary: #ffffff; /* Sidebar, Modals, Login Card - WHITE */
+        --bg-tertiary: #e9ecef; /* Input fields, subtle hover backgrounds, borders */
+        --bg-overlay: rgba(248, 249, 250, 0.85); /* Overlay using primary bg color with alpha */
+        --bg-overlay-login: rgba(248, 249, 250, 0.9); /* Slightly more opaque for login */
+        --bg-overlay-iframe: rgba(248, 249, 250, 0.6);
+
+        --text-primary: #212529; /* Almost black, for main text */
+        --text-secondary: #495057; /* Darker gray, for secondary text elements */
+        --text-tertiary: #6c757d; /* Medium gray, for placeholders and less important text */
+
+        --border-color: #dee2e6; /* Standard border */
+        --border-color-light: #f1f3f5; /* Lighter border, or for subtle divisions */
+
+        --scrollbar-track: #f1f3f5;
+        --scrollbar-thumb: #ced4da;
+        --scrollbar-thumb-hover: #adb5bd;
+
+        --accent-color: #007bff; /* Professional Blue */
+        --accent-color-hover: #0056b3; /* Darker Blue for hover */
+        --text-on-accent-bg: #ffffff; /* Text color on accent background (e.g., buttons) */
+
+        --accent-bg-subtle: rgba(0, 123, 255, 0.1);
+        --accent-bg-subtle-hover: rgba(0, 123, 255, 0.15);
+        --accent-border-left: var(--accent-color);
+
+        --focus-ring-color: rgba(0, 123, 255, 0.35);
+        --profile-ring-color: var(--accent-color);
+        --profile-ring-hover-color: var(--accent-color-hover);
+
+        --danger-text: #721c24; /* Dark red for text on light danger bg */
+        --danger-bg-subtle: #f8d7da; /* Light red background */
+        --danger-bg-subtle-hover: #f1c1c7; /* Darker shade of danger bg for hover */
+
+        --warning-text: #856404; /* Dark yellow/brown for text on light warning bg */
+        --warning-bg-subtle: #fff3cd; /* Light yellow background */
+        --warning-border: #ffeeba; /* Border for warning */
+
+        --error-text: #721c24; /* Dark red for text on light error bg */
+        --error-bg-subtle: #f8d7da; /* Light red background */
+        --error-border: #f5c6cb; /* Border for error */
+
+        --overlay-backdrop: rgba(33, 37, 41, 0.5); /* Dark backdrop for modals/mobile sidebar overlay */
+
+        --color-scheme: light;
     }
-    html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: 'Inter', sans-serif; color-scheme: dark; }
+    html, body { margin: 0; padding: 0; height: 100%; min-height: -webkit-fill-available; -webkit-text-size-adjust: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; font-family: 'Inter', sans-serif; color-scheme: var(--color-scheme); }
     body { padding-bottom: env(safe-area-inset-bottom); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); background-color: var(--bg-primary); color: var(--text-primary); overflow: hidden; }
     #dashboard { display: flex; flex-direction: column; height: 100vh; height: calc(var(--vh, 1vh) * 100); overflow: hidden; }
     #profileHeader { padding-top: calc(env(safe-area-inset-top) + 0.75rem); padding-bottom: 0.75rem; position: sticky; top: 0; z-index: 30; background-color: var(--bg-overlay); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); flex-shrink: 0; padding-left: 1rem; padding-right: 1rem; }
     #mobileMainContent { flex-grow: 1; overflow-y: auto; min-height: 0; position: relative; background-color: var(--bg-primary); }
     #desktopTopBar { display: none; }
-    #desktopSidebar { display: none; position: fixed; top: 0; left: 0; height: 100vh; z-index: 30; width: 16rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid var(--border-color); flex-direction: column; background-color: var(--bg-secondary); transition: width 0.3s ease-in-out; }
+    #desktopSidebar { display: none; position: fixed; top: 0; left: 0; height: 100vh; z-index: 30; width: 16rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid var(--border-color); flex-direction: column; background-color: var(--bg-secondary); color: var(--text-secondary); transition: width 0.3s ease-in-out; }
     #desktopSidebar .sidebar-scroll-content { flex-grow: 1; overflow-y: auto; }
     #desktopMainArea { display: none; height: 100vh; flex-direction: column; overflow: hidden; margin-left: 16rem; transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out; width: calc(100% - 16rem); background-color: var(--bg-primary); }
      #mainContent { flex: 1; min-width: 0; overflow-y: auto; position: relative; }
@@ -63,22 +76,36 @@
     :focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
     button:focus, a:focus, input:focus { outline: none; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 9999px; border: 2px solid var(--border-color-light); }
+    ::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 9999px; border: 2px solid var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
     ::-webkit-scrollbar-track { background-color: var(--scrollbar-track); border-radius: 9999px; }
     #welcomeScreen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 70; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in-out; pointer-events: none;}
     #welcomeScreen.visible { display: flex; opacity: 1; pointer-events: auto;}
-    .nav-link, #integrationBtnHeader, #desktopSidebarToggle button, .mobile-sidebar-footer-button { transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
-    .nav-link:hover, #integrationBtnHeader:hover, #desktopSidebarToggle button:hover, .mobile-sidebar-footer-button:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
-    .nav-link.active, #integrationBtnHeader.active { background-color: var(--accent-bg-subtle); color: var(--accent-color); font-weight: 500; }
-    #desktopSidebar:not(.sidebar-collapsed) .nav-link.active { border-left: 4px solid var(--accent-border-left); padding-left: calc(0.75rem - 4px); }
-    #desktopSidebar.sidebar-collapsed .nav-link.active { border-left: none; padding-left: 0.75rem; background-color: var(--accent-bg-subtle-hover); }
-    #mobileSidebar .nav-link.active { border-left: 4px solid var(--accent-border-left); padding-left: calc(0.75rem - 4px); }
+    #welcomeScreen p { color: var(--text-secondary); }
+    .nav-link, #integrationBtnHeader, #desktopSidebarToggle button, .mobile-sidebar-footer-button { transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease; color: var(--text-secondary); }
+    #desktopSidebar .nav-link, #desktopSidebar #desktopSidebarToggle button { color: var(--text-primary); } /* Darker text for desktop sidebar links */
+    #desktopSidebar .nav-link i, #desktopSidebar #desktopSidebarToggle button i { color: var(--text-secondary); } /* Slightly lighter icons */
+    #desktopSidebar .nav-link:hover i, #desktopSidebar #desktopSidebarToggle button:hover i { color: var(--accent-color); }
+
+    .nav-link:hover, #integrationBtnHeader:hover, #desktopSidebarToggle button:hover, .mobile-sidebar-footer-button:hover { background-color: var(--bg-tertiary); color: var(--accent-color); }
+    .nav-link.active, #integrationBtnHeader.active { background-color: var(--accent-bg-subtle); color: var(--accent-color); font-weight: 600; }
+    #desktopSidebar:not(.sidebar-collapsed) .nav-link.active { border-left: 4px solid var(--accent-border-left); padding-left: calc(0.75rem - 4px); background-color: var(--accent-bg-subtle); color: var(--accent-color); }
+    #desktopSidebar:not(.sidebar-collapsed) .nav-link.active i { color: var(--accent-color); }
+    #desktopSidebar.sidebar-collapsed .nav-link.active { border-left: none; padding-left: 0.75rem; background-color: var(--accent-color); color: var(--text-on-accent-bg); } /* Collapsed active state */
+    #desktopSidebar.sidebar-collapsed .nav-link.active i { color: var(--text-on-accent-bg); }
+
+    #mobileSidebar .nav-link.active { border-left: 4px solid var(--accent-border-left); padding-left: calc(0.75rem - 4px); background-color: var(--accent-bg-subtle); color: var(--accent-color); }
     .nav-link.active i:not(.submenu-toggle-icon), #integrationBtnHeader.active i { color: var(--accent-color); }
-    .submenu .nav-link.active { border-left: none; padding-left: 0.5rem; background-color: var(--accent-bg-subtle); color: var(--text-primary); font-weight: 500; }
-    #desktopSidebar:not(.sidebar-collapsed) .submenu .nav-link.active { padding-left: 0.5rem; }
+
+    .submenu .nav-link { color: var(--text-secondary); font-weight: 400; }
+    #desktopSidebar .submenu .nav-link { color: var(--text-primary); }
+    .submenu .nav-link:hover { color: var(--accent-color); background-color: var(--accent-bg-subtle); }
+    .submenu .nav-link.active { border-left: none; padding-left: 0.5rem; background-color: var(--accent-bg-subtle); color: var(--accent-color); font-weight: 500; }
+    #desktopSidebar:not(.sidebar-collapsed) .submenu .nav-link.active { padding-left: calc(0.5rem + 2px); border-left: 2px solid var(--accent-color); margin-left: -2px; } /* Indent active submenu slightly less aggressively */
     #desktopSidebar.sidebar-collapsed .submenu .nav-link { padding-left: 0.5rem; padding-right: 0.5rem; justify-content: center; }
-    #mobileSidebar .submenu .nav-link.active { padding-left: 0.5rem; }
+    #mobileSidebar .submenu .nav-link.active { padding-left: calc(0.5rem + 2px); border-left: 2px solid var(--accent-color); margin-left: -2px; }
     .submenu .nav-link.active i { color: inherit; }
+
     .profile-trigger.active img { box-shadow: 0 0 0 3px var(--focus-ring-color); }
     .profile-trigger img { ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease, box-shadow 0.15s ease; }
     .profile-trigger:hover img { ring-color: var(--profile-ring-hover-color); }
@@ -88,7 +115,7 @@
     .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
     .text-xs\+ { font-size: 0.8125rem; line-height: 1.25rem; }
     #iframeSpinnerOverlay > div, #mobileIframeSpinnerOverlay > div { border-color: var(--accent-color); border-bottom-color: transparent; }
-    #loginButton .spinner-icon { color: var(--accent-text-on-dark); }
+    #loginButton .spinner-icon { color: var(--text-on-accent-bg); }
     #desktopSidebar.sidebar-collapsed .sidebar-text, #desktopSidebar.sidebar-collapsed .submenu-toggle-icon, #desktopSidebar.sidebar-collapsed .submenu, #desktopSidebar.sidebar-collapsed #desktopSidebarToggle .sidebar-text, #desktopSidebar.sidebar-collapsed #desktopLogoutButton .sidebar-text { display: none; }
     #desktopSidebar.sidebar-collapsed .nav-link i:not(.submenu-toggle-icon) { margin-right: 0; }
     #desktopSidebar.sidebar-collapsed .nav-link { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
@@ -96,146 +123,129 @@
     #desktopSidebar:not(.sidebar-collapsed) .logo-container { padding: 0.75rem; }
     #desktopSidebar.sidebar-collapsed #desktopSidebarToggle button, #desktopSidebar.sidebar-collapsed #desktopLogoutButton { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
     #loginOverlay { background-color: var(--bg-overlay-login); backdrop-filter: blur(4px); transition: opacity 0.3s ease-in-out; }
-    #loginOverlay > div { background-color: var(--bg-secondary); border-color: var(--border-color); transition: transform 0.5s cubic-bezier(.36,.07,.19,.97); }
-    #logoutNotification { color: var(--warning-text); background-color: var(--warning-bg-subtle); border-color: var(--warning-border); }
-    #loginError { color: var(--error-text); background-color: var(--error-bg-subtle); border-color: var(--error-border); }
-    label { color: var(--text-primary); }
-    input[type="text"], input[type="password"], input[type="file"] { background-color: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary); transition: box-shadow 0.15s ease, border-color 0.15s ease; }
+    #loginOverlay > div { background-color: var(--bg-secondary); border: 1px solid var(--border-color); transition: transform 0.5s cubic-bezier(.36,.07,.19,.97); } /* Login card with white bg */
+    #logoutNotification { color: var(--warning-text); background-color: var(--warning-bg-subtle); border: 1px solid var(--warning-border); }
+    #loginError { color: var(--error-text); background-color: var(--error-bg-subtle); border: 1px solid var(--error-border); }
+    label { color: var(--text-primary); font-weight: 500; }
+    input[type="text"], input[type="password"], input[type="file"] { background-color: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); transition: box-shadow 0.15s ease, border-color 0.15s ease; } /* Inputs with white bg for better contrast */
     input::placeholder { color: var(--text-tertiary); }
-    input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus { --tw-ring-color: var(--accent-color); border-color: var(--accent-color); box-shadow: 0 0 0 2px var(--focus-ring-color); }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus { --tw-ring-color: var(--accent-color); border-color: var(--accent-color); box-shadow: 0 0 0 2px var(--focus-ring-color); background-color: var(--bg-secondary); }
     input[type="checkbox"] { color: var(--accent-color); border-color: var(--border-color); background-color: var(--bg-tertiary); }
-    input[type="checkbox"]:focus { --tw-ring-color: var(--accent-color); --tw-ring-offset-color: var(--bg-primary); }
+    input[type="checkbox"]:focus { --tw-ring-color: var(--accent-color); --tw-ring-offset-color: var(--bg-secondary); } /* Offset for checkbox on white card */
     #togglePassword { color: var(--text-secondary); transition: color 0.15s ease; }
     #togglePassword:hover { color: var(--text-primary); }
-    #rememberMe + label { color: var(--text-secondary); }
-    a { color: var(--accent-color); transition: color 0.15s ease; }
-    a:hover { color: var(--accent-color-hover); }
-    #loginButton { background-color: var(--accent-color); color: var(--accent-text-on-dark); --tw-ring-offset-color: var(--bg-primary); --tw-ring-color: var(--accent-color); transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease; }
+    #rememberMe + label { color: var(--text-secondary); font-weight: 400; }
+    a { color: var(--accent-color); text-decoration: none; transition: color 0.15s ease; }
+    a:hover { color: var(--accent-color-hover); text-decoration: underline; }
+    #loginButton { background-color: var(--accent-color); color: var(--text-on-accent-bg); --tw-ring-offset-color: var(--bg-secondary); --tw-ring-color: var(--accent-color); transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease; }
     #loginButton:hover:not(:disabled) { background-color: var(--accent-color-hover); }
-    #loginButton:focus { box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color); }
-    #welcomeScreen p { color: var(--text-secondary); }
+    #loginButton:focus { box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-color); }
+
     #profileHeader button, #profileHeader .profile-trigger span { color: var(--text-secondary); transition: color 0.15s ease, background-color 0.15s ease; }
     #profileHeader button:hover, #profileHeader .profile-trigger:hover span { color: var(--accent-color); }
     #profileHeader button:hover { background-color: var(--bg-tertiary); }
-    #profileImgHeader, #profileImgDesktop { ring-offset-color: var(--bg-primary); ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease; }
+    #profileImgHeader, #profileImgDesktop { ring-offset-color: var(--bg-overlay); /* offset from header bg */ }
     #profileImgHeader:hover, #profileImgDesktop:hover, .profile-trigger:hover img { ring-color: var(--profile-ring-hover-color); }
-    #desktopSidebar { color: var(--text-secondary); background-color: var(--bg-secondary); border-right-color: var(--border-color); transition: width 0.3s ease-in-out; }
-    #desktopSidebar .submenu { border-left-color: var(--border-color); transition: max-height 0.35s ease-out; }
+
+    #desktopSidebar .submenu { border-left-color: var(--border-color-light); transition: max-height 0.35s ease-out; }
     #desktopSidebarToggle { border-top-color: var(--border-color); }
     #iframeSpinnerOverlay, #mobileIframeSpinnerOverlay { background-color: var(--bg-overlay-iframe); backdrop-filter: blur(2px); transition: opacity 0.2s ease; opacity: 0; pointer-events: none; }
     #iframeSpinnerOverlay.flex, #mobileIframeSpinnerOverlay.flex { opacity: 1; pointer-events: auto; }
-    #mobileSidebarWrapper { background-color: rgba(0, 0, 0, 0.5); transition: opacity 0.3s ease-in-out; opacity: 0; pointer-events: none; }
+
+    #mobileSidebarWrapper { background-color: var(--overlay-backdrop); transition: opacity 0.3s ease-in-out; opacity: 0; pointer-events: none; }
     #mobileSidebarWrapper.visible { opacity: 1; pointer-events: auto; }
     #mobileSidebar { background-color: var(--bg-secondary); color: var(--text-secondary); border-right-color: var(--border-color); transition: transform 0.3s ease-in-out; }
-    #mobileSidebar > div:first-child { border-bottom-color: var(--border-color); }
-    #mobileSidebar .submenu { border-left-color: var(--border-color); transition: max-height 0.35s ease-out; }
+    #mobileSidebar > div:first-child { border-bottom-color: var(--border-color); } /* Header of mobile sidebar */
+    #mobileSidebar .nav-link { color: var(--text-primary); } /* Darker text for mobile sidebar links */
+    #mobileSidebar .nav-link i { color: var(--text-secondary); }
+    #mobileSidebar .nav-link:hover i { color: var(--accent-color); }
+    #mobileSidebar .submenu { border-left-color: var(--border-color-light); transition: max-height 0.35s ease-out; }
     #mobileSidebar .mobile-sidebar-footer { border-top-color: var(--border-color); }
-    #mobileSidebar .mobile-sidebar-footer-button { color: var(--danger-text); background-color: var(--danger-bg-subtle); transition: background-color 0.15s ease, color 0.15s ease; }
+    #mobileSidebar .mobile-sidebar-footer-button { color: var(--danger-text); background-color: var(--danger-bg-subtle); transition: background-color 0.15s ease, color 0.15s ease; font-weight: 500; }
     #mobileSidebar .mobile-sidebar-footer-button:hover { background-color: var(--danger-bg-subtle-hover); color: var(--danger-text); }
-    #profileModal { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); transition: opacity 0.2s ease-in-out; }
-    #profileModalContent { background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color); transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out; }
+
+    #profileModal { background-color: var(--overlay-backdrop); backdrop-filter: blur(4px); transition: opacity 0.2s ease-in-out; }
+    #profileModalContent { background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out; }
     #profileModalContent h5 { color: var(--text-primary); }
     #profileModalContent .border-b, #profileModalContent .border-t { border-color: var(--border-color); }
     #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button) { color: var(--text-secondary); transition: color 0.15s ease, background-color 0.15s ease; }
     #profileModalContent button[onclick*="closeProfileModal"]:not(.cancel-button):hover { color: var(--text-primary); background-color: var(--bg-tertiary); }
     #profileModalContent button.cancel-button { background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); transition: background-color 0.15s ease; }
-    #profileModalContent button.cancel-button:hover { background-color: var(--border-color); }
-    #profileModalContent button[type="submit"] { background-color: var(--accent-color); color: var(--accent-text-on-dark); --tw-ring-offset-color: var(--bg-secondary); --tw-ring-color: var(--accent-color); transition: background-color 0.15s ease, box-shadow 0.15s ease; }
+    #profileModalContent button.cancel-button:hover { background-color: #d3d9df; /* Slightly darker tertiary */ }
+    #profileModalContent button[type="submit"] { background-color: var(--accent-color); color: var(--text-on-accent-bg); --tw-ring-offset-color: var(--bg-secondary); --tw-ring-color: var(--accent-color); transition: background-color 0.15s ease, box-shadow 0.15s ease; }
     #profileModalContent button[type="submit"]:hover { background-color: var(--accent-color-hover); }
     #profileModalContent button[type="submit"]:focus { box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-color); }
     #modalProfileImg { ring-offset-color: var(--bg-secondary); ring-color: var(--profile-ring-color); transition: ring-color 0.3s ease; }
     label[for="profilePicInput"] { color: var(--accent-color); background-color: var(--accent-bg-subtle); transition: color 0.15s ease, background-color 0.15s ease; }
     label[for="profilePicInput"]:hover { color: var(--accent-color-hover); background-color: var(--accent-bg-subtle-hover); }
-    #profileModalContent h6 { color: var(--text-secondary); }
-    .placeholder-\\[\\#adb5bd\\]::placeholder { color: var(--text-tertiary) !important; }
+    #profileModalContent h6 { color: var(--text-secondary); font-weight: 600; }
+    .placeholder-\\[\\#adb5bd\\]::placeholder { color: var(--text-tertiary) !important; } /* Ensure this matches */
 
-    /* Novas regras para tamanho do logo */
-    #desktopSidebar.sidebar-collapsed .sidebar-logo-full {
-        height: 2rem; /* 32px */
+    /* Logo display on white background might need a dark version of the logo image */
+    #desktopSidebar.sidebar-collapsed .sidebar-logo-full { height: 2rem; /* 32px */ }
+    #desktopSidebar .sidebar-logo-full { transition: height 0.3s ease-in-out; width: auto; max-width: 100%; }
+    /* If logo is light, it might be hard to see on var(--bg-secondary) = white */
+    /* Consider adding a class or using a different logo src for light themes */
+    .sidebar-logo-full, #loginOverlay img, #mobileSidebar img {
+        /* filter: brightness(0.1) contrast(2); */ /* Example: hacky way to darken light logo if no alternative available, uncomment if needed */
     }
-    #desktopSidebar .sidebar-logo-full {
-        transition: height 0.3s ease-in-out;
-        width: auto;
-        max-width: 100%;
-    }
-    /* Fim novas regras */
+
   </style>
   </head>
 <body class="min-h-screen antialiased">
 
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm opacity-0 pointer-events-none">
-     <div class="bg-secondary rounded-lg shadow-xl w-full max-w-md p-8 border border-border-color">
-      <div class="text-center mb-8">
+  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+     <div class="rounded-lg shadow-xl w-full max-w-md p-8"> <div class="text-center mb-8">
        <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-12 w-auto" />
      </div>
      <h2 class="text-center text-2xl font-semibold text-primary mb-2">Bem-vindo de volta!</h2>
      <p class="text-center text-secondary text-sm mb-6">Faça login para acessar seu painel.</p>
-     <div id="logoutNotification" class="hidden mb-4 p-3 text-sm rounded-md text-center text-warning-text bg-warning-bg-subtle border border-warning-border">Você foi desconectado!</div>
-     <div id="loginError" class="hidden mb-4 p-3 text-sm rounded-md text-center text-error-text bg-error-bg-subtle border border-error-border"></div>
-     <form id="formLogin" novalidate class="space-y-5">
+     <div id="logoutNotification" class="hidden mb-4 p-3 text-sm rounded-md text-center">Você foi desconectado!</div> <div id="loginError" class="hidden mb-4 p-3 text-sm rounded-md text-center"></div> <form id="formLogin" novalidate class="space-y-5">
        <div>
-         <label for="username" class="block mb-1.5 text-sm font-medium">Usuário</label>
+         <label for="username" class="block mb-1.5 text-sm">Usuário</label>
          <input type="text" id="username" placeholder="Digite seu usuário" required
-                 class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-       </div>
+                 class="w-full px-4 py-2.5 rounded-md text-primary focus:ring-2 transition duration-200 placeholder-[#6c757d]" /> </div>
        <div>
-         <label for="password" class="block mb-1.5 text-sm font-medium">Senha</label>
+         <label for="password" class="block mb-1.5 text-sm">Senha</label>
          <div class="relative">
            <input type="password" id="password" placeholder="Digite sua senha" required
-                  class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 pr-10 placeholder-[#adb5bd]" />
-           <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-secondary hover:text-primary" aria-label="Mostrar senha">
-             <i class="bi bi-eye-slash text-lg"></i>
+                  class="w-full px-4 py-2.5 rounded-md text-primary focus:ring-2 transition duration-200 pr-10 placeholder-[#6c757d]" /> <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center" aria-label="Mostrar senha"> <i class="bi bi-eye-slash text-lg"></i>
            </button>
          </div>
        </div>
        <div class="flex items-center justify-between text-sm">
          <div class="flex items-center">
            <input type="checkbox" id="rememberMe"
-                  class="h-4 w-4 text-accent focus:ring-accent border-border-color rounded bg-tertiary focus:ring-offset-primary" />
-           <label for="rememberMe" class="ml-2 block text-secondary">Lembrar meus dados</label>
-         </div>
-         <a href="#" class="font-medium text-accent hover:text-accent-hover">Esqueceu a senha?</a>
-       </div>
+                  class="h-4 w-4 text-accent focus:ring-accent rounded focus:ring-offset-2" /> <label for="rememberMe" class="ml-2 block">Lembrar meus dados</label> </div>
+         <a href="#" class="font-medium">Esqueceu a senha?</a> </div>
        <button type="submit" id="loginButton"
-               class="w-full py-3 px-4 rounded-md font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
-         <span class="button-text">Entrar</span>
-         <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span>
-       </button>
+               class="w-full py-3 px-4 rounded-md font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed"> <span class="button-text">Entrar</span>
+         <span class="spinner-icon hidden ml-2"><i class="bi bi-arrow-repeat animate-spin"></i></span> </button>
      </form>
     </div>
   </div>
 
-  <div id="welcomeScreen" class="fixed inset-0 z-70 hidden items-center justify-center flex-col">
-     <div class="text-center">
+  <div id="welcomeScreen" class="fixed inset-0 z-70 hidden items-center justify-center flex-col"> <div class="text-center">
       <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="mx-auto h-16 w-auto mb-6 animate-pulse" />
       <h2 class="text-2xl font-semibold text-primary mb-2">Bem-vindo(a)!</h2>
-      <p class="text-secondary" id="welcomeUserName">Carregando seu painel...</p>
-     </div>
+      <p id="welcomeUserName" class="text-secondary">Carregando seu painel...</p> </div>
   </div>
 
   <div id="dashboard" class="hidden">
 
-     <header id="profileHeader" class="flex justify-between items-center shadow-sm md:hidden">
-      <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 rounded-full hover:bg-tertiary focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent" aria-label="Abrir menu">
-       <i class="bi bi-list text-xl"></i>
-      </button>
+     <header id="profileHeader" class="flex justify-between items-center shadow-sm md:hidden"> <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 -ml-2 rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent" aria-label="Abrir menu"> <i class="bi bi-list text-xl"></i> </button>
       <div class="flex items-center">
        <button id="integrationBtnHeader"
                class="p-2 rounded-full transition-colors duration-150 mr-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent"
                aria-label="Dados e Previsões"
-               onclick="loadPage('automate.html', this, true); return false;">
-         <i class="bi bi-link-45deg text-xl"></i>
-       </button>
+               onclick="loadPage('automate.html', this, true); return false;"> <i class="bi bi-link-45deg text-xl"></i> </button>
        <div class="flex items-center cursor-pointer group profile-trigger rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent" onclick="openProfileModal()" tabindex="0">
-         <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline group-hover:text-accent transition-colors duration-150 text-secondary">Nome</span>
-         <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 transition-all duration-150" />
-       </div>
+         <span id="profileNameHeader" class="font-medium mr-2 hidden sm:inline group-hover:text-accent transition-colors duration-150">Nome</span> <img id="profileImgHeader" src="https://via.placeholder.com/40" alt="Perfil" class="w-8 h-8 rounded-full object-cover ring-2 ring-offset-2 transition-all duration-150" /> </div>
       </div>
      </header>
 
-     <nav id="desktopSidebar" class="shadow-md">
-      <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center h-[72px] justify-center flex-shrink-0">
-       <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-12 w-auto" />
+     <nav id="desktopSidebar" class="shadow-md"> <div id="sidebarLogoContainer" class="logo-container flex flex-col items-center h-[72px] justify-center flex-shrink-0">
+        <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="sidebar-logo-full mx-auto h-12 w-auto" />
       </div>
 
       <div class="sidebar-scroll-content p-3 space-y-1">
@@ -255,8 +265,7 @@
            </span>
            <i id="desktopGastosIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
          </button>
-         <div id="desktopGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-           <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Janeiro</a>
+         <div id="desktopGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l"> <a href="#" onclick="loadPage('sub_janeiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Janeiro</a>
            <a href="#" onclick="loadPage('sub_fevereiro.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Fevereiro</a>
             <a href="#" onclick="loadPage('sub_abril.html', this); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Abril</a>
          </div>
@@ -273,53 +282,36 @@
             </span>
             <i id="desktopConfigIcon" class="submenu-toggle-icon bi bi-chevron-down text-xs transition-transform duration-300"></i>
           </button>
-          <div id="desktopConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-             <a href="#" onclick="openProfileModal(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
+          <div id="desktopConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l"> <a href="#" onclick="openProfileModal(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
                <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i><span class="sidebar-text">Perfil</span>
              </a>
            </div>
         </div>
       </div>
 
-      <div class="p-3 mt-auto border-t border-border-color flex-shrink-0 space-y-1">
-           <button id="desktopLogoutButton" onclick="logout()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-danger-text bg-danger-bg-subtle hover:bg-danger-bg-subtle-hover focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-danger-text" aria-label="Sair">
-               <i class="bi bi-box-arrow-right w-5 text-center text-lg"></i>
+      <div class="p-3 mt-auto border-t flex-shrink-0 space-y-1"> <button id="desktopLogoutButton" onclick="logout()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-danger-text" aria-label="Sair"> <i class="bi bi-box-arrow-right w-5 text-center text-lg"></i>
                <span class="sidebar-text text-sm font-medium">Sair</span>
            </button>
 
            <div id="desktopSidebarToggle">
-               <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Recolher barra lateral">
-                   <i id="desktopToggleIcon" class="bi bi-chevron-double-left w-5 text-center text-lg"></i>
+               <button onclick="toggleDesktopSidebar()" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Recolher barra lateral"> <i id="desktopToggleIcon" class="bi bi-chevron-double-left w-5 text-center text-lg"></i>
                    <span class="sidebar-text text-sm font-medium">Recolher</span>
                </button>
            </div>
       </div>
      </nav>
 
-     <div id="desktopMainArea">
-      <main id="mainContent">
-       <div id="iframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
-         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
+     <div id="desktopMainArea"> <main id="mainContent"> <div id="iframeSpinnerOverlay" class="absolute inset-0 z-20 hidden items-center justify-center"> <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
        </div>
-       <iframe id="mainFrame" src="about:blank" class="w-full h-full relative z-10" title="Conteúdo Principal"></iframe>
-      </main>
+       <iframe id="mainFrame" src="about:blank" class="w-full h-full relative z-10" title="Conteúdo Principal"></iframe> </main>
      </div>
 
-     <main id="mobileMainContent" class="md:hidden">
-      <div id="mobileIframeSpinnerOverlay" class="absolute inset-0 backdrop-blur-sm z-20 hidden items-center justify-center">
-       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
+     <main id="mobileMainContent" class="md:hidden"> <div id="mobileIframeSpinnerOverlay" class="absolute inset-0 z-20 hidden items-center justify-center"> <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
       </div>
-      <iframe id="mobileMainFrame" src="about:blank" class="w-full h-full relative z-10" title="Conteúdo Principal Mobile"></iframe>
-     </main>
+      <iframe id="mobileMainFrame" src="about:blank" class="w-full h-full relative z-10" title="Conteúdo Principal Mobile"></iframe> </main>
 
-     <div id="mobileSidebarWrapper" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
-
-     <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r">
-      <div class="p-4 flex justify-between items-center border-b h-[60px]">
-       <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-7 w-auto" />
-       <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 rounded-full hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Fechar menu">
-         <i class="bi bi-x-lg text-xl"></i>
-       </button>
+     <div id="mobileSidebarWrapper" class="fixed inset-0 z-40 hidden md:hidden" onclick="toggleMobileSidebar()"></div> <nav id="mobileSidebar" class="fixed top-0 left-0 bottom-0 w-64 h-screen flex flex-col shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden border-r"> <div class="p-4 flex justify-between items-center border-b h-[60px]"> <img src="https://war-machine.s3.sa-east-1.amazonaws.com/seller/521/logo/96169866-logo-alta-2552x1080.png" alt="Logo ClickForte" class="max-h-7 w-auto" />
+       <button onclick="toggleMobileSidebar()" class="p-2 -mr-2 rounded-full focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Fechar menu"> <i class="bi bi-x-lg text-xl"></i> </button>
       </div>
       <div class="overflow-y-auto flex-grow p-3 space-y-1">
        <a href="#" onclick="loadPage('home.html', this, true); toggleMobileSidebar(); return false;" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-md focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"> <i class="bi bi-house-door-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Home</span></a>
@@ -329,8 +321,7 @@
            <span class="flex items-center gap-3"><i class="bi bi-wallet2 w-5 text-center text-lg"></i> <span class="text-sm font-medium">Gastos</span></span>
            <i id="mobileGastosIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
          </button>
-         <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-           <a href="#" onclick="loadPage('sub_janeiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Janeiro</a>
+         <div id="mobileGastosSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l"> <a href="#" onclick="loadPage('sub_janeiro.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Janeiro</a>
             <a href="#" onclick="loadPage('sub_abril.html', this, true); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Abril</a>
          </div>
          </div>
@@ -340,69 +331,48 @@
               <span class="flex items-center gap-3"><i class="bi bi-gear-fill w-5 text-center text-lg"></i> <span class="text-sm font-medium">Configurações</span></span>
               <i id="mobileConfigIcon" class="bi bi-chevron-down text-xs transition-transform duration-300"></i>
             </button>
-            <div id="mobileConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l">
-              <a href="#" onclick="openProfileModal(); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
+            <div id="mobileConfigSubmenu" class="submenu pl-6 ml-4 mt-1 space-y-0.5 border-l"> <a href="#" onclick="openProfileModal(); toggleMobileSidebar(); return false;" class="block nav-link p-2 rounded-md text-xs+ profile-sidebar-link focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
                 <i class="bi bi-person-circle w-5 text-center text-base mr-1 -ml-1"></i> Perfil
               </a>
              </div>
            </div>
        </div>
 
-      <div class="p-3 mt-auto border-t mobile-sidebar-footer space-y-2">
-           <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium mobile-sidebar-footer-button focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-danger-text">
-             <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
+      <div class="p-3 mt-auto border-t mobile-sidebar-footer space-y-2"> <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm mobile-sidebar-footer-button focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-danger-text"> <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
            </button>
        </div>
      </nav>
   </div>
 
-  <div id="profileModal" class="fixed inset-0 bg-opacity-60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out opacity-0 pointer-events-none">
-     <div id="profileModalContent" class="rounded-lg w-full max-w-lg p-6 shadow-xl transform transition-all duration-200 ease-in-out scale-95 opacity-0 border">
-      <form id="profileForm">
-       <div class="flex justify-between items-start border-b pb-3 mb-5">
-         <h5 class="text-lg font-semibold">Editar Perfil</h5>
-         <button type="button" onclick="closeProfileModal()" class="rounded-full p-1.5 -mt-1 -mr-1 hover:bg-tertiary focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Fechar modal">
-           <i class="bi bi-x-lg text-xl"></i>
-         </button>
+  <div id="profileModal" class="fixed inset-0 hidden items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in-out opacity-0 pointer-events-none"> <div id="profileModalContent" class="rounded-lg w-full max-w-lg p-6 shadow-xl transform transition-all duration-200 ease-in-out scale-95 opacity-0"> <form id="profileForm">
+       <div class="flex justify-between items-start border-b pb-3 mb-5"> <h5 class="text-lg font-semibold">Editar Perfil</h5> <button type="button" onclick="closeProfileModal()" class="rounded-full p-1.5 -mt-1 -mr-1 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent" aria-label="Fechar modal"> <i class="bi bi-x-lg text-xl"></i> </button>
        </div>
        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
          <div class="flex-shrink-0 text-center">
-           <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 mb-3" />
-           <label for="profilePicInput" class="cursor-pointer text-xs font-medium px-3 py-1.5 rounded-md transition-colors duration-150 inline-block hover:bg-accent-bg-subtle-hover focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">
-             <i class="bi bi-upload mr-1"></i> Alterar foto
+           <img id="modalProfileImg" src="https://via.placeholder.com/100" alt="Foto de Perfil" class="mx-auto rounded-full w-24 h-24 object-cover ring-2 ring-offset-2 mb-3" /> <label for="profilePicInput" class="cursor-pointer text-xs font-medium px-3 py-1.5 rounded-md transition-colors duration-150 inline-block focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"> <i class="bi bi-upload mr-1"></i> Alterar foto
              <input type="file" id="profilePicInput" accept="image/*" class="hidden" />
            </label>
          </div>
          <div class="w-full flex-grow space-y-4">
            <div>
-             <label for="profileNameInput" class="block mb-1.5 text-sm font-medium">Nome de Usuário</label>
-             <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
-                    class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-           </div>
+             <label for="profileNameInput" class="block mb-1.5 text-sm">Nome de Usuário</label> <input type="text" id="profileNameInput" placeholder="Digite seu nome" required
+                    class="w-full px-4 py-2.5 rounded-md focus:ring-2 transition duration-200 placeholder-[#6c757d]" /> </div>
          </div>
        </div>
-       <div class="space-y-4 border-t pt-6 mb-6">
-          <h6 class="text-md font-semibold text-secondary">Alterar Senha</h6>
-          <div>
-            <label for="currentPassword" class="block mb-1.5 text-sm font-medium">Senha Atual</label>
+       <div class="space-y-4 border-t pt-6 mb-6"> <h6 class="text-md font-semibold">Alterar Senha</h6> <div>
+            <label for="currentPassword" class="block mb-1.5 text-sm">Senha Atual</label>
             <input type="password" id="currentPassword" placeholder="Digite sua senha atual"
-                   class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-          </div>
+                   class="w-full px-4 py-2.5 rounded-md focus:ring-2 transition duration-200 placeholder-[#6c757d]" /> </div>
            <div>
-            <label for="newPassword" class="block mb-1.5 text-sm font-medium">Nova Senha</label>
+            <label for="newPassword" class="block mb-1.5 text-sm">Nova Senha</label>
             <input type="password" id="newPassword" placeholder="Digite a nova senha (mín. 6 caracteres)"
-                   class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-          </div>
+                   class="w-full px-4 py-2.5 rounded-md focus:ring-2 transition duration-200 placeholder-[#6c757d]" /> </div>
            <div>
-            <label for="confirmPassword" class="block mb-1.5 text-sm font-medium">Confirmar Nova Senha</label>
+            <label for="confirmPassword" class="block mb-1.5 text-sm">Confirmar Nova Senha</label>
             <input type="password" id="confirmPassword" placeholder="Confirme a nova senha"
-                   class="w-full px-4 py-2.5 bg-tertiary border border-border-color rounded-md text-primary focus:ring-2 focus:ring-accent focus:border-accent transition duration-200 placeholder-[#adb5bd]" />
-          </div>
+                   class="w-full px-4 py-2.5 rounded-md focus:ring-2 transition duration-200 placeholder-[#6c757d]" /> </div>
        </div>
-       <div class="flex justify-end space-x-3 pt-4 border-t">
-         <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-md border transition duration-150 text-sm font-medium cancel-button focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Cancelar</button>
-         <button type="submit" class="px-4 py-2 rounded-md transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm font-medium">Salvar Alterações</button>
-       </div>
+       <div class="flex justify-end space-x-3 pt-4 border-t"> <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-md transition duration-150 text-sm font-medium cancel-button focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent">Cancelar</button> <button type="submit" class="px-4 py-2 rounded-md transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm font-medium">Salvar Alterações</button> </div>
       </form>
      </div>
   </div>
@@ -460,16 +430,17 @@
     const sidebarProfileLinkDesktop = document.querySelector('#desktopSidebar .profile-sidebar-link');
     const sidebarProfileLinkMobile = document.querySelector('#mobileSidebar .profile-sidebar-link');
     const profileTriggers = document.querySelectorAll('.profile-trigger');
-    const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40';
-    const DEFAULT_PROFILE_PIC_MEDIUM = 'https://via.placeholder.com/40';
-    const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100';
-    const DEFAULT_PROFILE_PIC_SIDEBAR = 'https://via.placeholder.com/32';
+    const DEFAULT_PROFILE_PIC_SMALL = 'https://via.placeholder.com/40/cccccc/808080?Text=User'; // Placeholder with contrast
+    const DEFAULT_PROFILE_PIC_MEDIUM = 'https://via.placeholder.com/40/cccccc/808080?Text=User';
+    const DEFAULT_PROFILE_PIC_LARGE = 'https://via.placeholder.com/100/cccccc/808080?Text=User';
+    const DEFAULT_PROFILE_PIC_SIDEBAR = 'https://via.placeholder.com/32/cccccc/808080?Text=U';
+
 
     if (formLogin) { formLogin.addEventListener('submit', function (e) { e.preventDefault(); hideElement(loginErrorDiv); if (loginButton && buttonText && spinnerIcon) { disableButton(loginButton, buttonText, spinnerIcon); } setTimeout(() => { const validUsername = localStorage.getItem('savedUsername') || 'admin'; const username = usernameField?.value.trim(); const password = passwordField?.value; if (username === validUsername && password === 'admin123') { handleSuccessfulLogin(username, password); } else { handleFailedLogin(); } }, 1000); }); }
     function handleSuccessfulLogin(username, password) { if (rememberMe?.checked) { localStorage.setItem('savedUsername', username); localStorage.setItem('savedPassword', password); } else { localStorage.removeItem('savedPassword'); if(localStorage.getItem('savedUsername') !== username) { localStorage.setItem('savedUsername', username); } } localStorage.setItem('isLoggedIn', 'true'); hideFlexElement(loginOverlay); if (welcomeUserName) welcomeUserName.textContent = `Olá, ${username}! Carregando seu painel...`; if (welcomeScreen) welcomeScreen.classList.add('visible'); setTimeout(() => { if (welcomeScreen) welcomeScreen.classList.remove('visible'); setTimeout(() => { hideElement(welcomeScreen); }, 500); showFlexElement(dashboard); updateUserInfo(); applyDesktopSidebarState(); const isMobile = window.innerWidth < 768; const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(initialLinkSelector); if (homeLink) { loadPage('home.html', homeLink, isMobile); } else { const targetFrame = isMobile ? mobileMainFrame : mainFrame; const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay; if (targetFrame) targetFrame.src = 'home.html'; hideFlexElement(targetSpinner); console.warn("Link Home não encontrado para view inicial."); } if (loginButton && buttonText && spinnerIcon) { enableButton(loginButton, buttonText, spinnerIcon); } }, 1500); }
-    function handleFailedLogin() { if (loginErrorDiv) { loginErrorDiv.textContent = 'Usuário ou senha incorretos.'; showElement(loginErrorDiv); } if (loginButton && buttonText && spinnerIcon) { enableButton(loginButton, buttonText, spinnerIcon); } const loginCard = loginOverlay?.querySelector('[class*="bg-secondary"]'); if(loginCard) { loginCard.classList.add('animate-shake'); setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500); } }
+    function handleFailedLogin() { if (loginErrorDiv) { loginErrorDiv.textContent = 'Usuário ou senha incorretos.'; showElement(loginErrorDiv); } if (loginButton && buttonText && spinnerIcon) { enableButton(loginButton, buttonText, spinnerIcon); } const loginCard = loginOverlay?.querySelector('[class*="rounded-lg"]'); if(loginCard) { loginCard.classList.add('animate-shake'); setTimeout(() => { loginCard.classList.remove('animate-shake'); }, 500); } }
     if (togglePasswordButton) { togglePasswordButton.addEventListener('click', function() { const icon = this.querySelector('i'); if (passwordField?.type === 'password') { passwordField.type = 'text'; icon?.classList.replace('bi-eye-slash', 'bi-eye'); this.setAttribute('aria-label', 'Ocultar senha'); } else if (passwordField) { passwordField.type = 'password'; icon?.classList.replace('bi-eye', 'bi-eye-slash'); this.setAttribute('aria-label', 'Mostrar senha'); } }); }
-    function logout() { localStorage.removeItem('isLoggedIn'); hideFlexElement(dashboard); showFlexElement(loginOverlay); showElement(logoutNotification); setTimeout(() => hideElement(logoutNotification), 4000); if (mobileSidebar?.classList.contains('translate-x-0')) toggleMobileSidebar(); if (passwordField) passwordField.value = ''; hideElement(loginErrorDiv); const savedUsername = localStorage.getItem('savedUsername'); const savedPassword = localStorage.getItem('savedPassword'); if (usernameField) usernameField.value = savedUsername || ''; if (rememberMe) rememberMe.checked = !!savedPassword; console.log("Logout realizado. Tela de login preparada."); }
+    function logout() { localStorage.removeItem('isLoggedIn'); hideFlexElement(dashboard); showFlexElement(loginOverlay); if (logoutNotification) { logoutNotification.classList.remove('hidden'); setTimeout(() => logoutNotification.classList.add('hidden'), 4000); } if (mobileSidebar?.classList.contains('translate-x-0')) toggleMobileSidebar(); if (passwordField) passwordField.value = ''; hideElement(loginErrorDiv); const savedUsername = localStorage.getItem('savedUsername'); const savedPassword = localStorage.getItem('savedPassword'); if (usernameField) usernameField.value = savedUsername || ''; if (rememberMe) rememberMe.checked = !!savedPassword; console.log("Logout realizado. Tela de login preparada."); }
     function setActiveLink(clickedLinkElement) { if (!clickedLinkElement) return; document.querySelectorAll('.nav-link, #integrationBtnHeader, .profile-trigger, .profile-sidebar-link').forEach(el => { el.classList.remove('active'); }); clickedLinkElement.classList.add('active'); const isIntegrationPage = clickedLinkElement.getAttribute('onclick')?.includes('automate.html') || clickedLinkElement.getAttribute('onclick')?.includes('integracao.html'); const isProfileTriggerOrLink = clickedLinkElement.classList.contains('profile-trigger') || clickedLinkElement.classList.contains('profile-sidebar-link'); if (isIntegrationPage) { if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.add('active'); if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.add('active'); if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.add('active'); } else if (isProfileTriggerOrLink) { profileTriggers.forEach(trigger => trigger.classList.add('active')); if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.add('active'); if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.add('active'); const parentConfigButtonD = sidebarProfileLinkDesktop?.closest('.nav-item')?.querySelector('button.nav-link'); const parentConfigButtonM = sidebarProfileLinkMobile?.closest('.nav-item')?.querySelector('button.nav-link'); if(parentConfigButtonD) parentConfigButtonD.classList.add('active'); if(parentConfigButtonM) parentConfigButtonM.classList.add('active'); const submenuD = parentConfigButtonD?.nextElementSibling; const submenuM = parentConfigButtonM?.nextElementSibling; const iconD = parentConfigButtonD?.querySelector('i[id$="Icon"]'); const iconM = parentConfigButtonM?.querySelector('i[id$="Icon"]'); if (submenuD && iconD && !submenuD.classList.contains('submenu-visible') && !desktopSidebar?.classList.contains('sidebar-collapsed')) { toggleSubmenu(submenuD.id, iconD.id); } if (submenuM && iconM && !submenuM.classList.contains('submenu-visible')) { toggleSubmenu(submenuM.id, iconM.id); } } else { const parentSubmenu = clickedLinkElement.closest('.submenu'); if (parentSubmenu) { const parentButton = parentSubmenu.previousElementSibling; if (parentButton && parentButton.classList.contains('nav-link')) { parentButton.classList.add('active'); const isDesktopSidebarCollapsed = desktopSidebar?.classList.contains('sidebar-collapsed'); const context = parentSubmenu.id.includes('desktop') ? 'desktop' : 'mobile'; if ((context === 'mobile' || !isDesktopSidebarCollapsed) && !parentSubmenu.classList.contains('submenu-visible') ) { const parentIconId = parentButton.querySelector('i[id$="Icon"]')?.id; if (parentIconId) toggleSubmenu(parentSubmenu.id, parentIconId); } } } if (integrationBtnHeaderMobile) integrationBtnHeaderMobile.classList.remove('active'); if (sidebarIntegrationLinkDesktop) sidebarIntegrationLinkDesktop.classList.remove('active'); if (sidebarIntegrationLinkMobile) sidebarIntegrationLinkMobile.classList.remove('active'); profileTriggers.forEach(trigger => trigger.classList.remove('active')); if (sidebarProfileLinkDesktop) sidebarProfileLinkDesktop.classList.remove('active'); if (sidebarProfileLinkMobile) sidebarProfileLinkMobile.classList.remove('active'); } }
     function loadPage(pageUrl, clickedLinkElement, isMobile = window.innerWidth < 768) { const targetFrame = isMobile ? mobileMainFrame : mainFrame; const targetSpinner = isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay; if(!targetFrame || !targetSpinner) { console.error("Iframe ou Spinner não encontrado para:", isMobile ? "Mobile" : "Desktop"); return; } showFlexElement(targetSpinner); setActiveLink(clickedLinkElement); setTimeout(() => { targetFrame.src = pageUrl; }, 50); }
     function setupIframeListener(frameElement, spinnerElement) { if (frameElement && spinnerElement) { frameElement.addEventListener('load', () => hideFlexElement(spinnerElement)); frameElement.addEventListener('error', (e) => { console.error(`Falha ao carregar iframe: ${frameElement.src}`, e); hideFlexElement(spinnerElement); }); } else { console.error("Iframe ou spinner overlay não encontrado para listener."); } }
@@ -479,12 +450,12 @@
     function updateDesktopSidebarUI(isCollapsed) { if (!desktopToggleIcon || !desktopToggleText || !desktopSidebarToggleBtn) return; if (isCollapsed) { desktopToggleIcon.classList.replace('bi-chevron-double-left', 'bi-chevron-double-right'); desktopToggleText.textContent = 'Expandir'; desktopSidebarToggleBtn.setAttribute('aria-label', 'Expandir barra lateral'); } else { desktopToggleIcon.classList.replace('bi-chevron-double-right', 'bi-chevron-double-left'); desktopToggleText.textContent = 'Recolher'; desktopSidebarToggleBtn.setAttribute('aria-label', 'Recolher barra lateral'); } }
     function applyDesktopSidebarState() { if (window.innerWidth < 768 || !desktopSidebar) return; const savedState = localStorage.getItem('desktopSidebarState'); const shouldBeCollapsed = savedState === 'collapsed'; if (desktopSidebar.classList.contains('sidebar-collapsed') !== shouldBeCollapsed) { desktopSidebar.classList.toggle('sidebar-collapsed', shouldBeCollapsed); } updateDesktopSidebarUI(shouldBeCollapsed); }
     function openProfileModal() { const currentUsername = localStorage.getItem('savedUsername') || 'Usuário Padrão'; const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (profileNameInput) profileNameInput.value = currentUsername; if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge; const currentPassEl = document.getElementById('currentPassword'); const newPassEl = document.getElementById('newPassword'); const confirmPassEl = document.getElementById('confirmPassword'); if (currentPassEl) currentPassEl.value = ''; if (newPassEl) newPassEl.value = ''; if (confirmPassEl) confirmPassEl.value = ''; if (profilePicInput) profilePicInput.value = ''; const isMobile = window.innerWidth < 768; const profileLinkToActivate = isMobile ? sidebarProfileLinkMobile : sidebarProfileLinkDesktop; if (profileLinkToActivate) { setActiveLink(profileLinkToActivate); } else { const triggerToActivate = isMobile ? profileHeaderMobile?.querySelector('.profile-trigger') : null; if (triggerToActivate) setActiveLink(triggerToActivate); } if (profileModal) { profileModal.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); profileModal.classList.add('flex'); void profileModal.offsetWidth; profileModal.classList.add('opacity-100'); profileModal.classList.remove('pointer-events-none'); } if (profileModalContent) { profileModalContent.classList.remove('scale-95', 'opacity-0'); } }
-    function closeProfileModal() { if (profileModal) { profileModal.classList.remove('opacity-100'); profileModalContent?.classList.add('scale-95', 'opacity-0'); setTimeout(() => { profileModal.classList.add('hidden', 'opacity-0', 'pointer-events-none'); profileModal.classList.remove('flex'); const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge; if (profilePicInput) profilePicInput.value = ''; document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active')); const isMobile = window.innerWidth < 768; const currentFrame = isMobile ? mobileMainFrame : mainFrame; const currentIframeSrc = currentFrame?.src; if (currentIframeSrc && currentIframeSrc !== 'about:blank') { try { const url = new URL(currentIframeSrc); const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1); if (pageName && pageName !== 'profile.html') { const linkSelector = `.nav-link[onclick*="'${pageName}'"]`; const correspondingLink = document.querySelector(linkSelector); if(correspondingLink && !correspondingLink.classList.contains('profile-sidebar-link')) { setActiveLink(correspondingLink); } } else if (!pageName || pageName === 'profile.html') { const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } } catch (e) { console.error("Erro ao processar URL do iframe para restaurar link ativo:", e); } } else { const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } }, 200); } }
+    function closeProfileModal() { if (profileModal) { profileModal.classList.remove('opacity-100'); profileModalContent?.classList.add('scale-95', 'opacity-0'); setTimeout(() => { profileModal.classList.add('hidden', 'opacity-0', 'pointer-events-none'); profileModal.classList.remove('flex'); const currentProfilePicLarge = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (modalProfileImg) modalProfileImg.src = currentProfilePicLarge; if (profilePicInput) profilePicInput.value = ''; document.querySelectorAll('.profile-trigger.active, .profile-sidebar-link.active').forEach(el => el.classList.remove('active')); const isMobile = window.innerWidth < 768; const currentFrame = isMobile ? mobileMainFrame : mainFrame; const currentIframeSrc = currentFrame?.src; if (currentIframeSrc && currentIframeSrc !== 'about:blank' && !currentIframeSrc.endsWith('profile.html')) { try { const url = new URL(currentIframeSrc); const pageName = url.pathname.substring(url.pathname.lastIndexOf('/') + 1); if (pageName) { const linkSelector = `.nav-link[onclick*="'${pageName}'"]:not(.profile-sidebar-link)`; const correspondingLink = document.querySelector(linkSelector); if(correspondingLink) { setActiveLink(correspondingLink); } else { const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } } } catch (e) { console.error("Erro ao processar URL do iframe para restaurar link ativo:", e); const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } } else { const homeLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(homeLinkSelector); if (homeLink) setActiveLink(homeLink); } }, 200); } }
     if (profilePicInput) { profilePicInput.addEventListener('change', function () { const file = this.files?.[0]; if (file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = function (e) { if (modalProfileImg && e.target?.result) { modalProfileImg.src = e.target.result.toString(); } }; reader.readAsDataURL(file); } else if (file) { alert("Por favor, selecione um arquivo de imagem válido."); this.value = ''; } }); }
-    if (profileForm) { profileForm.addEventListener('submit', function (e) { e.preventDefault(); const newName = profileNameInput?.value.trim(); const newImgSrc = modalProfileImg?.src; const currentPasswordEl = document.getElementById('currentPassword'); const newPasswordEl = document.getElementById('newPassword'); const confirmPasswordEl = document.getElementById('confirmPassword'); const currentPassword = currentPasswordEl?.value; const newPassword = newPasswordEl?.value; const confirmPassword = confirmPasswordEl?.value; let passwordChangeAttempted = currentPassword || newPassword || confirmPassword; let passwordChangeOk = true; if (passwordChangeAttempted) { const storedPassword = localStorage.getItem('savedPassword') || 'admin123'; if (!currentPassword || currentPassword !== storedPassword) { alert('Senha atual incorreta ou não fornecida!'); passwordChangeOk = false; currentPasswordEl?.focus(); } else if (!newPassword || newPassword !== confirmPassword) { alert('Nova senha e confirmação não coincidem ou estão vazias.'); passwordChangeOk = false; newPasswordEl?.focus(); } else if (newPassword.length < 6) { alert('A nova senha deve ter pelo menos 6 caracteres.'); passwordChangeOk = false; newPasswordEl?.focus(); } if (passwordChangeOk) { console.log("Simulação: Senha seria atualizada para:", newPassword); if(localStorage.getItem('savedPassword')) { localStorage.setItem('savedPassword', newPassword); console.log("Simulação: Senha salva no localStorage atualizada."); } else { console.log("Simulação: Senha validada, mas não estava salva ('Lembrar dados')."); } if(currentPasswordEl) currentPasswordEl.value = ''; if(newPasswordEl) newPasswordEl.value = ''; if(confirmPasswordEl) confirmPasswordEl.value = ''; } else { return; } } if (newName) { localStorage.setItem('savedUsername', newName); if (newImgSrc && newImgSrc.startsWith('data:image/')) { try { localStorage.setItem('savedProfilePicLarge', newImgSrc); } catch (error) { console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error); alert("Não foi possível salvar a imagem. Pode ser muito grande (limite ~5MB). Tente uma imagem menor ou remova a atual."); const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (modalProfileImg) modalProfileImg.src = previousPic; localStorage.removeItem('savedProfilePicLarge'); return; } } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE || !newImgSrc) { localStorage.removeItem('savedProfilePicLarge'); console.log("Imagem de perfil removida ou redefinida para padrão."); } updateUserInfo(); closeProfileModal(); } else { alert('O nome de usuário não pode ficar vazio.'); profileNameInput?.focus(); } }); }
+    if (profileForm) { profileForm.addEventListener('submit', function (e) { e.preventDefault(); const newName = profileNameInput?.value.trim(); const newImgSrc = modalProfileImg?.src; const currentPasswordEl = document.getElementById('currentPassword'); const newPasswordEl = document.getElementById('newPassword'); const confirmPasswordEl = document.getElementById('confirmPassword'); const currentPassword = currentPasswordEl?.value; const newPassword = newPasswordEl?.value; const confirmPassword = confirmPasswordEl?.value; let passwordChangeAttempted = currentPassword || newPassword || confirmPassword; let passwordChangeOk = true; if (passwordChangeAttempted) { const storedPassword = localStorage.getItem('savedPassword') || 'admin123'; if (!currentPassword || currentPassword !== storedPassword) { alert('Senha atual incorreta ou não fornecida!'); passwordChangeOk = false; currentPasswordEl?.focus(); } else if (!newPassword || newPassword !== confirmPassword) { alert('Nova senha e confirmação não coincidem ou estão vazias.'); passwordChangeOk = false; newPasswordEl?.focus(); } else if (newPassword.length < 6) { alert('A nova senha deve ter pelo menos 6 caracteres.'); passwordChangeOk = false; newPasswordEl?.focus(); } if (passwordChangeOk) { console.log("Simulação: Senha seria atualizada para:", newPassword); if(localStorage.getItem('savedPassword')) { localStorage.setItem('savedPassword', newPassword); console.log("Simulação: Senha salva no localStorage atualizada."); } else { console.log("Simulação: Senha validada, mas não estava salva ('Lembrar dados')."); } if(currentPasswordEl) currentPasswordEl.value = ''; if(newPasswordEl) newPasswordEl.value = ''; if(confirmPasswordEl) confirmPasswordEl.value = ''; } else { return; } } if (newName) { localStorage.setItem('savedUsername', newName); if (newImgSrc && newImgSrc.startsWith('data:image/')) { try { localStorage.setItem('savedProfilePicLarge', newImgSrc); } catch (error) { console.error("Erro ao salvar imagem no localStorage (pode ter excedido o limite):", error); alert("Não foi possível salvar a imagem. Pode ser muito grande (limite ~5MB). Tente uma imagem menor ou remova a atual."); const previousPic = localStorage.getItem('savedProfilePicLarge') || DEFAULT_PROFILE_PIC_LARGE; if (modalProfileImg) modalProfileImg.src = previousPic; localStorage.removeItem('savedProfilePicLarge'); return; } } else if (newImgSrc === DEFAULT_PROFILE_PIC_LARGE || !newImgSrc || newImgSrc.includes('via.placeholder.com')) { localStorage.removeItem('savedProfilePicLarge'); console.log("Imagem de perfil removida ou redefinida para padrão."); } updateUserInfo(); closeProfileModal(); } else { alert('O nome de usuário não pode ficar vazio.'); profileNameInput?.focus(); } }); }
     function updateUserInfo() { const username = localStorage.getItem('savedUsername') || 'Nome Padrão'; const profilePicBase64Large = localStorage.getItem('savedProfilePicLarge'); const displayPicSmall = profilePicBase64Large || DEFAULT_PROFILE_PIC_SMALL; const modalPic = profilePicBase64Large || DEFAULT_PROFILE_PIC_LARGE; if(profileNameHeaderMobile) profileNameHeaderMobile.textContent = username; if(profileImgHeaderMobile) profileImgHeaderMobile.src = displayPicSmall; if(modalProfileImg) modalProfileImg.src = modalPic; }
     function handleResize() { const stillLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; if (stillLoggedIn) { applyDesktopSidebarState(); } setVhProperty(); }
-    window.addEventListener('DOMContentLoaded', function () { setVhProperty(); const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; const isMobile = window.innerWidth < 768; if (isLoggedIn) { hideFlexElement(loginOverlay); showFlexElement(dashboard); updateUserInfo(); applyDesktopSidebarState(); const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(initialLinkSelector); if (homeLink) { setTimeout(() => loadPage('home.html', homeLink, isMobile), 50); } else { const targetFrame = isMobile ? mobileMainFrame : mainFrame; if(targetFrame) targetFrame.src = 'home.html'; hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay); console.warn("Link Home não encontrado na carga inicial."); } } else { showFlexElement(loginOverlay); hideFlexElement(dashboard); hideElement(logoutNotification); hideElement(loginErrorDiv); const savedUsername = localStorage.getItem('savedUsername'); const savedPassword = localStorage.getItem('savedPassword'); if (usernameField) usernameField.value = savedUsername || ''; if (passwordField) passwordField.value = ''; if (rememberMe) rememberMe.checked = !!savedPassword; } setupIframeListener(mainFrame, iframeSpinnerOverlay); setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay); window.addEventListener('resize', handleResize); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (profileModal?.classList.contains('flex')) { closeProfileModal(); } else if (mobileSidebar?.classList.contains('translate-x-0')) { toggleMobileSidebar(); } } }); profileTriggers.forEach(trigger => { trigger.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfileModal(); } }); }); });
+    window.addEventListener('DOMContentLoaded', function () { setVhProperty(); const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; const isMobile = window.innerWidth < 768; if (isLoggedIn) { hideFlexElement(loginOverlay); showFlexElement(dashboard); updateUserInfo(); applyDesktopSidebarState(); const initialLinkSelector = isMobile ? '#mobileSidebar a[onclick*="home.html"]' : '#desktopSidebar a[onclick*="home.html"]'; const homeLink = document.querySelector(initialLinkSelector); if (homeLink) { setTimeout(() => loadPage('home.html', homeLink, isMobile), 50); } else { const targetFrame = isMobile ? mobileMainFrame : mainFrame; if(targetFrame) targetFrame.src = 'home.html'; hideFlexElement(isMobile ? mobileIframeSpinnerOverlay : iframeSpinnerOverlay); console.warn("Link Home não encontrado na carga inicial."); } } else { showFlexElement(loginOverlay); hideFlexElement(dashboard); if(logoutNotification) hideElement(logoutNotification); if(loginErrorDiv) hideElement(loginErrorDiv); const savedUsername = localStorage.getItem('savedUsername'); const savedPassword = localStorage.getItem('savedPassword'); if (usernameField) usernameField.value = savedUsername || ''; if (passwordField) passwordField.value = ''; if (rememberMe) rememberMe.checked = !!savedPassword; } setupIframeListener(mainFrame, iframeSpinnerOverlay); setupIframeListener(mobileMainFrame, mobileIframeSpinnerOverlay); window.addEventListener('resize', handleResize); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (profileModal?.classList.contains('flex')) { closeProfileModal(); } else if (mobileSidebar?.classList.contains('translate-x-0')) { toggleMobileSidebar(); } } }); profileTriggers.forEach(trigger => { trigger.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProfileModal(); } }); }); });
   </script>
 
 </body>
